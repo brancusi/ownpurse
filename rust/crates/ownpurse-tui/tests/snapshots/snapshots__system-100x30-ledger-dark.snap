@@ -1,0 +1,176 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    as of 2025-12-31                                         ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+────────────────────────────────────────────────────────━━━━━━━━────────────────────────────────────
+  all › System
+  Connection
+  token: managed by the CLI (`ownpurse login`) · token file tokens/demo.json
+  cli: ~/.local/bin/ownpurse (0.9.0)
+  scopes: 15 read · 3 write configured (never requested by this TUI)
+  org     name                                 plan      records  last sync
+▌ roast   Tallowmere Coffee Roasting Co.       STANDARD       28  07:46 UTC · 2h ago
+  hold    Brackenridge Lane Holdings Ltd       PREMIUM        20  07:46 UTC · 2h ago
+  design  Quillfeather Design Consultancy LLP  STARTER        32  07:46 UTC · 2h ago
+  lab     Saltmarsh Cupping Lab LLC            STARTER        12  07:46 UTC · 2h ago
+
+  Settings
+  Config: tests/fixtures/demo/ownpurse.json · profile demo · store tests/fixtures/demo/record.sqli…
+  key                                       value                                       source
+  xero.auth_url                             https://login.xero.com/identity/connect/a…  defaults
+  xero.token_url                            https://identity.xero.com/connect/token     defaults
+  xero.revoke_url                           https://identity.xero.com/connect/revocat…  defaults
+  xero.connections_url                      https://api.xero.com/connections            defaults
+  xero.api_base                             https://api.xero.com/api.xro/2.0            defaults
+  xero.redirect_uri                         http://localhost:8765/callback              defaults
+  xero.login_timeout_seconds                900                                         defaults
+  xero.scopes.read                          openid, profile, email, offline_access, a…  defaults
+  xero.scopes.write                         accounting.banktransactions, accounting.m…  defaults
+  limits.calls_per_day                      1000                                        defaults
+────────────────────────────────────────────────────────────────────────────────────────────────────
+ roast · Tallowmere Coffee Roasting Co. · tenant c0ffee00-0000-4000-8000-0000000000a1 · short code…
+  q Quit  / Filter  ] Org ▸  g Scope  i Details  ? more  ⌃P palette                     v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-19 fg=#72B6D4 bg=#243137 +B
+r0 20-20 fg=#4DBFA9 bg=#243137 +B
+r0 21-21 fg=#9D8FF2 bg=#243137 +B
+r0 22-22 fg=#E8834F bg=#243137 +B
+r0 23-23 fg=#E8769F bg=#243137 +B
+r0 24-29 fg=#93A0A7 bg=#243137
+r0 30-45 fg=#B9C4C9 bg=#243137
+r0 46-86 fg=#93A0A7 bg=#243137
+r0 87-97 fg=#717E85 bg=#243137
+r0 98-99 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#E6ECEE bg=#171D20 +B
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-99 bg=#171D20
+r2 0-55 fg=#2D383E
+r2 56-63 fg=#72B6D4 +B
+r2 64-99 fg=#2D383E
+r3 2-7 fg=#93A0A7
+r3 8-13 fg=#E6ECEE
+r4 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r4 2-11 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r4 12-99 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r5 2-75 fg=#93A0A7
+r6 2-35 fg=#93A0A7
+r7 2-67 fg=#93A0A7
+r8 2-7 fg=#93A0A7
+r8 10-44 fg=#93A0A7
+r8 47-54 fg=#93A0A7
+r8 57-63 fg=#93A0A7
+r8 66-83 fg=#93A0A7
+r9 0-0 fg=#72B6D4 bg=#253540 +B
+r9 1-1 bg=#253540
+r9 2-7 fg=#E6ECEE bg=#253540
+r9 8-9 bg=#253540
+r9 10-44 fg=#93A0A7 bg=#253540
+r9 45-46 bg=#253540
+r9 47-54 fg=#93A0A7 bg=#253540
+r9 55-56 bg=#253540
+r9 57-63 fg=#E6ECEE bg=#253540
+r9 64-65 bg=#253540
+r9 66-83 fg=#E6ECEE bg=#253540
+r9 84-99 bg=#253540
+r10 2-7 fg=#E6ECEE
+r10 10-44 fg=#93A0A7
+r10 47-54 fg=#93A0A7
+r10 57-63 fg=#E6ECEE
+r10 66-83 fg=#E6ECEE
+r11 2-7 fg=#E6ECEE
+r11 10-44 fg=#93A0A7
+r11 47-54 fg=#93A0A7
+r11 57-63 fg=#E6ECEE
+r11 66-83 fg=#E6ECEE
+r12 2-7 fg=#E6ECEE
+r12 10-44 fg=#93A0A7
+r12 47-54 fg=#93A0A7
+r12 57-63 fg=#E6ECEE
+r12 66-83 fg=#E6ECEE
+r14 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r14 2-9 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r14 10-99 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r15 2-98 fg=#93A0A7
+r16 2-41 fg=#93A0A7
+r16 44-85 fg=#93A0A7
+r16 88-99 fg=#93A0A7
+r17 2-41 fg=#E6ECEE
+r17 44-85 fg=#E6ECEE
+r17 88-99 fg=#93A0A7
+r18 2-41 fg=#E6ECEE
+r18 44-85 fg=#E6ECEE
+r18 88-99 fg=#93A0A7
+r19 2-41 fg=#E6ECEE
+r19 44-85 fg=#E6ECEE
+r19 88-99 fg=#93A0A7
+r20 2-41 fg=#E6ECEE
+r20 44-85 fg=#E6ECEE
+r20 88-99 fg=#93A0A7
+r21 2-41 fg=#E6ECEE
+r21 44-85 fg=#E6ECEE
+r21 88-99 fg=#93A0A7
+r22 2-41 fg=#E6ECEE
+r22 44-85 fg=#E6ECEE
+r22 88-99 fg=#93A0A7
+r23 2-41 fg=#E6ECEE
+r23 44-85 fg=#E6ECEE
+r23 88-99 fg=#93A0A7
+r24 2-41 fg=#E6ECEE
+r24 44-85 fg=#E6ECEE
+r24 88-99 fg=#93A0A7
+r25 2-41 fg=#E6ECEE
+r25 44-85 fg=#E6ECEE
+r25 88-99 fg=#93A0A7
+r26 2-41 fg=#E6ECEE
+r26 44-85 fg=#E6ECEE
+r26 88-99 fg=#93A0A7
+r27 0-99 fg=#2D383E
+r28 1-98 fg=#E6ECEE
+r29 0-1 bg=#1B2226
+r29 2-2 fg=#FFFFFF bg=#1B2226
+r29 3-3 bg=#1B2226
+r29 4-9 fg=#93A0A7 bg=#1B2226
+r29 10-10 fg=#FFFFFF bg=#1B2226
+r29 11-11 bg=#1B2226
+r29 12-19 fg=#93A0A7 bg=#1B2226
+r29 20-20 fg=#FFFFFF bg=#1B2226
+r29 21-21 bg=#1B2226
+r29 22-28 fg=#93A0A7 bg=#1B2226
+r29 29-29 fg=#FFFFFF bg=#1B2226
+r29 30-30 bg=#1B2226
+r29 31-37 fg=#93A0A7 bg=#1B2226
+r29 38-38 fg=#FFFFFF bg=#1B2226
+r29 39-39 bg=#1B2226
+r29 40-48 fg=#93A0A7 bg=#1B2226
+r29 49-49 fg=#FFFFFF bg=#1B2226
+r29 50-50 bg=#1B2226
+r29 51-56 fg=#93A0A7 bg=#1B2226
+r29 57-58 fg=#FFFFFF bg=#1B2226
+r29 59-59 bg=#1B2226
+r29 60-66 fg=#93A0A7 bg=#1B2226
+r29 67-87 bg=#1B2226
+r29 88-98 fg=#717E85 bg=#1B2226
+r29 99-99 bg=#1B2226

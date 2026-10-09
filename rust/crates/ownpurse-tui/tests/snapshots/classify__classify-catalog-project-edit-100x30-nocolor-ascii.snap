@@ -1,0 +1,94 @@
+---
+source: crates/ownpurse-tui/tests/classify.rs
+assertion_line: 41
+expression: styled(&buf)
+---
+  [all organisations] v    as of 2025-12-31    classify: 38 open - 2 stale               read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+-------------------------------------------------------------------==========-----------------------
+  all > Classify > Catalog
+ Queue 38 - Groups - Audition - Tree - Catalog
+ Projects - Rules +- Project harvest --------------------------------------------+
+                  |  id               harvest                                    |
+  name            |  name             Harvest Blend launch                       | status
+> Harvest Blend l |> aliases          Harvest Blend, bag artwork, bag proofs...  | active
+  Wayfinding refi |                                                              | active
+  Sample roaster  |                                                              | active
+  Cupping lab fit | aliases: a comma list (whole words, any case)                | active
+  No project      +--------------------------------------------------------------+ active
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Enter stage  Tab field  Esc cancel                                                    v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-46 +D
+r0 74-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-68 +D
+r1 69-76 +B
+r1 80-89 +D
+r2 0-66 +D
+r2 67-76 +BD
+r2 77-99 +D
+r3 2-18 +D
+r4 9-11 +D
+r4 18-20 +D
+r4 29-31 +D
+r4 36-38 +D
+r4 39-45 +B
+r5 1-8 +B
+r5 9-11 +D
+r5 17-19 +D
+r5 20-36 +BD
+r5 37-81 +D
+r6 18-18 +D
+r6 21-36 +D
+r6 81-81 +D
+r7 2-18 +D
+r7 21-36 +D
+r7 81-81 +D
+r7 83-88 +D
+r8 0-0 +BR
+r8 1-17 +R
+r8 18-18 +D
+r8 19-19 +BR
+r8 20-80 +R
+r8 81-81 +D
+r8 82-99 +R
+r9 18-18 +D
+r9 81-81 +D
+r9 83-88 +D
+r10 18-18 +D
+r10 81-81 +D
+r10 83-88 +D
+r11 18-18 +D
+r11 20-64 +D
+r11 81-81 +D
+r11 83-88 +D
+r12 18-81 +D
+r12 83-88 +D
+r29 2-6 +B
+r29 8-14 +D
+r29 15-17 +B
+r29 19-25 +D
+r29 26-28 +B
+r29 30-35 +D
+r29 88-98 +D

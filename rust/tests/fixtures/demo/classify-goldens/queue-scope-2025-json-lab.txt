@@ -1,0 +1,130 @@
+$ ownpurse classify queue org:lab --json
+exit 0
+{
+ "filter": "org:lab",
+ "scope": "year:2025",
+ "store_rev": 82,
+ "lines": 4,
+ "open": 4,
+ "stale": 0,
+ "total_lines": 42,
+ "total_open": 31,
+ "total_stale": 2,
+ "rows": [
+  {
+   "anchor": "lab:bt:bt-403:L1",
+   "org": "lab",
+   "date": "2025-02-26",
+   "payee": "Brackenridge Lane Holdings",
+   "description": "Sample roaster advance",
+   "amount": "6912.48",
+   "account": "2440",
+   "suggestion": {
+    "project": {
+     "value": "roaster",
+     "name": "Sample roaster programme",
+     "source": "rule:r-project-alias",
+     "confidence": "0.95",
+     "confirmed": false
+    },
+    "bearer": {
+     "value": "lab",
+     "name": "Saltmarsh Cupping Lab",
+     "source": "rule:r-bearer-lab",
+     "confidence": "0.8",
+     "confirmed": false
+    },
+    "treatment": null
+   },
+   "source": "R",
+   "confidence": "0.8",
+   "stale": false,
+   "open": true
+  },
+  {
+   "anchor": "lab:bt:bt-402:L1",
+   "org": "lab",
+   "date": "2025-01-07",
+   "payee": "Saltmarsh Members",
+   "description": "Members' initial subscription",
+   "amount": "2486.19",
+   "account": "3010",
+   "suggestion": {
+    "project": null,
+    "bearer": {
+     "value": "lab",
+     "name": "Saltmarsh Cupping Lab",
+     "source": "rule:r-bearer-lab",
+     "confidence": "0.8",
+     "confirmed": false
+    },
+    "treatment": null
+   },
+   "source": "R",
+   "confidence": "0.8",
+   "stale": false,
+   "open": true
+  },
+  {
+   "anchor": "lab:mj:mj-401:L1",
+   "org": "lab",
+   "date": "2025-11-28",
+   "payee": "",
+   "description": "Exchange adjustment on the roaster advance",
+   "amount": "57.13",
+   "account": "2440",
+   "suggestion": {
+    "project": {
+     "value": "roaster",
+     "name": "Sample roaster programme",
+     "source": "rule:r-project-alias",
+     "confidence": "0.95",
+     "confirmed": false
+    },
+    "bearer": {
+     "value": "lab",
+     "name": "Saltmarsh Cupping Lab",
+     "source": "rule:r-bearer-lab",
+     "confidence": "0.8",
+     "confirmed": false
+    },
+    "treatment": null
+   },
+   "source": "R",
+   "confidence": "0.8",
+   "stale": false,
+   "open": true
+  },
+  {
+   "anchor": "lab:mj:mj-401:L2",
+   "org": "lab",
+   "date": "2025-11-28",
+   "payee": "",
+   "description": "Exchange adjustment on the roaster advance",
+   "amount": "-57.13",
+   "account": "4950",
+   "suggestion": {
+    "project": {
+     "value": "roaster",
+     "name": "Sample roaster programme",
+     "source": "rule:r-project-alias",
+     "confidence": "0.95",
+     "confirmed": false
+    },
+    "bearer": {
+     "value": "lab",
+     "name": "Saltmarsh Cupping Lab",
+     "source": "rule:r-bearer-lab",
+     "confidence": "0.8",
+     "confirmed": false
+    },
+    "treatment": null
+   },
+   "source": "R",
+   "confidence": "0.8",
+   "stale": false,
+   "open": true
+  }
+ ],
+ "rows_count": 4
+}

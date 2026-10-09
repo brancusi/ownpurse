@@ -1,0 +1,135 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ● design ↔ ● roast    as of 2025-12-31                                               ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────
+  Quillfeather ↔ Tallowmere (recharges) › … › Recharges due from Tallowmere (1450)
+  opening 0.00 from Xero TB 2024-12-31 · debits 1,412.57 · credits 1,148.63 · closing 263.94
+  postings from 2025-01-01 to 2025-12-31
+  date        source   contact                            debit    credit   balance
+▌ 2025-05-22  Spend    Hollowpine Packaging Works      1,148.63            1,148.63
+  2025-08-08  Receive  Tallowmere Coffee Roasting Co.            1,148.63      0.00
+  2025-11-19  Spend    Hollowpine Packaging Works        263.94              263.94
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  f Range  h Full history  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-2 fg=#E8834F bg=#243137 +B
+r0 3-3 fg=#93A0A7 bg=#243137
+r0 4-9 fg=#E8834F bg=#243137 +B
+r0 10-12 fg=#93A0A7 bg=#243137
+r0 13-13 fg=#4DBFA9 bg=#243137 +B
+r0 14-14 fg=#93A0A7 bg=#243137
+r0 15-19 fg=#4DBFA9 bg=#243137 +B
+r0 20-23 fg=#93A0A7 bg=#243137
+r0 24-39 fg=#B9C4C9 bg=#243137
+r0 40-86 fg=#93A0A7 bg=#243137
+r0 87-97 fg=#717E85 bg=#243137
+r0 98-99 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#E6ECEE bg=#171D20 +B
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-99 bg=#171D20
+r2 0-14 fg=#2D383E
+r2 15-22 fg=#72B6D4 +B
+r2 23-99 fg=#2D383E
+r3 2-45 fg=#93A0A7
+r3 46-81 fg=#E6ECEE
+r4 2-91 fg=#8FCB92
+r5 2-39 fg=#93A0A7
+r6 2-11 fg=#93A0A7
+r6 14-20 fg=#93A0A7
+r6 23-52 fg=#93A0A7
+r6 55-62 fg=#93A0A7
+r6 65-72 fg=#93A0A7
+r6 75-82 fg=#93A0A7
+r7 0-0 fg=#72B6D4 bg=#253540 +B
+r7 1-1 bg=#253540
+r7 2-11 fg=#E6ECEE bg=#253540
+r7 12-13 bg=#253540
+r7 14-20 fg=#93A0A7 bg=#253540
+r7 21-22 bg=#253540
+r7 23-52 fg=#E6ECEE bg=#253540
+r7 53-54 bg=#253540
+r7 55-62 fg=#E6ECEE bg=#253540
+r7 63-64 bg=#253540
+r7 65-72 fg=#E6ECEE bg=#253540
+r7 73-74 bg=#253540
+r7 75-82 fg=#E6ECEE bg=#253540
+r7 83-99 bg=#253540
+r8 2-11 fg=#E6ECEE
+r8 14-20 fg=#93A0A7
+r8 23-52 fg=#E6ECEE
+r8 55-62 fg=#E6ECEE
+r8 65-72 fg=#E6ECEE
+r8 75-82 fg=#E6ECEE
+r9 2-11 fg=#E6ECEE
+r9 14-20 fg=#93A0A7
+r9 23-52 fg=#E6ECEE
+r9 55-62 fg=#E6ECEE
+r9 65-72 fg=#E6ECEE
+r9 75-82 fg=#E6ECEE
+r29 0-1 bg=#1B2226
+r29 2-2 fg=#FFFFFF bg=#1B2226
+r29 3-3 bg=#1B2226
+r29 4-10 fg=#93A0A7 bg=#1B2226
+r29 11-11 fg=#FFFFFF bg=#1B2226
+r29 12-12 bg=#1B2226
+r29 13-26 fg=#93A0A7 bg=#1B2226
+r29 27-27 fg=#FFFFFF bg=#1B2226
+r29 28-28 bg=#1B2226
+r29 29-34 fg=#93A0A7 bg=#1B2226
+r29 35-35 fg=#FFFFFF bg=#1B2226
+r29 36-36 bg=#1B2226
+r29 37-44 fg=#93A0A7 bg=#1B2226
+r29 45-45 fg=#FFFFFF bg=#1B2226
+r29 46-46 bg=#1B2226
+r29 47-53 fg=#93A0A7 bg=#1B2226
+r29 54-54 fg=#FFFFFF bg=#1B2226
+r29 55-55 bg=#1B2226
+r29 56-61 fg=#93A0A7 bg=#1B2226
+r29 62-63 fg=#FFFFFF bg=#1B2226
+r29 64-64 bg=#1B2226
+r29 65-71 fg=#93A0A7 bg=#1B2226
+r29 72-87 bg=#1B2226
+r29 88-98 fg=#717E85 bg=#1B2226
+r29 99-99 bg=#1B2226

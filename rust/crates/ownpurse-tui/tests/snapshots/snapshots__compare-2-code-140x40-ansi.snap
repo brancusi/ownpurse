@@ -1,0 +1,170 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ● roast ↔ ● hold    as of 2025-12-31                                                                                         ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Ledger › compare trial balances at 2025-12-31 (accrual)
+  align: code                                                                                                                  ✓ all TB+25
+                                                                                        │          roast          │          hold
+                                                                                        │         TB+25 ✓         │         TB+25 ✓
+  code    account                                                                       │       debit       credit│       debit       credit
+▌ 1010 ≠  Tallowmere Roastery Operating Account / Brackenridge Reserve Account          │   41,671.82             │   16,109.61
+          roast Tallowmere Roastery Operating Account · hold Brackenridge Reserve Account
+  3010 ≠  Tallowmere Paid-In Capital / Brackenridge Ordinary Shares                     │                 4,618.27│                36,742.18
+  3200    Retained Earnings                                                             │                 7,316.42│                 1,906.33
+          ── only in roast ──
+  1060    Tallowmere Green-Bean Card                                                    │                 1,990.90│           —            —
+  2410    Brackenridge Term Loan                                                        │                15,568.80│           —            —
+  4010    Wholesale Bean Sales                                                          │                20,391.63│           —            —
+  5020    Green Coffee Purchases                                                        │    5,369.15             │           —            —
+  6140    Roaster Afterburner Servicing                                                 │      898.06             │           —            —
+  6290    Bag Artwork & Proofs                                                          │    1,148.63             │           —            —
+  6310    Cupping Room Supplies                                                         │      147.38             │           —            —
+  6520    Delivery Van Fuel                                                             │      238.61             │           —            —
+  6830    Term Loan Interest                                                            │      412.37             │           —            —
+          ── only in hold ──
+  1460    Term Loan to Tallowmere                                                       │           —            —│   15,568.80
+  1470    Fees Receivable from Quillfeather                                             │           —            —│    4,670.51
+  1480    Equipment Advance to Saltmarsh                                                │           —            —│    6,912.48
+  4610    Group Management Fee Income                                                   │           —            —│                 5,528.36
+  4710    Intra-group Interest Income                                                   │           —            —│                   412.37
+  6050    Board & Audit Fees                                                            │           —            —│    1,327.84
+
+
+
+
+
+
+
+
+  ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+          Total (each org's own)                                                        │   49,886.02  49,886.02 ✓│   44,589.24  44,589.24 ✓
+  a Align  h Full history  > Col ▸  x Drop col  q Quit  ? more  ⌃P palette                                                      v0.0.0-test
+--- styles
+r0 2-2 +B
+r0 3-3 +D
+r0 4-8 +B
+r0 9-11 +D
+r0 12-12 +B
+r0 13-13 +D
+r0 14-17 +B
+r0 18-21 +D
+r0 38-137 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-139 +D
+r3 2-10 +D
+r4 2-12 +D
+r4 127-137 +D
+r5 88-88 +D
+r5 99-103 +B
+r5 114-114 +D
+r5 125-128 +B
+r6 88-88 +D
+r6 98-104 +D
+r6 114-114 +D
+r6 124-130 +D
+r7 2-5 +D
+r7 10-16 +D
+r7 88-88 +D
+r7 90-114 +D
+r7 116-139 +D
+r8 0-0 +BR
+r8 1-9 +R
+r8 10-87 +BUR
+r8 88-139 +R
+r9 0-139 +R
+r10 2-7 fg=yellow
+r10 88-88 +D
+r10 114-114 +D
+r11 2-7 +D
+r11 88-88 +D
+r11 114-114 +D
+r12 10-28 +D
+r13 2-7 +D
+r13 88-88 +D
+r13 114-114 +D
+r13 116-139 +D
+r14 2-7 +D
+r14 88-88 +D
+r14 114-114 +D
+r14 116-139 +D
+r15 2-7 +D
+r15 88-88 +D
+r15 114-114 +D
+r15 116-139 +D
+r16 2-7 +D
+r16 88-88 +D
+r16 114-114 +D
+r16 116-139 +D
+r17 2-7 +D
+r17 88-88 +D
+r17 114-114 +D
+r17 116-139 +D
+r18 2-7 +D
+r18 88-88 +D
+r18 114-114 +D
+r18 116-139 +D
+r19 2-7 +D
+r19 88-88 +D
+r19 114-114 +D
+r19 116-139 +D
+r20 2-7 +D
+r20 88-88 +D
+r20 114-114 +D
+r20 116-139 +D
+r21 2-7 +D
+r21 88-88 +D
+r21 114-114 +D
+r21 116-139 +D
+r22 10-27 +D
+r23 2-7 +D
+r23 88-88 +D
+r23 90-114 +D
+r24 2-7 +D
+r24 88-88 +D
+r24 90-114 +D
+r25 2-7 +D
+r25 88-88 +D
+r25 90-114 +D
+r26 2-7 +D
+r26 88-88 +D
+r26 90-114 +D
+r27 2-7 +D
+r27 88-88 +D
+r27 90-114 +D
+r28 2-7 +D
+r28 88-88 +D
+r28 90-114 +D
+r37 2-139 +D
+r38 10-87 +B
+r38 88-88 +D
+r38 90-113 +B
+r38 114-114 +D
+r38 116-139 +B
+r39 2-2 +B
+r39 4-10 +D
+r39 11-11 +B
+r39 13-26 +D
+r39 27-27 +B
+r39 29-35 +D
+r39 36-36 +B
+r39 38-47 +D
+r39 48-48 +B
+r39 50-55 +D
+r39 56-56 +B
+r39 58-63 +D
+r39 64-65 +B
+r39 67-73 +D
+r39 128-138 +D

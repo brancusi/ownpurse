@@ -1,0 +1,175 @@
+---
+source: crates/ownpurse-tui/tests/viz.rs
+expression: styled(&buf)
+---
+  ● hold ▾    as of 2025-12-31                                                                                                                                                             ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Overview › Explain: timeline
+                                          Fees Receivable from Quillfeather (1470) · hold · month by month
+                                          How the balance of Fees Receivable from Quillfeather moved, month by month
+                                          Opening Dr 1,906.33 on 2025-01-01 · bars: debit balance right of the line, credit left · ◆ a manual journal landed
+                                          (2 in all)
+
+                                          month                                       balance      movement entries
+                                          2025-01  ███████████                    Dr 1,906.33             —
+                                          2025-02  ███████████                    Dr 1,906.33             —
+                                          2025-03  ███████████                    Dr 1,906.33             —
+                                          2025-04  ██████████████████████████     Dr 4,670.51     +2,764.18 1 ◆ journal
+                                          2025-05  ██████████████████████████     Dr 4,670.51             —
+                                          2025-06  ███████████                    Dr 1,906.33     −2,764.18 1
+                                          2025-07  ███████████                    Dr 1,906.33             —
+                                          2025-08  ██████████████████████████     Dr 4,670.51     +2,764.18 1 ◆ journal
+                                          2025-09  ██████████████████████████     Dr 4,670.51             —
+                                          2025-10  ██████████████████████████     Dr 4,670.51             —
+                                          2025-11  ██████████████████████████     Dr 4,670.51             —
+                                          2025-12  ██████████████████████████     Dr 4,670.51             —
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Esc Close  ↓ Scroll  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                                                                                                                        v0.0.0-test
+--- styles
+r0 0-1 bg=#282D3A
+r0 2-2 fg=#9D8FF2 bg=#282D3A +B
+r0 3-3 fg=#93A0A7 bg=#282D3A
+r0 4-7 fg=#9D8FF2 bg=#282D3A +B
+r0 8-13 fg=#93A0A7 bg=#282D3A
+r0 14-29 fg=#B9C4C9 bg=#282D3A
+r0 30-186 fg=#93A0A7 bg=#282D3A
+r0 187-197 fg=#717E85 bg=#282D3A
+r0 198-199 bg=#282D3A
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#E6ECEE bg=#171D20 +B
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-199 bg=#171D20
+r2 0-1 fg=#2D383E
+r2 2-11 fg=#9D8FF2 +B
+r2 12-199 fg=#2D383E
+r3 2-12 fg=#93A0A7
+r3 13-29 fg=#E6ECEE
+r4 42-105 fg=#E6ECEE +B
+r5 42-115 fg=#B9C4C9
+r6 42-155 fg=#93A0A7
+r7 42-51 fg=#93A0A7
+r9 42-46 fg=#93A0A7
+r9 86-92 fg=#93A0A7
+r9 99-106 fg=#93A0A7
+r9 108-114 fg=#93A0A7
+r10 42-48 fg=#E6ECEE
+r10 51-61 fg=#9D8FF2 +B
+r10 82-92 fg=#E6ECEE
+r10 106-106 fg=#B9C4C9
+r11 42-48 fg=#E6ECEE
+r11 51-61 fg=#9D8FF2 +B
+r11 82-92 fg=#E6ECEE
+r11 106-106 fg=#B9C4C9
+r12 42-48 fg=#E6ECEE
+r12 51-61 fg=#9D8FF2 +B
+r12 82-92 fg=#E6ECEE
+r12 106-106 fg=#B9C4C9
+r13 42-48 fg=#E6ECEE
+r13 51-76 fg=#9D8FF2 +B
+r13 82-92 fg=#E6ECEE
+r13 98-106 fg=#B9C4C9
+r13 108-118 fg=#9D8FF2 +B
+r14 42-48 fg=#E6ECEE
+r14 51-76 fg=#9D8FF2 +B
+r14 82-92 fg=#E6ECEE
+r14 106-106 fg=#B9C4C9
+r15 42-48 fg=#E6ECEE
+r15 51-61 fg=#9D8FF2 +B
+r15 82-92 fg=#E6ECEE
+r15 98-106 fg=#B9C4C9
+r15 108-108 fg=#93A0A7
+r16 42-48 fg=#E6ECEE
+r16 51-61 fg=#9D8FF2 +B
+r16 82-92 fg=#E6ECEE
+r16 106-106 fg=#B9C4C9
+r17 42-48 fg=#E6ECEE
+r17 51-76 fg=#9D8FF2 +B
+r17 82-92 fg=#E6ECEE
+r17 98-106 fg=#B9C4C9
+r17 108-118 fg=#9D8FF2 +B
+r18 42-48 fg=#E6ECEE
+r18 51-76 fg=#9D8FF2 +B
+r18 82-92 fg=#E6ECEE
+r18 106-106 fg=#B9C4C9
+r19 42-48 fg=#E6ECEE
+r19 51-76 fg=#9D8FF2 +B
+r19 82-92 fg=#E6ECEE
+r19 106-106 fg=#B9C4C9
+r20 42-48 fg=#E6ECEE
+r20 51-76 fg=#9D8FF2 +B
+r20 82-92 fg=#E6ECEE
+r20 106-106 fg=#B9C4C9
+r21 42-48 fg=#E6ECEE
+r21 51-76 fg=#9D8FF2 +B
+r21 82-92 fg=#E6ECEE
+r21 106-106 fg=#B9C4C9
+r49 0-1 bg=#1B2226
+r49 2-4 fg=#FFFFFF bg=#1B2226
+r49 5-5 bg=#1B2226
+r49 6-12 fg=#93A0A7 bg=#1B2226
+r49 13-13 fg=#FFFFFF bg=#1B2226
+r49 14-14 bg=#1B2226
+r49 15-22 fg=#93A0A7 bg=#1B2226
+r49 23-23 fg=#FFFFFF bg=#1B2226
+r49 24-24 bg=#1B2226
+r49 25-30 fg=#93A0A7 bg=#1B2226
+r49 31-31 fg=#FFFFFF bg=#1B2226
+r49 32-32 bg=#1B2226
+r49 33-40 fg=#93A0A7 bg=#1B2226
+r49 41-41 fg=#FFFFFF bg=#1B2226
+r49 42-42 bg=#1B2226
+r49 43-49 fg=#93A0A7 bg=#1B2226
+r49 50-50 fg=#FFFFFF bg=#1B2226
+r49 51-51 bg=#1B2226
+r49 52-57 fg=#93A0A7 bg=#1B2226
+r49 58-59 fg=#FFFFFF bg=#1B2226
+r49 60-60 bg=#1B2226
+r49 61-67 fg=#93A0A7 bg=#1B2226
+r49 68-187 bg=#1B2226
+r49 188-198 fg=#717E85 bg=#1B2226
+r49 199-199 bg=#1B2226

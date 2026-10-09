@@ -1,0 +1,61 @@
+---
+source: crates/ownpurse-tui/tests/system.rs
+expression: styled(&buf)
+---
+  [all organisations] v    as of 2025-12-31                          read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+--------------------------------------------------------========----------------
+  all > System
+  Links (continued)
+  Quillfeather Design Consultancy LLP - Quillfeather Tax Re...  https://go.xe...
+  Quillfeather Design Consultancy LLP - Quillfeather Site-V...  https://go.xe...
+  Saltmarsh Cupping Lab LLC - SALTMARSH SENSORY PANEL CARD™...  https://go.xe...
+  Saltmarsh Cupping Lab LLC - Saltmarsh Lab Account: reconcile  https://go.xe...
+  Tallowmere Coffee Roasting Co. - Tallowmere Green-Bean Ca...  https://go.xe...
+  Tallowmere Coffee Roasting Co. - Tallowmere Roastery Oper...  https://go.xe...
+  Brackenridge Lane Holdings Ltd - Brackenridge Reserve Acc...  https://go.xe...
+  Quillfeather Design Consultancy LLP - Quillfeather Payrol...  https://go.xe...
+  Quillfeather Design Consultancy LLP - Quillfeather Proof-...  https://go.xe...
+  Quillfeather Design Consultancy LLP - Quillfeather Client...  https://go.xe...
+  Quillfeather Design Consultancy LLP - Quillfeather Typefa...  https://go.xe...
+  Quillfeather Design Consultancy LLP - Quillfeather Tax Re...  https://go.xe...
+  Quillfeather Design Consultancy LLP - Quillfeather Site-V...  https://go.xe...
+  Saltmarsh Cupping Lab LLC - SALTMARSH SENSORY PANEL CARD™...  https://go.xe...
+  Saltmarsh Cupping Lab LLC - Saltmarsh Lab Account: statem...  https://go.xe...
+> Demo runbook                                                  https://examp...
+--------------------------------------------------------------------------------
+ A profile-level extra link (source profile:demo). - https://example.com/run...
+  o Open  y Copy  q  /  ]  ?  ^P palette                            v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-77 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-57 +D
+r1 58-63 +B
+r1 67-76 +D
+r2 0-55 +D
+r2 56-63 +BD
+r2 64-79 +D
+r3 2-7 +D
+r4 2-18 +B
+r20 0-0 +BR
+r20 1-79 +R
+r21 0-79 +D
+r23 2-2 +B
+r23 4-9 +D
+r23 10-10 +B
+r23 12-17 +D
+r23 18-18 +B
+r23 19-20 +D
+r23 21-21 +B
+r23 22-23 +D
+r23 24-24 +B
+r23 25-26 +D
+r23 27-27 +B
+r23 28-29 +D
+r23 30-31 +B
+r23 33-39 +D
+r23 68-78 +D

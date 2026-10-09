@@ -1,0 +1,6 @@
+$ ownpurse classify group add g76 roast:bt:bt-110:L1 --role witness --expect-store-rev 82 --client claude
+exit 2
+error: usage
+message: "unknown role ""witness"" (roles: origin, mirror, settlement)"
+help[1]:
+  Check the syntax with the command's --help; values (verbs, rows, choices, groups) must exist in the current view or classify.toml.

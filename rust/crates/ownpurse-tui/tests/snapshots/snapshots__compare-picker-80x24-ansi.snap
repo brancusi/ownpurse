@@ -1,0 +1,113 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  ● roast ▾    as of 2025-12-31                                    ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+───────────────━━━━━━━━─────────────────────────────────────────────────────────
+  ╭─ Compare orgs: space toggles, Enter opens with 2–4 ──────────────────────╮
+  │ ›  type to filter (alias, name, short code)                              │
+  │──────────────────────────────────────────────────────────────────────────│
+  │  [-] all           4 orgs                                                │
+  │  [x] roast         Tallowmere Coffee Roasting Co. · 07:46 UTC… ● current │
+  │▌ [x] hold          Brackenridge Lane Holdings Ltd · 07:46 UTC · 2h ago…  │
+  │  [ ] design        Quillfeather Design Consultancy LLP · 07:46 UTC · 2…  │
+  │  [ ] lab           Saltmarsh Cupping Lab LLC · 07:46 UTC · 2h ago · 97…  │
+  │  [-] group:all-co  4 orgs                                                │
+  │  [-] group:ops     3 orgs                                                │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+     4010  Wholesale Bean Sales                              20,391.63
+  Expenses                                                    8,214.20
+     5020  Green Coffee Purchases                  5,369.15
+     6140  Roaster Afterburner Servicing             898.06
+     6290  Bag Artwork & Proofs                    1,148.63
+     6310  Cupping Room Supplies                     147.38
+  ──────────────────────────────────────────────────────────────────────────────
+           Total                                  49,886.02  49,886.02
+                                                                     balanced ✓
+ (2 selected: ro…   Enter compare · space toggle · type to filter   v0.0.0-test
+--- styles
+r0 2-2 +B
+r0 3-3 +D
+r0 4-8 +B
+r0 9-14 +D
+r0 31-77 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-79 +D
+r3 2-3 +D
+r3 4-54 +BD
+r3 55-77 +D
+r4 2-2 +D
+r4 4-5 +D
+r4 6-6 +R
+r4 7-46 +D
+r4 77-77 +D
+r5 2-77 +D
+r6 0-0 +BR
+r6 1-1 +R
+r6 2-2 +D
+r6 5-8 +B
+r6 23-28 +D
+r6 77-77 +D
+r6 78-79 +R
+r7 2-2 +D
+r7 5-8 +B
+r7 23-65 +D
+r7 67-75 +B
+r7 77-77 +D
+r8 2-2 +D
+r8 3-3 +BR
+r8 4-4 +R
+r8 5-8 +BR
+r8 9-76 +R
+r8 77-77 +D
+r9 2-2 +D
+r9 5-8 +B
+r9 23-74 +D
+r9 77-77 +D
+r10 2-2 +D
+r10 5-8 +B
+r10 23-74 +D
+r10 77-77 +D
+r11 2-2 +D
+r11 5-8 +B
+r11 23-28 +D
+r11 77-77 +D
+r12 2-2 +D
+r12 5-8 +B
+r12 23-28 +D
+r12 77-77 +D
+r13 2-77 +D
+r14 2-2 fg=yellow
+r14 5-8 +D
+r15 2-9 +B
+r15 62-69 +D
+r16 2-2 fg=yellow
+r16 5-8 +D
+r17 2-2 fg=yellow
+r17 5-8 +D
+r18 2-2 fg=yellow
+r18 5-8 +D
+r19 2-2 fg=yellow
+r19 5-8 +D
+r20 2-79 +D
+r21 2-2 +B
+r21 5-8 +B
+r21 11-47 +B
+r21 50-58 +B
+r21 61-69 +B
+r22 69-78 fg=green
+r23 1-16 +D
+r23 20-24 +B
+r23 26-35 +D
+r23 36-40 +B
+r23 42-64 +D
+r23 68-78 +D

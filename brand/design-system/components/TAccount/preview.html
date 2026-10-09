@@ -1,0 +1,12 @@
+<!-- @dsCard group="Ledger" height=270 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>TAccount</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var O = window.Ownpurse, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', {className:'op-stack'}, h(O.TAccount,{title:'Loan, Brackenridge Lane Holdings', code:'2410', debits:[{label:'09-30 repayment',amount:400}], credits:[{label:'07-01 drawdown',amount:12000},{label:'09-30 interest',amount:62.5}]})));
+</script>
+</body>
+</html>

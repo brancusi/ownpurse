@@ -1,0 +1,96 @@
+---
+source: crates/ownpurse-tui/tests/manifests.rs
+expression: styled(&shown)
+---
+  [all organisations] v    [manifest dec-cleanup - approved]    as of 2025-12-31         read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ==========- - - - -
+  Manifest > [dec-cleanup] > Entries
+  draft ok - review ok - check ok - planned ok - > approved - applying - applied
+  Apply from your own terminal   y copies the full command
+  Apply: OWNPURSE_WRITE_RUN=94a6fce0...ef ownpurse manifest apply dec-cleanup --package 94a6fce0...
+  Entries   Issues   Diff   Log   , . mode - b manifests - P plan
+
+  Entries                                                         planned - sha256 94a6fce03781...
+  seq     org     entity  target  change   issues  by  apply
+> 2    +  design  MJ      new MJ  new      ok      H   -
+       reclass the charge
+  3    V  lab     MJ      mj-401  1 field  ok      H   -
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Enter Diff  y copy command  u Undo  N New  P Plan  ^P palette          [dec-cleanup]  v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 27-59 +B
+r0 60-63 +D
+r0 80-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-81 +D
+r1 82-89 +B
+r2 0-99 +B
+r3 2-28 +D
+r4 2-48 +D
+r4 49-58 +B
+r4 59-79 +D
+r5 2-29 +B
+r5 30-57 +D
+r6 2-8 +D
+r7 2-8 +B
+r7 12-17 +D
+r7 21-24 +D
+r7 28-30 +D
+r7 34-64 +D
+r9 2-8 +B
+r9 66-97 +D
+r10 2-4 +D
+r10 7-7 +D
+r10 10-15 +D
+r10 18-23 +D
+r10 26-31 +D
+r10 34-40 +D
+r10 43-48 +D
+r10 51-52 +D
+r10 55-59 +D
+r11 0-0 +BR
+r11 1-6 +R
+r11 7-7 +BR
+r11 8-99 +R
+r12 0-99 +R
+r13 2-4 +D
+r13 7-7 +B
+r13 18-23 +D
+r13 43-48 +D
+r13 51-52 +D
+r13 55-59 +D
+r29 2-6 +B
+r29 8-13 +D
+r29 14-14 +B
+r29 16-29 +D
+r29 30-30 +B
+r29 32-37 +D
+r29 38-38 +B
+r29 40-44 +D
+r29 45-45 +B
+r29 47-52 +D
+r29 53-54 +B
+r29 56-62 +D
+r29 73-87 +B
+r29 88-98 +D

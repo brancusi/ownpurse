@@ -1,0 +1,268 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ●●● compare: roast · design · lab ▾    as of 2025-12-31                              ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────
+  Ledger › compare trial balances at 2025-12-31 (accrual)
+  align: code                                                                          ✓ all TB+25
+                                                             │   roast    │   design   │    lab
+                                                             │  TB+25 ✓   │  TB+25 ✓   │  TB+25 ✓
+  code    account                                            │         net│         net│         net
+▌ 1010 ≠  Tallowmere Roastery Operating Account ≠            │   41,671.82│    2,184.87│    9,398.67
+          roast Tallowmere Roastery Operating Account · design Quillfeather Client Receipts Accoun…
+  1060 ≠  Tallowmere Green-Bean Card ≠                       │  (1,990.90)│  (1,372.64)│    (361.72)
+  3010 ≠  Tallowmere Paid-In Capital ≠                       │  (4,618.27)│ (28,304.42)│  (2,486.19)
+  3200    Retained Earnings                                  │  (7,316.42)│    1,906.33│
+          ── only in roast ──
+  2410    Brackenridge Term Loan                             │ (15,568.80)│           —│           —
+  4010    Wholesale Bean Sales                               │ (20,391.63)│           —│           —
+  5020    Green Coffee Purchases                             │    5,369.15│           —│           —
+  6140    Roaster Afterburner Servicing                      │      898.06│           —│           —
+  6290    Bag Artwork & Proofs                               │    1,148.63│           —│           —
+  6310    Cupping Room Supplies                              │      147.38│           —│           —
+  6520    Delivery Van Fuel                                  │      238.61│           —│           —
+  6830    Term Loan Interest                                 │      412.37│           —│           —
+          ── only in design ──
+  1013    Quillfeather Tax Reserve Account                   │           —│   15,326.18│           —
+  1014    Quillfeather Payroll Float                         │           —│    2,093.57│           —
+  1016    Quillfeather Proof-Print Float                     │           —│      486.92│           —
+  1062    Quillfeather Typeface Card                         │           —│    (637.80)│           —
+  ──────────────────────────────────────────────────────────────────────────────────────────────────
+          Total (each org's own)                             │  balanced ✓│  balanced ✓│  balanced ✓
+  a Align  h Full history  > Col ▸  x Drop col  q Quit  ? more  ⌃P palette              v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-2 fg=#4DBFA9 bg=#243137 +B
+r0 3-3 fg=#E8834F bg=#243137 +B
+r0 4-4 fg=#E8769F bg=#243137 +B
+r0 5-5 fg=#93A0A7 bg=#243137
+r0 6-34 fg=#72B6D4 bg=#243137 +B
+r0 35-40 fg=#93A0A7 bg=#243137
+r0 41-56 fg=#B9C4C9 bg=#243137
+r0 57-86 fg=#93A0A7 bg=#243137
+r0 87-97 fg=#717E85 bg=#243137
+r0 98-99 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#E6ECEE bg=#171D20 +B
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-99 bg=#171D20
+r2 0-14 fg=#2D383E
+r2 15-22 fg=#72B6D4 +B
+r2 23-99 fg=#2D383E
+r3 2-10 fg=#93A0A7
+r3 11-56 fg=#E6ECEE
+r4 2-12 fg=#93A0A7
+r4 87-97 fg=#93A0A7
+r5 61-61 fg=#2D383E
+r5 65-69 fg=#E6ECEE +B
+r5 74-74 fg=#2D383E
+r5 78-83 fg=#E6ECEE +B
+r5 87-87 fg=#2D383E
+r5 92-94 fg=#E6ECEE +B
+r6 61-61 fg=#2D383E
+r6 64-70 fg=#93A0A7
+r6 74-74 fg=#2D383E
+r6 77-83 fg=#93A0A7
+r6 87-87 fg=#2D383E
+r6 90-96 fg=#93A0A7
+r7 2-5 fg=#93A0A7
+r7 10-16 fg=#93A0A7
+r7 61-61 fg=#2D383E
+r7 63-73 fg=#93A0A7
+r7 74-74 fg=#2D383E
+r7 76-86 fg=#93A0A7
+r7 87-87 fg=#2D383E
+r7 89-99 fg=#93A0A7
+r8 0-0 fg=#72B6D4 bg=#253540 +B
+r8 1-1 bg=#253540
+r8 2-7 fg=#E6BC5E bg=#253540
+r8 8-9 bg=#253540
+r8 10-60 fg=#E6ECEE bg=#253540 +BR
+r8 61-61 fg=#2D383E bg=#253540
+r8 62-62 bg=#253540
+r8 63-73 fg=#E6ECEE bg=#253540
+r8 74-74 fg=#2D383E bg=#253540
+r8 75-75 bg=#253540
+r8 76-86 fg=#E6ECEE bg=#253540
+r8 87-87 fg=#2D383E bg=#253540
+r8 88-88 bg=#253540
+r8 89-99 fg=#E6ECEE bg=#253540
+r9 0-9 bg=#253540
+r9 10-98 fg=#E6BC5E bg=#253540
+r9 99-99 bg=#253540
+r10 2-7 fg=#E6BC5E
+r10 10-60 fg=#E6ECEE
+r10 61-61 fg=#2D383E
+r10 63-73 fg=#E6ECEE
+r10 74-74 fg=#2D383E
+r10 76-86 fg=#E6ECEE
+r10 87-87 fg=#2D383E
+r10 89-99 fg=#E6ECEE
+r11 2-7 fg=#E6BC5E
+r11 10-60 fg=#E6ECEE
+r11 61-61 fg=#2D383E
+r11 63-73 fg=#E6ECEE
+r11 74-74 fg=#2D383E
+r11 76-86 fg=#E6ECEE
+r11 87-87 fg=#2D383E
+r11 89-99 fg=#E6ECEE
+r12 2-7 fg=#93A0A7
+r12 10-60 fg=#E6ECEE
+r12 61-61 fg=#2D383E
+r12 63-73 fg=#E6ECEE
+r12 74-74 fg=#2D383E
+r12 76-86 fg=#E6ECEE
+r12 87-87 fg=#2D383E
+r12 89-99 fg=#E6ECEE
+r13 10-28 fg=#93A0A7
+r14 2-7 fg=#93A0A7
+r14 10-60 fg=#E6ECEE
+r14 61-61 fg=#2D383E
+r14 63-73 fg=#E6ECEE
+r14 74-74 fg=#2D383E
+r14 76-86 fg=#93A0A7
+r14 87-87 fg=#2D383E
+r14 89-99 fg=#93A0A7
+r15 2-7 fg=#93A0A7
+r15 10-60 fg=#E6ECEE
+r15 61-61 fg=#2D383E
+r15 63-73 fg=#E6ECEE
+r15 74-74 fg=#2D383E
+r15 76-86 fg=#93A0A7
+r15 87-87 fg=#2D383E
+r15 89-99 fg=#93A0A7
+r16 2-7 fg=#93A0A7
+r16 10-60 fg=#E6ECEE
+r16 61-61 fg=#2D383E
+r16 63-73 fg=#E6ECEE
+r16 74-74 fg=#2D383E
+r16 76-86 fg=#93A0A7
+r16 87-87 fg=#2D383E
+r16 89-99 fg=#93A0A7
+r17 2-7 fg=#93A0A7
+r17 10-60 fg=#E6ECEE
+r17 61-61 fg=#2D383E
+r17 63-73 fg=#E6ECEE
+r17 74-74 fg=#2D383E
+r17 76-86 fg=#93A0A7
+r17 87-87 fg=#2D383E
+r17 89-99 fg=#93A0A7
+r18 2-7 fg=#93A0A7
+r18 10-60 fg=#E6ECEE
+r18 61-61 fg=#2D383E
+r18 63-73 fg=#E6ECEE
+r18 74-74 fg=#2D383E
+r18 76-86 fg=#93A0A7
+r18 87-87 fg=#2D383E
+r18 89-99 fg=#93A0A7
+r19 2-7 fg=#93A0A7
+r19 10-60 fg=#E6ECEE
+r19 61-61 fg=#2D383E
+r19 63-73 fg=#E6ECEE
+r19 74-74 fg=#2D383E
+r19 76-86 fg=#93A0A7
+r19 87-87 fg=#2D383E
+r19 89-99 fg=#93A0A7
+r20 2-7 fg=#93A0A7
+r20 10-60 fg=#E6ECEE
+r20 61-61 fg=#2D383E
+r20 63-73 fg=#E6ECEE
+r20 74-74 fg=#2D383E
+r20 76-86 fg=#93A0A7
+r20 87-87 fg=#2D383E
+r20 89-99 fg=#93A0A7
+r21 2-7 fg=#93A0A7
+r21 10-60 fg=#E6ECEE
+r21 61-61 fg=#2D383E
+r21 63-73 fg=#E6ECEE
+r21 74-74 fg=#2D383E
+r21 76-86 fg=#93A0A7
+r21 87-87 fg=#2D383E
+r21 89-99 fg=#93A0A7
+r22 10-29 fg=#93A0A7
+r23 2-7 fg=#93A0A7
+r23 10-60 fg=#E6ECEE
+r23 61-61 fg=#2D383E
+r23 63-73 fg=#93A0A7
+r23 74-74 fg=#2D383E
+r23 76-86 fg=#E6ECEE
+r23 87-87 fg=#2D383E
+r23 89-99 fg=#93A0A7
+r24 2-7 fg=#93A0A7
+r24 10-60 fg=#E6ECEE
+r24 61-61 fg=#2D383E
+r24 63-73 fg=#93A0A7
+r24 74-74 fg=#2D383E
+r24 76-86 fg=#E6ECEE
+r24 87-87 fg=#2D383E
+r24 89-99 fg=#93A0A7
+r25 2-7 fg=#93A0A7
+r25 10-60 fg=#E6ECEE
+r25 61-61 fg=#2D383E
+r25 63-73 fg=#93A0A7
+r25 74-74 fg=#2D383E
+r25 76-86 fg=#E6ECEE
+r25 87-87 fg=#2D383E
+r25 89-99 fg=#93A0A7
+r26 2-7 fg=#93A0A7
+r26 10-60 fg=#E6ECEE
+r26 61-61 fg=#2D383E
+r26 63-73 fg=#93A0A7
+r26 74-74 fg=#2D383E
+r26 76-86 fg=#E6ECEE
+r26 87-87 fg=#2D383E
+r26 89-99 fg=#93A0A7
+r27 2-99 fg=#2D383E
+r28 10-60 fg=#E6ECEE +B
+r28 61-61 fg=#2D383E
+r28 63-73 fg=#E6ECEE +B
+r28 74-74 fg=#2D383E
+r28 76-86 fg=#E6ECEE +B
+r28 87-87 fg=#2D383E
+r28 89-99 fg=#E6ECEE +B
+r29 0-1 bg=#1B2226
+r29 2-2 fg=#FFFFFF bg=#1B2226
+r29 3-3 bg=#1B2226
+r29 4-10 fg=#93A0A7 bg=#1B2226
+r29 11-11 fg=#FFFFFF bg=#1B2226
+r29 12-12 bg=#1B2226
+r29 13-26 fg=#93A0A7 bg=#1B2226
+r29 27-27 fg=#FFFFFF bg=#1B2226
+r29 28-28 bg=#1B2226
+r29 29-35 fg=#93A0A7 bg=#1B2226
+r29 36-36 fg=#FFFFFF bg=#1B2226
+r29 37-37 bg=#1B2226
+r29 38-47 fg=#93A0A7 bg=#1B2226
+r29 48-48 fg=#FFFFFF bg=#1B2226
+r29 49-49 bg=#1B2226
+r29 50-55 fg=#93A0A7 bg=#1B2226
+r29 56-56 fg=#FFFFFF bg=#1B2226
+r29 57-57 bg=#1B2226
+r29 58-63 fg=#93A0A7 bg=#1B2226
+r29 64-65 fg=#FFFFFF bg=#1B2226
+r29 66-66 bg=#1B2226
+r29 67-73 fg=#93A0A7 bg=#1B2226
+r29 74-87 bg=#1B2226
+r29 88-98 fg=#717E85 bg=#1B2226
+r29 99-99 bg=#1B2226

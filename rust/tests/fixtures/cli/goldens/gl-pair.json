@@ -1,0 +1,230 @@
+{
+ "argv": [
+  "--offline",
+  "gl",
+  "hq,co"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "debits": "8889.09",
+   "credits": "8889.09",
+   "net": "0.00",
+   "postings": [
+    {
+     "org": "hq",
+     "date": "2024-01-01",
+     "account": "Calderwick Group Capital (3100)",
+     "debit": null,
+     "credit": "5021.36",
+     "balance": "-5021.36",
+     "source": "ManualJournals",
+     "contact": "",
+     "description": "",
+     "reference": "opening funds",
+     "source_id": "mj-1"
+    },
+    {
+     "org": "hq",
+     "date": "2024-01-01",
+     "account": "Retained Earnings (3200)",
+     "debit": "5021.36",
+     "credit": null,
+     "balance": "0.00",
+     "source": "ManualJournals",
+     "contact": "",
+     "description": "",
+     "reference": "opening funds",
+     "source_id": "mj-1"
+    },
+    {
+     "org": "hq",
+     "date": "2024-05-01",
+     "account": "Lease Recharge Receivable (1405)",
+     "debit": "1013.47",
+     "credit": null,
+     "balance": "1013.47",
+     "source": "BankTransactions",
+     "contact": "Ashgrove Estates",
+     "description": "",
+     "reference": "",
+     "source_id": "bt-1"
+    },
+    {
+     "org": "hq",
+     "date": "2024-05-01",
+     "account": "Calderwick HQ Current Account",
+     "debit": null,
+     "credit": "1013.47",
+     "balance": "0.00",
+     "source": "BankTransactions",
+     "contact": "Ashgrove Estates",
+     "description": "bank",
+     "reference": "",
+     "source_id": "bt-1"
+    },
+    {
+     "org": "hq",
+     "date": "2025-03-01",
+     "account": "Lease Recharge Receivable (1405)",
+     "debit": "506.25",
+     "credit": null,
+     "balance": "506.25",
+     "source": "BankTransactions",
+     "contact": "Ashgrove Estates",
+     "description": "",
+     "reference": "",
+     "source_id": "bt-2"
+    },
+    {
+     "org": "hq",
+     "date": "2025-03-01",
+     "account": "Calderwick HQ Current Account",
+     "debit": null,
+     "credit": "506.25",
+     "balance": "0.00",
+     "source": "BankTransactions",
+     "contact": "Ashgrove Estates",
+     "description": "bank",
+     "reference": "",
+     "source_id": "bt-2"
+    },
+    {
+     "org": "hq",
+     "date": "2025-04-01",
+     "account": "Co Settlement Clearing (2405)",
+     "debit": null,
+     "credit": "311.83",
+     "balance": "-311.83",
+     "source": "BankTransactions",
+     "contact": "Calderwick Trading Co",
+     "description": "",
+     "reference": "",
+     "source_id": "bt-3"
+    },
+    {
+     "org": "hq",
+     "date": "2025-04-01",
+     "account": "Calderwick HQ Current Account",
+     "debit": "311.83",
+     "credit": null,
+     "balance": "0.00",
+     "source": "BankTransactions",
+     "contact": "Calderwick Trading Co",
+     "description": "bank",
+     "reference": "",
+     "source_id": "bt-3"
+    },
+    {
+     "org": "co",
+     "date": "2024-12-31",
+     "account": "Premises Lease (6605)",
+     "debit": "1013.47",
+     "credit": null,
+     "balance": "1013.47",
+     "source": "ManualJournals",
+     "contact": "",
+     "description": "",
+     "reference": "lease recharged by HQ",
+     "source_id": "mj-10"
+    },
+    {
+     "org": "co",
+     "date": "2024-12-31",
+     "account": "Intra-group Payable – HQ (2475)",
+     "debit": null,
+     "credit": "1013.47",
+     "balance": "0.00",
+     "source": "ManualJournals",
+     "contact": "",
+     "description": "",
+     "reference": "lease recharged by HQ",
+     "source_id": "mj-10"
+    },
+    {
+     "org": "co",
+     "date": "2025-04-01",
+     "account": "Intra-group Payable – HQ (2475)",
+     "debit": "311.83",
+     "credit": null,
+     "balance": "311.83",
+     "source": "BankTransactions",
+     "contact": "HQ Treasury",
+     "description": "",
+     "reference": "",
+     "source_id": "bt-10"
+    },
+    {
+     "org": "co",
+     "date": "2025-04-01",
+     "account": "Calderwick Trading Current Account",
+     "debit": null,
+     "credit": "311.83",
+     "balance": "0.00",
+     "source": "BankTransactions",
+     "contact": "HQ Treasury",
+     "description": "bank",
+     "reference": "",
+     "source_id": "bt-10"
+    },
+    {
+     "org": "co",
+     "date": "2025-06-01",
+     "account": "Intra-group Payable – HQ (2475)",
+     "debit": "204.63",
+     "credit": null,
+     "balance": "204.63",
+     "source": "BankTransactions",
+     "contact": "Fernwick Card Services",
+     "description": "",
+     "reference": "",
+     "source_id": "bt-11"
+    },
+    {
+     "org": "co",
+     "date": "2025-06-01",
+     "account": "Calderwick Trading Current Account",
+     "debit": null,
+     "credit": "204.63",
+     "balance": "0.00",
+     "source": "BankTransactions",
+     "contact": "Fernwick Card Services",
+     "description": "bank",
+     "reference": "",
+     "source_id": "bt-11"
+    },
+    {
+     "org": "co",
+     "date": "2025-12-31",
+     "account": "Premises Lease (6605)",
+     "debit": "506.25",
+     "credit": null,
+     "balance": "506.25",
+     "source": "ManualJournals",
+     "contact": "",
+     "description": "",
+     "reference": "lease recharged by HQ",
+     "source_id": "mj-11"
+    },
+    {
+     "org": "co",
+     "date": "2025-12-31",
+     "account": "Intra-group Payable – HQ (2475)",
+     "debit": null,
+     "credit": "506.25",
+     "balance": "0.00",
+     "source": "ManualJournals",
+     "contact": "",
+     "description": "",
+     "reference": "lease recharged by HQ",
+     "source_id": "mj-11"
+    }
+   ],
+   "postings_count": 16,
+   "help": [
+    "Debits positive / credits negative internally; `ownpurse show <org> <source> <source_id>` opens the source document."
+   ]
+  }
+ ],
+ "text": "debits: 8889.09\ncredits: 8889.09\nnet: 0.00\npostings[16]{org,date,account,debit,credit,source,contact,description,source_id}:\n  hq,2024-01-01,Calderwick Group Capital (3100),,5021.36,ManualJournals,,,mj-1\n  hq,2024-01-01,Retained Earnings (3200),5021.36,,ManualJournals,,,mj-1\n  hq,2024-05-01,Lease Recharge Receivable (1405),1013.47,,BankTransactions,Ashgrove Estates,,bt-1\n  hq,2024-05-01,Calderwick HQ Current Account,,1013.47,BankTransactions,Ashgrove Estates,bank,bt-1\n  hq,2025-03-01,Lease Recharge Receivable (1405),506.25,,BankTransactions,Ashgrove Estates,,bt-2\n  hq,2025-03-01,Calderwick HQ Current Account,,506.25,BankTransactions,Ashgrove Estates,bank,bt-2\n  hq,2025-04-01,Co Settlement Clearing (2405),,311.83,BankTransactions,Calderwick Trading Co,,bt-3\n  hq,2025-04-01,Calderwick HQ Current Account,311.83,,BankTransactions,Calderwick Trading Co,bank,bt-3\n  co,2024-12-31,Premises Lease (6605),1013.47,,ManualJournals,,,mj-10\n  co,2024-12-31,Intra-group Payable – HQ (2475),,1013.47,ManualJournals,,,mj-10\n  co,2025-04-01,Intra-group Payable – HQ (2475),311.83,,BankTransactions,HQ Treasury,,bt-10\n  co,2025-04-01,Calderwick Trading Current Account,,311.83,BankTransactions,HQ Treasury,bank,bt-10\n  co,2025-06-01,Intra-group Payable – HQ (2475),204.63,,BankTransactions,Fernwick Card Services,,bt-11\n  co,2025-06-01,Calderwick Trading Current Account,,204.63,BankTransactions,Fernwick Card Services,bank,bt-11\n  co,2025-12-31,Premises Lease (6605),506.25,,ManualJournals,,,mj-11\n  co,2025-12-31,Intra-group Payable – HQ (2475),,506.25,ManualJournals,,,mj-11\nhelp[1]:\n  Debits positive / credits negative internally; `ownpurse show <org> <source> <source_id>` opens the source document.\n"
+}

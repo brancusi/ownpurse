@@ -1,0 +1,4 @@
+$ ownpurse classify set roast:bt:bt-104:L1 --expect-store-rev 82 --client claude
+exit 2
+error: usage
+message: "Give at least one label: <type>=<id>, e.g. project=harvest."

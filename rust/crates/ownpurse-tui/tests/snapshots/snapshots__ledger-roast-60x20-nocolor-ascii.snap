@@ -1,0 +1,8 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  [roast] v    as of 2025-12-31                  read-only
+--- styles
+r0 9-14 +D
+r0 31-57 +D

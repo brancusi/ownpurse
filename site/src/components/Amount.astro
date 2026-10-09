@@ -1,0 +1,8 @@
+---
+interface Props { value: number; total?: boolean; currency?: string; sign?: 'parens' | 'minus' }
+const { value, total = false, currency, sign = 'parens' } = Astro.props;
+const n = Math.abs(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const neg = value < 0;
+const text = neg ? (sign === 'minus' ? `−${n}` : `(${n})`) : n;
+---
+<span class:list={['op-amount', neg && 'neg', total && 'total']}>{currency && <span class="cur">{currency}</span>}{text}</span>

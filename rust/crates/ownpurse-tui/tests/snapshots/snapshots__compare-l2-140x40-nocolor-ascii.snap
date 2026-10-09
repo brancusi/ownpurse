@@ -1,0 +1,87 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [compare: roast - hold - design - lab] v    as of 2025-12-31                                                                   read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+---------------========---------------------------------------------------------------------------------------------------------------------
+  Ledger > compare > Retained Earnings - 2025-01-01 -> 2025-12-31
+  postings side by side - no pairing inferred
+  m marks postings the Intercompany engine matched - f sets the range for every column - Esc back
+ roast - Retained Earnings (3200)   opening Cr 7,316.42   closing Cr 7,316.42   0 postings
+ hold - Retained Earnings (3200)   opening Cr 1,906.33   closing Cr 1,906.33   0 postings
+ design - Retained Earnings (3200)   opening Dr 1,906.33   closing Dr 1,906.33   0 postings
+ lab - -   opening 0.00   closing 0.00   0 postings
+
+  date        | roast                  amount| hold                   amount| design                 amount| lab                    amount
+  No postings in this range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  f Range  m IC matches  h Full history  q Quit  / Filter  ? more  ^P palette                                                   v0.0.0-test
+--- styles
+r0 40-45 +D
+r0 62-137 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-139 +D
+r3 2-20 +D
+r5 2-96 +D
+r11 2-5 +D
+r11 14-14 +D
+r11 16-32 +B
+r11 34-45 +D
+r11 47-63 +B
+r11 65-76 +D
+r11 78-94 +B
+r11 96-107 +D
+r11 109-125 +B
+r11 127-137 +D
+r12 2-27 +D
+r39 2-2 +B
+r39 4-10 +D
+r39 11-11 +B
+r39 13-24 +D
+r39 25-25 +B
+r39 27-40 +D
+r39 41-41 +B
+r39 43-48 +D
+r39 49-49 +B
+r39 51-58 +D
+r39 59-59 +B
+r39 61-66 +D
+r39 67-68 +B
+r39 70-76 +D
+r39 128-138 +D

@@ -1,0 +1,134 @@
+---
+source: crates/ownpurse-tui/tests/walkthroughs.rs
+expression: styled(&buf)
+---
+  All organisations ●●●● ▾    as of 2025-12-31    ◆ agent          ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+──────────────────────────━━━━━━━━━━━━━━────────────────────────────────────────
+  Intercompany › pairs
+  Intercompany at 2025-12-31 · balances: cached Xero TBs (oldest fetched 07:46
+  UTC) · items: documents
+  4 pairs · 1 matches · 2 bridged · 1 unexplained   sort: status (s)
+  pair                difference  residual  status       ╭─────────────────────╮
+▌ Quillfeather ↔ Ta…      263.94    263.94  unexplained◀╮│ ◆ agent · This pair │
+  Brackenridge ↔ Qu…      418.27      0.00  bridged     ╰┤ The recharges       │
+  Brackenridge ↔ Sa…       57.13      0.00  bridged      │ between the two     │
+  Brackenridge ↔ Ta…        0.00      0.00  ✓ matches    │ companies.          │
+                                                         ╰─────────────────────╯
+
+
+
+
+
+
+
+
+
+
+ ◆ agent: hint L-1 on row:pair=design-roast · ` back    ⌃P palette  v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-19 fg=#72B6D4 bg=#243137 +B
+r0 20-20 fg=#4DBFA9 bg=#243137 +B
+r0 21-21 fg=#9D8FF2 bg=#243137 +B
+r0 22-22 fg=#E8834F bg=#243137 +B
+r0 23-23 fg=#E8769F bg=#243137 +B
+r0 24-29 fg=#93A0A7 bg=#243137
+r0 30-45 fg=#B9C4C9 bg=#243137
+r0 46-49 fg=#93A0A7 bg=#243137
+r0 50-56 fg=#88B1EC bg=#243137
+r0 57-66 fg=#93A0A7 bg=#243137
+r0 67-77 fg=#717E85 bg=#243137
+r0 78-79 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#E6ECEE bg=#171D20 +B
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r2 0-25 fg=#2D383E
+r2 26-39 fg=#72B6D4 +B
+r2 40-79 fg=#2D383E
+r3 2-16 fg=#93A0A7
+r3 17-21 fg=#E6ECEE
+r4 2-77 fg=#93A0A7
+r5 2-24 fg=#93A0A7
+r6 2-8 fg=#E6ECEE
+r6 9-11 fg=#93A0A7
+r6 12-20 fg=#E6ECEE
+r6 21-23 fg=#93A0A7
+r6 24-32 fg=#E6ECEE
+r6 33-35 fg=#93A0A7
+r6 36-48 fg=#F0907B
+r6 49-67 fg=#93A0A7
+r7 2-19 fg=#93A0A7
+r7 22-31 fg=#93A0A7
+r7 34-41 fg=#93A0A7
+r7 44-54 fg=#93A0A7
+r7 57-79 fg=#88B1EC bg=#1C2428
+r8 0-0 fg=#72B6D4 bg=#233239 +BU
+r8 1-1 bg=#233239 +U
+r8 2-19 fg=#E6ECEE bg=#233239 +U
+r8 20-21 bg=#233239 +U
+r8 22-31 fg=#E6ECEE bg=#233239 +U
+r8 32-33 bg=#233239 +U
+r8 34-41 fg=#F0907B bg=#233239 +U
+r8 42-43 bg=#233239 +U
+r8 44-54 fg=#F0907B bg=#233239 +U
+r8 55-56 fg=#88B1EC bg=#253540
+r8 57-57 fg=#88B1EC bg=#1C2428
+r8 58-58 bg=#1C2428
+r8 59-77 fg=#88B1EC bg=#1C2428 +B
+r8 78-78 bg=#1C2428
+r8 79-79 fg=#88B1EC bg=#1C2428
+r9 2-19 fg=#E6ECEE
+r9 22-31 fg=#E6ECEE
+r9 34-41 fg=#E6ECEE
+r9 44-54 fg=#E6ECEE
+r9 56-56 fg=#88B1EC
+r9 57-57 fg=#88B1EC bg=#1C2428
+r9 58-58 bg=#1C2428
+r9 59-71 fg=#E6ECEE bg=#1C2428
+r9 72-78 bg=#1C2428
+r9 79-79 fg=#88B1EC bg=#1C2428
+r10 2-19 fg=#E6ECEE
+r10 22-31 fg=#E6ECEE
+r10 34-41 fg=#E6ECEE
+r10 44-54 fg=#E6ECEE
+r10 57-57 fg=#88B1EC bg=#1C2428
+r10 58-58 bg=#1C2428
+r10 59-73 fg=#E6ECEE bg=#1C2428
+r10 74-78 bg=#1C2428
+r10 79-79 fg=#88B1EC bg=#1C2428
+r11 2-19 fg=#E6ECEE
+r11 22-31 fg=#E6ECEE
+r11 34-41 fg=#E6ECEE
+r11 44-54 fg=#8FCB92
+r11 57-57 fg=#88B1EC bg=#1C2428
+r11 58-58 bg=#1C2428
+r11 59-68 fg=#E6ECEE bg=#1C2428
+r11 69-78 bg=#1C2428
+r11 79-79 fg=#88B1EC bg=#1C2428
+r12 57-79 fg=#88B1EC bg=#1C2428
+r23 0-0 bg=#1B2226
+r23 1-51 fg=#88B1EC bg=#1B2226
+r23 52-55 bg=#1B2226
+r23 56-57 fg=#FFFFFF bg=#1B2226
+r23 58-58 bg=#1B2226
+r23 59-65 fg=#93A0A7 bg=#1B2226
+r23 66-67 bg=#1B2226
+r23 68-78 fg=#717E85 bg=#1B2226
+r23 79-79 bg=#1B2226

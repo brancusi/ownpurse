@@ -1,0 +1,49 @@
+{
+  "default_profile": "live",
+  "profiles": {
+    "live": {
+      "client_id": "YOUR_XERO_APP_CLIENT_ID",
+      "orgs": {
+        "roast": "00000000-0000-0000-0000-000000000000"
+      },
+      "store": "db/xero.sqlite"
+    },
+    "test": {
+      "client_id": "YOUR_TEST_APP_CLIENT_ID",
+      "require_tenant_name": "Demo Company (US)",
+      "forbid_tenants": [
+        "00000000-0000-0000-0000-000000000000"
+      ],
+      "store": "db/xero-test.sqlite",
+      "xero": {
+        "redirect_uri": "http://localhost:8766/callback"
+      }
+    }
+  },
+  "limits": {
+    "calls_per_day": 1000,
+    "warn_day_remaining": 150
+  },
+  "sync": {
+    "ttl_seconds": {
+      "Accounts": 43200
+    }
+  },
+  "tui": {
+    "refresh_seconds": 3,
+    "editor": "code --wait"
+  },
+  "extra_links": [
+    {
+      "name": "Team runbook",
+      "url": "https://example.com/runbook",
+      "description": "How we close the month"
+    },
+    {
+      "name": "{org_name}: chart of accounts",
+      "url": "https://go.xero.com/GeneralLedger/ChartOfAccounts.aspx",
+      "per": "org",
+      "description": "Open the org first (Open ... in Xero)."
+    }
+  ]
+}

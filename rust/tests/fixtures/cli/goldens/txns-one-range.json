@@ -1,0 +1,53 @@
+{
+ "argv": [
+  "--offline",
+  "txns",
+  "one",
+  "--from",
+  "2025-01-01",
+  "--to",
+  "2025-01-31"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2026-10-05T07:46:00",
+   "net_receive_minus_spend": "0.00",
+   "bank_transactions": [
+    {
+     "org": "one",
+     "date": "2025-01-15",
+     "type": "SPEND-TRANSFER",
+     "bank": "bank-1",
+     "contact": "Brindle & Oake Supply",
+     "reference": null,
+     "total": "52.19",
+     "codes": "",
+     "rec": null,
+     "status": "AUTHORISED",
+     "id": "bt-3",
+     "url": null
+    },
+    {
+     "org": "one",
+     "date": "2025-01-15",
+     "type": "RECEIVE-TRANSFER",
+     "bank": "bank-2",
+     "contact": "Brindle & Oake Supply",
+     "reference": null,
+     "total": "52.19",
+     "codes": "",
+     "rec": null,
+     "status": "AUTHORISED",
+     "id": "bt-4",
+     "url": null
+    }
+   ],
+   "bank_transactions_count": 2,
+   "help": [
+    "Run `ownpurse show <org> BankTransactions <id>` for line items and history."
+   ]
+  }
+ ],
+ "text": "as_of: 2026-10-05T07:46:00\nnet_receive_minus_spend: 0.00\nbank_transactions[2]{date,type,bank,contact,total,codes,rec,id}:\n  2025-01-15,SPEND-TRANSFER,bank-1,Brindle & Oake Supply,52.19,,,bt-3\n  2025-01-15,RECEIVE-TRANSFER,bank-2,Brindle & Oake Supply,52.19,,,bt-4\nhelp[1]:\n  Run `ownpurse show <org> BankTransactions <id>` for line items and history.\n"
+}

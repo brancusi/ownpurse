@@ -1,0 +1,242 @@
+---
+source: crates/ownpurse-tui/tests/viz.rs
+expression: styled(&buf)
+---
+  ●●●● compare: roast · hold · design · lab ▾    as of 2025-12-31                                                                                                                                                                                                                                                  ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Overview › Explain: money flow
+                                                                                                      Money between the orgs: what moved
+                                                                                                      Who paid or charged whom from 2025-01-01 to 2025-12-31
+                                                                                                      Each arrow points from the org that paid, lent or charged to the other, over the period.
+
+                                                                                                         ┌────────────────────┐       ┌────────────────────┐       ┌────────────────────┐       ┌────────────────────┐
+                                                                                                         │       roast        │       │        hold        │       │       design       │       │        lab         │
+                                                                                                         └──────────┬─────────┘       └──────────┬─────────┘       └──────────┬─────────┘       └──────────┬─────────┘
+                                                                                                                    │◀─────── 18,849.99 ─────────·                            │                            │
+                                                                                                                  hold paid or charged roast 18,849.99 · 2 entries in hold's books                         │
+                                                                                                                    ·──────── 3,281.19 ─────────▶│                            │                            │
+                                                                                                                  roast paid or charged hold 3,281.19 · 1 entry in hold's books                            │
+                                                                                                                    │                            ·──────── 5,528.36 ─────────▶│                            │
+                                                                                                                    │                          hold paid or charged design 5,528.36 · 2 entries in hold's books
+                                                                                                                    │                            │◀─────── 2,764.18 ──────────·                            │
+                                                                                                                    │                          design paid or charged hold 2,764.18 · 1 entry in hold's books
+                                                                                                                    │◀─────── design paid or charged roast 1,412.57 ──────────·                            │
+                                                                                                                  2 entries in design's books    │                            │                            │
+                                                                                                                    ·──────── roast paid or charged design 1,148.63 ─────────▶│                            │
+                                                                                                                  1 entry in design's books      │                            │                            │
+                                                                                                                    │                            ·────────── hold paid or charged lab 6,912.48 ───────────▶│
+                                                                                                                    │                          1 entry in hold's books        │                            │
+                                                                                                                    │                            │                            │                            │
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Esc Close  ↓ Scroll  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                                                                                                                                                                                                                                                v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-2 fg=#4DBFA9 bg=#243137 +B
+r0 3-3 fg=#9D8FF2 bg=#243137 +B
+r0 4-4 fg=#E8834F bg=#243137 +B
+r0 5-5 fg=#E8769F bg=#243137 +B
+r0 6-6 fg=#93A0A7 bg=#243137
+r0 7-42 fg=#72B6D4 bg=#243137 +B
+r0 43-48 fg=#93A0A7 bg=#243137
+r0 49-64 fg=#B9C4C9 bg=#243137
+r0 65-306 fg=#93A0A7 bg=#243137
+r0 307-317 fg=#717E85 bg=#243137
+r0 318-319 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#E6ECEE bg=#171D20 +B
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-319 bg=#171D20
+r2 0-1 fg=#2D383E
+r2 2-11 fg=#72B6D4 +B
+r2 12-319 fg=#2D383E
+r3 2-12 fg=#93A0A7
+r3 13-31 fg=#E6ECEE
+r4 102-135 fg=#E6ECEE +B
+r5 102-155 fg=#B9C4C9
+r6 102-189 fg=#93A0A7
+r8 105-126 fg=#4DBFA9 +B
+r8 134-155 fg=#9D8FF2 +B
+r8 163-184 fg=#E8834F +B
+r8 192-213 fg=#E8769F +B
+r9 105-105 fg=#4DBFA9 +B
+r9 113-117 fg=#4DBFA9 +B
+r9 126-126 fg=#4DBFA9 +B
+r9 134-134 fg=#9D8FF2 +B
+r9 143-146 fg=#9D8FF2 +B
+r9 155-155 fg=#9D8FF2 +B
+r9 163-163 fg=#E8834F +B
+r9 171-176 fg=#E8834F +B
+r9 184-184 fg=#E8834F +B
+r9 192-192 fg=#E8769F +B
+r9 201-203 fg=#E8769F +B
+r9 213-213 fg=#E8769F +B
+r10 105-126 fg=#4DBFA9 +B
+r10 134-155 fg=#9D8FF2 +B
+r10 163-184 fg=#E8834F +B
+r10 192-213 fg=#E8769F +B
+r11 116-116 fg=#2D383E
+r11 117-124 fg=#B9C4C9
+r11 125-135 fg=#E6ECEE
+r11 136-144 fg=#B9C4C9
+r11 145-145 fg=#9D8FF2 +B
+r11 174-174 fg=#2D383E
+r11 203-203 fg=#2D383E
+r12 114-177 fg=#93A0A7
+r12 203-203 fg=#2D383E
+r13 116-116 fg=#4DBFA9 +B
+r13 117-124 fg=#B9C4C9
+r13 125-134 fg=#E6ECEE
+r13 135-144 fg=#B9C4C9
+r13 145-145 fg=#2D383E
+r13 174-174 fg=#2D383E
+r13 203-203 fg=#2D383E
+r14 114-174 fg=#93A0A7
+r14 203-203 fg=#2D383E
+r15 116-116 fg=#2D383E
+r15 145-145 fg=#9D8FF2 +B
+r15 146-153 fg=#B9C4C9
+r15 154-163 fg=#E6ECEE
+r15 164-173 fg=#B9C4C9
+r15 174-174 fg=#2D383E
+r15 203-203 fg=#2D383E
+r16 116-116 fg=#2D383E
+r16 143-206 fg=#93A0A7
+r17 116-116 fg=#2D383E
+r17 145-145 fg=#2D383E
+r17 146-153 fg=#B9C4C9
+r17 154-163 fg=#E6ECEE
+r17 164-173 fg=#B9C4C9
+r17 174-174 fg=#E8834F +B
+r17 203-203 fg=#2D383E
+r18 116-116 fg=#2D383E
+r18 143-204 fg=#93A0A7
+r19 116-116 fg=#2D383E
+r19 117-124 fg=#B9C4C9
+r19 125-163 fg=#E6ECEE
+r19 164-173 fg=#B9C4C9
+r19 174-174 fg=#E8834F +B
+r19 203-203 fg=#2D383E
+r20 114-140 fg=#93A0A7
+r20 145-145 fg=#2D383E
+r20 174-174 fg=#2D383E
+r20 203-203 fg=#2D383E
+r21 116-116 fg=#4DBFA9 +B
+r21 117-124 fg=#B9C4C9
+r21 125-163 fg=#E6ECEE
+r21 164-173 fg=#B9C4C9
+r21 174-174 fg=#2D383E
+r21 203-203 fg=#2D383E
+r22 114-138 fg=#93A0A7
+r22 145-145 fg=#2D383E
+r22 174-174 fg=#2D383E
+r22 203-203 fg=#2D383E
+r23 116-116 fg=#2D383E
+r23 145-145 fg=#9D8FF2 +B
+r23 146-155 fg=#B9C4C9
+r23 156-190 fg=#E6ECEE
+r23 191-202 fg=#B9C4C9
+r23 203-203 fg=#2D383E
+r24 116-116 fg=#2D383E
+r24 143-165 fg=#93A0A7
+r24 174-174 fg=#2D383E
+r24 203-203 fg=#2D383E
+r25 116-116 fg=#2D383E
+r25 145-145 fg=#2D383E
+r25 174-174 fg=#2D383E
+r25 203-203 fg=#2D383E
+r79 0-1 bg=#1B2226
+r79 2-4 fg=#FFFFFF bg=#1B2226
+r79 5-5 bg=#1B2226
+r79 6-12 fg=#93A0A7 bg=#1B2226
+r79 13-13 fg=#FFFFFF bg=#1B2226
+r79 14-14 bg=#1B2226
+r79 15-22 fg=#93A0A7 bg=#1B2226
+r79 23-23 fg=#FFFFFF bg=#1B2226
+r79 24-24 bg=#1B2226
+r79 25-30 fg=#93A0A7 bg=#1B2226
+r79 31-31 fg=#FFFFFF bg=#1B2226
+r79 32-32 bg=#1B2226
+r79 33-40 fg=#93A0A7 bg=#1B2226
+r79 41-41 fg=#FFFFFF bg=#1B2226
+r79 42-42 bg=#1B2226
+r79 43-49 fg=#93A0A7 bg=#1B2226
+r79 50-50 fg=#FFFFFF bg=#1B2226
+r79 51-51 bg=#1B2226
+r79 52-57 fg=#93A0A7 bg=#1B2226
+r79 58-59 fg=#FFFFFF bg=#1B2226
+r79 60-60 bg=#1B2226
+r79 61-67 fg=#93A0A7 bg=#1B2226
+r79 68-307 bg=#1B2226
+r79 308-318 fg=#717E85 bg=#1B2226
+r79 319-319 bg=#1B2226

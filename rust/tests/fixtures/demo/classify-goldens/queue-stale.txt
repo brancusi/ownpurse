@@ -1,0 +1,14 @@
+$ ownpurse classify queue status:stale
+exit 0
+filter: status:stale
+scope: 
+store_rev: 82
+lines: 2
+open: 2
+stale: 2
+total_lines: 49
+total_open: 38
+total_stale: 2
+rows[2]{anchor,date,payee,amount,account,suggestion,src,conf,stale}:
+  design:bt:bt-308:L1,2025-03-18,Vellum & Quoin Type Foundry,(219.47),1630,refit / design / ·,R,0.8,stale: amount
+  roast:bt:bt-110:L1,2025-10-21,Emberline Thermal Services,(214.77),6140,roaster / roast / ·,R,0.95,stale: date

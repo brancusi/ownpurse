@@ -1,0 +1,74 @@
+---
+source: crates/ownpurse-tui/tests/viz.rs
+expression: styled(&buf)
+---
+  [hold <-> design]    as of 2025-12-31                                                  read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+--==========----------------------------------------------------------------------------------------
+  Overview > Explain: bridge
+  Brackenridge <-> Quillfeather (management fees)    hold <-> design
+  Why hold and design disagree by 418.27, item by item
+  hold's books: design owes hold 4,670.51
+  design's books: design owes hold 4,252.24
+
+  Difference at 2025-12-31               ##############################          418.27
+  - Annual return filing for the parent  ##############################          418.27
+    2025-10-06 - design - Spend - Corvid Registry Services - no party contact; no
+    matching entry in hold
+                                                                         --------------
+  Unexplained                            |                                      ok 0.00
+
+  fully explained: 418.27 = 418.27
+
+
+
+
+
+
+
+
+
+
+
+
+  Esc Close  v Scroll  q Quit  / Filter  ] Org >  ? more  ^P palette                    v0.0.0-test
+--- styles
+r0 19-22 +D
+r0 39-97 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-99 +D
+r3 2-12 +D
+r4 2-48 +B
+r4 53-56 +B
+r4 57-61 +D
+r4 62-67 +B
+r6 2-40 +D
+r7 2-42 +D
+r10 41-70 +B
+r11 4-80 +D
+r12 4-25 +D
+r13 73-86 +D
+r29 2-4 +B
+r29 6-12 +D
+r29 13-13 +B
+r29 15-22 +D
+r29 23-23 +B
+r29 25-30 +D
+r29 31-31 +B
+r29 33-40 +D
+r29 41-41 +B
+r29 43-49 +D
+r29 50-50 +B
+r29 52-57 +D
+r29 58-59 +B
+r29 61-67 +D
+r29 88-98 +D

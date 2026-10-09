@@ -1,0 +1,146 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [roast <-> hold]    as of 2025-12-31                                                   read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+---------------========-----------------------------------------------------------------------------
+  Ledger > compare trial balances at 2025-12-31 (accrual)
+  align: code                                                                            all TB+25
+                                                |          roast          |          hold
+                                                |        TB+25 ok         |        TB+25 ok
+  code    account                               |       debit       credit|       debit       credit
+> 101...  Tallowmere Roastery Operating Accou...|   41,671.82             |   16,109.61
+          roast Tallowmere Roastery Operating Account - hold Brackenridge Reserve Account
+  301...  Tallowmere Paid-In Capital !=         |                 4,618.27|                36,742.18
+  3200    Retained Earnings                     |                 7,316.42|                 1,906.33
+          -- only in roast --
+  1060    Tallowmere Green-Bean Card            |                 1,990.90|           -            -
+  2410    Brackenridge Term Loan                |                15,568.80|           -            -
+  4010    Wholesale Bean Sales                  |                20,391.63|           -            -
+  5020    Green Coffee Purchases                |    5,369.15             |           -            -
+  6140    Roaster Afterburner Servicing         |      898.06             |           -            -
+  6290    Bag Artwork & Proofs                  |    1,148.63             |           -            -
+  6310    Cupping Room Supplies                 |      147.38             |           -            -
+  6520    Delivery Van Fuel                     |      238.61             |           -            -
+  6830    Term Loan Interest                    |      412.37             |           -            -
+          -- only in hold --
+  1460    Term Loan to Tallowmere               |           -            -|   15,568.80
+  1470    Fees Receivable from Quillfeather     |           -            -|    4,670.51
+  1480    Equipment Advance to Saltmarsh        |           -            -|    6,912.48
+  4610    Group Management Fee Income           |           -            -|                 5,528.36
+  --------------------------------------------------------------------------------------------------
+          Total (each org's own)                |   49,886.02  49,886.0...|   44,589.24  44,589.2...
+  a Align  h Full history  > Col >  x Drop col  q Quit  ? more  ^P palette              v0.0.0-test
+--- styles
+r0 18-21 +D
+r0 38-97 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-99 +D
+r3 2-10 +D
+r4 2-12 +D
+r4 89-97 +D
+r5 48-48 +D
+r5 59-63 +B
+r5 74-74 +D
+r5 85-88 +B
+r6 48-48 +D
+r6 57-64 +D
+r6 74-74 +D
+r6 83-90 +D
+r7 2-5 +D
+r7 10-16 +D
+r7 48-48 +D
+r7 50-74 +D
+r7 76-99 +D
+r8 0-0 +BR
+r8 1-9 +R
+r8 10-47 +BUR
+r8 48-99 +R
+r9 0-99 +R
+r10 48-48 +D
+r10 74-74 +D
+r11 2-7 +D
+r11 48-48 +D
+r11 74-74 +D
+r12 10-28 +D
+r13 2-7 +D
+r13 48-48 +D
+r13 74-74 +D
+r13 76-99 +D
+r14 2-7 +D
+r14 48-48 +D
+r14 74-74 +D
+r14 76-99 +D
+r15 2-7 +D
+r15 48-48 +D
+r15 74-74 +D
+r15 76-99 +D
+r16 2-7 +D
+r16 48-48 +D
+r16 74-74 +D
+r16 76-99 +D
+r17 2-7 +D
+r17 48-48 +D
+r17 74-74 +D
+r17 76-99 +D
+r18 2-7 +D
+r18 48-48 +D
+r18 74-74 +D
+r18 76-99 +D
+r19 2-7 +D
+r19 48-48 +D
+r19 74-74 +D
+r19 76-99 +D
+r20 2-7 +D
+r20 48-48 +D
+r20 74-74 +D
+r20 76-99 +D
+r21 2-7 +D
+r21 48-48 +D
+r21 74-74 +D
+r21 76-99 +D
+r22 10-27 +D
+r23 2-7 +D
+r23 48-48 +D
+r23 50-74 +D
+r24 2-7 +D
+r24 48-48 +D
+r24 50-74 +D
+r25 2-7 +D
+r25 48-48 +D
+r25 50-74 +D
+r26 2-7 +D
+r26 48-48 +D
+r26 50-74 +D
+r27 2-99 +D
+r28 10-47 +B
+r28 48-48 +D
+r28 50-73 +B
+r28 74-74 +D
+r28 76-99 +B
+r29 2-2 +B
+r29 4-10 +D
+r29 11-11 +B
+r29 13-26 +D
+r29 27-27 +B
+r29 29-35 +D
+r29 36-36 +B
+r29 38-47 +D
+r29 48-48 +B
+r29 50-55 +D
+r29 56-56 +B
+r29 58-63 +D
+r29 64-65 +B
+r29 67-73 +D
+r29 88-98 +D

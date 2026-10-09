@@ -1,0 +1,8 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  [all organisations] v    as of 2025-06-30      read-only
+--- styles
+r0 21-26 +D
+r0 43-57 +D

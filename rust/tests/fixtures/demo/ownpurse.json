@@ -1,0 +1,211 @@
+{
+ "default_profile": "demo",
+ "profiles": {
+  "demo": {
+   "client_id": "DEMO0CLIENT0ID0000000000000000000",
+   "store": "record.sqlite",
+   "token_file": "tokens/demo.json",
+   "orgs": {
+    "roast": "c0ffee00-0000-4000-8000-0000000000a1",
+    "hold": "b01d0000-0000-4000-8000-0000000000b2",
+    "design": "de519000-0000-4000-8000-0000000000c3",
+    "lab": "1ab00000-0000-4000-8000-0000000000d4"
+   },
+   "extra_links": [
+    {
+     "name": "Demo runbook",
+     "url": "https://example.com/runbook",
+     "description": "A profile-level extra link (source profile:demo)."
+    }
+   ]
+  }
+ },
+ "groups": {
+  "all-co": {
+   "orgs": [
+    "roast",
+    "hold",
+    "design",
+    "lab"
+   ]
+  },
+  "ops": {
+   "orgs": [
+    "roast",
+    "design",
+    "lab"
+   ]
+  }
+ },
+ "tui": {
+  "log_rows": 300
+ },
+ "manifests": {
+  "accountant_gate": [
+   {
+    "org": "hold",
+    "through": "2025-12-31"
+   }
+  ],
+  "zero_accounts": {
+   "design": [
+    "2250"
+   ]
+  }
+ },
+ "parties": {
+  "hold": {
+   "contact": [
+    "brackenridge"
+   ],
+   "narration": [
+    "\\bbrackenridge\\b"
+   ]
+  },
+  "design": {
+   "contact": [
+    "quillfeather"
+   ],
+   "narration": [
+    "\\bquillfeather\\b"
+   ]
+  },
+  "roast": {
+   "contact": [
+    "tallowmere"
+   ],
+   "narration": [
+    "\\btallowmere\\b"
+   ]
+  }
+ },
+ "intercompany": {
+  "pairs": [
+   {
+    "id": "hold-roast",
+    "label": "Brackenridge ↔ Tallowmere (term loan)",
+    "a": {
+     "org": "hold",
+     "accounts": [
+      "1460"
+     ]
+    },
+    "b": {
+     "org": "roast",
+     "accounts": [
+      "2410"
+     ],
+     "party": "hold"
+    },
+    "movement": "match_both",
+    "match_days": 7
+   },
+   {
+    "id": "hold-design",
+    "label": "Brackenridge ↔ Quillfeather (management fees)",
+    "a": {
+     "org": "hold",
+     "accounts": [
+      "1470"
+     ]
+    },
+    "b": {
+     "org": "design",
+     "accounts": [
+      "2420"
+     ],
+     "party": "hold"
+    },
+    "movement": "b_unexplained",
+    "match_days": 7
+   },
+   {
+    "id": "design-roast",
+    "label": "Quillfeather ↔ Tallowmere (recharges)",
+    "a": {
+     "org": "design",
+     "accounts": [
+      "1450"
+     ]
+    },
+    "b": {
+     "org": "roast",
+     "accounts": [
+      "2430"
+     ],
+     "party": "design"
+    },
+    "movement": "b_unexplained",
+    "match_days": 7
+   },
+   {
+    "id": "hold-lab",
+    "label": "Brackenridge ↔ Saltmarsh (equipment advance)",
+    "a": {
+     "org": "hold",
+     "accounts": [
+      "1480"
+     ]
+    },
+    "b": {
+     "org": "lab",
+     "accounts": [
+      "2440"
+     ],
+     "party": "hold"
+    },
+    "movement": "b_unexplained",
+    "match_days": 7
+   }
+  ]
+ },
+ "account_map": {
+  "comment": "presentation only (management view)",
+  "categories": {
+   "cash": {
+    "default": "type:BANK",
+    "label": "Cash and cards"
+   },
+   "intragroup": {
+    "hold": [
+     "1460",
+     "1470",
+     "1480"
+    ],
+    "roast": [
+     "2410",
+     "2430"
+    ],
+    "design": [
+     "1450",
+     "2420"
+    ],
+    "lab": [
+     "2440"
+    ],
+    "label": "Intra-group balances"
+   },
+   "mgmt_fees": {
+    "hold": [
+     "4610"
+    ],
+    "design": [
+     "6420"
+    ],
+    "label": "Management fees"
+   },
+   "revenue": {
+    "default": "class:REVENUE",
+    "label": "Revenue"
+   },
+   "expenses": {
+    "default": "class:EXPENSE",
+    "label": "Expenses"
+   },
+   "equity": {
+    "default": "class:EQUITY",
+    "label": "Equity"
+   }
+  }
+ }
+}

@@ -1,0 +1,130 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  ● hq ↔ ● co    as of 2025-12-31    no local record               ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+──────────────────────────━━━━━━━━━━━━━━────────────────────────────────────────
+  HQ 1405 only › bridge at 2025-12-31                       311.83 unexplained
+
+  A hq Dr 1,519.72 · Lease Recharge Receivable (1405)
+  B co Cr 1,003.26 (hq's share) · Intra-group Payable – HQ (2475)
+
+  Bridge
+    Difference at year end             516.46
+      = prior-year opening difference    0.00
+      + 2025 movement difference       516.46
+          explained by 1 item below    204.63
+    ─────────────────────────────────────────
+    Unexplained residual               311.83
+
+  Items on one side only                                                     1
+  side  date        account           amount  why
+▌ B     2025-06-01  Intra-group Pay…  204.63  no party contact; no matchi…
+  why: no party contact; no matching entry in hq  ·  BankTransactions bt-11
+
+
+
+  o Open  a A  b B  q  /  ?  ⌃P palette                             v0.0.0-test
+--- styles
+r0 0-1 bg=#E0E7EA
+r0 2-2 fg=#5340B0 bg=#E0E7EA +B
+r0 3-3 fg=#566369 bg=#E0E7EA
+r0 4-5 fg=#5340B0 bg=#E0E7EA +B
+r0 6-8 fg=#566369 bg=#E0E7EA
+r0 9-9 fg=#A8461A bg=#E0E7EA +B
+r0 10-10 fg=#566369 bg=#E0E7EA
+r0 11-12 fg=#A8461A bg=#E0E7EA +B
+r0 13-16 fg=#566369 bg=#E0E7EA
+r0 17-32 fg=#3D4A50 bg=#E0E7EA
+r0 33-36 fg=#566369 bg=#E0E7EA
+r0 37-51 fg=#B23A24 bg=#E0E7EA
+r0 52-66 fg=#566369 bg=#E0E7EA
+r0 67-77 fg=#768186 bg=#E0E7EA
+r0 78-79 bg=#E0E7EA
+r1 0-1 bg=#F1F3F4
+r1 2-3 fg=#768186 bg=#F1F3F4
+r1 4-11 fg=#566369 bg=#F1F3F4
+r1 12-14 bg=#F1F3F4
+r1 15-16 fg=#768186 bg=#F1F3F4
+r1 17-22 fg=#566369 bg=#F1F3F4
+r1 23-25 bg=#F1F3F4
+r1 26-27 fg=#768186 bg=#F1F3F4
+r1 28-39 fg=#162024 bg=#F1F3F4 +B
+r1 40-42 bg=#F1F3F4
+r1 43-44 fg=#768186 bg=#F1F3F4
+r1 45-52 fg=#566369 bg=#F1F3F4
+r1 53-55 bg=#F1F3F4
+r1 56-57 fg=#768186 bg=#F1F3F4
+r1 58-63 fg=#566369 bg=#F1F3F4
+r1 64-66 bg=#F1F3F4
+r1 67-68 fg=#768186 bg=#F1F3F4
+r1 69-76 fg=#566369 bg=#F1F3F4
+r1 77-79 bg=#F1F3F4
+r2 0-25 fg=#C9D1D4
+r2 26-39 fg=#1D6A88 +B
+r2 40-79 fg=#C9D1D4
+r3 2-16 fg=#566369
+r3 17-36 fg=#162024
+r3 60-77 fg=#B23A24
+r5 2-52 fg=#162024
+r6 2-64 fg=#162024
+r8 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r8 2-7 fg=#3D4A50 bg=#EDF1F2 +U ul=#C9D1D4
+r8 8-79 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r9 4-25 fg=#162024
+r9 39-44 fg=#162024
+r10 4-36 fg=#162024
+r10 41-44 fg=#162024
+r11 4-31 fg=#162024
+r11 39-44 fg=#162024
+r12 4-34 fg=#162024
+r12 39-44 fg=#162024
+r13 4-44 fg=#C9D1D4
+r14 4-23 fg=#B23A24 +B
+r14 39-44 fg=#B23A24 +B
+r16 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r16 2-23 fg=#3D4A50 bg=#EDF1F2 +U ul=#C9D1D4
+r16 24-76 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r16 77-77 fg=#566369 bg=#EDF1F2 +U ul=#C9D1D4
+r16 78-79 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r17 2-5 fg=#566369
+r17 8-17 fg=#566369
+r17 20-35 fg=#566369
+r17 38-43 fg=#566369
+r17 46-73 fg=#566369
+r18 0-0 fg=#1D6A88 bg=#D7E4EA +B
+r18 1-1 bg=#D7E4EA
+r18 2-5 fg=#162024 bg=#D7E4EA
+r18 6-7 bg=#D7E4EA
+r18 8-17 fg=#162024 bg=#D7E4EA
+r18 18-19 bg=#D7E4EA
+r18 20-35 fg=#162024 bg=#D7E4EA
+r18 36-37 bg=#D7E4EA
+r18 38-43 fg=#162024 bg=#D7E4EA
+r18 44-45 bg=#D7E4EA
+r18 46-73 fg=#566369 bg=#D7E4EA
+r18 74-79 bg=#D7E4EA
+r19 2-74 fg=#162024
+r23 0-1 bg=#ECEFF0
+r23 2-2 fg=#162024 bg=#ECEFF0
+r23 3-3 bg=#ECEFF0
+r23 4-9 fg=#566369 bg=#ECEFF0
+r23 10-10 fg=#162024 bg=#ECEFF0
+r23 11-11 bg=#ECEFF0
+r23 12-14 fg=#566369 bg=#ECEFF0
+r23 15-15 fg=#162024 bg=#ECEFF0
+r23 16-16 bg=#ECEFF0
+r23 17-19 fg=#566369 bg=#ECEFF0
+r23 20-20 fg=#162024 bg=#ECEFF0
+r23 21-22 fg=#566369 bg=#ECEFF0
+r23 23-23 fg=#162024 bg=#ECEFF0
+r23 24-25 fg=#566369 bg=#ECEFF0
+r23 26-26 fg=#162024 bg=#ECEFF0
+r23 27-28 fg=#566369 bg=#ECEFF0
+r23 29-30 fg=#162024 bg=#ECEFF0
+r23 31-31 bg=#ECEFF0
+r23 32-38 fg=#566369 bg=#ECEFF0
+r23 39-67 bg=#ECEFF0
+r23 68-78 fg=#768186 bg=#ECEFF0
+r23 79-79 bg=#ECEFF0

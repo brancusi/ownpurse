@@ -1,0 +1,40 @@
+{
+ "argv": [
+  "--offline",
+  "accounts",
+  "one",
+  "--search",
+  "ACC"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2026-10-05T07:46:00",
+   "accounts": [
+    {
+     "org": "one",
+     "code": "610",
+     "name": "Accounts Receivable",
+     "type": "CURRENT",
+     "status": "ACTIVE",
+     "bank_account": null,
+     "id": "ar"
+    },
+    {
+     "org": "one",
+     "code": "800",
+     "name": "Accounts Payable",
+     "type": "CURRLIAB",
+     "status": "ACTIVE",
+     "bank_account": null,
+     "id": "ap"
+    }
+   ],
+   "accounts_count": 2,
+   "help": [
+    "Add --bank for bank accounts only; --search <text> to filter."
+   ]
+  }
+ ],
+ "text": "as_of: 2026-10-05T07:46:00\naccounts[2]{org,code,name,type}:\n  one,610,Accounts Receivable,CURRENT\n  one,800,Accounts Payable,CURRLIAB\nhelp[1]:\n  Add --bank for bank accounts only; --search <text> to filter.\n"
+}

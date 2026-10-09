@@ -1,0 +1,322 @@
+{
+ "argv": [
+  "--offline",
+  "tb",
+  "hq,co",
+  "--compare",
+  "--date",
+  "2025-12-31"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2025-12-31",
+   "accounting_basis": "accrual",
+   "align": "code",
+   "columns": [
+    {
+     "org": "hq",
+     "basis": "TB 2024-12-31 + 2025 ✓",
+     "total_debit": "6541.08",
+     "total_credit": "6541.08",
+     "balanced": true
+    },
+    {
+     "org": "co",
+     "basis": "TB 2024-12-31 + 2025 ✓",
+     "total_debit": "1519.72",
+     "total_credit": "1519.72",
+     "balanced": true
+    }
+   ],
+   "rows": [
+    {
+     "section": "aligned",
+     "key": "code:3200",
+     "code": "3200",
+     "label": "Retained Earnings",
+     "class": "EQUITY",
+     "members": {
+      "hq": [
+       "Retained Earnings (3200)"
+      ],
+      "co": [
+       "Retained Earnings (3200)"
+      ]
+     },
+     "member_ids": {
+      "hq": [
+       "h-re"
+      ],
+      "co": [
+       "c-re"
+      ]
+     },
+     "names_differ": false,
+     "names": {
+      "hq": [
+       "Retained Earnings"
+      ],
+      "co": [
+       "Retained Earnings"
+      ]
+     },
+     "cells": {
+      "hq": {
+       "exists": true,
+       "debit": "5021.36",
+       "credit": null,
+       "net": "5021.36"
+      },
+      "co": {
+       "exists": true,
+       "debit": "1013.47",
+       "credit": null,
+       "net": "1013.47"
+      }
+     }
+    },
+    {
+     "section": "only in hq",
+     "key": "hq:h-bank",
+     "code": "",
+     "label": "Calderwick HQ Current Account",
+     "class": "ASSET",
+     "members": {
+      "hq": [
+       "Calderwick HQ Current Account"
+      ]
+     },
+     "member_ids": {
+      "hq": [
+       "h-bank"
+      ],
+      "co": []
+     },
+     "account_id": "h-bank",
+     "org": "hq",
+     "cells": {
+      "hq": {
+       "exists": true,
+       "debit": null,
+       "credit": "1207.89",
+       "net": "-1207.89"
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in hq",
+     "key": "hq:h-1405",
+     "code": "1405",
+     "label": "Lease Recharge Receivable",
+     "class": "ASSET",
+     "members": {
+      "hq": [
+       "Lease Recharge Receivable (1405)"
+      ]
+     },
+     "member_ids": {
+      "hq": [
+       "h-1405"
+      ],
+      "co": []
+     },
+     "account_id": "h-1405",
+     "org": "hq",
+     "cells": {
+      "hq": {
+       "exists": true,
+       "debit": "1519.72",
+       "credit": null,
+       "net": "1519.72"
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in hq",
+     "key": "hq:h-2405",
+     "code": "2405",
+     "label": "Co Settlement Clearing",
+     "class": "LIABILITY",
+     "members": {
+      "hq": [
+       "Co Settlement Clearing (2405)"
+      ]
+     },
+     "member_ids": {
+      "hq": [
+       "h-2405"
+      ],
+      "co": []
+     },
+     "account_id": "h-2405",
+     "org": "hq",
+     "cells": {
+      "hq": {
+       "exists": true,
+       "debit": null,
+       "credit": "311.83",
+       "net": "-311.83"
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in hq",
+     "key": "hq:h-eq",
+     "code": "3100",
+     "label": "Calderwick Group Capital",
+     "class": "EQUITY",
+     "members": {
+      "hq": [
+       "Calderwick Group Capital (3100)"
+      ]
+     },
+     "member_ids": {
+      "hq": [
+       "h-eq"
+      ],
+      "co": []
+     },
+     "account_id": "h-eq",
+     "org": "hq",
+     "cells": {
+      "hq": {
+       "exists": true,
+       "debit": null,
+       "credit": "5021.36",
+       "net": "-5021.36"
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in co",
+     "key": "co:c-bank",
+     "code": "",
+     "label": "Calderwick Trading Current Account",
+     "class": "ASSET",
+     "members": {
+      "co": [
+       "Calderwick Trading Current Account"
+      ]
+     },
+     "member_ids": {
+      "hq": [],
+      "co": [
+       "c-bank"
+      ]
+     },
+     "account_id": "c-bank",
+     "org": "co",
+     "cells": {
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": true,
+       "debit": null,
+       "credit": "516.46",
+       "net": "-516.46"
+      }
+     }
+    },
+    {
+     "section": "only in co",
+     "key": "co:c-2475",
+     "code": "2475",
+     "label": "Intra-group Payable – HQ",
+     "class": "LIABILITY",
+     "members": {
+      "co": [
+       "Intra-group Payable – HQ (2475)"
+      ]
+     },
+     "member_ids": {
+      "hq": [],
+      "co": [
+       "c-2475"
+      ]
+     },
+     "account_id": "c-2475",
+     "org": "co",
+     "cells": {
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": true,
+       "debit": null,
+       "credit": "1003.26",
+       "net": "-1003.26"
+      }
+     }
+    },
+    {
+     "section": "only in co",
+     "key": "co:c-6605",
+     "code": "6605",
+     "label": "Premises Lease",
+     "class": "EXPENSE",
+     "members": {
+      "co": [
+       "Premises Lease (6605)"
+      ]
+     },
+     "member_ids": {
+      "hq": [],
+      "co": [
+       "c-6605"
+      ]
+     },
+     "account_id": "c-6605",
+     "org": "co",
+     "cells": {
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": true,
+       "debit": "506.25",
+       "credit": null,
+       "net": "506.25"
+      }
+     }
+    }
+   ],
+   "rows_count": 8
+  }
+ ],
+ "text": "as_of: 2025-12-31\naccounting_basis: accrual\nalign: code\ncolumns: hq: TB 2024-12-31 + 2025 ✓ · debit 6541.08 credit 6541.08, co: TB 2024-12-31 + 2025 ✓ · debit 1519.72 credit 1519.72\nrows[8]{section,code,account,hq,co}:\n  aligned,3200,Retained Earnings,5021.36,1013.47\n  only in hq,,Calderwick HQ Current Account,-1207.89,—\n  only in hq,1405,Lease Recharge Receivable,1519.72,—\n  only in hq,2405,Co Settlement Clearing,-311.83,—\n  only in hq,3100,Calderwick Group Capital,-5021.36,—\n  only in co,,Calderwick Trading Current Account,—,-516.46\n  only in co,2475,Intra-group Payable – HQ,—,-1003.26\n  only in co,6605,Premises Lease,—,506.25\nhelp[1]:\n  Cells are each org's own net balance (debit positive); — = the account does not exist there. Rows merge only on an identical code (or an account_map category with --align map); nothing is added or differenced across orgs.\n"
+}

@@ -1,0 +1,152 @@
+---
+source: crates/ownpurse-tui/tests/manifests.rs
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    ⎇ dec-review · check ✗ 2    as of 2025-12-31             ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌━━━━━━━━━━╌╌╌╌╌╌╌╌╌╌
+  Manifest › ⎇ dec-review › Entries › entry 5 › ~ manual journal mj-303
+  draft ✓ › review ✓ › ▸ check ✗ 2 › planned › approved › applying › applied
+  ~ Manual journal · design · mj-303   changed: 1 field · 2 lines                       entry 5 · H
+    Date           2025-08-31
+    Status         POSTED
+  ~ Narration      Management fee charge May-Aug for from August, Brackenridge holding fee
+  Lines
+    account          description                                             debit         credit
+  − 6420                                                                  2,764.18
+  + 6420                                                                  2,864.18
+      ✗ Xero can't edit a posted journal in place (/JournalLines/n1/LineAmount,
+      /JournalLines/n2/AccountCode, /JournalLines/n2/LineAmount)
+  − 2420                                                                                 2,764.18
+  + 2250                                                                                 2,864.18
+    debits 2,864.18 · credits 2,864.18 ✓
+
+
+
+
+
+
+
+
+
+
+
+  z All fields  J Patch  N New  P Plan  b Switch  ? more  ⌃P palette      ⎇ dec-review  v0.0.0-test
+--- styles
+r0 0-1 bg=#E0E7EA
+r0 2-19 fg=#1D6A88 bg=#E0E7EA +B
+r0 20-20 fg=#17705F bg=#E0E7EA +B
+r0 21-21 fg=#5340B0 bg=#E0E7EA +B
+r0 22-22 fg=#A8461A bg=#E0E7EA +B
+r0 23-23 fg=#A33462 bg=#E0E7EA +B
+r0 24-29 fg=#566369 bg=#E0E7EA
+r0 30-41 fg=#874083 bg=#E0E7EA +B
+r0 42-53 fg=#B23A24 bg=#E0E7EA
+r0 54-57 fg=#566369 bg=#E0E7EA
+r0 58-73 fg=#3D4A50 bg=#E0E7EA
+r0 74-86 fg=#566369 bg=#E0E7EA
+r0 87-97 fg=#768186 bg=#E0E7EA
+r0 98-99 bg=#E0E7EA
+r1 0-1 bg=#F1F3F4
+r1 2-3 fg=#768186 bg=#F1F3F4
+r1 4-11 fg=#566369 bg=#F1F3F4
+r1 12-14 bg=#F1F3F4
+r1 15-16 fg=#768186 bg=#F1F3F4
+r1 17-22 fg=#566369 bg=#F1F3F4
+r1 23-25 bg=#F1F3F4
+r1 26-27 fg=#768186 bg=#F1F3F4
+r1 28-39 fg=#566369 bg=#F1F3F4
+r1 40-42 bg=#F1F3F4
+r1 43-44 fg=#768186 bg=#F1F3F4
+r1 45-52 fg=#566369 bg=#F1F3F4
+r1 53-55 bg=#F1F3F4
+r1 56-57 fg=#768186 bg=#F1F3F4
+r1 58-63 fg=#566369 bg=#F1F3F4
+r1 64-66 bg=#F1F3F4
+r1 67-68 fg=#768186 bg=#F1F3F4
+r1 69-76 fg=#566369 bg=#F1F3F4
+r1 77-79 bg=#F1F3F4
+r1 80-81 fg=#768186 bg=#F1F3F4
+r1 82-89 fg=#162024 bg=#F1F3F4 +B
+r1 90-99 bg=#F1F3F4
+r2 0-79 fg=#874083
+r2 80-89 fg=#1D6A88 +B
+r2 90-99 fg=#874083
+r3 2-47 fg=#566369
+r3 48-70 fg=#162024
+r4 2-8 fg=#566369
+r4 9-11 fg=#768186
+r4 12-19 fg=#566369
+r4 20-22 fg=#768186
+r4 23-33 fg=#B23A24 +B
+r4 34-75 fg=#768186
+r5 2-3 fg=#874083 +B
+r5 4-35 fg=#162024 +B
+r5 36-64 fg=#566369
+r5 88-98 fg=#566369
+r6 2-18 fg=#566369
+r6 19-28 fg=#3D4A50
+r7 2-18 fg=#566369
+r7 19-24 fg=#3D4A50
+r8 2-3 fg=#874083
+r8 4-18 fg=#3D4A50
+r8 19-29 fg=#162024
+r8 30-32 fg=#566369
+r8 33-33 fg=#162024
+r8 34-39 fg=#874083 bg=#F0EDF1
+r8 40-40 fg=#162024
+r8 41-47 fg=#566369
+r8 48-48 fg=#162024
+r8 49-51 fg=#874083 bg=#F0EDF1
+r8 52-52 fg=#162024
+r8 53-56 fg=#566369
+r8 57-57 fg=#162024
+r8 58-64 fg=#874083 bg=#F0EDF1
+r8 65-77 fg=#162024
+r8 78-89 fg=#874083 bg=#F0EDF1
+r9 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r9 2-6 fg=#3D4A50 bg=#EDF1F2 +U ul=#C9D1D4
+r9 7-99 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r10 4-97 fg=#566369
+r11 2-3 fg=#874083
+r11 4-97 fg=#566369
+r12 2-3 fg=#874083
+r12 4-67 fg=#162024
+r12 68-82 fg=#874083 bg=#F0EDF1
+r12 83-97 fg=#162024
+r13 6-79 fg=#B23A24
+r14 6-63 fg=#B23A24
+r15 2-3 fg=#874083
+r15 4-97 fg=#566369
+r16 2-3 fg=#874083
+r16 4-20 fg=#874083 bg=#F0EDF1
+r16 21-82 fg=#162024
+r16 83-97 fg=#874083 bg=#F0EDF1
+r17 4-38 fg=#3D4A50
+r17 39-39 fg=#2E6B39
+r29 0-1 bg=#ECEFF0
+r29 2-2 fg=#162024 bg=#ECEFF0
+r29 3-3 bg=#ECEFF0
+r29 4-15 fg=#566369 bg=#ECEFF0
+r29 16-16 fg=#162024 bg=#ECEFF0
+r29 17-17 bg=#ECEFF0
+r29 18-24 fg=#566369 bg=#ECEFF0
+r29 25-25 fg=#162024 bg=#ECEFF0
+r29 26-26 bg=#ECEFF0
+r29 27-31 fg=#566369 bg=#ECEFF0
+r29 32-32 fg=#162024 bg=#ECEFF0
+r29 33-33 bg=#ECEFF0
+r29 34-39 fg=#566369 bg=#ECEFF0
+r29 40-40 fg=#162024 bg=#ECEFF0
+r29 41-41 bg=#ECEFF0
+r29 42-49 fg=#566369 bg=#ECEFF0
+r29 50-50 fg=#162024 bg=#ECEFF0
+r29 51-51 bg=#ECEFF0
+r29 52-57 fg=#566369 bg=#ECEFF0
+r29 58-59 fg=#162024 bg=#ECEFF0
+r29 60-60 bg=#ECEFF0
+r29 61-67 fg=#566369 bg=#ECEFF0
+r29 68-73 bg=#ECEFF0
+r29 74-87 fg=#874083 bg=#ECEFF0 +B
+r29 88-98 fg=#768186 bg=#ECEFF0
+r29 99-99 bg=#ECEFF0

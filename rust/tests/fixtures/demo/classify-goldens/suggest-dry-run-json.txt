@@ -1,0 +1,98 @@
+$ ownpurse classify suggest --dry-run --json
+exit 0
+{
+ "engine": "rules",
+ "filter": "",
+ "scope": null,
+ "dry_run": true,
+ "lines": 49,
+ "would_suggest": 49,
+ "would_write": 49,
+ "store_rev": 0,
+ "rules": [
+  {
+   "rule": "r-project-alias",
+   "matched": 11,
+   "project": 11,
+   "bearer": 0,
+   "treatment": 0,
+   "should_be_account": 0
+  },
+  {
+   "rule": "r-hollowpine",
+   "matched": 2,
+   "project": 0,
+   "bearer": 2,
+   "treatment": 2,
+   "should_be_account": 0
+  },
+  {
+   "rule": "r-intragroup",
+   "matched": 24,
+   "project": 24,
+   "bearer": 0,
+   "treatment": 24,
+   "should_be_account": 0
+  },
+  {
+   "rule": "r-wholesale",
+   "matched": 3,
+   "project": 3,
+   "bearer": 3,
+   "treatment": 0,
+   "should_be_account": 0
+  },
+  {
+   "rule": "r-fuel",
+   "matched": 1,
+   "project": 1,
+   "bearer": 0,
+   "treatment": 1,
+   "should_be_account": 0
+  },
+  {
+   "rule": "r-emberline-split",
+   "matched": 2,
+   "project": 0,
+   "bearer": 0,
+   "treatment": 0,
+   "should_be_account": 0
+  },
+  {
+   "rule": "r-bearer-roast",
+   "matched": 16,
+   "project": 0,
+   "bearer": 13,
+   "treatment": 0,
+   "should_be_account": 0
+  },
+  {
+   "rule": "r-bearer-hold",
+   "matched": 14,
+   "project": 0,
+   "bearer": 14,
+   "treatment": 0,
+   "should_be_account": 0
+  },
+  {
+   "rule": "r-bearer-design",
+   "matched": 14,
+   "project": 0,
+   "bearer": 12,
+   "treatment": 0,
+   "should_be_account": 0
+  },
+  {
+   "rule": "r-bearer-lab",
+   "matched": 5,
+   "project": 0,
+   "bearer": 5,
+   "treatment": 0,
+   "should_be_account": 0
+  }
+ ],
+ "rules_count": 10,
+ "help": [
+  "Nothing was written. Run without --dry-run to store these suggestions."
+ ]
+}

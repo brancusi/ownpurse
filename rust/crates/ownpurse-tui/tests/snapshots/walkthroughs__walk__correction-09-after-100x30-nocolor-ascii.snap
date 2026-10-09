@@ -1,0 +1,107 @@
+---
+source: crates/ownpurse-tui/tests/walkthroughs.rs
+expression: styled(&buf)
+---
+  [roast] v    as of 2025-12-31    [agent*]                                              read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+---------------========-----------------------------------------------------------------------------
+  roast > Trial balance at 2025-12-31 (accrual)                                       matches Xero
+  !  account                                    debit     credit
+  Assets                                               39,680.92
+     Tallowmere Roastery Operating Account  41,671.82
+     Tallowmere Green-Bean Card                         1,990.90
+  Liabilities                                        (15,568.80)
+     Brackenridge Term Loan                            15,568.80
+  Equity                                             (11,934.69)
+     Tallowmere Paid-In Capital                         4,618.27
+     Retained Earnings                                  7,316.42
+  Revenue                                            (20,391.63)
+     Wholesale Bean Sales                              20,391.63
+  Expenses                                              8,214.20
+     Green Coffee Purchases                  5,369.15  +-----------------------------------------+
+     Roaster Afterburner Servicing             898.06  | Where it lands                          |
+     Bag Artwork & Proofs                    1,148.63  | After apply, the 214.77 is part of this |
+>    Cupping Room Supplies                     147.38<-+ balance.                                |
+     Delivery Van Fuel                         238.61  +-----------------------------------------+
+  --------------------------------------------------------------------------------------------------
+     Total                                  49,886.02  49,886.02  balanced ok
+
+-- Step 9 of 10 - After apply ----------------------------------------------------------------------
+  Apply sends the journal, then reads it back from Xero. The entry shows as posted only when the
+  read-back matches the plan. The trial balance then moves 214.77 from 6140 to 6310.
+  Why this matters: Read-back is how you know the books say what was approved.
+  * * * * * * * * * o                                   -> next - <- back - t contents - Esc leave
+ * agent: step 9 of 10 - ` back       h Full history  v Compare  ! Differs  ^P palette  v0.0.0-test
+--- styles
+r0 9-14 +D
+r0 31-34 +D
+r0 43-97 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-99 +D
+r3 2-9 +D
+r3 86-97 +D
+r4 2-2 +D
+r4 5-41 +D
+r4 44-52 +D
+r4 55-63 +D
+r5 2-7 +B
+r5 55-63 +D
+r8 2-12 +B
+r8 53-63 +D
+r10 2-7 +B
+r10 53-63 +D
+r13 2-8 +B
+r13 53-63 +D
+r15 2-9 +B
+r15 56-63 +D
+r16 55-97 +B
+r17 55-55 +B
+r17 57-70 +B
+r17 97-97 +B
+r18 55-55 +B
+r18 97-97 +B
+r19 0-0 +BR
+r19 1-52 +R
+r19 53-54 +BR
+r19 55-55 +B
+r19 97-97 +B
+r19 98-99 +R
+r20 55-97 +B
+r21 2-99 +D
+r22 2-2 +B
+r22 5-41 +B
+r22 44-52 +B
+r22 55-63 +B
+r24 0-1 +D
+r24 2-29 +BD
+r24 30-99 +D
+r27 2-77 +D
+r28 2-2 +D
+r28 4-4 +D
+r28 6-6 +D
+r28 8-8 +D
+r28 10-10 +D
+r28 12-12 +D
+r28 14-14 +D
+r28 16-16 +D
+r28 18-18 +B
+r28 20-20 +D
+r28 56-97 +D
+r29 38-38 +B
+r29 40-53 +D
+r29 54-54 +B
+r29 56-64 +D
+r29 65-65 +B
+r29 67-75 +D
+r29 76-77 +B
+r29 79-85 +D
+r29 88-98 +D

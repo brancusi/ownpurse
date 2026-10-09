@@ -1,0 +1,45 @@
+{
+ "argv": [
+  "--offline",
+  "gl",
+  "one",
+  "--account",
+  "Checking",
+  "--from",
+  "2025-03-01",
+  "--to",
+  "2025-04-30"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "debits": "0.00",
+   "credits": "86517.43",
+   "net": "-86517.43",
+   "from": "2025-03-01",
+   "balance_basis": "Opening from Xero TB 2024-12-31 + 2025 activity",
+   "opening_balance": "42.20",
+   "closing_balance": "-86475.23",
+   "postings": [
+    {
+     "org": "one",
+     "date": "2025-04-02",
+     "account": "Pewter Lane Checking",
+     "debit": null,
+     "credit": "86517.43",
+     "balance": "-86475.23",
+     "source": "Payments",
+     "contact": "",
+     "description": "payment",
+     "reference": "",
+     "source_id": "pay-2"
+    }
+   ],
+   "postings_count": 1,
+   "help": [
+    "Debits positive / credits negative internally; `ownpurse show <org> <source> <source_id>` opens the source document."
+   ]
+  }
+ ],
+ "text": "debits: 0.00\ncredits: 86517.43\nnet: -86517.43\nfrom: 2025-03-01\nbalance_basis: Opening from Xero TB 2024-12-31 + 2025 activity\nopening_balance: 42.20\nclosing_balance: -86475.23\npostings[1]{org,date,account,debit,credit,balance,source,contact,description,source_id}:\n  one,2025-04-02,Pewter Lane Checking,,86517.43,-86475.23,Payments,,payment,pay-2\nhelp[1]:\n  Debits positive / credits negative internally; `ownpurse show <org> <source> <source_id>` opens the source document.\n"
+}

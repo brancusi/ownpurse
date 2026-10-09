@@ -1,0 +1,1167 @@
+{
+ "as_of": "2025-12-31",
+ "tenants": {
+  "roast": "c0ffee00-0000-4000-8000-0000000000a1",
+  "hold": "b01d0000-0000-4000-8000-0000000000b2",
+  "design": "de519000-0000-4000-8000-0000000000c3",
+  "lab": "1ab00000-0000-4000-8000-0000000000d4",
+  "rhein": "e0e00000-0000-4000-8000-0000000000e5"
+ },
+ "config": {
+  "default_profile": "demo",
+  "profiles": {
+   "demo": {
+    "client_id": "DEMO0CLIENT0ID0000000000000000000",
+    "store": "record-ic.sqlite",
+    "token_file": "tokens/demo.json",
+    "orgs": {
+     "roast": "c0ffee00-0000-4000-8000-0000000000a1",
+     "hold": "b01d0000-0000-4000-8000-0000000000b2",
+     "design": "de519000-0000-4000-8000-0000000000c3",
+     "lab": "1ab00000-0000-4000-8000-0000000000d4",
+     "rhein": "e0e00000-0000-4000-8000-0000000000e5"
+    },
+    "extra_links": [
+     {
+      "name": "Demo runbook",
+      "url": "https://example.com/runbook",
+      "description": "A profile-level extra link (source profile:demo)."
+     }
+    ]
+   }
+  },
+  "groups": {
+   "all-co": {
+    "orgs": [
+     "roast",
+     "hold",
+     "design",
+     "lab"
+    ]
+   },
+   "ops": {
+    "orgs": [
+     "roast",
+     "design",
+     "lab"
+    ]
+   }
+  },
+  "tui": {
+   "log_rows": 300
+  },
+  "manifests": {
+   "accountant_gate": [
+    {
+     "org": "hold",
+     "through": "2025-12-31"
+    }
+   ],
+   "zero_accounts": {
+    "design": [
+     "2250"
+    ]
+   }
+  },
+  "parties": {
+   "hold": {
+    "contact": [
+     "brackenridge"
+    ],
+    "narration": [
+     "\\bbrackenridge\\b"
+    ]
+   },
+   "design": {
+    "contact": [
+     "quillfeather"
+    ],
+    "narration": [
+     "\\bquillfeather\\b"
+    ]
+   },
+   "roast": {
+    "contact": [
+     "tallowmere"
+    ],
+    "narration": [
+     "\\btallowmere\\b"
+    ]
+   }
+  },
+  "intercompany": {
+   "pairs": [
+    {
+     "id": "hold-roast",
+     "label": "Brackenridge ↔ Tallowmere (term loan)",
+     "a": {
+      "org": "hold",
+      "accounts": [
+       "1460"
+      ]
+     },
+     "b": {
+      "org": "roast",
+      "accounts": [
+       "2410"
+      ],
+      "party": "hold"
+     },
+     "movement": "match_both",
+     "match_days": 7
+    },
+    {
+     "id": "hold-design",
+     "label": "Brackenridge ↔ Quillfeather (management fees)",
+     "a": {
+      "org": "hold",
+      "accounts": [
+       "1470"
+      ]
+     },
+     "b": {
+      "org": "design",
+      "accounts": [
+       "2420"
+      ],
+      "party": "hold"
+     },
+     "movement": "b_unexplained",
+     "match_days": 7
+    },
+    {
+     "id": "design-roast",
+     "label": "Quillfeather ↔ Tallowmere (recharges)",
+     "a": {
+      "org": "design",
+      "accounts": [
+       "1450"
+      ]
+     },
+     "b": {
+      "org": "roast",
+      "accounts": [
+       "2430"
+      ],
+      "party": "design"
+     },
+     "movement": "b_unexplained",
+     "match_days": 7
+    },
+    {
+     "id": "hold-lab",
+     "label": "Brackenridge ↔ Saltmarsh (equipment advance)",
+     "a": {
+      "org": "hold",
+      "accounts": [
+       "1480"
+      ]
+     },
+     "b": {
+      "org": "lab",
+      "accounts": [
+       "2440"
+      ],
+      "party": "hold"
+     },
+     "movement": "b_unexplained",
+     "match_days": 7
+    },
+    {
+     "id": "design-roast-proofs",
+     "label": "Quillfeather ↔ Tallowmere (proofs, cost side)",
+     "a": {
+      "org": "design",
+      "accounts": [
+       "1450"
+      ]
+     },
+     "b": {
+      "org": "roast",
+      "accounts": [
+       "6290"
+      ],
+      "party": "design"
+     },
+     "movement": "b_unexplained",
+     "match_days": 7
+    },
+    {
+     "id": "roast-rhein",
+     "label": "Tallowmere ↔ Rösterei",
+     "a": {
+      "org": "roast",
+      "accounts": [
+       "2410"
+      ]
+     },
+     "b": {
+      "org": "rhein",
+      "accounts": [
+       "2410"
+      ],
+      "party": null
+     },
+     "movement": "match_both",
+     "match_days": 7
+    }
+   ]
+  },
+  "account_map": {
+   "comment": "presentation only (management view)",
+   "categories": {
+    "cash": {
+     "default": "type:BANK",
+     "label": "Cash and cards"
+    },
+    "intragroup": {
+     "hold": [
+      "1460",
+      "1470",
+      "1480"
+     ],
+     "roast": [
+      "2410",
+      "2430"
+     ],
+     "design": [
+      "1450",
+      "2420"
+     ],
+     "lab": [
+      "2440"
+     ],
+     "label": "Intra-group balances"
+    },
+    "mgmt_fees": {
+     "hold": [
+      "4610"
+     ],
+     "design": [
+      "6420"
+     ],
+     "label": "Management fees"
+    },
+    "revenue": {
+     "default": "class:REVENUE",
+     "label": "Revenue"
+    },
+    "expenses": {
+     "default": "class:EXPENSE",
+     "label": "Expenses"
+    },
+    "equity": {
+     "default": "class:EQUITY",
+     "label": "Equity"
+    }
+   }
+  }
+ },
+ "result": {
+  "as_of": "2025-12-31",
+  "basis": "Xero TB balances (cached); party components and items from documents",
+  "summary": {
+   "pairs": 6,
+   "unexplained": 2,
+   "not compared": 0,
+   "not supported": 1,
+   "bridged": 2,
+   "matches": 1
+  },
+  "pairs": [
+   {
+    "id": "hold-roast",
+    "label": "Brackenridge ↔ Tallowmere (term loan)",
+    "a_org": "hold",
+    "b_org": "roast",
+    "party": "hold",
+    "as_of": "2025-12-31",
+    "residual": "0.00",
+    "movement_items": [],
+    "matched": [
+     {
+      "a": {
+       "org": "hold",
+       "source": "BankTransactions",
+       "source_id": "bt-202",
+       "date": "2025-03-11",
+       "amount": "18437.62"
+      },
+      "b": {
+       "org": "roast",
+       "source": "BankTransactions",
+       "source_id": "bt-106",
+       "date": "2025-03-11",
+       "amount": "-18437.62"
+      }
+     },
+     {
+      "a": {
+       "org": "hold",
+       "source": "BankTransactions",
+       "source_id": "bt-203",
+       "date": "2025-07-15",
+       "amount": "-3281.19"
+      },
+      "b": {
+       "org": "roast",
+       "source": "BankTransactions",
+       "source_id": "bt-107",
+       "date": "2025-07-14",
+       "amount": "3281.19"
+      }
+     },
+     {
+      "a": {
+       "org": "hold",
+       "source": "ManualJournals",
+       "source_id": "mj-204",
+       "date": "2025-09-30",
+       "amount": "412.37"
+      },
+      "b": {
+       "org": "roast",
+       "source": "ManualJournals",
+       "source_id": "mj-102",
+       "date": "2025-09-30",
+       "amount": "-412.37"
+      }
+     }
+    ],
+    "known_items": [],
+    "context": [],
+    "prior": "2024-12-31",
+    "year_start": "2025-01-01",
+    "a_account_ids": [
+     "h-1460"
+    ],
+    "b_account_ids": [
+     "r-2410"
+    ],
+    "a_accounts": [
+     "Term Loan to Tallowmere (1460)"
+    ],
+    "b_accounts": [
+     "Brackenridge Term Loan (2410)"
+    ],
+    "component": "residual",
+    "movement": "match_both",
+    "tb_fetched": {
+     "hold": "2026-10-05T07:46:00Z",
+     "roast": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "15568.80",
+    "b_net": "-15568.80",
+    "b_party_net": "-15568.80",
+    "other_components": {},
+    "raw_difference": "0.00",
+    "difference": "0.00",
+    "opening_difference": "0.00",
+    "movement_difference": "0.00",
+    "movement_explained": "0.00",
+    "movement_residual": "0.00",
+    "a_prev": "0.00",
+    "b_party_prev": "0.00",
+    "status": "matches"
+   },
+   {
+    "id": "hold-design",
+    "label": "Brackenridge ↔ Quillfeather (management fees)",
+    "a_org": "hold",
+    "b_org": "design",
+    "party": "hold",
+    "as_of": "2025-12-31",
+    "residual": "0.00",
+    "movement_items": [
+     {
+      "side": "b",
+      "org": "design",
+      "date": "2025-10-06",
+      "account": "Fees owed to Brackenridge (2420)",
+      "account_id": "d-2420",
+      "account_code": "2420",
+      "amount": "418.27",
+      "source": "BankTransactions",
+      "kind": "Spend",
+      "contact": "Corvid Registry Services",
+      "reference": "",
+      "description": "Annual return filing for the parent",
+      "source_id": "bt-307",
+      "why": "no party contact; no matching entry in hold"
+     }
+    ],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "prior": "2024-12-31",
+    "year_start": "2025-01-01",
+    "a_account_ids": [
+     "h-1470"
+    ],
+    "b_account_ids": [
+     "d-2420"
+    ],
+    "a_accounts": [
+     "Fees Receivable from Quillfeather (1470)"
+    ],
+    "b_accounts": [
+     "Fees owed to Brackenridge (2420)"
+    ],
+    "component": "residual",
+    "movement": "b_unexplained",
+    "tb_fetched": {
+     "hold": "2026-10-05T07:46:00Z",
+     "design": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "4670.51",
+    "b_net": "-4252.24",
+    "b_party_net": "-4252.24",
+    "other_components": {},
+    "raw_difference": "418.27",
+    "difference": "418.27",
+    "opening_difference": "0.00",
+    "movement_difference": "418.27",
+    "movement_explained": "418.27",
+    "movement_residual": "0.00",
+    "a_prev": "1906.33",
+    "b_party_prev": "-1906.33",
+    "status": "bridged"
+   },
+   {
+    "id": "design-roast",
+    "label": "Quillfeather ↔ Tallowmere (recharges)",
+    "a_org": "design",
+    "b_org": "roast",
+    "party": "design",
+    "as_of": "2025-12-31",
+    "residual": "263.94",
+    "movement_items": [],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "prior": "2024-12-31",
+    "year_start": "2025-01-01",
+    "a_account_ids": [
+     "d-1450"
+    ],
+    "b_account_ids": [
+     "r-2430"
+    ],
+    "a_accounts": [
+     "Recharges due from Tallowmere (1450)"
+    ],
+    "b_accounts": [
+     "Owed to Quillfeather for Recharges (2430)"
+    ],
+    "component": "residual",
+    "movement": "b_unexplained",
+    "tb_fetched": {
+     "design": "2026-10-05T07:46:00Z",
+     "roast": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "263.94",
+    "b_net": "0.00",
+    "b_party_net": "0.00",
+    "other_components": {},
+    "raw_difference": "263.94",
+    "difference": "263.94",
+    "opening_difference": "0.00",
+    "movement_difference": "263.94",
+    "movement_explained": "0.00",
+    "movement_residual": "263.94",
+    "a_prev": "0.00",
+    "b_party_prev": "0.00",
+    "status": "unexplained"
+   },
+   {
+    "id": "hold-lab",
+    "label": "Brackenridge ↔ Saltmarsh (equipment advance)",
+    "a_org": "hold",
+    "b_org": "lab",
+    "party": "hold",
+    "as_of": "2025-12-31",
+    "residual": "0.00",
+    "movement_items": [
+     {
+      "side": "b",
+      "org": "lab",
+      "date": "2025-11-28",
+      "account": "Advance from Brackenridge (2440)",
+      "account_id": "l-2440",
+      "account_code": "2440",
+      "amount": "57.13",
+      "source": "ManualJournals",
+      "kind": "Journal",
+      "contact": "",
+      "reference": "Exchange adjustment on the roaster advance",
+      "description": "",
+      "source_id": "mj-401",
+      "why": "no party contact; no matching entry in hold"
+     }
+    ],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "prior": "2024-12-31",
+    "year_start": "2025-01-01",
+    "a_account_ids": [
+     "h-1480"
+    ],
+    "b_account_ids": [
+     "l-2440"
+    ],
+    "a_accounts": [
+     "Equipment Advance to Saltmarsh (1480)"
+    ],
+    "b_accounts": [
+     "Advance from Brackenridge (2440)"
+    ],
+    "component": "residual",
+    "movement": "b_unexplained",
+    "tb_fetched": {
+     "hold": "2026-10-05T07:46:00Z",
+     "lab": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "6912.48",
+    "b_net": "-6855.35",
+    "b_party_net": "-6855.35",
+    "other_components": {},
+    "raw_difference": "57.13",
+    "difference": "57.13",
+    "opening_difference": "0.00",
+    "movement_difference": "57.13",
+    "movement_explained": "57.13",
+    "movement_residual": "0.00",
+    "a_prev": "0.00",
+    "b_party_prev": "0.00",
+    "status": "bridged"
+   },
+   {
+    "id": "design-roast-proofs",
+    "label": "Quillfeather ↔ Tallowmere (proofs, cost side)",
+    "a_org": "design",
+    "b_org": "roast",
+    "party": "design",
+    "as_of": "2025-12-31",
+    "residual": "1412.57",
+    "movement_items": [],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "prior": "2024-12-31",
+    "year_start": "2025-01-01",
+    "a_account_ids": [
+     "d-1450"
+    ],
+    "b_account_ids": [
+     "r-6290"
+    ],
+    "a_accounts": [
+     "Recharges due from Tallowmere (1450)"
+    ],
+    "b_accounts": [
+     "Bag Artwork & Proofs (6290)"
+    ],
+    "component": "residual",
+    "movement": "b_unexplained",
+    "tb_fetched": {
+     "design": "2026-10-05T07:46:00Z",
+     "roast": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "263.94",
+    "b_net": "1148.63",
+    "b_party_net": "1148.63",
+    "other_components": {},
+    "raw_difference": "1412.57",
+    "difference": "1412.57",
+    "opening_difference": "0.00",
+    "movement_difference": "1412.57",
+    "movement_explained": "0.00",
+    "movement_residual": "1412.57",
+    "a_prev": "0.00",
+    "b_party_prev": "0.00",
+    "status": "unexplained"
+   },
+   {
+    "id": "roast-rhein",
+    "label": "Tallowmere ↔ Rösterei",
+    "a_org": "roast",
+    "b_org": "rhein",
+    "party": null,
+    "as_of": "2025-12-31",
+    "residual": null,
+    "movement_items": [],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "status": "not supported",
+    "reason": "different base currencies (roast USD, rhein EUR)"
+   }
+  ]
+ },
+ "checks": [
+  {
+   "name": "hold-roast",
+   "status": "ok",
+   "detail": "matches"
+  },
+  {
+   "name": "hold-design",
+   "status": "ok",
+   "detail": "bridged"
+  },
+  {
+   "name": "design-roast",
+   "status": "warn",
+   "detail": "unexplained"
+  },
+  {
+   "name": "hold-lab",
+   "status": "ok",
+   "detail": "bridged"
+  },
+  {
+   "name": "design-roast-proofs",
+   "status": "warn",
+   "detail": "unexplained"
+  },
+  {
+   "name": "roast-rhein",
+   "status": "warn",
+   "detail": "not supported: different base currencies (roast USD, rhein EUR)"
+  }
+ ],
+ "envelope": {
+  "report": "ic",
+  "title": "Intercompany pairs",
+  "generated_at": "2026-10-05T00:00:00Z",
+  "source": {
+   "record": "record.sqlite",
+   "xero_tb_fetched": {
+    "hold": "2026-10-05T07:46:00Z",
+    "roast": "2026-10-05T07:46:00Z",
+    "design": "2026-10-05T07:46:00Z",
+    "lab": "2026-10-05T07:46:00Z"
+   }
+  },
+  "as_of": "2025-12-31",
+  "basis": "accrual",
+  "orgs": [
+   "design",
+   "hold",
+   "lab",
+   "rhein",
+   "roast"
+  ],
+  "sign_convention": "net debit = positive; credits negative; amounts are decimal strings",
+  "checks": [
+   {
+    "name": "hold-roast",
+    "status": "ok",
+    "detail": "matches"
+   },
+   {
+    "name": "hold-design",
+    "status": "ok",
+    "detail": "bridged"
+   },
+   {
+    "name": "design-roast",
+    "status": "warn",
+    "detail": "unexplained"
+   },
+   {
+    "name": "hold-lab",
+    "status": "ok",
+    "detail": "bridged"
+   },
+   {
+    "name": "design-roast-proofs",
+    "status": "warn",
+    "detail": "unexplained"
+   },
+   {
+    "name": "roast-rhein",
+    "status": "warn",
+    "detail": "not supported: different base currencies (roast USD, rhein EUR)"
+   }
+  ],
+  "data": {
+   "as_of": "2025-12-31",
+   "basis": "Xero TB balances (cached); party components and items from documents",
+   "summary": {
+    "pairs": 6,
+    "unexplained": 2,
+    "not compared": 0,
+    "not supported": 1,
+    "bridged": 2,
+    "matches": 1
+   },
+   "pairs": [
+    {
+     "id": "hold-roast",
+     "label": "Brackenridge ↔ Tallowmere (term loan)",
+     "a_org": "hold",
+     "b_org": "roast",
+     "party": "hold",
+     "as_of": "2025-12-31",
+     "residual": "0.00",
+     "movement_items": [],
+     "matched": [
+      {
+       "a": {
+        "org": "hold",
+        "source": "BankTransactions",
+        "source_id": "bt-202",
+        "date": "2025-03-11",
+        "amount": "18437.62"
+       },
+       "b": {
+        "org": "roast",
+        "source": "BankTransactions",
+        "source_id": "bt-106",
+        "date": "2025-03-11",
+        "amount": "-18437.62"
+       }
+      },
+      {
+       "a": {
+        "org": "hold",
+        "source": "BankTransactions",
+        "source_id": "bt-203",
+        "date": "2025-07-15",
+        "amount": "-3281.19"
+       },
+       "b": {
+        "org": "roast",
+        "source": "BankTransactions",
+        "source_id": "bt-107",
+        "date": "2025-07-14",
+        "amount": "3281.19"
+       }
+      },
+      {
+       "a": {
+        "org": "hold",
+        "source": "ManualJournals",
+        "source_id": "mj-204",
+        "date": "2025-09-30",
+        "amount": "412.37"
+       },
+       "b": {
+        "org": "roast",
+        "source": "ManualJournals",
+        "source_id": "mj-102",
+        "date": "2025-09-30",
+        "amount": "-412.37"
+       }
+      }
+     ],
+     "known_items": [],
+     "context": [],
+     "prior": "2024-12-31",
+     "year_start": "2025-01-01",
+     "a_account_ids": [
+      "h-1460"
+     ],
+     "b_account_ids": [
+      "r-2410"
+     ],
+     "a_accounts": [
+      "Term Loan to Tallowmere (1460)"
+     ],
+     "b_accounts": [
+      "Brackenridge Term Loan (2410)"
+     ],
+     "component": "residual",
+     "movement": "match_both",
+     "tb_fetched": {
+      "hold": "2026-10-05T07:46:00Z",
+      "roast": "2026-10-05T07:46:00Z"
+     },
+     "a_net": "15568.80",
+     "b_net": "-15568.80",
+     "b_party_net": "-15568.80",
+     "other_components": {},
+     "raw_difference": "0.00",
+     "difference": "0.00",
+     "opening_difference": "0.00",
+     "movement_difference": "0.00",
+     "movement_explained": "0.00",
+     "movement_residual": "0.00",
+     "a_prev": "0.00",
+     "b_party_prev": "0.00",
+     "status": "matches"
+    },
+    {
+     "id": "hold-design",
+     "label": "Brackenridge ↔ Quillfeather (management fees)",
+     "a_org": "hold",
+     "b_org": "design",
+     "party": "hold",
+     "as_of": "2025-12-31",
+     "residual": "0.00",
+     "movement_items": [
+      {
+       "side": "b",
+       "org": "design",
+       "date": "2025-10-06",
+       "account": "Fees owed to Brackenridge (2420)",
+       "account_id": "d-2420",
+       "account_code": "2420",
+       "amount": "418.27",
+       "source": "BankTransactions",
+       "kind": "Spend",
+       "contact": "Corvid Registry Services",
+       "reference": "",
+       "description": "Annual return filing for the parent",
+       "source_id": "bt-307",
+       "why": "no party contact; no matching entry in hold"
+      }
+     ],
+     "matched": [],
+     "known_items": [],
+     "context": [],
+     "prior": "2024-12-31",
+     "year_start": "2025-01-01",
+     "a_account_ids": [
+      "h-1470"
+     ],
+     "b_account_ids": [
+      "d-2420"
+     ],
+     "a_accounts": [
+      "Fees Receivable from Quillfeather (1470)"
+     ],
+     "b_accounts": [
+      "Fees owed to Brackenridge (2420)"
+     ],
+     "component": "residual",
+     "movement": "b_unexplained",
+     "tb_fetched": {
+      "hold": "2026-10-05T07:46:00Z",
+      "design": "2026-10-05T07:46:00Z"
+     },
+     "a_net": "4670.51",
+     "b_net": "-4252.24",
+     "b_party_net": "-4252.24",
+     "other_components": {},
+     "raw_difference": "418.27",
+     "difference": "418.27",
+     "opening_difference": "0.00",
+     "movement_difference": "418.27",
+     "movement_explained": "418.27",
+     "movement_residual": "0.00",
+     "a_prev": "1906.33",
+     "b_party_prev": "-1906.33",
+     "status": "bridged"
+    },
+    {
+     "id": "design-roast",
+     "label": "Quillfeather ↔ Tallowmere (recharges)",
+     "a_org": "design",
+     "b_org": "roast",
+     "party": "design",
+     "as_of": "2025-12-31",
+     "residual": "263.94",
+     "movement_items": [],
+     "matched": [],
+     "known_items": [],
+     "context": [],
+     "prior": "2024-12-31",
+     "year_start": "2025-01-01",
+     "a_account_ids": [
+      "d-1450"
+     ],
+     "b_account_ids": [
+      "r-2430"
+     ],
+     "a_accounts": [
+      "Recharges due from Tallowmere (1450)"
+     ],
+     "b_accounts": [
+      "Owed to Quillfeather for Recharges (2430)"
+     ],
+     "component": "residual",
+     "movement": "b_unexplained",
+     "tb_fetched": {
+      "design": "2026-10-05T07:46:00Z",
+      "roast": "2026-10-05T07:46:00Z"
+     },
+     "a_net": "263.94",
+     "b_net": "0.00",
+     "b_party_net": "0.00",
+     "other_components": {},
+     "raw_difference": "263.94",
+     "difference": "263.94",
+     "opening_difference": "0.00",
+     "movement_difference": "263.94",
+     "movement_explained": "0.00",
+     "movement_residual": "263.94",
+     "a_prev": "0.00",
+     "b_party_prev": "0.00",
+     "status": "unexplained"
+    },
+    {
+     "id": "hold-lab",
+     "label": "Brackenridge ↔ Saltmarsh (equipment advance)",
+     "a_org": "hold",
+     "b_org": "lab",
+     "party": "hold",
+     "as_of": "2025-12-31",
+     "residual": "0.00",
+     "movement_items": [
+      {
+       "side": "b",
+       "org": "lab",
+       "date": "2025-11-28",
+       "account": "Advance from Brackenridge (2440)",
+       "account_id": "l-2440",
+       "account_code": "2440",
+       "amount": "57.13",
+       "source": "ManualJournals",
+       "kind": "Journal",
+       "contact": "",
+       "reference": "Exchange adjustment on the roaster advance",
+       "description": "",
+       "source_id": "mj-401",
+       "why": "no party contact; no matching entry in hold"
+      }
+     ],
+     "matched": [],
+     "known_items": [],
+     "context": [],
+     "prior": "2024-12-31",
+     "year_start": "2025-01-01",
+     "a_account_ids": [
+      "h-1480"
+     ],
+     "b_account_ids": [
+      "l-2440"
+     ],
+     "a_accounts": [
+      "Equipment Advance to Saltmarsh (1480)"
+     ],
+     "b_accounts": [
+      "Advance from Brackenridge (2440)"
+     ],
+     "component": "residual",
+     "movement": "b_unexplained",
+     "tb_fetched": {
+      "hold": "2026-10-05T07:46:00Z",
+      "lab": "2026-10-05T07:46:00Z"
+     },
+     "a_net": "6912.48",
+     "b_net": "-6855.35",
+     "b_party_net": "-6855.35",
+     "other_components": {},
+     "raw_difference": "57.13",
+     "difference": "57.13",
+     "opening_difference": "0.00",
+     "movement_difference": "57.13",
+     "movement_explained": "57.13",
+     "movement_residual": "0.00",
+     "a_prev": "0.00",
+     "b_party_prev": "0.00",
+     "status": "bridged"
+    },
+    {
+     "id": "design-roast-proofs",
+     "label": "Quillfeather ↔ Tallowmere (proofs, cost side)",
+     "a_org": "design",
+     "b_org": "roast",
+     "party": "design",
+     "as_of": "2025-12-31",
+     "residual": "1412.57",
+     "movement_items": [],
+     "matched": [],
+     "known_items": [],
+     "context": [],
+     "prior": "2024-12-31",
+     "year_start": "2025-01-01",
+     "a_account_ids": [
+      "d-1450"
+     ],
+     "b_account_ids": [
+      "r-6290"
+     ],
+     "a_accounts": [
+      "Recharges due from Tallowmere (1450)"
+     ],
+     "b_accounts": [
+      "Bag Artwork & Proofs (6290)"
+     ],
+     "component": "residual",
+     "movement": "b_unexplained",
+     "tb_fetched": {
+      "design": "2026-10-05T07:46:00Z",
+      "roast": "2026-10-05T07:46:00Z"
+     },
+     "a_net": "263.94",
+     "b_net": "1148.63",
+     "b_party_net": "1148.63",
+     "other_components": {},
+     "raw_difference": "1412.57",
+     "difference": "1412.57",
+     "opening_difference": "0.00",
+     "movement_difference": "1412.57",
+     "movement_explained": "0.00",
+     "movement_residual": "1412.57",
+     "a_prev": "0.00",
+     "b_party_prev": "0.00",
+     "status": "unexplained"
+    },
+    {
+     "id": "roast-rhein",
+     "label": "Tallowmere ↔ Rösterei",
+     "a_org": "roast",
+     "b_org": "rhein",
+     "party": null,
+     "as_of": "2025-12-31",
+     "residual": null,
+     "movement_items": [],
+     "matched": [],
+     "known_items": [],
+     "context": [],
+     "status": "not supported",
+     "reason": "different base currencies (roast USD, rhein EUR)"
+    }
+   ]
+  }
+ },
+ "sorted": {
+  "status": [
+   "design-roast-proofs",
+   "design-roast",
+   "roast-rhein",
+   "hold-design",
+   "hold-lab",
+   "hold-roast"
+  ],
+  "difference": [
+   "design-roast-proofs",
+   "hold-design",
+   "design-roast",
+   "hold-lab",
+   "hold-roast",
+   "roast-rhein"
+  ],
+  "pair": [
+   "hold-design",
+   "hold-lab",
+   "hold-roast",
+   "design-roast-proofs",
+   "design-roast",
+   "roast-rhein"
+  ]
+ },
+ "subset": {
+  "as_of": "2025-12-31",
+  "basis": "Xero TB balances (cached); party components and items from documents",
+  "summary": {
+   "pairs": 1,
+   "unexplained": 0,
+   "not compared": 0,
+   "not supported": 0,
+   "bridged": 0,
+   "matches": 1
+  },
+  "pairs": [
+   {
+    "id": "hold-roast",
+    "label": "Brackenridge ↔ Tallowmere (term loan)",
+    "a_org": "hold",
+    "b_org": "roast",
+    "party": "hold",
+    "as_of": "2025-12-31",
+    "residual": "0.00",
+    "movement_items": [],
+    "matched": [
+     {
+      "a": {
+       "org": "hold",
+       "source": "BankTransactions",
+       "source_id": "bt-202",
+       "date": "2025-03-11",
+       "amount": "18437.62"
+      },
+      "b": {
+       "org": "roast",
+       "source": "BankTransactions",
+       "source_id": "bt-106",
+       "date": "2025-03-11",
+       "amount": "-18437.62"
+      }
+     },
+     {
+      "a": {
+       "org": "hold",
+       "source": "BankTransactions",
+       "source_id": "bt-203",
+       "date": "2025-07-15",
+       "amount": "-3281.19"
+      },
+      "b": {
+       "org": "roast",
+       "source": "BankTransactions",
+       "source_id": "bt-107",
+       "date": "2025-07-14",
+       "amount": "3281.19"
+      }
+     },
+     {
+      "a": {
+       "org": "hold",
+       "source": "ManualJournals",
+       "source_id": "mj-204",
+       "date": "2025-09-30",
+       "amount": "412.37"
+      },
+      "b": {
+       "org": "roast",
+       "source": "ManualJournals",
+       "source_id": "mj-102",
+       "date": "2025-09-30",
+       "amount": "-412.37"
+      }
+     }
+    ],
+    "known_items": [],
+    "context": [],
+    "prior": "2024-12-31",
+    "year_start": "2025-01-01",
+    "a_account_ids": [
+     "h-1460"
+    ],
+    "b_account_ids": [
+     "r-2410"
+    ],
+    "a_accounts": [
+     "Term Loan to Tallowmere (1460)"
+    ],
+    "b_accounts": [
+     "Brackenridge Term Loan (2410)"
+    ],
+    "component": "residual",
+    "movement": "match_both",
+    "tb_fetched": {
+     "hold": "2026-10-05T07:46:00Z",
+     "roast": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "15568.80",
+    "b_net": "-15568.80",
+    "b_party_net": "-15568.80",
+    "other_components": {},
+    "raw_difference": "0.00",
+    "difference": "0.00",
+    "opening_difference": "0.00",
+    "movement_difference": "0.00",
+    "movement_explained": "0.00",
+    "movement_residual": "0.00",
+    "a_prev": "0.00",
+    "b_party_prev": "0.00",
+    "status": "matches"
+   }
+  ]
+ }
+}

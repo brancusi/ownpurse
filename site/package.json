@@ -1,0 +1,19 @@
+{
+  "name": "ownpurse-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "deploy": "astro build && npx --yes wrangler@4.139.0 deploy"
+  },
+  "dependencies": {
+    "@astrojs/rss": "4.0.19",
+    "@astrojs/sitemap": "3.7.4",
+    "@astrojs/starlight": "0.42.4",
+    "@fontsource-variable/bricolage-grotesque": "5.3.0",
+    "@fontsource/dm-mono": "5.3.0",
+    "astro": "7.3.5"
+  }
+}

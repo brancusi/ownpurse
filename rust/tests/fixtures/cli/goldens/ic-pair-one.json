@@ -1,0 +1,163 @@
+{
+ "argv": [
+  "--offline",
+  "ic",
+  "one-co",
+  "--as-of",
+  "2025-12-31"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "report": "ic",
+   "title": "Intercompany pairs",
+   "source": {
+    "record": "<FIXTURES>/record.sqlite",
+    "xero_tb_fetched": {
+     "one": "2026-10-05T07:46:00Z",
+     "co": "2026-10-05T07:46:00Z"
+    }
+   },
+   "as_of": "2025-12-31",
+   "basis": "accrual",
+   "orgs": [
+    "co",
+    "one"
+   ],
+   "sign_convention": "net debit = positive; credits negative; amounts are decimal strings",
+   "checks": [
+    {
+     "name": "one-co",
+     "status": "ok",
+     "detail": "bridged"
+    }
+   ],
+   "data": {
+    "as_of": "2025-12-31",
+    "basis": "Xero TB balances (cached); party components and items from documents",
+    "summary": {
+     "pairs": 1,
+     "unexplained": 0,
+     "not compared": 0,
+     "not supported": 0,
+     "bridged": 1,
+     "matches": 0
+    },
+    "pairs": [
+     {
+      "id": "one-co",
+      "label": "One ↔ Co (equity)",
+      "a_org": "one",
+      "b_org": "co",
+      "party": null,
+      "as_of": "2025-12-31",
+      "residual": "0.00",
+      "movement_items": [
+       {
+        "side": "a",
+        "org": "one",
+        "date": "2025-03-31",
+        "account": "Pewter Lane Founders' Capital (300)",
+        "account_id": "eq",
+        "account_code": "300",
+        "amount": "-33.33",
+        "source": "ManualJournals",
+        "kind": "Journal",
+        "contact": "",
+        "reference": "accrual",
+        "description": "",
+        "source_id": "mj-1",
+        "why": "no matching entry in co"
+       },
+       {
+        "side": "b",
+        "org": "co",
+        "date": "2025-04-01",
+        "account": "Intra-group Payable – HQ (2475)",
+        "account_id": "c-2475",
+        "account_code": "2475",
+        "amount": "311.83",
+        "source": "BankTransactions",
+        "kind": "Spend",
+        "contact": "HQ Treasury",
+        "reference": "",
+        "description": "",
+        "source_id": "bt-10",
+        "why": "no matching entry in one"
+       },
+       {
+        "side": "b",
+        "org": "co",
+        "date": "2025-06-01",
+        "account": "Intra-group Payable – HQ (2475)",
+        "account_id": "c-2475",
+        "account_code": "2475",
+        "amount": "204.63",
+        "source": "BankTransactions",
+        "kind": "Spend",
+        "contact": "Fernwick Card Services",
+        "reference": "",
+        "description": "",
+        "source_id": "bt-11",
+        "why": "no matching entry in one"
+       },
+       {
+        "side": "b",
+        "org": "co",
+        "date": "2025-12-31",
+        "account": "Intra-group Payable – HQ (2475)",
+        "account_id": "c-2475",
+        "account_code": "2475",
+        "amount": "-506.25",
+        "source": "ManualJournals",
+        "kind": "Journal",
+        "contact": "",
+        "reference": "lease recharged by HQ",
+        "description": "",
+        "source_id": "mj-11",
+        "why": "no matching entry in one"
+       }
+      ],
+      "matched": [],
+      "known_items": [],
+      "context": [],
+      "prior": "2024-12-31",
+      "year_start": "2025-01-01",
+      "a_account_ids": [
+       "eq"
+      ],
+      "b_account_ids": [
+       "c-2475"
+      ],
+      "a_accounts": [
+       "Pewter Lane Founders' Capital (300)"
+      ],
+      "b_accounts": [
+       "Intra-group Payable – HQ (2475)"
+      ],
+      "component": "residual",
+      "movement": "match_both",
+      "tb_fetched": {
+       "one": "2026-10-05T07:46:00Z",
+       "co": "2026-10-05T07:46:00Z"
+      },
+      "a_net": "-33.33",
+      "b_net": "-1003.26",
+      "b_party_net": "-1003.26",
+      "other_components": {},
+      "raw_difference": "-1036.59",
+      "difference": "-1036.59",
+      "opening_difference": "-1013.47",
+      "movement_difference": "-23.12",
+      "movement_explained": "-23.12",
+      "movement_residual": "0.00",
+      "a_prev": "0.00",
+      "b_party_prev": "-1013.47",
+      "status": "bridged"
+     }
+    ]
+   }
+  }
+ ],
+ "text": "as_of: 2025-12-31\nbasis: Xero TB balances (cached); party components and items from documents\nsummary: pairs=1, unexplained=0, bridged=1\nbridge: difference=-1036.59, opening=-1013.47, movement=-23.12, explained=-23.12, residual=0.00\npairs[1]{pair,a,b,difference,residual,status}:\n  one-co,one -33.33,co -1003.26,-1036.59,0.00,bridged\nitems[4]{side,date,org,account,contact,amount,why}:\n  a,2025-03-31,one,Pewter Lane Founders' Capital (300),,-33.33,no matching entry in co\n  b,2025-04-01,co,Intra-group Payable – HQ (2475),HQ Treasury,311.83,no matching entry in one\n  b,2025-06-01,co,Intra-group Payable – HQ (2475),Fernwick Card Services,204.63,no matching entry in one\n  b,2025-12-31,co,Intra-group Payable – HQ (2475),,-506.25,no matching entry in one\n"
+}

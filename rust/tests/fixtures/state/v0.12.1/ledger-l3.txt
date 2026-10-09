@@ -1,0 +1,30 @@
+  ● roast ▾    as of 2025-12-31                                                        ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────
+  roast › … › Tallowmere Green-Bean Card (1060) › Spend 2025-04-17
+  1,092.84  paid to Cordillera Green Imports
+  2025-04-17 · Spend money · Authorised · no tax · reconciled ✓
+
+  Lines
+  description                   account                          amount   tax
+  Natural lot samples, 3 sacks  5020 · Green Coffee Purchases  1,092.84  0.00
+
+  Attachments and history
+  Not fetched yet. ⌃P → Fetch attachments or Fetch history · 1 call each
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  o Open  y Copy  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                         v0.0.0-test

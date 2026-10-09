@@ -1,0 +1,11 @@
+---
+import Mark from './Mark.astro';
+type Part = [string, string?];
+interface Props { title?: string; meta?: string; lines: (string | Part[])[]; blink?: boolean; label?: string }
+const { title = 'ownpurse', meta, lines, blink = false, label } = Astro.props;
+const norm = lines.map((l) => (typeof l === 'string' ? [[l]] as Part[] : l));
+---
+<figure class="op-term" aria-label={label ?? 'Terminal session'}>
+	<div class="bar"><Mark size={13} blink={blink} title="" /><span>{title}</span>{meta && <span class="meta">{meta}</span>}</div>
+	<pre>{norm.map((parts, i) => <>{parts.map(([t, tone]) => <span class={tone ? `t-${tone}` : undefined}>{t}</span>)}{i < norm.length - 1 ? '\n' : ''}</>)}</pre>
+</figure>

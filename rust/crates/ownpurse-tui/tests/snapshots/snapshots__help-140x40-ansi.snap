@@ -1,0 +1,151 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    as of 2025-12-31                                                                                 ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Overview
+  Organisations                                                                                                          all synced 2h ago
+  org     parity (year)  parity (history)    issues
+▌ roast   ✓ exact        2 accounts differ   none
+          Enter → roast trial balance · 967 calls left
+  hold    ✓ exact        ✓ exact             none
+  design  ✓ exact        15 accounts differ  none
+  lab     ✓ exact        ✓ exact             none
+
+  Inter ╭─ Keys · Overview ───────────────────────────────────────────────────────────────────────────────────────────────────────╮
+  4 pai │ Move                          Tabs                          App                           View                          │
+        │ ←           cell ◂            1           Overview          q           Quit              i           Details           │
+  Needs │ →           cell ▸            2           Ledger            r           Reload            W           Walkthroughs      │
+  ! Qui │ ⌥←          Back              3           Intercompany      ?           Help              L           Lay mode          │
+        │ ⌥→          Forward           4           Activity          ⌃P :        palette                                         │
+        │ ↑ k         up                5           System                                                                        │
+        │ ↓ j         down              6           Classify          Find                                                        │
+        │ PgUp        page up           7           Manifest          /           Filter                                          │
+        │ PgDn        page down         Tab         next tab                                                                      │
+        │ Home        first             ⇧Tab        prev tab          Scope                                                       │
+        │ End         last                                            ]           Org ▸                                           │
+        │ Enter       open                                            [           Org ◂                                           │
+        │ Esc         back                                            g           Scope                                           │
+        ╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                                                                     Esc close  v0.0.0-test
+--- styles
+r0 2-23 +B
+r0 24-29 +D
+r0 46-137 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-139 +D
+r4 2-14 +B
+r4 121-137 +D
+r5 2-7 +D
+r5 10-22 +D
+r5 25-42 +D
+r5 45-50 +D
+r6 0-0 +BR
+r6 1-139 +R
+r7 0-139 +R
+r8 10-22 +D
+r8 25-42 +D
+r8 45-50 +D
+r9 10-22 +D
+r9 25-42 fg=yellow
+r9 45-50 +D
+r10 10-22 +D
+r10 25-42 +D
+r10 45-50 +D
+r12 2-7 +B
+r12 8-9 +D
+r12 10-26 +BD
+r12 27-130 +D
+r13 8-8 +D
+r13 10-13 +B
+r13 40-43 +B
+r13 70-72 +B
+r13 100-103 +B
+r13 130-130 +D
+r14 8-8 +D
+r14 22-27 +D
+r14 52-59 +D
+r14 82-85 +D
+r14 112-118 +D
+r14 130-130 +D
+r15 2-7 +B
+r15 8-8 +D
+r15 22-27 +D
+r15 52-57 +D
+r15 82-87 +D
+r15 112-123 +D
+r15 130-130 +D
+r16 2-7 fg=yellow
+r16 8-8 +D
+r16 22-25 +D
+r16 52-63 +D
+r16 82-85 +D
+r16 112-119 +D
+r16 130-130 +D
+r17 8-8 +D
+r17 22-28 +D
+r17 52-59 +D
+r17 82-88 +D
+r17 130-130 +D
+r18 8-8 +D
+r18 22-23 +D
+r18 52-57 +D
+r18 130-130 +D
+r19 8-8 +D
+r19 22-25 +D
+r19 52-59 +D
+r19 70-73 +B
+r19 130-130 +D
+r20 8-8 +D
+r20 22-28 +D
+r20 52-59 +D
+r20 82-87 +D
+r20 130-130 +D
+r21 8-8 +D
+r21 22-30 +D
+r21 52-59 +D
+r21 130-130 +D
+r22 8-8 +D
+r22 22-26 +D
+r22 52-59 +D
+r22 70-74 +B
+r22 130-130 +D
+r23 8-8 +D
+r23 22-25 +D
+r23 82-86 +D
+r23 130-130 +D
+r24 8-8 +D
+r24 22-25 +D
+r24 82-86 +D
+r24 130-130 +D
+r25 8-8 +D
+r25 22-25 +D
+r25 82-86 +D
+r25 130-130 +D
+r26 8-130 +D
+r39 117-119 +B
+r39 121-125 +D
+r39 128-138 +D

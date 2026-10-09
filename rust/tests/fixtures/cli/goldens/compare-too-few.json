@@ -1,0 +1,21 @@
+{
+ "argv": [
+  "--offline",
+  "tb",
+  "one",
+  "--compare",
+  "--date",
+  "2025-12-31"
+ ],
+ "exit": 2,
+ "json": [
+  {
+   "error": "usage",
+   "message": "--compare needs 2–4 orgs; 'one' names 1.",
+   "help": [
+    "Pass a comma list or a group, e.g. `ownpurse tb roast,design --compare`."
+   ]
+  }
+ ],
+ "text": "error: usage\nmessage: --compare needs 2–4 orgs; 'one' names 1.\nhelp[1]:\n  Pass a comma list or a group, e.g. `ownpurse tb roast,design --compare`.\n"
+}

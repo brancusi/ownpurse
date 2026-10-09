@@ -1,0 +1,24 @@
+  All organisations ●●●● ▾    as of 2025-12-31                     ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────
+  ╭─ Switch scope ───────────────────────────────────────────────────────────╮
+  │ › des                                                                    │
+  │──────────────────────────────────────────────────────────────────────────│
+  │▌ design  Quillfeather Design Consultancy LLP · 07:46 UTC · 2h ago · 93…  │
+  │  hold    Brackenridge Lane Holdings Ltd · 07:46 UTC · 2h ago · 978/1,0…  │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+  design  ✓ exact        15 accounts differ  none
+  lab     ✓ exact        ✓ exact             none
+
+  Intercompany
+  4 pairs   1 match   2 bridged   1 unexplained
+
+  Needs attention
+  ! Quillfeather ↔ Tallowmere (recharges) has an unexplained residual of
+    263.94. Open Intercompany (3).
+
+
+
+
+
+             Enter switch · Esc cancel · ↑↓ move · type to filter   v0.0.0-test

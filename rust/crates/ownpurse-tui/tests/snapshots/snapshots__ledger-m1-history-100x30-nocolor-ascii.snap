@@ -1,0 +1,82 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [roast] v    as of 2025-12-31                                                          read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+---------------========-----------------------------------------------------------------------------
+  Overview > roast > Trial balance at 2025-12-31 (accrual)
+  Local full-history balances: 2 accounts differ from Xero (marked !; usually pre-2025 setup
+  balances). ^P -> Refetch TB to open from Xero.
+  showing: differs from Xero (2) - difference = local - Xero
+  !  code  account                                    debit     credit          xero  local − xero
+  Assets                                                                                 37,053.55
+> !  1010  Tallowmere Roastery Operating Account  37,053.55             Dr 41,671.82   Cr 4,618.27
+  Equity                                                                                      0.00
+  !  3010  Tallowmere Paid-In Capital                                    Cr 4,618.27   Dr 4,618.27
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --------------------------------------------------------------------------------------------------
+           Total (all accounts)                   45,267.75  45,267.75
+                                                                                        balanced ok
+ roast - 2 differ - trial balance       h Year basis  v Compare  ! Differs  ^P palette  v0.0.0-test
+--- styles
+r0 9-14 +D
+r0 31-97 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-99 +D
+r3 2-20 +D
+r7 2-2 +D
+r7 5-8 +D
+r7 11-47 +D
+r7 50-58 +D
+r7 61-69 +D
+r7 72-83 +D
+r7 86-97 +D
+r8 2-7 +B
+r8 89-97 +D
+r9 0-0 +BR
+r9 1-99 +R
+r10 2-7 +B
+r10 94-97 +D
+r11 5-8 +D
+r26 2-99 +D
+r27 2-2 +B
+r27 5-8 +B
+r27 11-47 +B
+r27 50-58 +B
+r27 61-69 +B
+r27 72-83 +B
+r27 86-97 +B
+r29 1-32 +D
+r29 40-40 +B
+r29 42-53 +D
+r29 54-54 +B
+r29 56-64 +D
+r29 65-65 +B
+r29 67-75 +D
+r29 76-77 +B
+r29 79-85 +D
+r29 88-98 +D

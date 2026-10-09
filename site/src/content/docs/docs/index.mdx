@@ -1,0 +1,50 @@
+---
+title: ownpurse docs
+description: Documentation for ownpurse, a local, append-only record of your books that you and your agents can query, reconcile and plan changes against.
+---
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+ownpurse keeps a local record of the facts from your financial sources, in a file you hold. It rebuilds your ledger
+from that record, checks it against the source to the cent, and lets you and your agents plan changes that reach your
+books only after you approve them. Xero is the first source; others are planned.
+
+ownpurse is in early development. macOS is the tested platform.
+
+## Start here
+
+<CardGrid>
+  <LinkCard title="Introduction" href="/docs/start/introduction/" description="What ownpurse is and how its layers fit together." />
+  <LinkCard title="Install" href="/docs/start/install/" description="Build the CLI and terminal UI, and check your setup." />
+  <LinkCard title="Quickstart" href="/docs/start/quickstart/" description="Run the offline demo, then connect your Xero organisations." />
+  <LinkCard title="Concepts" href="/docs/start/concepts/" description="The record, versions, sources, the local ledger and parity." />
+</CardGrid>
+
+## Guides
+
+<CardGrid>
+  <LinkCard title="Configuration" href="/docs/guides/configuration/" description="Every key in ownpurse.json." />
+  <LinkCard title="Reports" href="/docs/guides/reports/" description="Trial balance, ledger, P&L, balance sheet, parity and exports." />
+  <LinkCard title="Intercompany" href="/docs/guides/intercompany/" description="Check that related organisations agree." />
+  <LinkCard title="Terminal UI" href="/docs/guides/terminal-ui/" description="Tabs, keys, themes, walkthroughs and upgrades." />
+  <LinkCard title="Working with agents" href="/docs/guides/agents/" description="AXI conventions and the view-only agent bridge." />
+  <LinkCard title="Writes and classification" href="/docs/guides/writes/" description="Manifests, sealed packages you approve, and local labels." />
+</CardGrid>
+
+## Developers
+
+<CardGrid>
+  <LinkCard title="Architecture" href="/docs/developers/architecture/" description="Crates, dependencies, tests and safety rules." />
+  <LinkCard title="Data model" href="/docs/developers/data-model/" description="The record's layers and tables, and the direction toward facts." />
+  <LinkCard title="Writing a connector" href="/docs/developers/connectors/" description="What a connector must do to bring in a new source." />
+  <LinkCard title="Contributing" href="/docs/developers/contributing/" description="Build, test, the release gate and releases." />
+  <LinkCard title="Security" href="/docs/developers/security/" description="Credentials, tokens, writes and reporting." />
+</CardGrid>
+
+## Reference
+
+<CardGrid>
+  <LinkCard title="CLI reference" href="/docs/reference/cli/" description="Every command and option, from the binary's own help." />
+  <LinkCard title="Roadmap" href="/docs/reference/roadmap/" description="What ships, what comes next, what is planned." />
+  <LinkCard title="Changelog" href="/docs/reference/changelog/" description="Every notable change, release by release." />
+</CardGrid>

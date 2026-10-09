@@ -1,0 +1,104 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ● hq ↔ ● co    as of 2025-12-31    no local record                                                                           ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──────────────────────────━━━━━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────
+  HQ 1405 only › bridge at 2025-12-31                                                                                   311.83 unexplained
+
+  side A · hq                                                           side B · co · hq's share (residual)
+  Dr 1,519.72                                                           Cr 1,003.26
+  Lease Recharge Receivable (1405)                                      Intra-group Payable – HQ (2475) · account total Cr 1,003.26
+
+  Bridge
+    Difference at year end             516.46
+      = prior-year opening difference    0.00
+      + 2025 movement difference       516.46
+          explained by 1 item below    204.63
+    ─────────────────────────────────────────
+    Unexplained residual               311.83
+
+  Items on one side only                                                                                                                 1
+  side  date        org  account                          contact                 amount  why
+▌ B     2025-06-01  co   Intra-group Payable – HQ (2475)  Fernwick Card Services  204.63  no party contact; no matching entry in hq
+  why: no party contact; no matching entry in hq  ·  BankTransactions bt-11
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  o Open  a A  b B  q Quit  / Filter  ? more  ⌃P palette                                                                        v0.0.0-test
+--- styles
+r0 2-2 +B
+r0 3-3 +D
+r0 4-5 +B
+r0 6-8 +D
+r0 9-9 +B
+r0 10-10 +D
+r0 11-12 +B
+r0 13-16 +D
+r0 33-36 +D
+r0 37-51 fg=red
+r0 52-137 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-27 +D
+r1 28-39 +B
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-25 +D
+r2 26-39 +BD
+r2 40-139 +D
+r3 2-16 +D
+r3 120-137 fg=red
+r5 2-12 +B
+r5 72-106 +B
+r7 2-33 +D
+r7 72-130 +D
+r9 2-7 +B
+r14 4-44 +D
+r15 4-23 fg=red +B
+r15 39-44 fg=red +B
+r17 2-23 +B
+r17 137-137 +D
+r18 2-5 +D
+r18 8-17 +D
+r18 20-22 +D
+r18 25-55 +D
+r18 58-79 +D
+r18 82-87 +D
+r18 90-130 +D
+r19 0-0 +BR
+r19 1-139 +R
+r39 2-2 +B
+r39 4-9 +D
+r39 10-10 +B
+r39 12-14 +D
+r39 15-15 +B
+r39 17-19 +D
+r39 20-20 +B
+r39 22-27 +D
+r39 28-28 +B
+r39 30-37 +D
+r39 38-38 +B
+r39 40-45 +D
+r39 46-47 +B
+r39 49-55 +D
+r39 128-138 +D

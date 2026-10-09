@@ -1,0 +1,20 @@
+{
+ "argv": [
+  "--offline",
+  "gl",
+  "one",
+  "--account",
+  "nothing-like-this"
+ ],
+ "exit": 2,
+ "json": [
+  {
+   "error": "usage",
+   "message": "No account matches 'nothing-like-this'.",
+   "help": [
+    "Run `ownpurse accounts one`."
+   ]
+  }
+ ],
+ "text": "error: usage\nmessage: No account matches 'nothing-like-this'.\nhelp[1]:\n  Run `ownpurse accounts one`.\n"
+}

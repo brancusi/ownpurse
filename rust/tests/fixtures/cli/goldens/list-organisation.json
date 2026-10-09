@@ -1,0 +1,43 @@
+{
+ "argv": [
+  "--offline",
+  "list",
+  "all",
+  "Organisation"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "entity": "Organisation",
+   "as_of": "2026-10-05T07:46:00",
+   "records": [
+    {
+     "org": "one",
+     "name": "Pewter Lane Ironmongery",
+     "class": null,
+     "currency": null,
+     "id": "org"
+    },
+    {
+     "org": "hq",
+     "name": "Calderwick Group HQ",
+     "class": null,
+     "currency": "USD",
+     "id": "o-hq"
+    },
+    {
+     "org": "co",
+     "name": "Calderwick Trading Co",
+     "class": null,
+     "currency": "USD",
+     "id": "o-co"
+    }
+   ],
+   "records_count": 3,
+   "help": [
+    "`--fields a,b.c` picks payload fields; `ownpurse show <org> Organisation <id>` for one record."
+   ]
+  }
+ ],
+ "text": "entity: Organisation\nas_of: 2026-10-05T07:46:00\nrecords[3]{org,name,class,currency,id}:\n  one,Pewter Lane Ironmongery,,,org\n  hq,Calderwick Group HQ,,USD,o-hq\n  co,Calderwick Trading Co,,USD,o-co\nhelp[1]:\n  `--fields a,b.c` picks payload fields; `ownpurse show <org> Organisation <id>` for one record.\n"
+}

@@ -1,0 +1,148 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ● roast ▾    as of 2025-12-31                                                        ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────
+  Overview › roast › Trial balance at 2025-12-31 (accrual)
+  Local full-history balances: 2 accounts differ from Xero (marked !; usually pre-2025 setup
+  balances). ⌃P → Refetch TB to open from Xero.
+  showing: differs from Xero (2) · difference = local − Xero
+  !  code  account                                    debit     credit          xero  local − xero
+  Assets                                                                                 37,053.55
+▌ !  1010  Tallowmere Roastery Operating Account  37,053.55             Dr 41,671.82   Cr 4,618.27
+  Equity                                                                                      0.00
+  !  3010  Tallowmere Paid-In Capital                                    Cr 4,618.27   Dr 4,618.27
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ──────────────────────────────────────────────────────────────────────────────────────────────────
+           Total (all accounts)                   45,267.75  45,267.75
+                                                                                         balanced ✓
+ roast · 2 differ …   h Year basis  v Compare  ! Differs  q Quit  / Filter  ⌃P palette  v0.0.0-test
+--- styles
+r0 0-1 bg=#203233
+r0 2-2 fg=#4DBFA9 bg=#203233 +B
+r0 3-3 fg=#93A0A7 bg=#203233
+r0 4-8 fg=#4DBFA9 bg=#203233 +B
+r0 9-14 fg=#93A0A7 bg=#203233
+r0 15-30 fg=#B9C4C9 bg=#203233
+r0 31-86 fg=#93A0A7 bg=#203233
+r0 87-97 fg=#717E85 bg=#203233
+r0 98-99 bg=#203233
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#E6ECEE bg=#171D20 +B
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-99 bg=#171D20
+r2 0-14 fg=#2D383E
+r2 15-22 fg=#4DBFA9 +B
+r2 23-99 fg=#2D383E
+r3 2-20 fg=#93A0A7
+r3 21-57 fg=#E6ECEE
+r4 2-91 fg=#E6BC5E
+r5 2-46 fg=#E6BC5E
+r6 2-59 fg=#E6BC5E
+r7 2-2 fg=#93A0A7
+r7 5-8 fg=#93A0A7
+r7 11-47 fg=#93A0A7
+r7 50-58 fg=#93A0A7
+r7 61-69 fg=#93A0A7
+r7 72-83 fg=#93A0A7
+r7 86-97 fg=#93A0A7
+r8 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r8 2-7 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r8 8-88 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r8 89-97 fg=#93A0A7 bg=#1A2125 +U ul=#2D383E
+r8 98-99 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r9 0-0 fg=#4DBFA9 bg=#24363E +B
+r9 1-1 bg=#24363E
+r9 2-2 fg=#E6BC5E bg=#24363E
+r9 3-4 bg=#24363E
+r9 5-8 fg=#93A0A7 bg=#24363E
+r9 9-10 bg=#24363E
+r9 11-47 fg=#E6ECEE bg=#24363E
+r9 48-49 bg=#24363E
+r9 50-58 fg=#E6ECEE bg=#24363E
+r9 59-60 bg=#24363E
+r9 61-69 fg=#E6ECEE bg=#24363E
+r9 70-71 bg=#24363E
+r9 72-83 fg=#E6ECEE bg=#24363E
+r9 84-85 bg=#24363E
+r9 86-97 fg=#E6BC5E bg=#24363E
+r9 98-99 bg=#24363E
+r10 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r10 2-7 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r10 8-93 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r10 94-97 fg=#93A0A7 bg=#1A2125 +U ul=#2D383E
+r10 98-99 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r11 2-2 fg=#E6BC5E
+r11 5-8 fg=#93A0A7
+r11 11-47 fg=#E6ECEE
+r11 50-58 fg=#E6ECEE
+r11 61-69 fg=#E6ECEE
+r11 72-83 fg=#E6ECEE
+r11 86-97 fg=#E6BC5E
+r26 2-99 fg=#2D383E
+r27 2-2 fg=#E6ECEE +B
+r27 5-8 fg=#E6ECEE +B
+r27 11-47 fg=#E6ECEE +B
+r27 50-58 fg=#E6ECEE +B
+r27 61-69 fg=#E6ECEE +B
+r27 72-83 fg=#E6ECEE +B
+r27 86-97 fg=#E6ECEE +B
+r28 89-98 fg=#8FCB92
+r29 0-0 bg=#1B2226
+r29 1-18 fg=#93A0A7 bg=#1B2226
+r29 19-21 bg=#1B2226
+r29 22-22 fg=#FFFFFF bg=#1B2226
+r29 23-23 bg=#1B2226
+r29 24-35 fg=#93A0A7 bg=#1B2226
+r29 36-36 fg=#FFFFFF bg=#1B2226
+r29 37-37 bg=#1B2226
+r29 38-46 fg=#93A0A7 bg=#1B2226
+r29 47-47 fg=#FFFFFF bg=#1B2226
+r29 48-48 bg=#1B2226
+r29 49-57 fg=#93A0A7 bg=#1B2226
+r29 58-58 fg=#FFFFFF bg=#1B2226
+r29 59-59 bg=#1B2226
+r29 60-65 fg=#93A0A7 bg=#1B2226
+r29 66-66 fg=#FFFFFF bg=#1B2226
+r29 67-67 bg=#1B2226
+r29 68-75 fg=#93A0A7 bg=#1B2226
+r29 76-77 fg=#FFFFFF bg=#1B2226
+r29 78-78 bg=#1B2226
+r29 79-85 fg=#93A0A7 bg=#1B2226
+r29 86-87 bg=#1B2226
+r29 88-98 fg=#717E85 bg=#1B2226
+r29 99-99 bg=#1B2226

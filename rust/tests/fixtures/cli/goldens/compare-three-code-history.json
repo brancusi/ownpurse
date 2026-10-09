@@ -1,0 +1,675 @@
+{
+ "argv": [
+  "--offline",
+  "tb",
+  "one,hq,co",
+  "--compare",
+  "--date",
+  "2025-06-30",
+  "--full-history"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2025-06-30",
+   "accounting_basis": "accrual",
+   "align": "code",
+   "columns": [
+    {
+     "org": "one",
+     "basis": "full history not compared",
+     "total_debit": "86623.62",
+     "total_credit": "86623.62",
+     "balanced": true
+    },
+    {
+     "org": "hq",
+     "basis": "full history not compared",
+     "total_debit": "6541.08",
+     "total_credit": "6541.08",
+     "balanced": true
+    },
+    {
+     "org": "co",
+     "basis": "full history not compared",
+     "total_debit": "1013.47",
+     "total_credit": "1013.47",
+     "balanced": true
+    }
+   ],
+   "rows": [
+    {
+     "section": "aligned",
+     "key": "code:3200",
+     "code": "3200",
+     "label": "Retained Earnings",
+     "class": "EQUITY",
+     "members": {
+      "one": [],
+      "hq": [
+       "Retained Earnings (3200)"
+      ],
+      "co": [
+       "Retained Earnings (3200)"
+      ]
+     },
+     "member_ids": {
+      "one": [],
+      "hq": [
+       "h-re"
+      ],
+      "co": [
+       "c-re"
+      ]
+     },
+     "names_differ": false,
+     "names": {
+      "one": [],
+      "hq": [
+       "Retained Earnings"
+      ],
+      "co": [
+       "Retained Earnings"
+      ]
+     },
+     "cells": {
+      "one": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "hq": {
+       "exists": true,
+       "debit": "5021.36",
+       "credit": null,
+       "net": "5021.36"
+      },
+      "co": {
+       "exists": true,
+       "debit": "1013.47",
+       "credit": null,
+       "net": "1013.47"
+      }
+     }
+    },
+    {
+     "section": "only in one",
+     "key": "one:bank-1",
+     "code": "",
+     "label": "Pewter Lane Checking",
+     "class": "ASSET",
+     "members": {
+      "one": [
+       "Pewter Lane Checking"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "bank-1"
+      ],
+      "hq": [],
+      "co": []
+     },
+     "account_id": "bank-1",
+     "org": "one",
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": null,
+       "credit": "86485.23",
+       "net": "-86485.23"
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in one",
+     "key": "one:bank-2",
+     "code": "",
+     "label": "Pewter Lane Savings",
+     "class": "ASSET",
+     "members": {
+      "one": [
+       "Pewter Lane Savings"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "bank-2"
+      ],
+      "hq": [],
+      "co": []
+     },
+     "account_id": "bank-2",
+     "org": "one",
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": "52.52",
+       "credit": null,
+       "net": "52.52"
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in one",
+     "key": "one:ap",
+     "code": "800",
+     "label": "Accounts Payable",
+     "class": "LIABILITY",
+     "members": {
+      "one": [
+       "Accounts Payable (800)"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "ap"
+      ],
+      "hq": [],
+      "co": []
+     },
+     "account_id": "ap",
+     "org": "one",
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": "21.68",
+       "credit": null,
+       "net": "21.68"
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in one",
+     "key": "one:gst",
+     "code": "820",
+     "label": "Sales Tax",
+     "class": "LIABILITY",
+     "members": {
+      "one": [
+       "Sales Tax (820)"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "gst"
+      ],
+      "hq": [],
+      "co": []
+     },
+     "account_id": "gst",
+     "org": "one",
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": "10.34",
+       "credit": null,
+       "net": "10.34"
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in one",
+     "key": "one:eq",
+     "code": "300",
+     "label": "Pewter Lane Founders' Capital",
+     "class": "EQUITY",
+     "members": {
+      "one": [
+       "Pewter Lane Founders' Capital (300)"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "eq"
+      ],
+      "hq": [],
+      "co": []
+     },
+     "account_id": "eq",
+     "org": "one",
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": null,
+       "credit": "33.33",
+       "net": "-33.33"
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in one",
+     "key": "one:re",
+     "code": "320",
+     "label": "Retained Earnings",
+     "class": "EQUITY",
+     "members": {
+      "one": [
+       "Retained Earnings (320)"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "re"
+      ],
+      "hq": [],
+      "co": []
+     },
+     "account_id": "re",
+     "org": "one",
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": null,
+       "credit": "104.76",
+       "net": "-104.76"
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in one",
+     "key": "one:rev",
+     "code": "410",
+     "label": "Pewter Lane Counter Sales",
+     "class": "REVENUE",
+     "members": {
+      "one": [
+       "Pewter Lane Counter Sales (410)"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "rev"
+      ],
+      "hq": [],
+      "co": []
+     },
+     "account_id": "rev",
+     "org": "one",
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": null,
+       "credit": "0.30",
+       "net": "-0.30"
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in one",
+     "key": "one:exp",
+     "code": "400",
+     "label": "Pewter Lane Shop Supplies",
+     "class": "EXPENSE",
+     "members": {
+      "one": [
+       "Pewter Lane Shop Supplies (400)"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "exp"
+      ],
+      "hq": [],
+      "co": []
+     },
+     "account_id": "exp",
+     "org": "one",
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": "86539.08",
+       "credit": null,
+       "net": "86539.08"
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in hq",
+     "key": "hq:h-bank",
+     "code": "",
+     "label": "Calderwick HQ Current Account",
+     "class": "ASSET",
+     "members": {
+      "hq": [
+       "Calderwick HQ Current Account"
+      ]
+     },
+     "member_ids": {
+      "one": [],
+      "hq": [
+       "h-bank"
+      ],
+      "co": []
+     },
+     "account_id": "h-bank",
+     "org": "hq",
+     "cells": {
+      "one": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "hq": {
+       "exists": true,
+       "debit": null,
+       "credit": "1207.89",
+       "net": "-1207.89"
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in hq",
+     "key": "hq:h-1405",
+     "code": "1405",
+     "label": "Lease Recharge Receivable",
+     "class": "ASSET",
+     "members": {
+      "hq": [
+       "Lease Recharge Receivable (1405)"
+      ]
+     },
+     "member_ids": {
+      "one": [],
+      "hq": [
+       "h-1405"
+      ],
+      "co": []
+     },
+     "account_id": "h-1405",
+     "org": "hq",
+     "cells": {
+      "one": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "hq": {
+       "exists": true,
+       "debit": "1519.72",
+       "credit": null,
+       "net": "1519.72"
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in hq",
+     "key": "hq:h-2405",
+     "code": "2405",
+     "label": "Co Settlement Clearing",
+     "class": "LIABILITY",
+     "members": {
+      "hq": [
+       "Co Settlement Clearing (2405)"
+      ]
+     },
+     "member_ids": {
+      "one": [],
+      "hq": [
+       "h-2405"
+      ],
+      "co": []
+     },
+     "account_id": "h-2405",
+     "org": "hq",
+     "cells": {
+      "one": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "hq": {
+       "exists": true,
+       "debit": null,
+       "credit": "311.83",
+       "net": "-311.83"
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in hq",
+     "key": "hq:h-eq",
+     "code": "3100",
+     "label": "Calderwick Group Capital",
+     "class": "EQUITY",
+     "members": {
+      "hq": [
+       "Calderwick Group Capital (3100)"
+      ]
+     },
+     "member_ids": {
+      "one": [],
+      "hq": [
+       "h-eq"
+      ],
+      "co": []
+     },
+     "account_id": "h-eq",
+     "org": "hq",
+     "cells": {
+      "one": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "hq": {
+       "exists": true,
+       "debit": null,
+       "credit": "5021.36",
+       "net": "-5021.36"
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in co",
+     "key": "co:c-bank",
+     "code": "",
+     "label": "Calderwick Trading Current Account",
+     "class": "ASSET",
+     "members": {
+      "co": [
+       "Calderwick Trading Current Account"
+      ]
+     },
+     "member_ids": {
+      "one": [],
+      "hq": [],
+      "co": [
+       "c-bank"
+      ]
+     },
+     "account_id": "c-bank",
+     "org": "co",
+     "cells": {
+      "one": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": true,
+       "debit": null,
+       "credit": "516.46",
+       "net": "-516.46"
+      }
+     }
+    },
+    {
+     "section": "only in co",
+     "key": "co:c-2475",
+     "code": "2475",
+     "label": "Intra-group Payable – HQ",
+     "class": "LIABILITY",
+     "members": {
+      "co": [
+       "Intra-group Payable – HQ (2475)"
+      ]
+     },
+     "member_ids": {
+      "one": [],
+      "hq": [],
+      "co": [
+       "c-2475"
+      ]
+     },
+     "account_id": "c-2475",
+     "org": "co",
+     "cells": {
+      "one": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": true,
+       "debit": null,
+       "credit": "497.01",
+       "net": "-497.01"
+      }
+     }
+    }
+   ],
+   "rows_count": 15
+  }
+ ],
+ "text": "as_of: 2025-06-30\naccounting_basis: accrual\nalign: code\ncolumns: one: full history not compared · debit 86623.62 credit 86623.62, hq: full history not compared · debit 6541.08 credit 6541.08, co: full history not compared · debit 1013.47 credit 1013.47\nrows[15]{section,code,account,one,hq,co}:\n  aligned,3200,Retained Earnings,—,5021.36,1013.47\n  only in one,,Pewter Lane Checking,-86485.23,—,—\n  only in one,,Pewter Lane Savings,52.52,—,—\n  only in one,800,Accounts Payable,21.68,—,—\n  only in one,820,Sales Tax,10.34,—,—\n  only in one,300,Pewter Lane Founders' Capital,-33.33,—,—\n  only in one,320,Retained Earnings,-104.76,—,—\n  only in one,410,Pewter Lane Counter Sales,-0.30,—,—\n  only in one,400,Pewter Lane Shop Supplies,86539.08,—,—\n  only in hq,,Calderwick HQ Current Account,—,-1207.89,—\n  only in hq,1405,Lease Recharge Receivable,—,1519.72,—\n  only in hq,2405,Co Settlement Clearing,—,-311.83,—\n  only in hq,3100,Calderwick Group Capital,—,-5021.36,—\n  only in co,,Calderwick Trading Current Account,—,—,-516.46\n  only in co,2475,Intra-group Payable – HQ,—,—,-497.01\nhelp[1]:\n  Cells are each org's own net balance (debit positive); — = the account does not exist there. Rows merge only on an identical code (or an account_map category with --align map); nothing is added or differenced across orgs.\n"
+}

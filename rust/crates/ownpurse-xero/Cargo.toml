@@ -1,0 +1,32 @@
+[package]
+name = "ownpurse-xero"
+description = "ownpurse API layer: token store (cross-process lock), OAuth, HTTP, sync. Never a dependency of the TUI (V1)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+ownpurse-core = { path = "../ownpurse-core" }
+serde_json.workspace = true
+rust_decimal.workspace = true
+rusqlite.workspace = true
+sha2.workspace = true
+# flock(2): the advisory lock every process takes on the token file, so refreshers exclude each other
+libc = "0.2"
+# blocking HTTP over rustls: the API layer is sequential by design (rate limits), no async runtime
+ureq = "3"
+
+[[bin]]
+# test helper for the cross-runtime refresh race (tests/token_race.rs); not installed by install.sh
+name = "ownpurse-token-probe"
+path = "src/bin/token_probe.rs"
+
+[[bin]]
+# test helper for the TUI's fake CLI: appends a scenario's rows to a record copy under the temp folder;
+# not installed by install.sh
+name = "ownpurse-fake-record"
+path = "src/bin/fake_record.rs"
+
+[lints]
+workspace = true

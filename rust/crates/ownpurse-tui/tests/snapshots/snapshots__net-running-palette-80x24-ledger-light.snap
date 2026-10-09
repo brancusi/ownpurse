@@ -1,0 +1,182 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    2025-12-31    ⇅ 929/1,000 left       ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────
+  ╭─ Commands ───────────────────────────────────────────────────────────────╮
+  │ ›  type to filter                                                        │
+  │──────────────────────────────────────────────────────────────────────────│
+  │▌⇅ Sync roast… · running: sync design                                     │
+  │ ⇅ Sync hold… · running: sync design                                      │
+  │ ⇅ Sync design… · running: sync design                                    │
+  │ ⇅ Sync lab… · running: sync design                                       │
+  │ ⇅ Sync all orgs… · running: sync design                                  │
+  │ ⇅ Log in to Xero… · running: sync design                                 │
+  │ ⇅ Refetch Xero trial balance for parity… · running: sync design          │
+  │   Switch to roast                                                        │
+  │   Switch to hold                                                         │
+  │   Switch to design                                                       │
+  │   Switch to lab                                                          │
+  │   Switch to group:all-co                                                 │
+  │   Switch to group:ops                                                    │
+  │   Compare orgs side by side…                                             │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+
+ ⇅ Syncing design · BankTransactions p2 · 9 of ≈ 15 calls · 929 le…    Esc hide
+                 Enter run · Esc close · ↑↓ move · type to filter   v0.0.0-test
+--- styles
+r0 0-1 bg=#E0E7EA
+r0 2-19 fg=#1D6A88 bg=#E0E7EA +B
+r0 20-20 fg=#17705F bg=#E0E7EA +B
+r0 21-21 fg=#5340B0 bg=#E0E7EA +B
+r0 22-22 fg=#A8461A bg=#E0E7EA +B
+r0 23-23 fg=#A33462 bg=#E0E7EA +B
+r0 24-29 fg=#566369 bg=#E0E7EA
+r0 30-39 fg=#3D4A50 bg=#E0E7EA
+r0 40-43 fg=#566369 bg=#E0E7EA
+r0 44-59 fg=#162024 bg=#E0E7EA
+r0 60-66 fg=#566369 bg=#E0E7EA
+r0 67-77 fg=#768186 bg=#E0E7EA
+r0 78-79 bg=#E0E7EA
+r1 0-1 bg=#F1F3F4
+r1 2-3 fg=#768186 bg=#F1F3F4
+r1 4-11 fg=#162024 bg=#F1F3F4 +B
+r1 12-14 bg=#F1F3F4
+r1 15-16 fg=#768186 bg=#F1F3F4
+r1 17-22 fg=#566369 bg=#F1F3F4
+r1 23-25 bg=#F1F3F4
+r1 26-27 fg=#768186 bg=#F1F3F4
+r1 28-39 fg=#566369 bg=#F1F3F4
+r1 40-42 bg=#F1F3F4
+r1 43-44 fg=#768186 bg=#F1F3F4
+r1 45-52 fg=#566369 bg=#F1F3F4
+r1 53-55 bg=#F1F3F4
+r1 56-57 fg=#768186 bg=#F1F3F4
+r1 58-63 fg=#566369 bg=#F1F3F4
+r1 64-66 bg=#F1F3F4
+r1 67-68 fg=#768186 bg=#F1F3F4
+r1 69-76 fg=#566369 bg=#F1F3F4
+r1 77-79 bg=#F1F3F4
+r2 0-1 fg=#C9D1D4
+r2 2-11 fg=#1D6A88 +B
+r2 12-79 fg=#C9D1D4
+r3 2-3 fg=#C9D1D4 bg=#EEF1F2
+r3 4-13 fg=#162024 bg=#EEF1F2 +B
+r3 14-77 fg=#C9D1D4 bg=#EEF1F2
+r4 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r4 2-2 fg=#C9D1D4 bg=#EEF1F2
+r4 3-3 bg=#EEF1F2
+r4 4-5 fg=#566369 bg=#EEF1F2
+r4 6-6 bg=#EEF1F2 +R
+r4 7-20 fg=#566369 bg=#EEF1F2
+r4 21-76 bg=#EEF1F2
+r4 77-77 fg=#C9D1D4 bg=#EEF1F2
+r4 78-79 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r5 2-77 fg=#C9D1D4 bg=#EEF1F2
+r6 0-0 fg=#1D6A88 bg=#D7E4EA +B
+r6 1-1 bg=#D7E4EA
+r6 2-2 fg=#C9D1D4 bg=#EEF1F2
+r6 3-3 fg=#1D6A88 bg=#D7E4EA +B
+r6 4-39 fg=#566369 bg=#D7E4EA
+r6 40-76 bg=#D7E4EA
+r6 77-77 fg=#C9D1D4 bg=#EEF1F2
+r6 78-79 bg=#D7E4EA
+r7 0-1 bg=#D7E4EA
+r7 2-2 fg=#C9D1D4 bg=#EEF1F2
+r7 3-3 bg=#EEF1F2
+r7 4-38 fg=#566369 bg=#EEF1F2
+r7 39-76 bg=#EEF1F2
+r7 77-77 fg=#C9D1D4 bg=#EEF1F2
+r7 78-79 bg=#D7E4EA
+r8 2-2 fg=#C9D1D4 bg=#EEF1F2
+r8 3-3 bg=#EEF1F2
+r8 4-40 fg=#566369 bg=#EEF1F2
+r8 41-76 bg=#EEF1F2
+r8 77-77 fg=#C9D1D4 bg=#EEF1F2
+r9 2-2 fg=#C9D1D4 bg=#EEF1F2
+r9 3-3 bg=#EEF1F2
+r9 4-37 fg=#566369 bg=#EEF1F2
+r9 38-76 bg=#EEF1F2
+r9 77-77 fg=#C9D1D4 bg=#EEF1F2
+r10 2-2 fg=#C9D1D4 bg=#EEF1F2
+r10 3-3 bg=#EEF1F2
+r10 4-42 fg=#566369 bg=#EEF1F2
+r10 43-76 bg=#EEF1F2
+r10 77-77 fg=#C9D1D4 bg=#EEF1F2
+r11 2-2 fg=#C9D1D4 bg=#EEF1F2
+r11 3-3 bg=#EEF1F2
+r11 4-43 fg=#566369 bg=#EEF1F2
+r11 44-76 bg=#EEF1F2
+r11 77-77 fg=#C9D1D4 bg=#EEF1F2
+r12 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r12 2-2 fg=#C9D1D4 bg=#EEF1F2
+r12 3-3 bg=#EEF1F2
+r12 4-66 fg=#566369 bg=#EEF1F2
+r12 67-76 bg=#EEF1F2
+r12 77-77 fg=#C9D1D4 bg=#EEF1F2
+r12 78-79 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r13 2-2 fg=#C9D1D4 bg=#EEF1F2
+r13 3-3 bg=#EEF1F2
+r13 4-5 fg=#2D5FA3 bg=#EEF1F2
+r13 6-20 fg=#162024 bg=#EEF1F2
+r13 21-76 bg=#EEF1F2
+r13 77-77 fg=#C9D1D4 bg=#EEF1F2
+r14 2-2 fg=#C9D1D4 bg=#EEF1F2
+r14 3-3 bg=#EEF1F2
+r14 4-5 fg=#2D5FA3 bg=#EEF1F2
+r14 6-19 fg=#162024 bg=#EEF1F2
+r14 20-76 bg=#EEF1F2
+r14 77-77 fg=#C9D1D4 bg=#EEF1F2
+r15 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r15 2-2 fg=#C9D1D4 bg=#EEF1F2
+r15 3-3 bg=#EEF1F2
+r15 4-5 fg=#2D5FA3 bg=#EEF1F2
+r15 6-21 fg=#162024 bg=#EEF1F2
+r15 22-76 bg=#EEF1F2
+r15 77-77 fg=#C9D1D4 bg=#EEF1F2
+r15 78-79 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r16 2-2 fg=#C9D1D4 bg=#EEF1F2
+r16 3-3 bg=#EEF1F2
+r16 4-5 fg=#2D5FA3 bg=#EEF1F2
+r16 6-18 fg=#162024 bg=#EEF1F2
+r16 19-76 bg=#EEF1F2
+r16 77-77 fg=#C9D1D4 bg=#EEF1F2
+r17 2-2 fg=#C9D1D4 bg=#EEF1F2
+r17 3-3 bg=#EEF1F2
+r17 4-5 fg=#2D5FA3 bg=#EEF1F2
+r17 6-27 fg=#162024 bg=#EEF1F2
+r17 28-76 bg=#EEF1F2
+r17 77-77 fg=#C9D1D4 bg=#EEF1F2
+r18 2-2 fg=#C9D1D4 bg=#EEF1F2
+r18 3-3 bg=#EEF1F2
+r18 4-5 fg=#2D5FA3 bg=#EEF1F2
+r18 6-24 fg=#162024 bg=#EEF1F2
+r18 25-76 bg=#EEF1F2
+r18 77-77 fg=#C9D1D4 bg=#EEF1F2
+r19 2-2 fg=#C9D1D4 bg=#EEF1F2
+r19 3-3 bg=#EEF1F2
+r19 4-5 fg=#2D5FA3 bg=#EEF1F2
+r19 6-31 fg=#162024 bg=#EEF1F2
+r19 32-76 bg=#EEF1F2
+r19 77-77 fg=#C9D1D4 bg=#EEF1F2
+r20 2-77 fg=#C9D1D4 bg=#EEF1F2
+r22 0-0 bg=#EEF1F2
+r22 1-66 fg=#162024 bg=#EEF1F2
+r22 67-70 bg=#EEF1F2
+r22 71-78 fg=#566369 bg=#EEF1F2
+r22 79-79 bg=#EEF1F2
+r23 0-16 bg=#ECEFF0
+r23 17-21 fg=#162024 bg=#ECEFF0
+r23 22-22 bg=#ECEFF0
+r23 23-28 fg=#566369 bg=#ECEFF0
+r23 29-31 fg=#162024 bg=#ECEFF0
+r23 32-32 bg=#ECEFF0
+r23 33-40 fg=#566369 bg=#ECEFF0
+r23 41-42 fg=#162024 bg=#ECEFF0
+r23 43-43 bg=#ECEFF0
+r23 44-64 fg=#566369 bg=#ECEFF0
+r23 65-67 bg=#ECEFF0
+r23 68-78 fg=#768186 bg=#ECEFF0
+r23 79-79 bg=#ECEFF0

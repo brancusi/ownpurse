@@ -1,0 +1,8 @@
+$ ownpurse classify queue
+exit 1
+error: config
+message: classify.toml has 2 problems.
+help[3]:
+  classify.toml:59: rules[1].set.bearer = "rost": unknown choice (did you mean "roast"?)
+  classify.toml:79: rules[4].when.payee_hass: unknown condition (did you mean "payee_has"?)
+  The classification config is <DEMO>/classify.toml (`classify.config` in ownpurse.json); check it with `ownpurse classify rules check`.

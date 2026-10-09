@@ -1,0 +1,128 @@
+---
+source: crates/ownpurse-tui/tests/viz.rs
+expression: styled(&buf)
+---
+  [compare: roast - hold - design - lab] v    as of 2025-12-31                                                                   read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+--==========--------------------------------------------------------------------------------------------------------------------------------
+  Overview > Explain: money flow
+            Money between the orgs: what is owed
+            Who owes whom at 2025-12-31
+            Each arrow points from the org that owes to the org that is owed (as the first org of each pair records it).
+
+               +--------------------+       +--------------------+       +--------------------+       +--------------------+
+               |       roast        |       |        hold        |       |       design       |       |        lab         |
+               +----------+---------+       +----------+---------+       +----------+---------+       +----------+---------+
+                          --------- 15,568.80 -------->|                            |                            |
+                        roast owes hold 15,568.80      |                            |                            |
+                          |                            |<------- 4,670.51 -----------                            |
+                          |                          design owes hold 4,670.51 - design's books show 4,252.24 - a gap of 418.27
+                          ---------------- roast owes design 263.94 --------------->|                            |
+                        roast's books show 0.00 - a gap of 263.94                   |                            |
+                          |                            |<--------------- lab owes hold 6,912.48 ------------------
+                          |                          lab's books show 6,855.35 - a gap of 57.13                  |
+                          |                            |                            |                            |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Esc Close  v Scroll  q Quit  / Filter  ] Org >  ? more  ^P palette                                                            v0.0.0-test
+--- styles
+r0 40-45 +D
+r0 62-137 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-139 +D
+r3 2-12 +D
+r4 12-47 +B
+r6 12-119 +D
+r8 15-36 +B
+r8 44-65 +B
+r8 73-94 +B
+r8 102-123 +B
+r9 15-15 +B
+r9 23-27 +B
+r9 36-36 +B
+r9 44-44 +B
+r9 53-56 +B
+r9 65-65 +B
+r9 73-73 +B
+r9 81-86 +B
+r9 94-94 +B
+r9 102-102 +B
+r9 111-113 +B
+r9 123-123 +B
+r10 15-36 +B
+r10 44-65 +B
+r10 73-94 +B
+r10 102-123 +B
+r11 26-26 +BD
+r11 55-55 +D
+r11 84-84 +D
+r11 113-113 +D
+r12 24-48 +D
+r12 55-55 +D
+r12 84-84 +D
+r12 113-113 +D
+r13 26-26 +D
+r13 55-55 +D
+r13 84-84 +BD
+r13 113-113 +D
+r14 26-26 +D
+r14 53-126 +D
+r15 26-26 +BD
+r15 55-55 +D
+r15 84-84 +D
+r15 113-113 +D
+r16 24-64 +D
+r16 84-84 +D
+r16 113-113 +D
+r17 26-26 +D
+r17 55-55 +D
+r17 84-84 +D
+r17 113-113 +BD
+r18 26-26 +D
+r18 53-94 +D
+r18 113-113 +D
+r19 26-26 +D
+r19 55-55 +D
+r19 84-84 +D
+r19 113-113 +D
+r39 2-4 +B
+r39 6-12 +D
+r39 13-13 +B
+r39 15-22 +D
+r39 23-23 +B
+r39 25-30 +D
+r39 31-31 +B
+r39 33-40 +D
+r39 41-41 +B
+r39 43-49 +D
+r39 50-50 +B
+r39 52-57 +D
+r39 58-59 +B
+r39 61-67 +D
+r39 128-138 +D

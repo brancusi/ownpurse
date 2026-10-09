@@ -1,0 +1,101 @@
+---
+source: crates/ownpurse-tui/tests/classify.rs
+assertion_line: 41
+expression: styled(&buf)
+---
+  [all organisations] v    as of 2025-12-31    classify: 38 open - 2 stale               read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+-------------------------------------------------------------------==========-----------------------
+  all > Classify > Groups > Equipment advance
+ Queue 38 - Groups - Audition - Tree - Catalog
+ Groups > members                   | Equipment advance - intercompany chain - open - g83
+ Hollowpine proofs rech...  4 · open|
+ Emberlin +- Add member - Equipment advance ---------------------------------------------+ iption
+>Equipmen | >  same amount ±7 days in another org first · type an org, date, amount o... | e ro...
+          |------------------------------------------------------------------------------|
+          |> lab · 2025-02-26 · 6,912.48 · Brackenridge Lane Holdings · 0 days apart     |
+          +------------------------------------------------------------------------------+
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+  Enter set  Esc cancel  ^v move                                                        v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-46 +D
+r0 74-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-68 +D
+r1 69-76 +B
+r1 80-89 +D
+r2 0-66 +D
+r2 67-76 +BD
+r2 77-99 +D
+r3 2-27 +D
+r4 9-11 +D
+r4 12-17 +B
+r4 18-20 +D
+r4 29-31 +D
+r4 36-38 +D
+r5 1-16 +D
+r5 36-36 +D
+r5 38-54 +B
+r5 55-88 +D
+r6 27-36 +D
+r7 10-11 +D
+r7 12-43 +BD
+r7 44-96 +D
+r8 0-0 +B
+r8 10-10 +D
+r8 12-13 +D
+r8 14-14 +R
+r8 15-87 +D
+r8 89-89 +D
+r8 90-99 +R
+r9 10-89 +D
+r10 10-10 +D
+r10 11-11 +BR
+r10 12-88 +R
+r10 89-89 +D
+r11 10-89 +D
+r12 36-36 +D
+r13 36-36 +D
+r14 36-36 +D
+r15 36-36 +D
+r16 36-36 +D
+r17 36-36 +D
+r18 36-36 +D
+r19 36-36 +D
+r20 36-36 +D
+r21 36-36 +D
+r22 36-36 +D
+r23 36-36 +D
+r24 36-36 +D
+r25 36-36 +D
+r26 36-36 +D
+r27 36-36 +D
+r28 36-36 +D
+r29 2-6 +B
+r29 8-12 +D
+r29 13-15 +B
+r29 17-24 +D
+r29 25-26 +B
+r29 28-31 +D
+r29 88-98 +D

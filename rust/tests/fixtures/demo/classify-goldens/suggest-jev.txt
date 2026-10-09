@@ -1,0 +1,6 @@
+$ ownpurse classify suggest --engine jev
+exit 2
+error: jev_not_enabled
+message: Jev is not enabled: nothing was sent.
+help[1]:
+  This release runs rules only: `ownpurse classify suggest --engine rules`.

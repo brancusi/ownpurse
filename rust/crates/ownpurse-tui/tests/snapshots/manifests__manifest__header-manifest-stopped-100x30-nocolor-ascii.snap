@@ -1,0 +1,10 @@
+---
+source: crates/ownpurse-tui/tests/manifests.rs
+expression: styled(&shown)
+---
+  [all organisations] v    [manifest dec-cleanup - stopped x]    as of 2025-12-31        read-only
+--- styles
+r0 21-26 +D
+r0 27-60 +B
+r0 61-64 +D
+r0 81-97 +D

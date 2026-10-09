@@ -1,0 +1,123 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    as of 2025-12-31                                                                                 ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+────────────────────────────────────────────────────────━━━━━━━━────────────────────────────────────────────────────────────────────────────
+  all › System
+  Connection
+  token: managed by the CLI (`ownpurse login`) · token file tokens/demo.json
+  cli: ~/.local/bin/ownpurse (0.9.0)
+  scopes: 15 read · 3 write configured (never requested by this TUI)
+  org     name                                 plan      records  last sync           tenant id
+▌ roast   Tallowmere Coffee Roasting Co.       STANDARD       28  07:46 UTC · 2h ago  c0ffee00-0000-4000-8000-0000000000a1
+  hold    Brackenridge Lane Holdings Ltd       PREMIUM        20  07:46 UTC · 2h ago  b01d0000-0000-4000-8000-0000000000b2
+  design  Quillfeather Design Consultancy LLP  STARTER        32  07:46 UTC · 2h ago  de519000-0000-4000-8000-0000000000c3
+  lab     Saltmarsh Cupping Lab LLC            STARTER        12  07:46 UTC · 2h ago  1ab00000-0000-4000-8000-0000000000d4
+
+  Settings
+  Config: tests/fixtures/demo/ownpurse.json · profile demo · store tests/fixtures/demo/record.sqlite · e edits; restart to apply
+  key                                       value                                                                               source
+  xero.auth_url                             https://login.xero.com/identity/connect/authorize                                   defaults
+  xero.token_url                            https://identity.xero.com/connect/token                                             defaults
+  xero.revoke_url                           https://identity.xero.com/connect/revocation                                        defaults
+  xero.connections_url                      https://api.xero.com/connections                                                    defaults
+  xero.api_base                             https://api.xero.com/api.xro/2.0                                                    defaults
+  xero.redirect_uri                         http://localhost:8765/callback                                                      defaults
+  xero.login_timeout_seconds                900                                                                                 defaults
+  xero.scopes.read                          openid, profile, email, offline_access, accounting.settings.read, accounting.cont…  defaults
+  xero.scopes.write                         accounting.banktransactions, accounting.manualjournals, accounting.attachments      defaults
+  limits.calls_per_day                      1000                                                                                defaults
+  limits.calls_per_minute                   60                                                                                  defaults
+  limits.minute_soft_limit                  55                                                                                  defaults
+  limits.warn_day_remaining                 100                                                                                 defaults
+  limits.refresh_token_days                 60                                                                                  defaults
+  limits.refresh_token_warn_days            45                                                                                  defaults
+  sync.page_size                            1000                                                                                defaults
+  sync.ims_overlap_seconds                  5                                                                                   defaults
+  sync.full_sweep_days                      7                                                                                   defaults
+  sync.ttl_seconds.default                  86400                                                                               defaults
+  sync.ttl_seconds.BankTransactions         900                                                                                 defaults
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ roast · Tallowmere Coffee Roasting Co. · tenant c0ffee00-0000-4000-8000-0000000000a1 · short code !TmR4q
+  q Quit  / Filter  ] Org ▸  g Scope  i Details  ? more  ⌃P palette                                                             v0.0.0-test
+--- styles
+r0 2-23 +B
+r0 24-29 +D
+r0 46-137 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-57 +D
+r1 58-63 +B
+r1 67-76 +D
+r1 80-89 +D
+r2 0-55 +D
+r2 56-63 +BD
+r2 64-139 +D
+r3 2-7 +D
+r4 2-11 +B
+r5 2-75 +D
+r6 2-35 +D
+r7 2-67 +D
+r8 2-7 +D
+r8 10-44 +D
+r8 47-54 +D
+r8 57-63 +D
+r8 66-83 +D
+r8 86-121 +D
+r9 0-0 +BR
+r9 1-139 +R
+r10 10-44 +D
+r10 47-54 +D
+r10 86-121 +D
+r11 10-44 +D
+r11 47-54 +D
+r11 86-121 +D
+r12 10-44 +D
+r12 47-54 +D
+r12 86-121 +D
+r14 2-9 +B
+r15 2-127 +D
+r16 2-41 +D
+r16 44-125 +D
+r16 128-139 +D
+r17 128-139 +D
+r18 128-139 +D
+r19 128-139 +D
+r20 128-139 +D
+r21 128-139 +D
+r22 128-139 +D
+r23 128-139 +D
+r24 128-139 +D
+r25 128-139 +D
+r26 128-139 +D
+r27 128-139 +D
+r28 128-139 +D
+r29 128-139 +D
+r30 128-139 +D
+r31 128-139 +D
+r32 128-139 +D
+r33 128-139 +D
+r34 128-139 +D
+r35 128-139 +D
+r36 128-139 +D
+r37 0-139 +D
+r39 2-2 +B
+r39 4-9 +D
+r39 10-10 +B
+r39 12-19 +D
+r39 20-20 +B
+r39 22-28 +D
+r39 29-29 +B
+r39 31-37 +D
+r39 38-38 +B
+r39 40-48 +D
+r39 49-49 +B
+r39 51-56 +D
+r39 57-58 +B
+r39 60-66 +D
+r39 128-138 +D

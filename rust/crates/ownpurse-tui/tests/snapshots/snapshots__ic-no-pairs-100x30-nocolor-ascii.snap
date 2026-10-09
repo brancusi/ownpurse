@@ -1,0 +1,65 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [all organisations] v    as of 2025-12-31                                              read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+--------------------------==============------------------------------------------------------------
+  Intercompany
+
+ No intercompany pairs configured. Add "intercompany.pairs" to ownpurse.json (docs/ROADMAP.md §2).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  q Quit  / Filter  ] Org >  g Scope  d As of  ? more  ^P palette                       v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-27 +D
+r1 28-39 +B
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-25 +D
+r2 26-39 +BD
+r2 40-99 +D
+r5 1-97 +D
+r29 2-2 +B
+r29 4-9 +D
+r29 10-10 +B
+r29 12-19 +D
+r29 20-20 +B
+r29 22-28 +D
+r29 29-29 +B
+r29 31-37 +D
+r29 38-38 +B
+r29 40-46 +D
+r29 47-47 +B
+r29 49-54 +D
+r29 55-56 +B
+r29 58-64 +D
+r29 88-98 +D

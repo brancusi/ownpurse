@@ -1,0 +1,191 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  ● roast ▾    as of 2025-12-31                                    ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+───────────────━━━━━━━━─────────────────────────────────────────────────────────
+  ╭─ Compare orgs: space toggles, Enter opens with 2–4 ──────────────────────╮
+  │ ›  type to filter (alias, name, short code)                              │
+  │──────────────────────────────────────────────────────────────────────────│
+  │  [-] all           4 orgs                                                │
+  │  [x] roast         Tallowmere Coffee Roasting Co. · 07:46 UTC… ● current │
+  │▌ [x] hold          Brackenridge Lane Holdings Ltd · 07:46 UTC · 2h ago…  │
+  │  [ ] design        Quillfeather Design Consultancy LLP · 07:46 UTC · 2…  │
+  │  [ ] lab           Saltmarsh Cupping Lab LLC · 07:46 UTC · 2h ago · 97…  │
+  │  [-] group:all-co  4 orgs                                                │
+  │  [-] group:ops     3 orgs                                                │
+  ╰──────────────────────────────────────────────────────────────────────────╯
+     4010  Wholesale Bean Sales                              20,391.63
+  Expenses                                                    8,214.20
+     5020  Green Coffee Purchases                  5,369.15
+     6140  Roaster Afterburner Servicing             898.06
+     6290  Bag Artwork & Proofs                    1,148.63
+     6310  Cupping Room Supplies                     147.38
+  ──────────────────────────────────────────────────────────────────────────────
+           Total                                  49,886.02  49,886.02
+                                                                     balanced ✓
+ (2 selected: ro…   Enter compare · space toggle · type to filter   v0.0.0-test
+--- styles
+r0 0-1 bg=#DFE7E7
+r0 2-2 fg=#17705F bg=#DFE7E7 +B
+r0 3-3 fg=#566369 bg=#DFE7E7
+r0 4-8 fg=#17705F bg=#DFE7E7 +B
+r0 9-14 fg=#566369 bg=#DFE7E7
+r0 15-30 fg=#3D4A50 bg=#DFE7E7
+r0 31-66 fg=#566369 bg=#DFE7E7
+r0 67-77 fg=#768186 bg=#DFE7E7
+r0 78-79 bg=#DFE7E7
+r1 0-1 bg=#F1F3F4
+r1 2-3 fg=#768186 bg=#F1F3F4
+r1 4-11 fg=#566369 bg=#F1F3F4
+r1 12-14 bg=#F1F3F4
+r1 15-16 fg=#768186 bg=#F1F3F4
+r1 17-22 fg=#162024 bg=#F1F3F4 +B
+r1 23-25 bg=#F1F3F4
+r1 26-27 fg=#768186 bg=#F1F3F4
+r1 28-39 fg=#566369 bg=#F1F3F4
+r1 40-42 bg=#F1F3F4
+r1 43-44 fg=#768186 bg=#F1F3F4
+r1 45-52 fg=#566369 bg=#F1F3F4
+r1 53-55 bg=#F1F3F4
+r1 56-57 fg=#768186 bg=#F1F3F4
+r1 58-63 fg=#566369 bg=#F1F3F4
+r1 64-66 bg=#F1F3F4
+r1 67-68 fg=#768186 bg=#F1F3F4
+r1 69-76 fg=#566369 bg=#F1F3F4
+r1 77-79 bg=#F1F3F4
+r2 0-14 fg=#C9D1D4
+r2 15-22 fg=#17705F +B
+r2 23-79 fg=#C9D1D4
+r3 2-3 fg=#C9D1D4 bg=#EEF1F2
+r3 4-54 fg=#162024 bg=#EEF1F2 +B
+r3 55-77 fg=#C9D1D4 bg=#EEF1F2
+r4 2-2 fg=#C9D1D4 bg=#EEF1F2
+r4 3-3 bg=#EEF1F2
+r4 4-5 fg=#566369 bg=#EEF1F2
+r4 6-6 bg=#EEF1F2 +R
+r4 7-46 fg=#566369 bg=#EEF1F2
+r4 47-76 bg=#EEF1F2
+r4 77-77 fg=#C9D1D4 bg=#EEF1F2
+r5 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r5 2-77 fg=#C9D1D4 bg=#EEF1F2
+r5 78-79 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r6 0-0 fg=#17705F bg=#D7E4E8 +B
+r6 1-1 bg=#D7E4E8
+r6 2-2 fg=#C9D1D4 bg=#EEF1F2
+r6 3-4 bg=#EEF1F2
+r6 5-8 fg=#17705F bg=#EEF1F2 +B
+r6 9-11 fg=#162024 bg=#EEF1F2
+r6 12-22 bg=#EEF1F2
+r6 23-28 fg=#566369 bg=#EEF1F2
+r6 29-76 bg=#EEF1F2
+r6 77-77 fg=#C9D1D4 bg=#EEF1F2
+r6 78-79 bg=#D7E4E8
+r7 2-2 fg=#C9D1D4 bg=#EEF1F2
+r7 3-4 bg=#EEF1F2
+r7 5-8 fg=#17705F bg=#EEF1F2 +B
+r7 9-13 fg=#162024 bg=#EEF1F2
+r7 14-22 bg=#EEF1F2
+r7 23-65 fg=#566369 bg=#EEF1F2
+r7 66-66 bg=#EEF1F2
+r7 67-75 fg=#17705F bg=#EEF1F2 +B
+r7 76-76 bg=#EEF1F2
+r7 77-77 fg=#C9D1D4 bg=#EEF1F2
+r8 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r8 2-2 fg=#C9D1D4 bg=#EEF1F2
+r8 3-3 fg=#17705F bg=#D7E4E8 +B
+r8 4-4 bg=#D7E4E8
+r8 5-8 fg=#17705F bg=#D7E4E8 +B
+r8 9-12 fg=#162024 bg=#D7E4E8
+r8 13-22 bg=#D7E4E8
+r8 23-74 fg=#566369 bg=#D7E4E8
+r8 75-76 bg=#D7E4E8
+r8 77-77 fg=#C9D1D4 bg=#EEF1F2
+r8 78-79 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r9 2-2 fg=#C9D1D4 bg=#EEF1F2
+r9 3-4 bg=#EEF1F2
+r9 5-8 fg=#17705F bg=#EEF1F2 +B
+r9 9-14 fg=#162024 bg=#EEF1F2
+r9 15-22 bg=#EEF1F2
+r9 23-74 fg=#566369 bg=#EEF1F2
+r9 75-76 bg=#EEF1F2
+r9 77-77 fg=#C9D1D4 bg=#EEF1F2
+r10 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r10 2-2 fg=#C9D1D4 bg=#EEF1F2
+r10 3-4 bg=#EEF1F2
+r10 5-8 fg=#17705F bg=#EEF1F2 +B
+r10 9-11 fg=#162024 bg=#EEF1F2
+r10 12-22 bg=#EEF1F2
+r10 23-74 fg=#566369 bg=#EEF1F2
+r10 75-76 bg=#EEF1F2
+r10 77-77 fg=#C9D1D4 bg=#EEF1F2
+r10 78-79 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r11 2-2 fg=#C9D1D4 bg=#EEF1F2
+r11 3-4 bg=#EEF1F2
+r11 5-8 fg=#17705F bg=#EEF1F2 +B
+r11 9-20 fg=#162024 bg=#EEF1F2
+r11 21-22 bg=#EEF1F2
+r11 23-28 fg=#566369 bg=#EEF1F2
+r11 29-76 bg=#EEF1F2
+r11 77-77 fg=#C9D1D4 bg=#EEF1F2
+r12 2-2 fg=#C9D1D4 bg=#EEF1F2
+r12 3-4 bg=#EEF1F2
+r12 5-8 fg=#17705F bg=#EEF1F2 +B
+r12 9-17 fg=#162024 bg=#EEF1F2
+r12 18-22 bg=#EEF1F2
+r12 23-28 fg=#566369 bg=#EEF1F2
+r12 29-76 bg=#EEF1F2
+r12 77-77 fg=#C9D1D4 bg=#EEF1F2
+r13 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r13 2-77 fg=#C9D1D4 bg=#EEF1F2
+r13 78-79 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r14 2-2 fg=#805800
+r14 5-8 fg=#566369
+r14 11-47 fg=#162024
+r14 50-58 fg=#162024
+r14 61-69 fg=#162024
+r15 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r15 2-9 fg=#3D4A50 bg=#EDF1F2 +U ul=#C9D1D4
+r15 10-61 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r15 62-69 fg=#566369 bg=#EDF1F2 +U ul=#C9D1D4
+r15 70-79 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r16 2-2 fg=#805800
+r16 5-8 fg=#566369
+r16 11-47 fg=#162024
+r16 50-58 fg=#162024
+r16 61-69 fg=#162024
+r17 2-2 fg=#805800
+r17 5-8 fg=#566369
+r17 11-47 fg=#162024
+r17 50-58 fg=#162024
+r17 61-69 fg=#162024
+r18 2-2 fg=#805800
+r18 5-8 fg=#566369
+r18 11-47 fg=#162024
+r18 50-58 fg=#162024
+r18 61-69 fg=#162024
+r19 2-2 fg=#805800
+r19 5-8 fg=#566369
+r19 11-47 fg=#162024
+r19 50-58 fg=#162024
+r19 61-69 fg=#162024
+r20 2-79 fg=#C9D1D4
+r21 2-2 fg=#162024 +B
+r21 5-8 fg=#162024 +B
+r21 11-47 fg=#162024 +B
+r21 50-58 fg=#162024 +B
+r21 61-69 fg=#162024 +B
+r22 69-78 fg=#2E6B39
+r23 0-0 bg=#ECEFF0
+r23 1-16 fg=#566369 bg=#ECEFF0
+r23 17-19 bg=#ECEFF0
+r23 20-24 fg=#162024 bg=#ECEFF0
+r23 25-25 bg=#ECEFF0
+r23 26-35 fg=#566369 bg=#ECEFF0
+r23 36-40 fg=#162024 bg=#ECEFF0
+r23 41-41 bg=#ECEFF0
+r23 42-64 fg=#566369 bg=#ECEFF0
+r23 65-67 bg=#ECEFF0
+r23 68-78 fg=#768186 bg=#ECEFF0
+r23 79-79 bg=#ECEFF0

@@ -1,0 +1,123 @@
+---
+source: crates/ownpurse-tui/tests/viz.rs
+expression: styled(&buf)
+---
+  ● hold ▾    as of 2025-12-31                                                         ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────
+  Overview › Explain: T-account
+  Fees Receivable from Quillfeather (1470) · hold
+  Money into (debit) and out of (credit) Fees Receivable from Quillfeather, 2025-01-01 to
+  2025-12-31
+  2025-01-01 to 2025-12-31 · opening from Xero TB 2024-12-31 · 2 debits and 1 credit
+
+                                            Debit   Credit
+  ════════════════════════════════════════════════┬═══════════════════════════════════════════════
+  Opening balance                        1,906.33 │ 06-17 Management fee remittance       2,764.18
+  04-30 Management fee Jan-Apr, Qu…      2,764.18 │
+  08-31 Management fee May-Aug, Qu…      2,764.18 │
+  ────────────────────────────────────────────────┼───────────────────────────────────────────────
+  Total                                  7,434.69 │ Total                                 2,764.18
+
+               Closing balance at 2025-12-31: Dr 4,670.51  (the debit side is bigger)
+
+
+
+
+
+
+
+
+
+
+
+  Esc Close  ↓ Scroll  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                    v0.0.0-test
+--- styles
+r0 0-1 bg=#E3E5EC
+r0 2-2 fg=#5340B0 bg=#E3E5EC +B
+r0 3-3 fg=#566369 bg=#E3E5EC
+r0 4-7 fg=#5340B0 bg=#E3E5EC +B
+r0 8-13 fg=#566369 bg=#E3E5EC
+r0 14-29 fg=#3D4A50 bg=#E3E5EC
+r0 30-86 fg=#566369 bg=#E3E5EC
+r0 87-97 fg=#768186 bg=#E3E5EC
+r0 98-99 bg=#E3E5EC
+r1 0-1 bg=#F1F3F4
+r1 2-3 fg=#768186 bg=#F1F3F4
+r1 4-11 fg=#162024 bg=#F1F3F4 +B
+r1 12-14 bg=#F1F3F4
+r1 15-16 fg=#768186 bg=#F1F3F4
+r1 17-22 fg=#566369 bg=#F1F3F4
+r1 23-25 bg=#F1F3F4
+r1 26-27 fg=#768186 bg=#F1F3F4
+r1 28-39 fg=#566369 bg=#F1F3F4
+r1 40-42 bg=#F1F3F4
+r1 43-44 fg=#768186 bg=#F1F3F4
+r1 45-52 fg=#566369 bg=#F1F3F4
+r1 53-55 bg=#F1F3F4
+r1 56-57 fg=#768186 bg=#F1F3F4
+r1 58-63 fg=#566369 bg=#F1F3F4
+r1 64-66 bg=#F1F3F4
+r1 67-68 fg=#768186 bg=#F1F3F4
+r1 69-76 fg=#566369 bg=#F1F3F4
+r1 77-79 bg=#F1F3F4
+r1 80-81 fg=#768186 bg=#F1F3F4
+r1 82-89 fg=#566369 bg=#F1F3F4
+r1 90-99 bg=#F1F3F4
+r2 0-1 fg=#C9D1D4
+r2 2-11 fg=#5340B0 +B
+r2 12-99 fg=#C9D1D4
+r3 2-12 fg=#566369
+r3 13-30 fg=#162024
+r4 2-48 fg=#162024 +B
+r5 2-88 fg=#3D4A50
+r6 2-11 fg=#3D4A50
+r7 2-83 fg=#566369
+r9 44-48 fg=#5340B0 +B
+r9 52-57 fg=#5340B0 +B
+r10 2-97 fg=#5340B0 +B
+r11 2-16 fg=#3D4A50
+r11 41-48 fg=#162024
+r11 50-50 fg=#5340B0 +B
+r11 52-82 fg=#162024
+r11 90-97 fg=#162024
+r12 2-34 fg=#162024
+r12 41-48 fg=#162024
+r12 50-50 fg=#5340B0 +B
+r13 2-34 fg=#162024
+r13 41-48 fg=#162024
+r13 50-50 fg=#5340B0 +B
+r14 2-49 fg=#C9D1D4
+r14 50-50 fg=#5340B0 +B
+r14 51-97 fg=#C9D1D4
+r15 2-6 fg=#3D4A50
+r15 41-48 fg=#162024
+r15 50-50 fg=#5340B0 +B
+r15 52-56 fg=#3D4A50
+r15 90-97 fg=#162024
+r17 15-84 fg=#162024
+r29 0-1 bg=#ECEFF0
+r29 2-4 fg=#162024 bg=#ECEFF0
+r29 5-5 bg=#ECEFF0
+r29 6-12 fg=#566369 bg=#ECEFF0
+r29 13-13 fg=#162024 bg=#ECEFF0
+r29 14-14 bg=#ECEFF0
+r29 15-22 fg=#566369 bg=#ECEFF0
+r29 23-23 fg=#162024 bg=#ECEFF0
+r29 24-24 bg=#ECEFF0
+r29 25-30 fg=#566369 bg=#ECEFF0
+r29 31-31 fg=#162024 bg=#ECEFF0
+r29 32-32 bg=#ECEFF0
+r29 33-40 fg=#566369 bg=#ECEFF0
+r29 41-41 fg=#162024 bg=#ECEFF0
+r29 42-42 bg=#ECEFF0
+r29 43-49 fg=#566369 bg=#ECEFF0
+r29 50-50 fg=#162024 bg=#ECEFF0
+r29 51-51 bg=#ECEFF0
+r29 52-57 fg=#566369 bg=#ECEFF0
+r29 58-59 fg=#162024 bg=#ECEFF0
+r29 60-60 bg=#ECEFF0
+r29 61-67 fg=#566369 bg=#ECEFF0
+r29 68-87 bg=#ECEFF0
+r29 88-98 fg=#768186 bg=#ECEFF0
+r29 99-99 bg=#ECEFF0

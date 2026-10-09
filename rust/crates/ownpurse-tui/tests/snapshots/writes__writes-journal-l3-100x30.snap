@@ -1,0 +1,35 @@
+---
+source: crates/ownpurse-tui/tests/writes.rs
+assertion_line: 98
+expression: s
+---
+  ● roast ▾    as of 2026-12-31                                                        ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────
+  roast › … › Green Coffee Purchases (5020) › Journal 2026-10-05
+  Manual journal
+  2026-10-05 · Posted · Owner-paid cupping supplies · XA:fixture-write-01:op-1 · written by
+  package 195bd88444f2 (op-1) · no tax
+
+  Lines
+  description  account                                 amount   tax
+  tins         5020 · Green Coffee Purchases           147.38  0.00
+  tins         6140 · Roaster Afterburner Servicing  (147.38)  0.00
+
+  Attachments and history
+  Not fetched yet. ⌃P → Fetch attachments or Fetch history · 1 call each
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  o Open  y Copy  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                         v0.0.0-test

@@ -1,0 +1,21 @@
+---
+import Wordmark from './Wordmark.astro';
+interface Props { current?: string }
+const { current } = Astro.props;
+const links = [
+	{ href: '/philosophy/', label: 'Philosophy', key: 'philosophy' },
+	{ href: '/how-it-works/', label: 'How it works', key: 'how' },
+	{ href: '/docs/', label: 'Docs', key: 'docs' },
+	{ href: '/blog/', label: 'Blog', key: 'blog' },
+	{ href: 'https://github.com/brancusi/ownpurse', label: 'GitHub', key: 'github' },
+];
+---
+<header class="site-header">
+	<div class="wrap">
+		<a class="home" href="/" aria-label="ownpurse home"><Wordmark size={30} blink /></a>
+		<nav class="site-nav" aria-label="Main">
+			{links.map((l) => <a href={l.href} aria-current={current === l.key ? 'page' : undefined}>{l.label}</a>)}
+			<a class="op-btn primary" href="/get-started/" aria-current={current === 'start' ? 'page' : undefined}>Get started</a>
+		</nav>
+	</div>
+</header>

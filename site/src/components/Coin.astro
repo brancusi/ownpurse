@@ -1,0 +1,17 @@
+---
+type Kind = 'posted' | 'balanced' | 'open' | 'held' | 'short' | 'over';
+interface Props { kind?: Kind; label?: string; size?: number }
+const WORD: Record<Kind, string> = { posted: 'Posted', balanced: 'Balanced', open: 'Open', held: 'Held', short: 'Short', over: 'Over' };
+const { kind = 'posted', label, size: s = 12 } = Astro.props;
+const c = s / 2, r = s / 2 - 0.5;
+---
+<span class:list={['op-coin', kind]}>
+	<svg width={s} height={s} viewBox={`0 0 ${s} ${s}`} aria-hidden="true" class={kind === 'held' ? 'g-held' : undefined}>
+		{(kind === 'posted' || kind === 'balanced') && <circle cx={c} cy={c} r={r} fill="currentColor" />}
+		{kind === 'open' && <circle cx={c} cy={c} r={r - s * 0.12} fill="none" stroke="currentColor" stroke-width={s * 0.22} />}
+		{kind === 'held' && <circle cx={c} cy={c} r={r - s * 0.12} fill="none" stroke="currentColor" stroke-width={s * 0.22} stroke-dasharray={`${s * 0.42} ${s * 0.2}`} />}
+		{(kind === 'short' || kind === 'over') && <rect x={s * 0.18} y={c - s * 0.12} width={s * 0.64} height={s * 0.24} fill="currentColor" />}
+		{kind === 'over' && <rect x={c - s * 0.12} y={s * 0.18} width={s * 0.24} height={s * 0.64} fill="currentColor" />}
+	</svg>
+	<span>{label ?? WORD[kind]}</span>
+</span>

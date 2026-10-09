@@ -1,0 +1,91 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [roast] v    as of 2025-12-31    [agent*]                                              read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+---------------========-----------------------------------------------------------------------------
+  roast > Trial balance at 2025-12-31 (accrual)                                       matches Xero
+  !  code  account                                    debit     credit
+  Assets                                                     39,680.92
+>    1010  Tallowmere Roastery Operating Account  41,671.82
+     1060  Tallowmere Green-Bean Card                         1,990.90
+  Liabilities                                              (15,568.80)
+     2410  Brackenridge Term Loan                            15,568.80
+  Equity                                                   (11,934.69)
+     3010  Tallowmere Paid-In Capital                         4,618.27
+     3200  Retained Earnings                                  7,316.42
+  Revenue                                                  (20,391.63)
+     4010  Wholesale Bean Sales                              20,391.63
+  Expenses                                                    8,214.20
+     5020  Green Coffee Purchases                  5,369.15
+     6140  Roaster Afterburner Servicing             898.06
+     6290  Bag Artwork & Proofs                    1,148.63
+     6310  Cupping Room Supplies                     147.38
+     6520  Delivery Van Fuel                         238.61
+     6830  Term Loan Interest                        412.37
+
+
+
+
+  --------------------------------------------------------------------------------------------------
+           Total                                  49,886.02  49,886.02  balanced ok
+
+ * Green-bean card spend, 2025 - 3 lines - 1,990.90 - ` back                ^P palette  v0.0.0-test
+--- styles
+r0 9-14 +D
+r0 31-34 +D
+r0 43-97 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-99 +D
+r3 2-9 +D
+r3 86-97 +D
+r4 2-2 +D
+r4 5-8 +D
+r4 11-47 +D
+r4 50-58 +D
+r4 61-69 +D
+r5 2-7 +B
+r5 61-69 +D
+r6 0-0 +BR
+r6 1-99 +R
+r7 5-8 +D
+r8 2-12 +B
+r8 59-69 +D
+r9 5-8 +D
+r10 2-7 +B
+r10 59-69 +D
+r11 5-8 +D
+r12 5-8 +D
+r13 2-8 +B
+r13 59-69 +D
+r14 5-8 +D
+r15 2-9 +B
+r15 62-69 +D
+r16 5-8 +D
+r17 5-8 +D
+r18 5-8 +D
+r19 5-8 +D
+r20 5-8 +D
+r21 5-8 +D
+r26 2-99 +D
+r27 2-2 +B
+r27 5-8 +B
+r27 11-47 +B
+r27 50-58 +B
+r27 61-69 +B
+r29 51-53 +D
+r29 55-59 +D
+r29 76-77 +B
+r29 79-85 +D
+r29 88-98 +D

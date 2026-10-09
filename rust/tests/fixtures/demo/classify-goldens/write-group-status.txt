@@ -1,0 +1,8 @@
+$ ownpurse classify group status g70 complete --expect-store-rev 82 --client claude
+exit 0
+op: group_status
+summary: "set group ""Hollowpine proofs recharge"" to complete"
+batch: claude-2026-10-05T09:46:00.000000Z-82
+lines: 0
+store_rev: 83
+events: 83

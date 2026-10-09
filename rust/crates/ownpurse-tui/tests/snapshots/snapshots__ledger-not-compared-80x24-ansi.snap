@@ -1,0 +1,75 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  ● roast ▾    as of 2023-06-30                                    ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+───────────────━━━━━━━━─────────────────────────────────────────────────────────
+  roast › Trial balance at 2023-06-30 (accrual)
+  Local full-history balances — no cached Xero TB to compare; may differ from
+  Xero. ⌃P → Refetch TB to open from Xero.
+  !  code  account  debit  credit
+  No balances at this date.
+
+
+
+
+
+
+
+
+
+
+
+
+  ──────────────────────────────────────────────────────────────────────────────
+           Total     0.00    0.00  balanced ✓
+
+  h Full history  v Compare  ! Differs  q  /  ?  ⌃P palette         v0.0.0-test
+--- styles
+r0 2-2 +B
+r0 3-3 +D
+r0 4-8 +B
+r0 9-14 +D
+r0 31-77 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-79 +D
+r3 2-9 +D
+r4 2-76 fg=yellow
+r5 2-41 fg=yellow
+r6 2-2 +D
+r6 5-8 +D
+r6 11-17 +D
+r6 20-24 +D
+r6 27-32 +D
+r7 2-26 +D
+r20 2-79 +D
+r21 2-2 +B
+r21 5-8 +B
+r21 11-17 +B
+r21 20-24 +B
+r21 27-32 +B
+r21 35-44 fg=green
+r23 2-2 +B
+r23 4-17 +D
+r23 18-18 +B
+r23 20-28 +D
+r23 29-29 +B
+r23 31-39 +D
+r23 40-40 +B
+r23 41-42 +D
+r23 43-43 +B
+r23 44-45 +D
+r23 46-46 +B
+r23 47-48 +D
+r23 49-50 +B
+r23 52-58 +D
+r23 68-78 +D

@@ -1,0 +1,98 @@
+---
+source: crates/ownpurse-tui/tests/viz.rs
+expression: styled(&buf)
+---
+  [hold] v    as of 2025-12-31                                                           read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+--==========----------------------------------------------------------------------------------------
+  Overview > Explain: timeline
+  Fees Receivable from Quillfeather (1470) - hold - month by month
+  How the balance of Fees Receivable from Quillfeather moved, month by month
+  Opening Dr 1,906.33 on 2025-01-01 - bars: debit balance right of the line, credit left - * a
+  manual journal landed (2 in all)
+
+  month                                       balance      movement entries
+  2025-01  ###########                    Dr 1,906.33             -
+  2025-02  ###########                    Dr 1,906.33             -
+  2025-03  ###########                    Dr 1,906.33             -
+  2025-04  ##########################     Dr 4,670.51     +2,764.18 1 * journal
+  2025-05  ##########################     Dr 4,670.51             -
+  2025-06  ###########                    Dr 1,906.33     -2,764.18 1
+  2025-07  ###########                    Dr 1,906.33             -
+  2025-08  ##########################     Dr 4,670.51     +2,764.18 1 * journal
+  2025-09  ##########################     Dr 4,670.51             -
+  2025-10  ##########################     Dr 4,670.51             -
+  2025-11  ##########################     Dr 4,670.51             -
+  2025-12  ##########################     Dr 4,670.51             -
+
+
+
+
+
+
+
+  Esc Close  v Scroll  q Quit  / Filter  ] Org >  ? more  ^P palette                    v0.0.0-test
+--- styles
+r0 8-13 +D
+r0 30-97 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-99 +D
+r3 2-12 +D
+r4 2-65 +B
+r6 2-93 +D
+r7 2-33 +D
+r9 2-6 +D
+r9 46-52 +D
+r9 59-66 +D
+r9 68-74 +D
+r10 11-11 +BD
+r10 12-21 +B
+r11 11-11 +BD
+r11 12-21 +B
+r12 11-11 +BD
+r12 12-21 +B
+r13 11-11 +BD
+r13 12-36 +B
+r13 68-78 +B
+r14 11-11 +BD
+r14 12-36 +B
+r15 11-11 +BD
+r15 12-21 +B
+r15 68-68 +D
+r16 11-11 +BD
+r16 12-21 +B
+r17 11-11 +BD
+r17 12-36 +B
+r17 68-78 +B
+r18 11-11 +BD
+r18 12-36 +B
+r19 11-11 +BD
+r19 12-36 +B
+r20 11-11 +BD
+r20 12-36 +B
+r21 11-11 +BD
+r21 12-36 +B
+r29 2-4 +B
+r29 6-12 +D
+r29 13-13 +B
+r29 15-22 +D
+r29 23-23 +B
+r29 25-30 +D
+r29 31-31 +B
+r29 33-40 +D
+r29 41-41 +B
+r29 43-49 +D
+r29 50-50 +B
+r29 52-57 +D
+r29 58-59 +B
+r29 61-67 +D
+r29 88-98 +D

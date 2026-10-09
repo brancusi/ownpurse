@@ -1,0 +1,1074 @@
+{
+ "as_of": "2024-12-31",
+ "tenants": {
+  "one": "11111111-1111-1111-1111-111111111111",
+  "hq": "33333333-3333-3333-3333-333333333333",
+  "co": "44444444-4444-4444-4444-444444444444"
+ },
+ "config": {
+  "parties": {
+   "hq": {
+    "contact": [
+     "\\bhq\\b"
+    ],
+    "narration": [
+     "\\bhq\\b"
+    ]
+   },
+   "card": {
+    "contact": [
+     "fernwick card"
+    ],
+    "cross_match": {
+     "org": "hq",
+     "accounts": [
+      "1405"
+     ],
+     "days": 31
+    }
+   }
+  },
+  "intercompany": {
+   "pairs": [
+    {
+     "id": "hq-co",
+     "label": "HQ ↔ Co",
+     "a": {
+      "org": "hq",
+      "accounts": [
+       "1405",
+       "2405"
+      ]
+     },
+     "b": {
+      "org": "co",
+      "accounts": [
+       "2475"
+      ],
+      "party": "hq"
+     },
+     "movement": "b_unexplained",
+     "match_days": 7
+    },
+    {
+     "id": "hq-co-mb",
+     "label": "",
+     "a": {
+      "org": "hq",
+      "accounts": [
+       "1405",
+       "2405"
+      ]
+     },
+     "b": {
+      "org": "co",
+      "accounts": [
+       "2475"
+      ],
+      "party": "hq"
+     },
+     "movement": "match_both",
+     "match_days": 7,
+     "known_items": [
+      {
+       "text": "2024 lease",
+       "org": "hq",
+       "amount": "1013.47",
+       "contact": "ashgrove",
+       "before": "2025-01-01"
+      },
+      {
+       "text": "float amount",
+       "org": "hq",
+       "amount": 506.25,
+       "contact": "ASHGROVE"
+      },
+      {
+       "text": "inexact float",
+       "org": "hq",
+       "amount": 9.99
+      },
+      {
+       "text": "elsewhere",
+       "org": "nobody",
+       "amount": "1.07"
+      }
+     ],
+     "context_accounts": [
+      {
+       "org": "hq",
+       "account": "2405"
+      },
+      {
+       "org": "hq",
+       "account": {
+        "name": "Nope"
+       }
+      },
+      {
+       "org": "nobody",
+       "account": "1"
+      },
+      {
+       "org": "co",
+       "account": {
+        "name": "Calderwick Trading Current Account"
+       }
+      }
+     ]
+    },
+    {
+     "id": "hq-co-1405",
+     "label": "HQ 1405 only",
+     "a": {
+      "org": "hq",
+      "accounts": [
+       "1405",
+       {
+        "name": "Missing"
+       }
+      ]
+     },
+     "b": {
+      "org": "co",
+      "accounts": [
+       "2475"
+      ],
+      "party": "hq"
+     },
+     "movement": "b_unexplained",
+     "match_days": 7
+    },
+    {
+     "id": "card-co",
+     "label": "Card ↔ Co",
+     "a": {
+      "org": "hq",
+      "accounts": [
+       "1405",
+       "2405"
+      ]
+     },
+     "b": {
+      "org": "co",
+      "accounts": [
+       "2475"
+      ],
+      "party": "card",
+      "other_parties": [
+       "hq"
+      ],
+      "component": "attributed"
+     },
+     "movement": "match_both",
+     "match_days": 7
+    },
+    {
+     "id": "hq-co-resid",
+     "label": "HQ ↔ Co (residual, others)",
+     "a": {
+      "org": "hq",
+      "accounts": [
+       "1405",
+       "2405"
+      ]
+     },
+     "b": {
+      "org": "co",
+      "accounts": [
+       "2475",
+       "6605"
+      ],
+      "party": "hq",
+      "other_parties": [
+       "card"
+      ]
+     },
+     "movement": "match_both",
+     "match_days": 3
+    },
+    {
+     "id": "nobody-co",
+     "label": "Nobody ↔ Co",
+     "a": {
+      "org": "nobody",
+      "accounts": [
+       "1"
+      ]
+     },
+     "b": {
+      "org": "co",
+      "accounts": [
+       "2475"
+      ],
+      "party": "hq"
+     },
+     "movement": "b_unexplained",
+     "match_days": 7
+    },
+    {
+     "id": "one-co",
+     "label": "One ↔ Co",
+     "a": {
+      "org": "one",
+      "accounts": [
+       "1405"
+      ]
+     },
+     "b": {
+      "org": "co",
+      "accounts": [
+       "2475"
+      ],
+      "party": "hq"
+     },
+     "movement": "b_unexplained",
+     "match_days": 7
+    }
+   ]
+  }
+ },
+ "result": {
+  "as_of": "2024-12-31",
+  "basis": "Xero TB balances (cached); party components and items from documents",
+  "summary": {
+   "pairs": 7,
+   "unexplained": 0,
+   "not compared": 6,
+   "not supported": 1,
+   "bridged": 0,
+   "matches": 0
+  },
+  "pairs": [
+   {
+    "id": "hq-co",
+    "label": "HQ ↔ Co",
+    "a_org": "hq",
+    "b_org": "co",
+    "party": "hq",
+    "as_of": "2024-12-31",
+    "residual": null,
+    "movement_items": [],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "prior": "2023-12-31",
+    "year_start": "2024-01-01",
+    "a_account_ids": [
+     "h-1405",
+     "h-2405"
+    ],
+    "b_account_ids": [
+     "c-2475"
+    ],
+    "a_accounts": [
+     "Lease Recharge Receivable (1405)",
+     "Co Settlement Clearing (2405)"
+    ],
+    "b_accounts": [
+     "Intra-group Payable – HQ (2475)"
+    ],
+    "component": "residual",
+    "movement": "b_unexplained",
+    "tb_fetched": {
+     "hq": "2026-10-05T07:46:00Z",
+     "co": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "1013.47",
+    "b_net": "-1013.47",
+    "b_party_net": "-1013.47",
+    "other_components": {},
+    "raw_difference": "0.00",
+    "difference": "0.00",
+    "status": "not compared",
+    "reason": "no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)",
+    "missing_tb": {
+     "date": "2023-12-31",
+     "orgs": [
+      "hq",
+      "co"
+     ]
+    }
+   },
+   {
+    "id": "hq-co-mb",
+    "label": "hq ↔ co",
+    "a_org": "hq",
+    "b_org": "co",
+    "party": "hq",
+    "as_of": "2024-12-31",
+    "residual": null,
+    "movement_items": [],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "prior": "2023-12-31",
+    "year_start": "2024-01-01",
+    "a_account_ids": [
+     "h-1405",
+     "h-2405"
+    ],
+    "b_account_ids": [
+     "c-2475"
+    ],
+    "a_accounts": [
+     "Lease Recharge Receivable (1405)",
+     "Co Settlement Clearing (2405)"
+    ],
+    "b_accounts": [
+     "Intra-group Payable – HQ (2475)"
+    ],
+    "component": "residual",
+    "movement": "match_both",
+    "tb_fetched": {
+     "hq": "2026-10-05T07:46:00Z",
+     "co": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "1013.47",
+    "b_net": "-1013.47",
+    "b_party_net": "-1013.47",
+    "other_components": {},
+    "raw_difference": "0.00",
+    "difference": "0.00",
+    "status": "not compared",
+    "reason": "no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)",
+    "missing_tb": {
+     "date": "2023-12-31",
+     "orgs": [
+      "hq",
+      "co"
+     ]
+    }
+   },
+   {
+    "id": "hq-co-1405",
+    "label": "HQ 1405 only",
+    "a_org": "hq",
+    "b_org": "co",
+    "party": "hq",
+    "as_of": "2024-12-31",
+    "residual": null,
+    "movement_items": [],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "prior": "2023-12-31",
+    "year_start": "2024-01-01",
+    "a_account_ids": [
+     "h-1405"
+    ],
+    "b_account_ids": [
+     "c-2475"
+    ],
+    "a_accounts": [
+     "Lease Recharge Receivable (1405)"
+    ],
+    "b_accounts": [
+     "Intra-group Payable – HQ (2475)"
+    ],
+    "component": "residual",
+    "movement": "b_unexplained",
+    "tb_fetched": {
+     "hq": "2026-10-05T07:46:00Z",
+     "co": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "1013.47",
+    "b_net": "-1013.47",
+    "b_party_net": "-1013.47",
+    "other_components": {},
+    "raw_difference": "0.00",
+    "difference": "0.00",
+    "status": "not compared",
+    "reason": "no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)",
+    "missing_tb": {
+     "date": "2023-12-31",
+     "orgs": [
+      "hq",
+      "co"
+     ]
+    }
+   },
+   {
+    "id": "card-co",
+    "label": "Card ↔ Co",
+    "a_org": "hq",
+    "b_org": "co",
+    "party": "card",
+    "as_of": "2024-12-31",
+    "residual": null,
+    "movement_items": [],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "prior": "2023-12-31",
+    "year_start": "2024-01-01",
+    "a_account_ids": [
+     "h-1405",
+     "h-2405"
+    ],
+    "b_account_ids": [
+     "c-2475"
+    ],
+    "a_accounts": [
+     "Lease Recharge Receivable (1405)",
+     "Co Settlement Clearing (2405)"
+    ],
+    "b_accounts": [
+     "Intra-group Payable – HQ (2475)"
+    ],
+    "component": "attributed",
+    "movement": "match_both",
+    "tb_fetched": {
+     "hq": "2026-10-05T07:46:00Z",
+     "co": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "1013.47",
+    "b_net": "-1013.47",
+    "b_party_net": "0.00",
+    "other_components": {
+     "hq": "-1013.47"
+    },
+    "raw_difference": "0.00",
+    "difference": "1013.47",
+    "status": "not compared",
+    "reason": "no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)",
+    "missing_tb": {
+     "date": "2023-12-31",
+     "orgs": [
+      "hq",
+      "co"
+     ]
+    }
+   },
+   {
+    "id": "hq-co-resid",
+    "label": "HQ ↔ Co (residual, others)",
+    "a_org": "hq",
+    "b_org": "co",
+    "party": "hq",
+    "as_of": "2024-12-31",
+    "residual": null,
+    "movement_items": [],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "prior": "2023-12-31",
+    "year_start": "2024-01-01",
+    "a_account_ids": [
+     "h-1405",
+     "h-2405"
+    ],
+    "b_account_ids": [
+     "c-2475",
+     "c-6605"
+    ],
+    "a_accounts": [
+     "Lease Recharge Receivable (1405)",
+     "Co Settlement Clearing (2405)"
+    ],
+    "b_accounts": [
+     "Intra-group Payable – HQ (2475)",
+     "Premises Lease (6605)"
+    ],
+    "component": "residual",
+    "movement": "match_both",
+    "tb_fetched": {
+     "hq": "2026-10-05T07:46:00Z",
+     "co": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "1013.47",
+    "b_net": "0.00",
+    "b_party_net": "0.00",
+    "other_components": {
+     "card": "0.00"
+    },
+    "raw_difference": "1013.47",
+    "difference": "1013.47",
+    "status": "not compared",
+    "reason": "no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)",
+    "missing_tb": {
+     "date": "2023-12-31",
+     "orgs": [
+      "hq",
+      "co"
+     ]
+    }
+   },
+   {
+    "id": "nobody-co",
+    "label": "Nobody ↔ Co",
+    "a_org": "nobody",
+    "b_org": "co",
+    "party": "hq",
+    "as_of": "2024-12-31",
+    "residual": null,
+    "movement_items": [],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "status": "not supported",
+    "reason": "unknown org nobody"
+   },
+   {
+    "id": "one-co",
+    "label": "One ↔ Co",
+    "a_org": "one",
+    "b_org": "co",
+    "party": "hq",
+    "as_of": "2024-12-31",
+    "residual": null,
+    "movement_items": [],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "prior": "2023-12-31",
+    "year_start": "2024-01-01",
+    "a_account_ids": [],
+    "b_account_ids": [
+     "c-2475"
+    ],
+    "a_accounts": [],
+    "b_accounts": [
+     "Intra-group Payable – HQ (2475)"
+    ],
+    "component": "residual",
+    "movement": "b_unexplained",
+    "tb_fetched": {
+     "one": "2026-10-05T07:46:00Z",
+     "co": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "0.00",
+    "b_net": "-1013.47",
+    "b_party_net": "-1013.47",
+    "other_components": {},
+    "raw_difference": "-1013.47",
+    "difference": "-1013.47",
+    "status": "not compared",
+    "reason": "no cached Xero TB at 2023-12-31 for one, co (bridge needs the prior year-end)",
+    "missing_tb": {
+     "date": "2023-12-31",
+     "orgs": [
+      "one",
+      "co"
+     ]
+    }
+   }
+  ]
+ },
+ "checks": [
+  {
+   "name": "hq-co",
+   "status": "warn",
+   "detail": "not compared: no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)"
+  },
+  {
+   "name": "hq-co-mb",
+   "status": "warn",
+   "detail": "not compared: no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)"
+  },
+  {
+   "name": "hq-co-1405",
+   "status": "warn",
+   "detail": "not compared: no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)"
+  },
+  {
+   "name": "card-co",
+   "status": "warn",
+   "detail": "not compared: no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)"
+  },
+  {
+   "name": "hq-co-resid",
+   "status": "warn",
+   "detail": "not compared: no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)"
+  },
+  {
+   "name": "nobody-co",
+   "status": "warn",
+   "detail": "not supported: unknown org nobody"
+  },
+  {
+   "name": "one-co",
+   "status": "warn",
+   "detail": "not compared: no cached Xero TB at 2023-12-31 for one, co (bridge needs the prior year-end)"
+  }
+ ],
+ "envelope": {
+  "report": "ic",
+  "title": "Intercompany pairs",
+  "generated_at": "2026-10-05T00:00:00Z",
+  "source": {
+   "record": "record.sqlite",
+   "xero_tb_fetched": {
+    "hq": "2026-10-05T07:46:00Z",
+    "co": "2026-10-05T07:46:00Z",
+    "one": "2026-10-05T07:46:00Z"
+   }
+  },
+  "as_of": "2024-12-31",
+  "basis": "accrual",
+  "orgs": [
+   "co",
+   "hq",
+   "nobody",
+   "one"
+  ],
+  "sign_convention": "net debit = positive; credits negative; amounts are decimal strings",
+  "checks": [
+   {
+    "name": "hq-co",
+    "status": "warn",
+    "detail": "not compared: no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)"
+   },
+   {
+    "name": "hq-co-mb",
+    "status": "warn",
+    "detail": "not compared: no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)"
+   },
+   {
+    "name": "hq-co-1405",
+    "status": "warn",
+    "detail": "not compared: no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)"
+   },
+   {
+    "name": "card-co",
+    "status": "warn",
+    "detail": "not compared: no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)"
+   },
+   {
+    "name": "hq-co-resid",
+    "status": "warn",
+    "detail": "not compared: no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)"
+   },
+   {
+    "name": "nobody-co",
+    "status": "warn",
+    "detail": "not supported: unknown org nobody"
+   },
+   {
+    "name": "one-co",
+    "status": "warn",
+    "detail": "not compared: no cached Xero TB at 2023-12-31 for one, co (bridge needs the prior year-end)"
+   }
+  ],
+  "data": {
+   "as_of": "2024-12-31",
+   "basis": "Xero TB balances (cached); party components and items from documents",
+   "summary": {
+    "pairs": 7,
+    "unexplained": 0,
+    "not compared": 6,
+    "not supported": 1,
+    "bridged": 0,
+    "matches": 0
+   },
+   "pairs": [
+    {
+     "id": "hq-co",
+     "label": "HQ ↔ Co",
+     "a_org": "hq",
+     "b_org": "co",
+     "party": "hq",
+     "as_of": "2024-12-31",
+     "residual": null,
+     "movement_items": [],
+     "matched": [],
+     "known_items": [],
+     "context": [],
+     "prior": "2023-12-31",
+     "year_start": "2024-01-01",
+     "a_account_ids": [
+      "h-1405",
+      "h-2405"
+     ],
+     "b_account_ids": [
+      "c-2475"
+     ],
+     "a_accounts": [
+      "Lease Recharge Receivable (1405)",
+      "Co Settlement Clearing (2405)"
+     ],
+     "b_accounts": [
+      "Intra-group Payable – HQ (2475)"
+     ],
+     "component": "residual",
+     "movement": "b_unexplained",
+     "tb_fetched": {
+      "hq": "2026-10-05T07:46:00Z",
+      "co": "2026-10-05T07:46:00Z"
+     },
+     "a_net": "1013.47",
+     "b_net": "-1013.47",
+     "b_party_net": "-1013.47",
+     "other_components": {},
+     "raw_difference": "0.00",
+     "difference": "0.00",
+     "status": "not compared",
+     "reason": "no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)",
+     "missing_tb": {
+      "date": "2023-12-31",
+      "orgs": [
+       "hq",
+       "co"
+      ]
+     }
+    },
+    {
+     "id": "hq-co-mb",
+     "label": "hq ↔ co",
+     "a_org": "hq",
+     "b_org": "co",
+     "party": "hq",
+     "as_of": "2024-12-31",
+     "residual": null,
+     "movement_items": [],
+     "matched": [],
+     "known_items": [],
+     "context": [],
+     "prior": "2023-12-31",
+     "year_start": "2024-01-01",
+     "a_account_ids": [
+      "h-1405",
+      "h-2405"
+     ],
+     "b_account_ids": [
+      "c-2475"
+     ],
+     "a_accounts": [
+      "Lease Recharge Receivable (1405)",
+      "Co Settlement Clearing (2405)"
+     ],
+     "b_accounts": [
+      "Intra-group Payable – HQ (2475)"
+     ],
+     "component": "residual",
+     "movement": "match_both",
+     "tb_fetched": {
+      "hq": "2026-10-05T07:46:00Z",
+      "co": "2026-10-05T07:46:00Z"
+     },
+     "a_net": "1013.47",
+     "b_net": "-1013.47",
+     "b_party_net": "-1013.47",
+     "other_components": {},
+     "raw_difference": "0.00",
+     "difference": "0.00",
+     "status": "not compared",
+     "reason": "no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)",
+     "missing_tb": {
+      "date": "2023-12-31",
+      "orgs": [
+       "hq",
+       "co"
+      ]
+     }
+    },
+    {
+     "id": "hq-co-1405",
+     "label": "HQ 1405 only",
+     "a_org": "hq",
+     "b_org": "co",
+     "party": "hq",
+     "as_of": "2024-12-31",
+     "residual": null,
+     "movement_items": [],
+     "matched": [],
+     "known_items": [],
+     "context": [],
+     "prior": "2023-12-31",
+     "year_start": "2024-01-01",
+     "a_account_ids": [
+      "h-1405"
+     ],
+     "b_account_ids": [
+      "c-2475"
+     ],
+     "a_accounts": [
+      "Lease Recharge Receivable (1405)"
+     ],
+     "b_accounts": [
+      "Intra-group Payable – HQ (2475)"
+     ],
+     "component": "residual",
+     "movement": "b_unexplained",
+     "tb_fetched": {
+      "hq": "2026-10-05T07:46:00Z",
+      "co": "2026-10-05T07:46:00Z"
+     },
+     "a_net": "1013.47",
+     "b_net": "-1013.47",
+     "b_party_net": "-1013.47",
+     "other_components": {},
+     "raw_difference": "0.00",
+     "difference": "0.00",
+     "status": "not compared",
+     "reason": "no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)",
+     "missing_tb": {
+      "date": "2023-12-31",
+      "orgs": [
+       "hq",
+       "co"
+      ]
+     }
+    },
+    {
+     "id": "card-co",
+     "label": "Card ↔ Co",
+     "a_org": "hq",
+     "b_org": "co",
+     "party": "card",
+     "as_of": "2024-12-31",
+     "residual": null,
+     "movement_items": [],
+     "matched": [],
+     "known_items": [],
+     "context": [],
+     "prior": "2023-12-31",
+     "year_start": "2024-01-01",
+     "a_account_ids": [
+      "h-1405",
+      "h-2405"
+     ],
+     "b_account_ids": [
+      "c-2475"
+     ],
+     "a_accounts": [
+      "Lease Recharge Receivable (1405)",
+      "Co Settlement Clearing (2405)"
+     ],
+     "b_accounts": [
+      "Intra-group Payable – HQ (2475)"
+     ],
+     "component": "attributed",
+     "movement": "match_both",
+     "tb_fetched": {
+      "hq": "2026-10-05T07:46:00Z",
+      "co": "2026-10-05T07:46:00Z"
+     },
+     "a_net": "1013.47",
+     "b_net": "-1013.47",
+     "b_party_net": "0.00",
+     "other_components": {
+      "hq": "-1013.47"
+     },
+     "raw_difference": "0.00",
+     "difference": "1013.47",
+     "status": "not compared",
+     "reason": "no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)",
+     "missing_tb": {
+      "date": "2023-12-31",
+      "orgs": [
+       "hq",
+       "co"
+      ]
+     }
+    },
+    {
+     "id": "hq-co-resid",
+     "label": "HQ ↔ Co (residual, others)",
+     "a_org": "hq",
+     "b_org": "co",
+     "party": "hq",
+     "as_of": "2024-12-31",
+     "residual": null,
+     "movement_items": [],
+     "matched": [],
+     "known_items": [],
+     "context": [],
+     "prior": "2023-12-31",
+     "year_start": "2024-01-01",
+     "a_account_ids": [
+      "h-1405",
+      "h-2405"
+     ],
+     "b_account_ids": [
+      "c-2475",
+      "c-6605"
+     ],
+     "a_accounts": [
+      "Lease Recharge Receivable (1405)",
+      "Co Settlement Clearing (2405)"
+     ],
+     "b_accounts": [
+      "Intra-group Payable – HQ (2475)",
+      "Premises Lease (6605)"
+     ],
+     "component": "residual",
+     "movement": "match_both",
+     "tb_fetched": {
+      "hq": "2026-10-05T07:46:00Z",
+      "co": "2026-10-05T07:46:00Z"
+     },
+     "a_net": "1013.47",
+     "b_net": "0.00",
+     "b_party_net": "0.00",
+     "other_components": {
+      "card": "0.00"
+     },
+     "raw_difference": "1013.47",
+     "difference": "1013.47",
+     "status": "not compared",
+     "reason": "no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)",
+     "missing_tb": {
+      "date": "2023-12-31",
+      "orgs": [
+       "hq",
+       "co"
+      ]
+     }
+    },
+    {
+     "id": "nobody-co",
+     "label": "Nobody ↔ Co",
+     "a_org": "nobody",
+     "b_org": "co",
+     "party": "hq",
+     "as_of": "2024-12-31",
+     "residual": null,
+     "movement_items": [],
+     "matched": [],
+     "known_items": [],
+     "context": [],
+     "status": "not supported",
+     "reason": "unknown org nobody"
+    },
+    {
+     "id": "one-co",
+     "label": "One ↔ Co",
+     "a_org": "one",
+     "b_org": "co",
+     "party": "hq",
+     "as_of": "2024-12-31",
+     "residual": null,
+     "movement_items": [],
+     "matched": [],
+     "known_items": [],
+     "context": [],
+     "prior": "2023-12-31",
+     "year_start": "2024-01-01",
+     "a_account_ids": [],
+     "b_account_ids": [
+      "c-2475"
+     ],
+     "a_accounts": [],
+     "b_accounts": [
+      "Intra-group Payable – HQ (2475)"
+     ],
+     "component": "residual",
+     "movement": "b_unexplained",
+     "tb_fetched": {
+      "one": "2026-10-05T07:46:00Z",
+      "co": "2026-10-05T07:46:00Z"
+     },
+     "a_net": "0.00",
+     "b_net": "-1013.47",
+     "b_party_net": "-1013.47",
+     "other_components": {},
+     "raw_difference": "-1013.47",
+     "difference": "-1013.47",
+     "status": "not compared",
+     "reason": "no cached Xero TB at 2023-12-31 for one, co (bridge needs the prior year-end)",
+     "missing_tb": {
+      "date": "2023-12-31",
+      "orgs": [
+       "one",
+       "co"
+      ]
+     }
+    }
+   ]
+  }
+ },
+ "sorted": {
+  "status": [
+   "card-co",
+   "hq-co-resid",
+   "one-co",
+   "hq-co-1405",
+   "hq-co",
+   "hq-co-mb",
+   "nobody-co"
+  ],
+  "difference": [
+   "card-co",
+   "hq-co-resid",
+   "one-co",
+   "hq-co-1405",
+   "hq-co",
+   "nobody-co",
+   "hq-co-mb"
+  ],
+  "pair": [
+   "card-co",
+   "hq-co-1405",
+   "hq-co",
+   "hq-co-mb",
+   "hq-co-resid",
+   "nobody-co",
+   "one-co"
+  ]
+ },
+ "subset": {
+  "as_of": "2024-12-31",
+  "basis": "Xero TB balances (cached); party components and items from documents",
+  "summary": {
+   "pairs": 1,
+   "unexplained": 0,
+   "not compared": 1,
+   "not supported": 0,
+   "bridged": 0,
+   "matches": 0
+  },
+  "pairs": [
+   {
+    "id": "hq-co",
+    "label": "HQ ↔ Co",
+    "a_org": "hq",
+    "b_org": "co",
+    "party": "hq",
+    "as_of": "2024-12-31",
+    "residual": null,
+    "movement_items": [],
+    "matched": [],
+    "known_items": [],
+    "context": [],
+    "prior": "2023-12-31",
+    "year_start": "2024-01-01",
+    "a_account_ids": [
+     "h-1405",
+     "h-2405"
+    ],
+    "b_account_ids": [
+     "c-2475"
+    ],
+    "a_accounts": [
+     "Lease Recharge Receivable (1405)",
+     "Co Settlement Clearing (2405)"
+    ],
+    "b_accounts": [
+     "Intra-group Payable – HQ (2475)"
+    ],
+    "component": "residual",
+    "movement": "b_unexplained",
+    "tb_fetched": {
+     "hq": "2026-10-05T07:46:00Z",
+     "co": "2026-10-05T07:46:00Z"
+    },
+    "a_net": "1013.47",
+    "b_net": "-1013.47",
+    "b_party_net": "-1013.47",
+    "other_components": {},
+    "raw_difference": "0.00",
+    "difference": "0.00",
+    "status": "not compared",
+    "reason": "no cached Xero TB at 2023-12-31 for hq, co (bridge needs the prior year-end)",
+    "missing_tb": {
+     "date": "2023-12-31",
+     "orgs": [
+      "hq",
+      "co"
+     ]
+    }
+   }
+  ]
+ }
+}

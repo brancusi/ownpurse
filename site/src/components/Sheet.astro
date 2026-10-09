@@ -1,0 +1,8 @@
+---
+interface Props { titleBlock?: Record<string, string> }
+const { titleBlock } = Astro.props;
+---
+<div class="op-sheet">
+	<slot />
+	{titleBlock && <div class="tb" aria-label="Title block">{Object.entries(titleBlock).map(([k, v]) => <div><span>{k}</span>{v}</div>)}</div>}
+</div>

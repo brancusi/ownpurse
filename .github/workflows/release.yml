@@ -1,0 +1,37 @@
+name: release
+on:
+  push:
+    tags: ["v*.*.*"]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export the pinned caretline commit
+        working-directory: .
+        run: |
+          git clone --quiet https://github.com/brancusi/caretline "$RUNNER_TEMP/caretline"
+          bash rust/scripts/prepare-caretline.sh "$RUNNER_TEMP/caretline"
+      - run: rustup show
+        working-directory: rust
+      - name: Gate
+        working-directory: rust
+        env:
+          CI: "true"
+        run: scripts/check.sh
+      - name: Tag matches the workspace version
+        working-directory: rust
+        run: |
+          v=$(sed -n 's/^version *= *"\(.*\)"/\1/p' Cargo.toml | head -1)
+          test "v$v" = "$GITHUB_REF_NAME" || { echo "tag $GITHUB_REF_NAME != version $v"; exit 1; }
+      - name: Changelog section
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          awk -v v="$v" '$0 ~ "^## \\[" v "\\]"{f=1;next} /^## \[/{f=0} f' CHANGELOG.md > notes.md
+          test -s notes.md || { echo "CHANGELOG.md has no section for $v"; exit 1; }
+      - name: GitHub Release (source; install with ./install.sh)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file notes.md

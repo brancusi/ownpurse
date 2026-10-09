@@ -1,0 +1,19 @@
+{
+ "argv": [
+  "--offline",
+  "list",
+  "one",
+  "Bogus"
+ ],
+ "exit": 2,
+ "json": [
+  {
+   "error": "usage",
+   "message": "Unknown entity 'Bogus'.",
+   "help": [
+    "Entities: Organisation, Accounts, TaxRates, TrackingCategories, Currencies, BankTransfers, Contacts, BankTransactions, ManualJournals, Invoices, CreditNotes, Payments, Overpayments, Prepayments"
+   ]
+  }
+ ],
+ "text": "error: usage\nmessage: Unknown entity 'Bogus'.\nhelp[1]:\n  Entities: Organisation, Accounts, TaxRates, TrackingCategories, Currencies, BankTransfers, Contacts, BankTransactions, ManualJournals, Invoices, CreditNotes, Payments, Overpayments, Prepayments\n"
+}

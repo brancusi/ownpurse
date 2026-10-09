@@ -1,0 +1,81 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ● lab ▾    as of 2025-12-31    no local record                                                                               ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  lab › Ledger
+
+ No local record for lab yet. ⌃P → Sync lab.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  q Quit  / Filter  ] Org ▸  g Scope  d As of  ? more  ⌃P palette                                                               v0.0.0-test
+--- styles
+r0 2-2 +B
+r0 3-3 +D
+r0 4-6 +B
+r0 7-12 +D
+r0 29-32 +D
+r0 33-47 fg=red
+r0 48-137 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-139 +D
+r3 2-7 +D
+r5 1-43 fg=red
+r39 2-2 +B
+r39 4-9 +D
+r39 10-10 +B
+r39 12-19 +D
+r39 20-20 +B
+r39 22-28 +D
+r39 29-29 +B
+r39 31-37 +D
+r39 38-38 +B
+r39 40-46 +D
+r39 47-47 +B
+r39 49-54 +D
+r39 55-56 +B
+r39 58-64 +D
+r39 128-138 +D

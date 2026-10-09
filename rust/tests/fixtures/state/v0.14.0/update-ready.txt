@@ -1,0 +1,30 @@
+  ● roast ▾    as of 2025-12-31                                                        ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────
+  roast › Trial balance at 2025-12-31 (accrual)                                     ✓ matches Xero
+  !  code  account                                    debit     credit
+  Assets                                                     39,680.92
+▌    1010  Tallowmere Roastery Operating Account  41,671.82
+     1060  Tallowmere Green-Bean Card                         1,990.90
+  Liabilities                                              (15,568.80)
+     2410  Brackenridge Term Loan                            15,568.80
+  Equity                                                   (11,934.69)
+     3010  Tallowmere Paid-In Capital                         4,618.27
+     3200  Retained Earnings                                  7,316.42
+  Revenue                                                  (20,391.63)
+     4010  Wholesale Bean Sales                              20,391.63
+  Expenses                                                    8,214.20
+     5020  Green Coffee Purchases                  5,369.15
+     6140  Roaster Afterburner Servicing             898.06
+     6290  Bag Artwork & Proofs                    1,148.63
+     6310  Cupping Room Supplies                     147.38
+     6520  Delivery Van Fuel                         238.61
+     6830  Term Loan Interest                        412.37
+
+
+
+
+  ──────────────────────────────────────────────────────────────────────────────────────────────────
+           Total                                  49,886.02  49,886.02  balanced ✓
+
+  h Full history  v Compare  ! Differs  q Quit            v0.0.0-test  ⬆ v0.99.0 ready · ⌃P Upgrade

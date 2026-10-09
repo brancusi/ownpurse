@@ -1,0 +1,29 @@
+{
+ "argv": [
+  "--offline",
+  "list",
+  "one",
+  "BankTransfers"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "entity": "BankTransfers",
+   "as_of": "2026-10-05T07:46:00",
+   "records": [
+    {
+     "date": "2025-01-15",
+     "from": "Pewter Lane Checking",
+     "to": "Pewter Lane Savings",
+     "amount": "52.19",
+     "id": "tr-1"
+    }
+   ],
+   "records_count": 1,
+   "help": [
+    "`--fields a,b.c` picks payload fields; `ownpurse show <org> BankTransfers <id>` for one record."
+   ]
+  }
+ ],
+ "text": "entity: BankTransfers\nas_of: 2026-10-05T07:46:00\nrecords[1]{date,from,to,amount,id}:\n  2025-01-15,Pewter Lane Checking,Pewter Lane Savings,52.19,tr-1\nhelp[1]:\n  `--fields a,b.c` picks payload fields; `ownpurse show <org> BankTransfers <id>` for one record.\n"
+}

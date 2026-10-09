@@ -1,0 +1,225 @@
+---
+import Base from '../layouts/Base.astro';
+import Terminal from '../components/Terminal.astro';
+import Note from '../components/Note.astro';
+import TAccount from '../components/TAccount.astro';
+import Tag from '../components/Tag.astro';
+import Coin from '../components/Coin.astro';
+import Mark from '../components/Mark.astro';
+
+const hero = [
+	[['$ ', 'dim'], ['ownpurse sync all']],
+	[['roast · hold · 3 sources · 214 new versions · chain verified', 'dim']],
+	'',
+	[['agent ', 'note'], ['3 card payments are split between roast and household.']],
+	[['agent ', 'note'], ['Two halves are posted. One is held:']],
+	'',
+	'  bill-2041/b   household · Home upkeep        32.80',
+	[['  ◌ held  ', 'gilt'], ['proposed by agent, waiting for you', 'dim']],
+	'',
+	'  roast          53.60   household        32.80',
+	[['  card 4417                                (86.40)', 'coin']],
+	[['  ● balanced once posted', 'ok']],
+	'',
+	[['hint: ', 'note'], ['ownpurse tui  ·  press p to post', 'dim']],
+] as any;
+
+const views = {
+	facts: { label: 'All facts', cmd: 'ownpurse show bill-2041 --history', cols: ['Entity', 'Attribute', 'Value', 'Tx', 'Source'], num: [],
+		rows: [['bill-2041', 'amount', '86.40', '1184', 'xero'], ['bill-2041', 'paid-by', 'card-4417', '1184', 'xero'],
+			['bill-2041/a', 'book · account', 'roast · 6420 Repairs', '1185', 'xero'], ['bill-2041/b', 'book · account', 'household · Home upkeep', '1191', 'sheet'],
+			['stmt-0930/17', 'line', 'Hardware Depot 86.40', '1190', 'bank']],
+		coin: 'posted', coinLabel: '5 facts, 3 sources, nothing overwritten' },
+	roast: { label: 'roast, September', cmd: 'ownpurse pl roast --from 2026-09-01 --to 2026-09-30', cols: ['Account', 'Book', 'Amount'], num: [2],
+		rows: [['4000 Sales', 'roast', '18,240.00'], ['5000 Cost of sales', 'roast', '(7,512.40)'], ['6100 Rent', 'roast', '(2,400.00)'], ['6420 Repairs', 'roast', '(53.60)']],
+		coin: 'balanced', coinLabel: 'Agrees with Xero, to the cent' },
+	household: { label: 'Household', cmd: 'ownpurse gl household --from 2026-09-01 --to 2026-09-30', cols: ['Account', 'Source', 'Amount'], num: [2],
+		rows: [['Groceries', 'sheet', '611.45'], ['Home upkeep', 'sheet', '32.80'], ['Childcare', 'bank', '1,180.00']],
+		coin: 'held', coinLabel: 'Held: 2 bank lines not yet classified' },
+	card: { label: 'Card 4417', cmd: 'ownpurse gl --account card-4417 --from 2026-09-01 --to 2026-09-30', cols: ['Line', 'Book', 'Debit', 'Credit'], num: [2, 3],
+		rows: [['Hardware Depot, repairs', 'roast', '53.60', ''], ['Hardware Depot, home', 'household', '32.80', ''], ['Statement line 17', 'bank', '', '86.40']],
+		coin: 'balanced', coinLabel: 'Balanced across two books' },
+} as const;
+const keys = Object.keys(views) as (keyof typeof views)[];
+
+const connectors = [
+	{ name: 'Xero', status: 'available', tone: 'verdigris', desc: 'Every organisation from one login: invoices, bills, bank transactions, journals, reports and attachments.' },
+	{ name: 'QuickBooks Online', status: 'planned', tone: 'neutral', desc: 'The same record and views for books kept in QuickBooks.' },
+	{ name: 'Bank exports', status: 'planned', tone: 'neutral', desc: 'CSV, OFX and QIF statements, matched to what your books already say.' },
+	{ name: 'Spreadsheets', status: 'planned', tone: 'neutral', desc: 'Household budgets, trackers and the one sheet you keep for everything else.' },
+	{ name: 'Portfolios', status: 'planned', tone: 'neutral', desc: 'Brokerage and retirement holdings, as positions and transactions over time.' },
+	{ name: 'Files', status: 'planned', tone: 'neutral', desc: 'Statements and receipts in a cloud drive or a local folder, read into facts with their source attached.' },
+] as const;
+---
+<Base title="ownpurse: own every fact about your money" description="ownpurse pulls your accounting system, bank records, spreadsheets and portfolios into one append-only record on your machine, so you and your agents can make sense of it together.">
+
+<section class="wrap sec" style="padding-block: 88px 72px;">
+	<div class="split center">
+		<div class="stack-lg">
+			<div class="eyebrow">Local books for you and your agents</div>
+			<h1 class="h1">Own every fact about your money.</h1>
+			<p class="lead">Your financial life is spread across an accounting system, bank feeds, spreadsheets, portfolios and a folder of statements. ownpurse pulls all of it into one record on your own machine, a log of facts that only ever grows, so you and your agents can make sense of it together.</p>
+			<div class="row">
+				<a class="op-btn coin btn-lg" href="/get-started/">Get started</a>
+				<a class="op-btn quiet btn-lg" href="/philosophy/">Read the philosophy</a>
+			</div>
+			<code class="cmd">ownpurse demo   <span style="color: var(--ink-3)"># try it offline, no setup</span></code>
+		</div>
+		<Terminal title="ownpurse" meta="0.17 · roast, household · 2026-09-30" blink lines={hero} label="An agent finds a card payment split across two books" />
+	</div>
+</section>
+
+<section class="rule-top">
+	<div class="wrap sec split">
+		<div class="stack">
+			<div class="eyebrow">The problem</div>
+			<h2 class="h2">Your books no longer live in one place.</h2>
+			<p class="muted">A business on Xero, a household in a spreadsheet, a card that pays for both, a brokerage account, a folder of PDFs in a cloud drive. Each holds part of the truth, and none of them will show you the whole.</p>
+		</div>
+		<div class="cells">
+			<div><h3>Locked in your provider</h3><p>Your history lives in someone else's database, shaped by their chart of accounts and their export button.</p></div>
+			<div><h3>Rationed by the API</h3><p>A new Xero app gets 1,000 calls a day per organisation. Real analysis runs out of calls before it runs out of questions.</p></div>
+			<div><h3>Exported and stashed</h3><p>Every question starts with a CSV, a spreadsheet and an afternoon. Next month you do it again.</p></div>
+			<div><h3>Moving is a nightmare</h3><p>Switching bookkeeping systems means rebuilding years of history by hand, or leaving it behind.</p></div>
+		</div>
+	</div>
+</section>
+
+<section class="band">
+	<div class="wrap sec stack-lg" style="gap: 40px;">
+		<div class="stack" style="max-width: 760px;">
+			<div class="eyebrow">Sovereignty</div>
+			<h2 class="h2">Your financial data belongs to you, not to the tool that recorded it.</h2>
+		</div>
+		<div class="cols ruled">
+			<div><h3 class="h3">On your machine</h3><p class="muted small">The record is a file you hold, on your laptop or your own server. Reading it costs no API calls and sends nothing anywhere.</p></div>
+			<div><h3 class="h3">Complete and tamper-evident</h3><p class="muted small">Every version of every document is kept. A SHA-256 chain proves nothing was edited after the fact.</p></div>
+			<div><h3 class="h3">Portable by design</h3><p class="muted small">Changing providers becomes one sentence: here is my data, make it work there.</p></div>
+		</div>
+	</div>
+</section>
+
+<section class="wrap sec split">
+	<div class="stack">
+		<div class="eyebrow">Why now</div>
+		<h2 class="h2">Connectors were the bottleneck. Agents removed it.</h2>
+	</div>
+	<div class="stack muted">
+		<p>Tools that tried to unify personal and business finance were ahead of their time. Every bank, every provider, every spreadsheet needed a connector, and someone had to build and maintain each one.</p>
+		<p>An agent can now write a connector for your bank's export in an afternoon. The hard problem has moved: once everything arrives, where does it go, and how do you make sense of it? ownpurse is that place.</p>
+	</div>
+</section>
+
+<section class="rule-top">
+	<div class="wrap sec stack-lg" style="gap: 36px;">
+		<div class="split end">
+			<div class="stack">
+				<div class="eyebrow">The record</div>
+				<h2 class="h2">Atomic facts over time. Every view is a query.</h2>
+			</div>
+			<p class="muted">Underneath, ownpurse keeps one kind of thing: a fact. This entity has this attribute with this value, as of this moment, from this source. A correction is a new fact; nothing is overwritten. A profit and loss, a household budget and a card reconciliation are all questions asked of the same facts.</p>
+		</div>
+		<div class="demo" data-demo>
+			<div role="tablist" aria-label="Views of the same facts">
+				{keys.map((k, i) => <button role="tab" type="button" id={`tab-${k}`} aria-controls={`panel-${k}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>{views[k].label}</button>)}
+			</div>
+			{keys.map((k, i) => { const v = views[k]; return (
+				<div class="panel" role="tabpanel" id={`panel-${k}`} aria-labelledby={`tab-${k}`} hidden={i !== 0}>
+					<code class="cmd">$ {v.cmd}</code>
+					<div class="scroll-x"><table>
+						<thead><tr>{v.cols.map((c, j) => <th style={(v.num as readonly number[]).includes(j) ? 'text-align:right' : undefined}>{c}</th>)}</tr></thead>
+						<tbody>{v.rows.map((r) => <tr>{r.map((cell, j) => <td class={(v.num as readonly number[]).includes(j) ? 'num' : undefined}>{cell}</td>)}</tr>)}</tbody>
+					</table></div>
+					<div class="foot"><Coin kind={v.coin} label={v.coinLabel} /><span class="eyebrow" style="font-size: 11px;">Example data</span></div>
+				</div>
+			); })}
+		</div>
+	</div>
+</section>
+
+<section class="band">
+	<div class="wrap sec split center">
+		<div class="stack-lg">
+			<div class="eyebrow">You and your agents</div>
+			<h2 class="h2">Your agent builds the view. You decide what gets posted.</h2>
+			<p class="muted">Instead of digging through the complexity yourself, work through it together. An agent finds the facts, shows you the view, and walks you through what it found. Reconciliations, manual journals and reports become small, reviewable events on top of the record.</p>
+			<Note label="Proposed">Post 32.80 of card 4417's Hardware Depot payment to household, Home upkeep. The other 53.60 is already in roast, 6420 Repairs.</Note>
+		</div>
+		<TAccount title="Card 4417, September" code="card" debits={[{ label: '09-03 roast, repairs', amount: 53.6 }, { label: '09-03 household, upkeep', amount: 32.8 }]} credits={[{ label: '09-30 statement, line 17', amount: 86.4 }]} />
+	</div>
+</section>
+
+<section class="wrap sec split center">
+	<div class="stack">
+		<div class="eyebrow">The stack</div>
+		<h2 class="h2">Simple at the bottom. Yours at the top.</h2>
+		<p class="muted">The closer you get to the record, the less ownpurse decides for you. Facts at the base, a small daemon above them, and a CLI that does everything, so you and your agents can build any tool or view on top. A fast terminal UI comes with it.</p>
+		<a href="/how-it-works/" style="font-weight: 600;">How it works</a>
+	</div>
+	<div class="layers">
+		<div class="dashed"><strong>Your tools, reports and views</strong><span>built by you and your agents</span></div>
+		<div><strong>Terminal UI</strong><span>one state, every screen derived</span></div>
+		<div><strong>CLI</strong><span>the whole surface, agent-first output</span></div>
+		<div><strong>Daemon</strong><span>local, lightweight, always on</span></div>
+		<div class="base"><strong><span class="coin-dot"></span>The record</strong><span>append-only facts, hash-chained</span></div>
+		<div class="sources"><span>xero</span><span>bank</span><span>sheets</span><span>files</span></div>
+	</div>
+</section>
+
+<section class="rule-top">
+	<div class="wrap sec stack-lg" style="gap: 36px;">
+		<div class="split end">
+			<div class="stack">
+				<div class="eyebrow">Connectors</div>
+				<h2 class="h2">Xero today. Anything with your numbers in it, next.</h2>
+			</div>
+			<p class="muted">A connector only has to turn a source into facts. The record, the views and the agents work the same for all of them, and anything you write back goes out as a planned, recorded operation.</p>
+		</div>
+		<div class="cells three">
+			{connectors.map((c) => (
+				<div>
+					<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;"><h3>{c.name}</h3><Tag tone={c.tone}>{c.status}</Tag></div>
+					<p>{c.desc}</p>
+				</div>
+			))}
+		</div>
+		<p class="small muted">Want a connector sooner? <a href="/docs/developers/connectors/">Writing a connector</a> explains what one has to do.</p>
+	</div>
+</section>
+
+<section class="band-ink">
+	<div class="wrap sec" style="padding-block: 96px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px;">
+		<Mark size={72} tone="reversed" blink />
+		<h2 class="h2" style="font-size: clamp(32px, 4.4vw, 60px); max-width: 16em; letter-spacing: -0.03em;">It always was, and always will be, atomic events over time.</h2>
+		<p style="font-size: 18px; opacity: 0.8; max-width: 36em;">Bookkeeping got complicated. The thing underneath never did. ownpurse gives it back to you.</p>
+		<div class="row" style="justify-content: center;">
+			<a class="op-btn coin btn-lg" href="/get-started/">Get started</a>
+			<a class="op-btn outline-inverse btn-lg" href="https://github.com/brancusi/ownpurse">Source on GitHub</a>
+		</div>
+	</div>
+</section>
+
+<script>
+	for (const demo of document.querySelectorAll<HTMLElement>('[data-demo]')) {
+		const tabs = [...demo.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+		const select = (t: HTMLButtonElement) => {
+			for (const o of tabs) {
+				const on = o === t;
+				o.setAttribute('aria-selected', String(on));
+				o.tabIndex = on ? 0 : -1;
+				const panel = document.getElementById(o.getAttribute('aria-controls')!);
+				if (panel) panel.hidden = !on;
+			}
+		};
+		tabs.forEach((t, i) => {
+			t.addEventListener('click', () => select(t));
+			t.addEventListener('keydown', (e) => {
+				const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+				if (!d) return;
+				const n = tabs[(i + d + tabs.length) % tabs.length];
+				select(n); n.focus();
+			});
+		});
+	}
+</script>
+</Base>

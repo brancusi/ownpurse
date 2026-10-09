@@ -1,0 +1,128 @@
+---
+source: crates/ownpurse-tui/tests/classify.rs
+assertion_line: 41
+expression: styled(&buf)
+---
+  [all organisations] v    as of 2025-12-31    classify: 38 open - 2 stale               read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+-------------------------------------------------------------------==========-----------------------
+  all > Classify > Queue
+ Queue 38 - Groups - Audition - Tree - Catalog
+  filter: "org:roast conf<0.9" - 8 of 38
+ org    date  payee                     amount suggestion      conf| Bank transaction bt-104 - r...
+>roast  03-04 Cordillera Green ...  (4,276.31) no project +1   .80 | 2025-03-04 - Cordillera Gre...
+ roast  05-31 Hollowpine proofs...    1,148.63 no project +1   .80 | Washed lot 14, 22 sacks
+ roast  05-31 Hollowpine proofs...  (1,148.63) no project +1   .80 | (4,276.31) - 5020 Green Cof...
+ roast  08-08 Quillfeather Desi...  (1,148.63) no project +2   .80 | reconciled ok
+ roast  04-17 Cordillera Green ...  (1,092.84) no project +1   .80 |
+ roast  09-12 Emberline Thermal...    (683.29) Sample ro... +1 .80 | Project           -
+ roast  09-30 Q3 interest on th...    (412.37) no project +2   .80 | Bearer     R .80  Tallowmer...
+ roast  10-02 Brightwater Fuel ...    (238.61) no project +2   .55 | Treatment         -
+                                                                   | Should-be         -
+                                                                   |
+                                                                   | p1 Harvest Blend launch
+                                                                   | p2 Wayfinding refit
+                                                                   | p3 Sample roaster programme
+                                                                   | p4 Cupping lab fit-out
+                                                                   | p5 No project
+                                                                   |
+                                                                   | Rule      r-bearer-roast - ...
+                                                                   |
+                                                                   |
+                                                                   |
+                                                                   |
+                                                                   |
+  Enter Accept  p Project  b Bearer  t Treatment  / Filter  q Quit  ^P palette          v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-46 +D
+r0 74-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-68 +D
+r1 69-76 +B
+r1 80-89 +D
+r2 0-66 +D
+r2 67-76 +BD
+r2 77-99 +D
+r3 2-18 +D
+r4 1-8 +B
+r4 9-11 +D
+r4 18-20 +D
+r4 29-31 +D
+r4 36-38 +D
+r5 2-9 +D
+r5 30-39 +D
+r6 1-67 +D
+r6 69-91 +B
+r6 92-94 +D
+r7 0-0 +BR
+r7 1-66 +R
+r7 67-67 +D
+r7 69-81 +D
+r8 8-12 +D
+r8 47-61 +D
+r8 63-67 +D
+r8 69-91 +D
+r9 8-12 +D
+r9 47-61 +D
+r9 63-67 +D
+r9 79-81 +D
+r10 8-12 +D
+r10 47-61 +D
+r10 63-67 +D
+r10 69-81 +D
+r11 8-12 +D
+r11 47-61 +D
+r11 63-67 +D
+r12 8-12 +D
+r12 63-67 +D
+r12 69-87 +D
+r13 8-12 +D
+r13 47-61 +D
+r13 63-67 +D
+r13 69-86 +D
+r14 8-12 +D
+r14 47-61 +D
+r14 63-67 +D
+r14 69-87 +D
+r15 67-67 +D
+r15 69-87 +D
+r16 67-67 +D
+r17 67-67 +D
+r17 72-91 +D
+r18 67-67 +D
+r18 72-87 +D
+r19 67-67 +D
+r19 72-95 +D
+r20 67-67 +D
+r20 72-90 +D
+r21 67-67 +D
+r21 72-81 +D
+r22 67-67 +D
+r23 67-67 +D
+r23 69-78 +D
+r23 93-98 +D
+r24 67-67 +D
+r25 67-67 +D
+r26 67-67 +D
+r27 67-67 +D
+r28 67-67 +D
+r29 2-6 +B
+r29 8-15 +D
+r29 16-16 +B
+r29 18-26 +D
+r29 27-27 +B
+r29 29-36 +D
+r29 37-37 +B
+r29 39-49 +D
+r29 50-50 +B
+r29 52-59 +D
+r29 60-60 +B
+r29 62-67 +D
+r29 68-69 +B
+r29 71-77 +D
+r29 88-98 +D

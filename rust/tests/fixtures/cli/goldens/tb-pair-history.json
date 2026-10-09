@@ -1,0 +1,106 @@
+{
+ "argv": [
+  "--offline",
+  "tb",
+  "group:pair",
+  "--date",
+  "2025-06-30",
+  "--full-history",
+  "--full"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2025-06-30",
+   "accounting_basis": "accrual",
+   "balance_basis": [
+    "co: full local history",
+    "hq: full local history"
+   ],
+   "total_debit": "7554.55",
+   "total_credit": "7554.55",
+   "balanced": true,
+   "trial_balance": [
+    {
+     "org": "hq",
+     "flag": "",
+     "account": "Calderwick HQ Current Account",
+     "class": "ASSET",
+     "debit": null,
+     "credit": "1207.89",
+     "account_id": "h-bank"
+    },
+    {
+     "org": "hq",
+     "flag": "",
+     "account": "Lease Recharge Receivable (1405)",
+     "class": "ASSET",
+     "debit": "1519.72",
+     "credit": null,
+     "account_id": "h-1405"
+    },
+    {
+     "org": "hq",
+     "flag": "",
+     "account": "Calderwick Group Capital (3100)",
+     "class": "EQUITY",
+     "debit": null,
+     "credit": "5021.36",
+     "account_id": "h-eq"
+    },
+    {
+     "org": "hq",
+     "flag": "",
+     "account": "Retained Earnings (3200)",
+     "class": "EQUITY",
+     "debit": "5021.36",
+     "credit": null,
+     "account_id": "h-re"
+    },
+    {
+     "org": "hq",
+     "flag": "",
+     "account": "Co Settlement Clearing (2405)",
+     "class": "LIABILITY",
+     "debit": null,
+     "credit": "311.83",
+     "account_id": "h-2405"
+    },
+    {
+     "org": "co",
+     "flag": "",
+     "account": "Calderwick Trading Current Account",
+     "class": "ASSET",
+     "debit": null,
+     "credit": "516.46",
+     "account_id": "c-bank"
+    },
+    {
+     "org": "co",
+     "flag": "",
+     "account": "Retained Earnings (3200)",
+     "class": "EQUITY",
+     "debit": "1013.47",
+     "credit": null,
+     "account_id": "c-re"
+    },
+    {
+     "org": "co",
+     "flag": "",
+     "account": "Intra-group Payable – HQ (2475)",
+     "class": "LIABILITY",
+     "debit": null,
+     "credit": "497.01",
+     "account_id": "c-2475"
+    }
+   ],
+   "trial_balance_count": 8,
+   "help": [
+    "hq: full local history not compared (no cached Xero TB) — run `ownpurse parity hq --date 2025-06-30 --since <prior year-end>` to cache Xero's TBs.",
+    "co: full local history not compared (no cached Xero TB) — run `ownpurse parity co --date 2025-06-30 --since <prior year-end>` to cache Xero's TBs.",
+    "`--full-history` shows balances from local documents only; `ownpurse parity` checks against Xero."
+   ]
+  }
+ ],
+ "text": "as_of: 2025-06-30\naccounting_basis: accrual\nbalance_basis: co: full local history, hq: full local history\ntotal_debit: 7554.55\ntotal_credit: 7554.55\nbalanced: true\ntrial_balance[8]{org,account,class,debit,credit,account_id}:\n  hq,Calderwick HQ Current Account,ASSET,,1207.89,h-bank\n  hq,Lease Recharge Receivable (1405),ASSET,1519.72,,h-1405\n  hq,Calderwick Group Capital (3100),EQUITY,,5021.36,h-eq\n  hq,Retained Earnings (3200),EQUITY,5021.36,,h-re\n  hq,Co Settlement Clearing (2405),LIABILITY,,311.83,h-2405\n  co,Calderwick Trading Current Account,ASSET,,516.46,c-bank\n  co,Retained Earnings (3200),EQUITY,1013.47,,c-re\n  co,Intra-group Payable – HQ (2475),LIABILITY,,497.01,c-2475\nhelp[3]:\n  hq: full local history not compared (no cached Xero TB) — run `ownpurse parity hq --date 2025-06-30 --since <prior year-end>` to cache Xero's TBs.\n  co: full local history not compared (no cached Xero TB) — run `ownpurse parity co --date 2025-06-30 --since <prior year-end>` to cache Xero's TBs.\n  `--full-history` shows balances from local documents only; `ownpurse parity` checks against Xero.\n"
+}

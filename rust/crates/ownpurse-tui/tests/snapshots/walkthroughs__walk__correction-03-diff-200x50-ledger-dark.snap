@@ -1,0 +1,251 @@
+---
+source: crates/ownpurse-tui/tests/walkthroughs.rs
+expression: styled(&buf)
+---
+  All organisations ●●●● ▾    ⎇ fix-igniter · planned    as of 2025-12-31    ◆ agent                                                                                                       ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌━━━━━━━━━━╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+  Manifest › ⎇ fix-igniter › Entries › entry 2 › ~ bank transaction bt-110
+  draft ✓ › review ✓ › check ✓ › ▸ planned › approved › applying › applied                                                                          ── Step 3 of 10 · Before and after ─────────────────
+  ~ Bank transaction · roast · bt-110  reconciled   changed: 1 line                                                                    entry 2 · H    Opening the entry shows the document as it is
+  via reclass journal reclass-roast-202510: Xero refuses edits of reconciled lines, so roast's 2025-10 reclass journal carries this account           and as it would be. Only the account on the line
+  change (Dr new / Cr old)                                                                                                                            changes: 6140 → 6310. The amount, the date and
+    … 8 unchanged fields · z to expand                                                                                                                the supplier stay the same.
+  Lines                                                                                                                                               Why this matters: A change you can see side by
+    account          description                                                                                           amount            tax      side is a change you can check.
+  ~ 6140 → 6310      Burner igniter                                                                                        214.77           0.00      ● ● ● ○ ○ ○ ○ ○ ○ ○
+    total 214.77            ▲
+   ╭────────────────────────┴╮
+   │ The change              │
+   │ Same line, new account. │
+   ╰─────────────────────────╯
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ◆ agent: step 3 of 10 · ` back                                                                    y copy command  z All fields  J Patch  N New  P Plan  ? more  ⌃P palette  ⎇ fix-igniter  v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-19 fg=#72B6D4 bg=#243137 +B
+r0 20-20 fg=#4DBFA9 bg=#243137 +B
+r0 21-21 fg=#9D8FF2 bg=#243137 +B
+r0 22-22 fg=#E8834F bg=#243137 +B
+r0 23-23 fg=#E8769F bg=#243137 +B
+r0 24-29 fg=#93A0A7 bg=#243137
+r0 30-42 fg=#D49AD0 bg=#243137 +B
+r0 43-56 fg=#93A0A7 bg=#243137
+r0 57-72 fg=#B9C4C9 bg=#243137
+r0 73-76 fg=#93A0A7 bg=#243137
+r0 77-83 fg=#88B1EC bg=#243137
+r0 84-186 fg=#93A0A7 bg=#243137
+r0 187-197 fg=#717E85 bg=#243137
+r0 198-199 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#E6ECEE bg=#171D20 +B
+r1 90-199 bg=#171D20
+r2 0-79 fg=#D49AD0
+r2 80-89 fg=#72B6D4 +B
+r2 90-199 fg=#D49AD0
+r3 2-48 fg=#93A0A7
+r3 49-73 fg=#E6ECEE
+r4 2-8 fg=#93A0A7
+r4 9-11 fg=#717E85
+r4 12-19 fg=#93A0A7
+r4 20-22 fg=#717E85
+r4 23-29 fg=#93A0A7
+r4 30-32 fg=#717E85
+r4 33-41 fg=#D49AD0 +B
+r4 42-73 fg=#717E85
+r4 148-149 fg=#2D383E bg=#1C2428
+r4 150-182 fg=#72B6D4 bg=#1C2428 +B
+r4 183-199 fg=#2D383E bg=#1C2428
+r5 2-3 fg=#D49AD0 +B
+r5 4-36 fg=#E6ECEE +B
+r5 37-48 fg=#E6BC5E
+r5 49-66 fg=#93A0A7
+r5 135-145 fg=#93A0A7
+r5 148-149 bg=#1C2428
+r5 150-194 fg=#E6ECEE bg=#1C2428
+r5 195-199 bg=#1C2428
+r6 2-139 fg=#D49AD0
+r6 148-149 bg=#1C2428
+r6 150-197 fg=#E6ECEE bg=#1C2428
+r6 198-199 bg=#1C2428
+r7 2-25 fg=#D49AD0
+r7 148-149 bg=#1C2428
+r7 150-158 fg=#E6ECEE bg=#1C2428
+r7 159-162 fg=#E6ECEE bg=#1C2428 +B
+r7 163-163 fg=#E6ECEE bg=#1C2428
+r7 164-164 fg=#E6ECEE bg=#1C2428 +B
+r7 165-165 fg=#E6ECEE bg=#1C2428
+r7 166-169 fg=#E6ECEE bg=#1C2428 +B
+r7 170-195 fg=#E6ECEE bg=#1C2428
+r7 196-199 bg=#1C2428
+r8 2-37 fg=#717E85
+r8 148-149 bg=#1C2428
+r8 150-176 fg=#E6ECEE bg=#1C2428
+r8 177-199 bg=#1C2428
+r9 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r9 2-6 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r9 7-146 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r9 148-149 bg=#1C2428
+r9 150-195 fg=#93A0A7 bg=#1C2428
+r9 196-199 bg=#1C2428
+r10 4-144 fg=#93A0A7
+r10 148-149 bg=#1C2428
+r10 150-180 fg=#93A0A7 bg=#1C2428
+r10 181-199 bg=#1C2428
+r11 0-1 bg=#233239 +U
+r11 2-3 fg=#D49AD0 bg=#233239 +U
+r11 4-10 fg=#93A0A7 bg=#233239 +U
+r11 11-14 fg=#E6ECEE bg=#233239 +U
+r11 15-20 bg=#233239 +U
+r11 21-144 fg=#E6ECEE bg=#233239 +U
+r11 145-146 bg=#233239 +U
+r11 148-149 bg=#1C2428
+r11 150-150 fg=#93A0A7 bg=#1C2428
+r11 151-151 bg=#1C2428
+r11 152-152 fg=#93A0A7 bg=#1C2428
+r11 153-153 bg=#1C2428
+r11 154-154 fg=#72B6D4 bg=#1C2428 +B
+r11 155-155 bg=#1C2428
+r11 156-156 fg=#93A0A7 bg=#1C2428
+r11 157-157 bg=#1C2428
+r11 158-158 fg=#93A0A7 bg=#1C2428
+r11 159-159 bg=#1C2428
+r11 160-160 fg=#93A0A7 bg=#1C2428
+r11 161-161 bg=#1C2428
+r11 162-162 fg=#93A0A7 bg=#1C2428
+r11 163-163 bg=#1C2428
+r11 164-164 fg=#93A0A7 bg=#1C2428
+r11 165-165 bg=#1C2428
+r11 166-166 fg=#93A0A7 bg=#1C2428
+r11 167-167 bg=#1C2428
+r11 168-168 fg=#93A0A7 bg=#1C2428
+r11 169-199 bg=#1C2428
+r12 4-15 fg=#B9C4C9
+r12 28-28 fg=#72B6D4 +B
+r12 148-199 bg=#1C2428
+r13 3-29 fg=#72B6D4 bg=#1C2428 +B
+r13 148-199 bg=#1C2428
+r14 3-3 fg=#72B6D4 bg=#1C2428 +B
+r14 4-4 bg=#1C2428
+r14 5-14 fg=#72B6D4 bg=#1C2428 +B
+r14 15-28 bg=#1C2428
+r14 29-29 fg=#72B6D4 bg=#1C2428 +B
+r14 148-199 bg=#1C2428
+r15 3-3 fg=#72B6D4 bg=#1C2428 +B
+r15 4-4 bg=#1C2428
+r15 5-27 fg=#E6ECEE bg=#1C2428
+r15 28-28 bg=#1C2428
+r15 29-29 fg=#72B6D4 bg=#1C2428 +B
+r15 148-199 bg=#1C2428
+r16 3-29 fg=#72B6D4 bg=#1C2428 +B
+r16 148-199 bg=#1C2428
+r17 148-199 bg=#1C2428
+r18 148-199 bg=#1C2428
+r19 148-199 bg=#1C2428
+r20 148-199 bg=#1C2428
+r21 148-199 bg=#1C2428
+r22 148-199 bg=#1C2428
+r23 148-199 bg=#1C2428
+r24 148-199 bg=#1C2428
+r25 148-199 bg=#1C2428
+r26 148-199 bg=#1C2428
+r27 148-199 bg=#1C2428
+r28 148-199 bg=#1C2428
+r29 148-199 bg=#1C2428
+r30 148-199 bg=#1C2428
+r31 148-199 bg=#1C2428
+r32 148-199 bg=#1C2428
+r33 148-199 bg=#1C2428
+r34 148-199 bg=#1C2428
+r35 148-199 bg=#1C2428
+r36 148-199 bg=#1C2428
+r37 148-199 bg=#1C2428
+r38 148-199 bg=#1C2428
+r39 148-199 bg=#1C2428
+r40 148-199 bg=#1C2428
+r41 148-199 bg=#1C2428
+r42 148-199 bg=#1C2428
+r43 148-199 bg=#1C2428
+r44 148-199 bg=#1C2428
+r45 148-199 bg=#1C2428
+r46 148-199 bg=#1C2428
+r47 148-199 bg=#1C2428
+r48 148-199 bg=#1C2428
+r49 0-0 bg=#1B2226
+r49 1-30 fg=#88B1EC bg=#1B2226
+r49 31-98 bg=#1B2226
+r49 99-99 fg=#FFFFFF bg=#1B2226
+r49 100-100 bg=#1B2226
+r49 101-114 fg=#93A0A7 bg=#1B2226
+r49 115-115 fg=#FFFFFF bg=#1B2226
+r49 116-116 bg=#1B2226
+r49 117-128 fg=#93A0A7 bg=#1B2226
+r49 129-129 fg=#FFFFFF bg=#1B2226
+r49 130-130 bg=#1B2226
+r49 131-137 fg=#93A0A7 bg=#1B2226
+r49 138-138 fg=#FFFFFF bg=#1B2226
+r49 139-139 bg=#1B2226
+r49 140-144 fg=#93A0A7 bg=#1B2226
+r49 145-145 fg=#FFFFFF bg=#1B2226
+r49 146-146 bg=#1B2226
+r49 147-152 fg=#93A0A7 bg=#1B2226
+r49 153-153 fg=#FFFFFF bg=#1B2226
+r49 154-154 bg=#1B2226
+r49 155-160 fg=#93A0A7 bg=#1B2226
+r49 161-162 fg=#FFFFFF bg=#1B2226
+r49 163-163 bg=#1B2226
+r49 164-170 fg=#93A0A7 bg=#1B2226
+r49 171-172 bg=#1B2226
+r49 173-187 fg=#D49AD0 bg=#1B2226 +B
+r49 188-198 fg=#717E85 bg=#1B2226
+r49 199-199 bg=#1B2226

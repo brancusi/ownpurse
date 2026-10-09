@@ -1,0 +1,23 @@
+$ ownpurse classify set design:bt:bt-303:L1 project=refit --expect-store-rev 82 --client claude --overwrite --json
+exit 0
+{
+ "op": "set",
+ "summary": "set project Wayfinding refit on 1 line",
+ "batch": "claude-2026-10-05T09:46:00.000000Z-82",
+ "lines": 1,
+ "store_rev": 83,
+ "events": [
+  83
+ ],
+ "anchors": [
+  "design:bt:bt-303:L1"
+ ],
+ "skipped": [],
+ "effects": [
+  {
+   "verb": "set",
+   "changed": true,
+   "what": "set project Wayfinding refit on 1 line"
+  }
+ ]
+}

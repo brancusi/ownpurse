@@ -1,0 +1,43 @@
+{
+ "argv": [
+  "--offline",
+  "list",
+  "hq,co",
+  "ManualJournals"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "entity": "ManualJournals",
+   "as_of": "2026-10-05T07:46:00",
+   "records": [
+    {
+     "org": "hq",
+     "date": "2024-01-01",
+     "status": "POSTED",
+     "narration": "opening funds",
+     "id": "mj-1"
+    },
+    {
+     "org": "co",
+     "date": "2024-12-31",
+     "status": "POSTED",
+     "narration": "lease recharged by HQ",
+     "id": "mj-10"
+    },
+    {
+     "org": "co",
+     "date": "2025-12-31",
+     "status": "POSTED",
+     "narration": "lease recharged by HQ",
+     "id": "mj-11"
+    }
+   ],
+   "records_count": 3,
+   "help": [
+    "`--fields a,b.c` picks payload fields; `ownpurse show <org> ManualJournals <id>` for one record."
+   ]
+  }
+ ],
+ "text": "entity: ManualJournals\nas_of: 2026-10-05T07:46:00\nrecords[3]{org,date,status,narration,id}:\n  hq,2024-01-01,POSTED,opening funds,mj-1\n  co,2024-12-31,POSTED,lease recharged by HQ,mj-10\n  co,2025-12-31,POSTED,lease recharged by HQ,mj-11\nhelp[1]:\n  `--fields a,b.c` picks payload fields; `ownpurse show <org> ManualJournals <id>` for one record.\n"
+}

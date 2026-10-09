@@ -1,0 +1,83 @@
+---
+source: crates/ownpurse-tui/tests/system.rs
+expression: styled(&buf)
+---
+  All organisations ●●●● ▾    as of 2025-12-31                                         ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+────────────────────────────────────────────────────────━━━━━━━━────────────────────────────────────
+  all › System
+  filter: "reconcile" · 11 of 112
+  Links
+  link                                                                              url
+▌ Tallowmere Coffee Roasting Co. · Tallowmere Green-Bean Card: reconcile            https://go.xero…
+  Tallowmere Coffee Roasting Co. · Tallowmere Roastery Operating Account: reconci…  https://go.xero…
+  Brackenridge Lane Holdings Ltd · Brackenridge Reserve Account: reconcile          https://go.xero…
+  Quillfeather Design Consultancy LLP · Quillfeather Payroll Float: reconcile       https://go.xero…
+  Quillfeather Design Consultancy LLP · Quillfeather Proof-Print Float: reconcile   https://go.xero…
+  Quillfeather Design Consultancy LLP · Quillfeather Client Receipts Account: rec…  https://go.xero…
+  Quillfeather Design Consultancy LLP · Quillfeather Typeface Card: reconcile       https://go.xero…
+  Quillfeather Design Consultancy LLP · Quillfeather Tax Reserve Account: reconci…  https://go.xero…
+  Quillfeather Design Consultancy LLP · Quillfeather Site-Visit Card: reconcile     https://go.xero…
+  Saltmarsh Cupping Lab LLC · SALTMARSH SENSORY PANEL CARD™: reconcile              https://go.xero…
+  Saltmarsh Cupping Lab LLC · Saltmarsh Lab Account: reconcile                      https://go.xero…
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+ Reconcile queue (browser only; the API cannot reconcile). · https://go.xero.com/BankRec/BankRec.a…
+  o Open  y Copy  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                         v0.0.0-test
+--- styles
+r0 2-23 +B
+r0 24-29 +D
+r0 46-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-57 +D
+r1 58-63 +B
+r1 67-76 +D
+r1 80-89 +D
+r2 0-55 +D
+r2 56-63 +BD
+r2 64-99 +D
+r3 2-7 +D
+r4 2-9 +D
+r4 21-32 +D
+r5 2-6 +B
+r6 2-81 +D
+r6 84-99 +D
+r7 0-0 +BR
+r7 1-99 +R
+r8 84-99 fg=lightblue
+r9 84-99 fg=lightblue
+r10 84-99 fg=lightblue
+r11 84-99 fg=lightblue
+r12 84-99 fg=lightblue
+r13 84-99 fg=lightblue
+r14 84-99 fg=lightblue
+r15 84-99 fg=lightblue
+r16 84-99 fg=lightblue
+r17 84-99 fg=lightblue
+r27 0-99 +D
+r29 2-2 +B
+r29 4-9 +D
+r29 10-10 +B
+r29 12-17 +D
+r29 18-18 +B
+r29 20-25 +D
+r29 26-26 +B
+r29 28-35 +D
+r29 36-36 +B
+r29 38-44 +D
+r29 45-45 +B
+r29 47-52 +D
+r29 53-54 +B
+r29 56-62 +D
+r29 88-98 +D

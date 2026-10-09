@@ -1,0 +1,48 @@
+{
+ "argv": [
+  "--offline",
+  "parity",
+  "one",
+  "--date",
+  "2025-12-31",
+  "--since",
+  "2024-12-31"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2025-12-31",
+   "match": false,
+   "opening_from_xero_tb": "2024-12-31",
+   "parity": [
+    {
+     "org": "one",
+     "match": false,
+     "accounts": 8,
+     "differences": 1,
+     "net_difference": "-0.37",
+     "postings": 2027,
+     "unbalanced_docs": 0,
+     "uncoded_postings": 1,
+     "xero_tb_fetched": "2026-10-05T07:46:00Z"
+    }
+   ],
+   "parity_count": 1,
+   "differences": [
+    {
+     "org": "one",
+     "account": "exp",
+     "local": "86539.08",
+     "xero": "86539.45",
+     "difference": "-0.37",
+     "account_id": "exp"
+    }
+   ],
+   "differences_count": 1,
+   "help": [
+    "Drill in with `ownpurse gl <org> --account <code|name> --from <date> --to <date>`."
+   ]
+  }
+ ],
+ "text": "as_of: 2025-12-31\nmatch: false\nopening_from_xero_tb: 2024-12-31\nparity[1]{org,match,accounts,differences,net_difference,postings,unbalanced_docs,uncoded_postings}:\n  one,false,8,1,-0.37,2027,0,1\ndifferences[1]{org,account,local,xero,difference}:\n  one,exp,86539.08,86539.45,-0.37\nhelp[1]:\n  Drill in with `ownpurse gl <org> --account <code|name> --from <date> --to <date>`.\n"
+}

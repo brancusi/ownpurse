@@ -1,0 +1,6 @@
+$ ownpurse classify config add-project harvest Again --confirm --expect-store-rev 82 --client claude
+exit 1
+error: config
+message: "project already has a choice ""harvest"""
+help[1]:
+  Run `ownpurse classify rules check` and fix the file, or adjust the edit.

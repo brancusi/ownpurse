@@ -1,0 +1,186 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    as of 2025-12-31                                                                                 ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Overview                      ╭─ Commands ───────────────────────────────────────────────────────────────╮
+  Organisations                 │ ›  type to filter                                                        │             all synced 2h ago
+  org     parity (year)  parity │──────────────────────────────────────────────────────────────────────────│
+▌ roast   ✓ exact        2 acco │▌⇅ Sync roast…                                                            │
+          Enter → roast trial b │ ⇅ Sync hold…                                                             │
+  hold    ✓ exact        ✓ exac │ ⇅ Sync design…                                                           │
+  design  ✓ exact        15 acc │ ⇅ Sync lab…                                                              │
+  lab     ✓ exact        ✓ exac │ ⇅ Sync all orgs…                                                         │
+                                │ ⇅ Log in to Xero…                                                        │
+  Intercompany                  │ ⇅ Refetch Xero trial balance for parity…                                 │
+  4 pairs   1 match   2 bridged │   Switch to roast                                                        │
+                                │   Switch to hold                                                         │
+  Needs attention               │   Switch to design                                                       │
+  ! Quillfeather ↔ Tallowmere ( │   Switch to lab                                                          │
+                                │   Switch to group:all-co                                                 │
+                                │   Switch to group:ops                                                    │
+                                │   Compare orgs side by side…                                             │
+                                │   Change theme                                                           │
+                                │   Show or hide details (IDs, sources, budgets)                         i │
+                                │   Walkthroughs…                                                        W │
+                                │   Lay mode / informed mode                                             L │
+                                │   Clear theme overlay                                                    │
+                                │   Classify: Queue                                                        │
+                                │   Classify: Groups                                                       │
+                                │   Classify: Audition                                                     │
+                                │   Classify: Tree                                                         │
+                                │   Classify: Catalog                                                      │
+                                │ ⇅ Classify: Ask Jev… · Jev not enabled                                   │
+                                │   Switch manifest…                                                       │
+                                │   Make default manifest (the CLI follows it)                             │
+                                │   Show main (leave the manifest)                                         │
+                                │   Explain: bridge Brackenridge ↔ Tallowmere (term loan)                  │
+                                │   Explain: bridge Brackenridge ↔ Quillfeather (management fees)          │
+                                ╰──────────────────────────────────────────────────────────────────────────╯
+
+
+                                                                             Enter run · Esc close · ↑↓ move · type to filter   v0.0.0-test
+--- styles
+r0 2-23 +B
+r0 24-29 +D
+r0 46-137 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-139 +D
+r3 32-33 +D
+r3 34-43 +BD
+r3 44-107 +D
+r4 2-14 +B
+r4 32-32 +D
+r4 34-35 +D
+r4 36-36 +R
+r4 37-50 +D
+r4 107-107 +D
+r4 121-137 +D
+r5 2-7 +D
+r5 10-22 +D
+r5 25-107 +D
+r6 0-0 +BR
+r6 1-31 +R
+r6 32-32 +D
+r6 33-33 +BR
+r6 34-106 +R
+r6 107-107 +D
+r6 108-139 +R
+r7 0-31 +R
+r7 32-32 +D
+r7 34-35 fg=lightblue
+r7 107-107 +D
+r7 108-139 +R
+r8 10-22 +D
+r8 25-32 +D
+r8 34-35 fg=lightblue
+r8 107-107 +D
+r9 10-22 +D
+r9 25-31 fg=yellow
+r9 32-32 +D
+r9 34-35 fg=lightblue
+r9 107-107 +D
+r10 10-22 +D
+r10 25-32 +D
+r10 34-35 fg=lightblue
+r10 107-107 +D
+r11 32-32 +D
+r11 34-35 fg=lightblue
+r11 107-107 +D
+r12 2-13 +B
+r12 32-32 +D
+r12 34-35 fg=lightblue
+r12 107-107 +D
+r13 32-32 +D
+r13 34-35 fg=lightblue
+r13 107-107 +D
+r14 32-32 +D
+r14 34-35 fg=lightblue
+r14 107-107 +D
+r15 2-16 +B
+r15 32-32 +D
+r15 34-35 fg=lightblue
+r15 107-107 +D
+r16 2-31 fg=yellow
+r16 32-32 +D
+r16 34-35 fg=lightblue
+r16 107-107 +D
+r17 32-32 +D
+r17 34-35 fg=lightblue
+r17 107-107 +D
+r18 32-32 +D
+r18 34-35 fg=lightblue
+r18 107-107 +D
+r19 32-32 +D
+r19 34-35 fg=lightblue
+r19 107-107 +D
+r20 32-32 +D
+r20 34-35 fg=lightblue
+r20 107-107 +D
+r21 32-32 +D
+r21 34-35 fg=lightblue
+r21 105-105 +D
+r21 107-107 +D
+r22 32-32 +D
+r22 34-35 fg=lightblue
+r22 105-105 +D
+r22 107-107 +D
+r23 32-32 +D
+r23 34-35 fg=lightblue
+r23 105-105 +D
+r23 107-107 +D
+r24 32-32 +D
+r24 34-35 fg=lightblue
+r24 107-107 +D
+r25 32-32 +D
+r25 34-35 fg=lightblue
+r25 107-107 +D
+r26 32-32 +D
+r26 34-35 fg=lightblue
+r26 107-107 +D
+r27 32-32 +D
+r27 34-35 fg=lightblue
+r27 107-107 +D
+r28 32-32 +D
+r28 34-35 fg=lightblue
+r28 107-107 +D
+r29 32-32 +D
+r29 34-35 fg=lightblue
+r29 107-107 +D
+r30 32-32 +D
+r30 34-71 +D
+r30 107-107 +D
+r31 32-32 +D
+r31 34-35 fg=lightblue
+r31 107-107 +D
+r32 32-32 +D
+r32 34-35 fg=lightblue
+r32 107-107 +D
+r33 32-32 +D
+r33 34-35 fg=lightblue
+r33 107-107 +D
+r34 32-32 +D
+r34 34-35 fg=lightblue
+r34 107-107 +D
+r35 32-32 +D
+r35 34-35 fg=lightblue
+r35 107-107 +D
+r36 32-107 +D
+r39 77-81 +B
+r39 83-88 +D
+r39 89-91 +B
+r39 93-100 +D
+r39 101-102 +B
+r39 104-124 +D
+r39 128-138 +D

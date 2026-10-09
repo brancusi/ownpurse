@@ -1,0 +1,147 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    as of 2025-12-31    offline    938/1,000 left                                                    ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Overview
+  Organisations                                                                                                          all synced 2h ago
+  org     parity (year)  parity (history)    issues
+▌ roast   ✓ exact        2 accounts differ   none
+          Enter → roast trial balance · 967 calls left
+  hold    ✓ exact        ✓ exact             none
+  design  ✓ exact        15 accounts differ  none
+  lab     ✓ exact        ✓ exact             none
+
+  Intercompany
+  4 pairs   1 match   2 bridged   1 unexplained
+
+  Needs attention
+  ! Quillfeather ↔ Tallowmere (recharges) has an unexplained residual of 263.94. Open Intercompany (3).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ Offline mode: network actions are disabled. Restart without --offline to use them.                                                ▌Close
+  Enter close  Esc close                                                                                                        v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-19 fg=#72B6D4 bg=#243137 +B
+r0 20-20 fg=#4DBFA9 bg=#243137 +B
+r0 21-21 fg=#9D8FF2 bg=#243137 +B
+r0 22-22 fg=#E8834F bg=#243137 +B
+r0 23-23 fg=#E8769F bg=#243137 +B
+r0 24-29 fg=#93A0A7 bg=#243137
+r0 30-45 fg=#B9C4C9 bg=#243137
+r0 46-49 fg=#93A0A7 bg=#243137
+r0 50-56 fg=#E6BC5E bg=#243137
+r0 57-60 fg=#93A0A7 bg=#243137
+r0 61-74 fg=#E6ECEE bg=#243137
+r0 75-126 fg=#93A0A7 bg=#243137
+r0 127-137 fg=#717E85 bg=#243137
+r0 138-139 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#E6ECEE bg=#171D20 +B
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-139 bg=#171D20
+r2 0-1 fg=#2D383E
+r2 2-11 fg=#72B6D4 +B
+r2 12-139 fg=#2D383E
+r3 2-9 fg=#E6ECEE
+r4 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r4 2-14 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r4 15-120 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r4 121-137 fg=#93A0A7 bg=#1A2125 +U ul=#2D383E
+r4 138-139 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r5 2-7 fg=#93A0A7
+r5 10-22 fg=#93A0A7
+r5 25-42 fg=#93A0A7
+r5 45-50 fg=#93A0A7
+r6 0-0 fg=#72B6D4 bg=#253540 +B
+r6 1-1 bg=#253540
+r6 2-7 fg=#E6ECEE bg=#253540
+r6 8-9 bg=#253540
+r6 10-22 fg=#93A0A7 bg=#253540
+r6 23-24 bg=#253540
+r6 25-42 fg=#E6BC5E bg=#253540
+r6 43-44 bg=#253540
+r6 45-50 fg=#93A0A7 bg=#253540
+r6 51-139 bg=#253540
+r7 0-9 bg=#253540
+r7 10-53 fg=#93A0A7 bg=#253540
+r7 54-139 bg=#253540
+r8 2-7 fg=#E6ECEE
+r8 10-22 fg=#93A0A7
+r8 25-42 fg=#93A0A7
+r8 45-50 fg=#93A0A7
+r9 2-7 fg=#E6ECEE
+r9 10-22 fg=#93A0A7
+r9 25-42 fg=#E6BC5E
+r9 45-50 fg=#93A0A7
+r10 2-7 fg=#E6ECEE
+r10 10-22 fg=#93A0A7
+r10 25-42 fg=#93A0A7
+r10 45-50 fg=#93A0A7
+r12 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r12 2-13 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r12 14-139 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r13 2-8 fg=#E6ECEE
+r13 12-18 fg=#E6ECEE
+r13 22-30 fg=#E6ECEE
+r13 34-46 fg=#F0907B
+r15 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r15 2-16 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r15 17-139 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r16 2-102 fg=#E6BC5E
+r38 0-0 bg=#1C2428
+r38 1-82 fg=#F0907B bg=#1C2428
+r38 83-130 bg=#1C2428
+r38 131-137 fg=#E6ECEE bg=#1C2428 +R
+r38 138-139 bg=#1C2428
+r39 0-1 bg=#1B2226
+r39 2-6 fg=#FFFFFF bg=#1B2226
+r39 7-7 bg=#1B2226
+r39 8-14 fg=#93A0A7 bg=#1B2226
+r39 15-17 fg=#FFFFFF bg=#1B2226
+r39 18-18 bg=#1B2226
+r39 19-23 fg=#93A0A7 bg=#1B2226
+r39 24-127 bg=#1B2226
+r39 128-138 fg=#717E85 bg=#1B2226
+r39 139-139 bg=#1B2226

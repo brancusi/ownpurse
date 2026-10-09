@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+import Sheet from '../components/Sheet.astro';
+import Note from '../components/Note.astro';
+import Coin from '../components/Coin.astro';
+import Amount from '../components/Amount.astro';
+import Mark from '../components/Mark.astro';
+
+const principles = [
+	['Facts, not tables', 'Everything is stored as small facts with a time and a source. Tables are something you ask for, not something you are stuck with.'],
+	['Append, never overwrite', 'A correction is a new fact. The record only grows, and a hash chain proves it.'],
+	['Stay uncollapsed', 'Facts can wait in an intermediate state until a person decides what they mean.'],
+	['Every view is a query', 'A P&L, a balance sheet, a budget and a reconciliation are questions asked of the same facts.'],
+	['Balance is the test', 'Debits equal credits, every book agrees with its source to the cent, or ownpurse shows you exactly where it doesn’t.'],
+	['You hold the record', 'It lives on your machine or your own server. No account with us, nothing sent anywhere you didn’t choose.'],
+	['Agents propose, you post', 'Agents read everything and suggest anything. Writes are planned, recorded operations that you approve.'],
+	['Simple underneath', 'However complicated the books get, the base stays the same: atomic events over time.'],
+];
+const fact = [['Entity', 'bill-2041/b'], ['Attribute', 'account'], ['Value', 'household · Home upkeep'], ['As of', 'tx 1191']];
+const readings = [['roast · 6420 Repairs', 0.62], ['household · Home upkeep', 0.31], ['roast · 3200 Owner drawings', 0.07]] as const;
+---
+<Base title="Philosophy · ownpurse" description="Bookkeeping was the first database. ownpurse brings the ledger's append-only log of facts back to the surface and puts it on your machine." current="philosophy">
+
+<section class="wrap sec stack-lg" style="padding-block: 88px 56px;">
+	<div class="eyebrow">Philosophy</div>
+	<h1 class="h1 sm" style="max-width: 14em;">Bookkeeping was the first database. It should be yours again.</h1>
+	<p class="lead">ownpurse rests on one old idea and one new one. The old idea is the ledger: a book of facts you only ever add to. The new one is the agent: a collaborator that can read every fact and help you see what they mean.</p>
+</section>
+
+<section class="rule-top">
+	<div class="wrap sec-sm split">
+		<div style="display: flex; flex-direction: column; gap: 6px;">
+			<div style="font-family: var(--font-mono); font-size: clamp(72px, 11vw, 150px); line-height: 0.9; letter-spacing: -0.04em;">1494</div>
+			<div class="eyebrow">Venice · Summa de arithmetica</div>
+		</div>
+		<div class="stack muted">
+			<h2 class="h2 sm" style="color: var(--ink-1);">The ledger was append-only five centuries before the word existed.</h2>
+			<p>Luca Pacioli wrote down the method Venetian merchants already used: record every movement twice, once as a debit and once as a credit, in a book you add to and never erase. A mistake is not scratched out; it is corrected by a new entry. The books balance, or they tell you exactly where they don't.</p>
+			<p>That is an immutable log of facts with a built-in integrity check. Modern accounting software kept the arithmetic and hid the log. ownpurse brings the log back to the surface and puts it on your machine.</p>
+		</div>
+	</div>
+</section>
+
+<section class="wrap" style="padding-block: 24px 80px; display: flex; flex-direction: column; gap: 28px;">
+	<div class="stack" style="max-width: 760px;">
+		<div class="eyebrow">The unit</div>
+		<h2 class="h2 sm">One fact: this thing had this property, with this value, from this moment, according to this source.</h2>
+		<p class="muted">It is the same shape as an RDF triple or a datom in Datomic, with time and provenance attached. A posting, a bank line, a budget row and a share price all fit it, so nothing has to be forced into one system's chart of accounts on the way in.</p>
+	</div>
+	<Sheet titleBlock={{ sheet: 'P-001', subject: 'One fact', date: '2026-10-09' }}>
+		<div style="display: flex; flex-direction: column; gap: 22px; padding-bottom: 40px;">
+			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); border: 2px solid var(--ink-1); background: var(--surface-0); max-width: 900px;">
+				{fact.map(([k, v]) => <div style="padding: 16px; border-right: 1px solid var(--ink-1); display: flex; flex-direction: column; gap: 4px;"><span style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lapis);">{k}</span><span style="font-family: var(--font-mono); font-size: 16px;">{v}</span></div>)}
+				<div style="padding: 16px; display: flex; flex-direction: column; gap: 4px; background: var(--surface-1);"><span style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lapis);">Source</span><span style="font-family: var(--font-mono); font-size: 16px; display: inline-flex; align-items: center; gap: 8px;"><span class="coin-dot" style="width: 10px; height: 10px;"></span>sheet</span></div>
+			</div>
+			<Note label="Fig. 1">A fact is never edited. When the household half moved from Groceries to Home upkeep, tx 1191 added a new fact; tx 1185's fact is still there, and both are in the hash chain.</Note>
+		</div>
+	</Sheet>
+</section>
+
+<section class="band">
+	<div class="wrap sec stack-lg" style="gap: 36px;">
+		<div class="stack">
+			<div class="eyebrow">Principles</div>
+			<h2 class="h2 sm">What ownpurse holds to.</h2>
+		</div>
+		<div class="cols ruled" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));">
+			{principles.map(([t, b]) => <div><h3 class="h3">{t}</h3><p class="muted small">{b}</p></div>)}
+		</div>
+	</div>
+</section>
+
+<section class="wrap sec split center">
+	<div class="stack">
+		<div class="eyebrow">Uncollapsed</div>
+		<h2 class="h2 sm">Hold the facts before deciding what they mean.</h2>
+		<p class="muted">Most tools make you decide on the way in: which account, which book, which system. ownpurse lets a fact arrive and wait, like a waveform that hasn't collapsed. A card payment can be held as possibly repairs, possibly household, until you and your agent look at it together. Posting is the moment it collapses, and that moment is recorded too.</p>
+	</div>
+	<div style="border: 1px solid var(--line-2); padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+		<div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-family: var(--font-mono); font-size: 14px;"><span>card 4417 · Hardware Depot</span><Amount value={-86.4} /></div>
+		{readings.map(([l, p]) => (
+			<div style="display: flex; flex-direction: column; gap: 6px;">
+				<div style="display: flex; justify-content: space-between; gap: 12px; font-size: 15px;"><span>{l}</span><span style="font-family: var(--font-mono); color: var(--ink-3);">{p.toFixed(2)}</span></div>
+				<div style="height: 4px; background: var(--surface-2);"><div style={`height: 4px; width: ${p * 100}%; background: var(--gilt);`}></div></div>
+			</div>
+		))}
+		<Coin kind="held" label="Held, not posted" />
+	</div>
+</section>
+
+<section class="band-ink">
+	<div class="wrap sec" style="padding-block: 96px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 28px;">
+		<Mark size={72} tone="reversed" blink />
+		<h2 class="h2" style="font-size: clamp(32px, 4.4vw, 60px); max-width: 16em; letter-spacing: -0.03em;">It always was, and always will be, atomic events over time.</h2>
+		<a class="op-btn coin btn-lg" href="/how-it-works/">See how it works</a>
+	</div>
+</section>
+</Base>

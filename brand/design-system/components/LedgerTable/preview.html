@@ -1,0 +1,12 @@
+<!-- @dsCard group="Ledger" height=320 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>LedgerTable</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var O = window.Ownpurse, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', {className:'op-stack'}, h(O.LedgerTable,{rows:[{date:'09-03',source:'xero',book:'roast',account:'6420 Repairs',debit:53.6},{date:'09-03',source:'sheet',book:'household',account:'Home upkeep',debit:32.8,selected:true},{date:'09-03',source:'bank',book:'card 4417',account:'Card clearing',credit:86.4},{date:'09-30',source:'xero',book:'roast',account:'2410 Loan, hold',debit:400},{date:'09-30',source:'xero',book:'hold',account:'1460 Loan, roast',credit:400}]})));
+</script>
+</body>
+</html>

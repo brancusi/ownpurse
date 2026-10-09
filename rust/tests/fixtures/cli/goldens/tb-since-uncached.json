@@ -1,0 +1,22 @@
+{
+ "argv": [
+  "--offline",
+  "tb",
+  "one",
+  "--date",
+  "2025-12-31",
+  "--since",
+  "2023-12-31"
+ ],
+ "exit": 2,
+ "json": [
+  {
+   "error": "usage",
+   "message": "No cached TrialBalance snapshot for {\"date\":\"2023-12-31\",\"paymentsOnly\":\"false\"}.",
+   "help": [
+    "Drop --offline/--cached."
+   ]
+  }
+ ],
+ "text": "error: usage\nmessage: \"No cached TrialBalance snapshot for {\"\"date\"\":\"\"2023-12-31\"\",\"\"paymentsOnly\"\":\"\"false\"\"}.\"\nhelp[1]:\n  Drop --offline/--cached.\n"
+}

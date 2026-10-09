@@ -1,0 +1,10 @@
+$ ownpurse classify note lab:bt:bt-402:L1 Founding members, see the register --expect-store-rev 82 --client claude
+exit 0
+op: note
+summary: "added a note to Saltmarsh Members 2,486.19"
+batch: claude-2026-10-05T09:46:00.000000Z-82
+lines: 1
+store_rev: 83
+events: 83
+anchors[1]{anchor}:
+  lab:bt:bt-402:L1

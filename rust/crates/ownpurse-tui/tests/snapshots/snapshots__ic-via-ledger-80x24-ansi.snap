@@ -1,0 +1,77 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  ● design ↔ ● roast    as of 2025-12-31                           ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+───────────────━━━━━━━━─────────────────────────────────────────────────────────
+  Quillfeather ↔ Tallowmere (recharges) › … › Recharges due from Tallowmere (1…
+  opening 0.00 from Xero TB 2024-12-31 · debits 1,412.57 · credits 1,148.63 ·
+  closing 263.94
+  postings from 2025-01-01 to 2025-12-31
+  date        src  contact                            debit    credit   balance
+▌ 2025-05-22  Sp   Hollowpine Packaging Works      1,148.63            1,148.63
+  2025-08-08  Re   Tallowmere Coffee Roasting Co.            1,148.63      0.00
+  2025-11-19  Sp   Hollowpine Packaging Works        263.94              263.94
+
+
+
+
+
+
+
+
+
+
+
+
+  f Range  h Full history  q  /  ]  ?  ⌃P palette                   v0.0.0-test
+--- styles
+r0 2-2 +B
+r0 3-3 +D
+r0 4-9 +B
+r0 10-12 +D
+r0 13-13 +B
+r0 14-14 +D
+r0 15-19 +B
+r0 20-23 +D
+r0 40-77 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-79 +D
+r3 2-45 +D
+r4 2-76 fg=green
+r5 2-15 fg=green
+r6 2-39 +D
+r7 2-11 +D
+r7 14-16 +D
+r7 19-48 +D
+r7 51-58 +D
+r7 61-68 +D
+r7 71-78 +D
+r8 0-0 +BR
+r8 1-79 +R
+r9 14-16 +D
+r10 14-16 +D
+r23 2-2 +B
+r23 4-10 +D
+r23 11-11 +B
+r23 13-26 +D
+r23 27-27 +B
+r23 28-29 +D
+r23 30-30 +B
+r23 31-32 +D
+r23 33-33 +B
+r23 34-35 +D
+r23 36-36 +B
+r23 37-38 +D
+r23 39-40 +B
+r23 42-48 +D
+r23 68-78 +D

@@ -1,0 +1,110 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [all organisations] v    as of 2025-12-31                                                                                      read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+--==========--------------------------------------------------------------------------------------------------------------------------------
+  Overview            +- Switch scope -------------------------------------------------------------------------------+
+  Organisations       | >  type to filter (alias, name, short code)                                                  |   all synced 2h ago
+  org     parity (yea |----------------------------------------------------------------------------------------------|
+> roast   exact       |> all           4 orgs                                                              * current |
+          Enter -> ro |  roast         Tallowmere Coffee Roasting Co. - 07:46 UTC - 2h ago - 967/1,000 left          |
+  hold    exact       |  hold          Brackenridge Lane Holdings Ltd - 07:46 UTC - 2h ago - 978/1,000 left          |
+  design  exact       |  design        Quillfeather Design Consultancy LLP - 07:46 UTC - 2h ago - 938/1,000 left     |
+  lab     exact       |  lab           Saltmarsh Cupping Lab LLC - 07:46 UTC - 2h ago - 978/1,000 left               |
+                      |  group:all-co  4 orgs                                                                        |
+  Intercompany        |  group:ops     3 orgs                                                                        |
+  4 pairs   1 match   +----------------------------------------------------------------------------------------------+
+
+  Needs attention
+  ! Quillfeather <-> Tallowmere (recharges) has an unexplained residual of 263.94. Open Intercompany (3).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                         Enter switch - Esc cancel - ^v move - type to filter   v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-137 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-139 +D
+r3 22-23 +D
+r3 24-37 +BD
+r3 38-117 +D
+r4 2-14 +B
+r4 22-22 +D
+r4 24-25 +D
+r4 26-26 +R
+r4 27-66 +D
+r4 117-117 +D
+r4 121-137 +D
+r5 2-7 +D
+r5 10-117 +D
+r6 0-0 +BR
+r6 1-21 +R
+r6 22-22 +D
+r6 23-23 +BR
+r6 24-106 +R
+r6 107-115 +BR
+r6 116-116 +R
+r6 117-117 +D
+r6 118-139 +R
+r7 0-21 +R
+r7 22-22 +D
+r7 39-106 +D
+r7 117-117 +D
+r7 118-139 +R
+r8 10-22 +D
+r8 39-106 +D
+r8 117-117 +D
+r9 10-22 +D
+r9 39-111 +D
+r9 117-117 +D
+r10 10-22 +D
+r10 39-101 +D
+r10 117-117 +D
+r11 22-22 +D
+r11 39-44 +D
+r11 117-117 +D
+r12 2-13 +B
+r12 22-22 +D
+r12 39-44 +D
+r12 117-117 +D
+r13 22-117 +D
+r15 2-16 +B
+r39 73-77 +B
+r39 79-87 +D
+r39 88-90 +B
+r39 92-100 +D
+r39 101-102 +B
+r39 104-124 +D
+r39 128-138 +D

@@ -1,0 +1,18 @@
+$ ownpurse classify queue proofs status:all
+exit 0
+filter: status:all proofs
+scope: 
+store_rev: 82
+lines: 6
+open: 4
+stale: 0
+total_lines: 49
+total_open: 38
+total_stale: 2
+rows[6]{anchor,date,payee,amount,account,suggestion,src,conf,stale}:
+  design:bt:bt-303:L1,2025-05-22,Hollowpine Packaging Works,"(1,148.63)",1450,harvest / roast / intercompany,H,,
+  roast:mj:mj-101:L1,2025-05-31,,"1,148.63",6290,· / roast / ·,R,0.8,
+  roast:mj:mj-101:L2,2025-05-31,,"(1,148.63)",2430,· / roast / ·,R,0.8,
+  design:bt:bt-304:L1,2025-08-08,Tallowmere Coffee Roasting Co.,"1,148.63",1450,none / design / intercompany,R,0.8,
+  roast:bt:bt-108:L1,2025-08-08,Quillfeather Design Consultancy,"(1,148.63)",2430,none / roast / intercompany,R,0.8,
+  design:bt:bt-305:L1,2025-11-19,Hollowpine Packaging Works,(263.94),1450,harvest / roast / intercompany,H,,

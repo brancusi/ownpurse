@@ -1,0 +1,337 @@
+---
+source: crates/ownpurse-tui/tests/walkthroughs.rs
+assertion_line: 790
+expression: styled(&buf)
+---
+  All organisations ●●●● ▾    ⎇ fix-igniter · planned    as of 2025-12-31    ◆ agent                                                                                                                                                                                                                               ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌━━━━━━━━━━╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+  Manifest › ⎇ fix-igniter › Entries
+  draft ✓ › review ✓ › check ✓ › ▸ planned › approved › applying › applied                                                                                                                                                                                                  ── Step 2 of 10 · The change lives in a manifest ───
+  Apply from your own terminal   the owner approves first (refused in agent sessions) · y copies the full command                                                                                                                                                             A manifest collects proposed changes so they can
+  Approve: ownpurse manifest approve fix-igniter --package b7bdaa8f…6c --response-file <your-response.txt> --i-am-the-owner                                                                                                                                                   be read and checked first. This one, fix-igniter
+  Then apply: OWNPURSE_WRITE_RUN=b7bdaa8f…6c ownpurse manifest apply fix-igniter --package b7bdaa8f…6c                                                                                                                                                                        , holds one entry.
+  Entries   Issues   Diff   Log   , . mode · b manifests · P plan                                                                                                                                                                                                             Why this matters: Nothing here touches the books
+                                                                                                                                                                                                                                                                              until the owner approves.
+  Entries                                                                                                                                                                                                                                  planned · sha256 b7bdaa8f9059…     ● ● ○ ○ ○ ○ ○ ○ ○ ○
+  seq     org    entity  target  change  issues  by               ╭────────────────────────────────╮
+▌ 2    ~  roast  BT      bt-110  1 line  ✓       H               ╭┤ One payment, one line changed. │
+       the igniter is for the sample roaster in the cupping room◀╯╰────────────────────────────────╯
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ◆ agent: step 2 of 10 · ` back                                                                                                                                                                                               Enter Diff  y copy command  u Undo  N New  P Plan  ? more  ⌃P palette  ⎇ fix-igniter  v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-19 fg=#72B6D4 bg=#243137 +B
+r0 20-20 fg=#4DBFA9 bg=#243137 +B
+r0 21-21 fg=#9D8FF2 bg=#243137 +B
+r0 22-22 fg=#E8834F bg=#243137 +B
+r0 23-23 fg=#E8769F bg=#243137 +B
+r0 24-29 fg=#93A0A7 bg=#243137
+r0 30-42 fg=#D49AD0 bg=#233239 +BU
+r0 43-52 fg=#93A0A7 bg=#233239 +U
+r0 53-56 fg=#93A0A7 bg=#243137
+r0 57-72 fg=#B9C4C9 bg=#243137
+r0 73-76 fg=#93A0A7 bg=#243137
+r0 77-83 fg=#88B1EC bg=#243137
+r0 84-306 fg=#93A0A7 bg=#243137
+r0 307-317 fg=#717E85 bg=#243137
+r0 318-319 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#E6ECEE bg=#171D20 +B
+r1 90-319 bg=#171D20
+r2 0-79 fg=#D49AD0
+r2 80-89 fg=#72B6D4 +B
+r2 90-319 fg=#D49AD0
+r3 2-28 fg=#93A0A7
+r3 29-35 fg=#E6ECEE
+r4 2-8 fg=#93A0A7
+r4 9-11 fg=#717E85
+r4 12-19 fg=#93A0A7
+r4 20-22 fg=#717E85
+r4 23-29 fg=#93A0A7
+r4 30-32 fg=#717E85
+r4 33-41 fg=#D49AD0 +B
+r4 42-73 fg=#717E85
+r4 268-269 fg=#2D383E bg=#1C2428
+r4 270-316 fg=#72B6D4 bg=#1C2428 +B
+r4 317-319 fg=#2D383E bg=#1C2428
+r5 0-1 bg=#1C2428
+r5 2-29 fg=#E6ECEE bg=#1C2428 +B
+r5 30-112 fg=#93A0A7 bg=#1C2428
+r5 113-266 bg=#1C2428
+r5 268-269 bg=#1C2428
+r5 270-271 fg=#E6ECEE bg=#1C2428
+r5 272-279 fg=#72B6D4 bg=#1C2428 +BU
+r5 280-317 fg=#E6ECEE bg=#1C2428
+r5 318-319 bg=#1C2428
+r6 0-1 bg=#1C2428
+r6 2-10 fg=#93A0A7 bg=#1C2428
+r6 11-122 fg=#E6ECEE bg=#1C2428
+r6 123-266 bg=#1C2428
+r6 268-269 bg=#1C2428
+r6 270-306 fg=#E6ECEE bg=#1C2428
+r6 307-317 fg=#E6ECEE bg=#1C2428 +B
+r6 318-319 bg=#1C2428
+r7 0-1 bg=#1C2428
+r7 2-13 fg=#93A0A7 bg=#1C2428
+r7 14-101 fg=#E6ECEE bg=#1C2428
+r7 102-266 bg=#1C2428
+r7 268-269 bg=#1C2428
+r7 270-287 fg=#E6ECEE bg=#1C2428
+r7 288-319 bg=#1C2428
+r8 2-8 fg=#E6ECEE +B
+r8 12-17 fg=#93A0A7
+r8 21-24 fg=#93A0A7
+r8 28-30 fg=#93A0A7
+r8 34-64 fg=#717E85
+r8 268-269 bg=#1C2428
+r8 270-317 fg=#93A0A7 bg=#1C2428
+r8 318-319 bg=#1C2428
+r9 268-269 bg=#1C2428
+r9 270-294 fg=#93A0A7 bg=#1C2428
+r9 295-319 bg=#1C2428
+r10 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r10 2-8 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r10 9-234 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r10 235-264 fg=#93A0A7 bg=#1A2125 +U ul=#2D383E
+r10 265-266 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r10 268-269 bg=#1C2428
+r10 270-270 fg=#93A0A7 bg=#1C2428
+r10 271-271 bg=#1C2428
+r10 272-272 fg=#72B6D4 bg=#1C2428 +B
+r10 273-273 bg=#1C2428
+r10 274-274 fg=#93A0A7 bg=#1C2428
+r10 275-275 bg=#1C2428
+r10 276-276 fg=#93A0A7 bg=#1C2428
+r10 277-277 bg=#1C2428
+r10 278-278 fg=#93A0A7 bg=#1C2428
+r10 279-279 bg=#1C2428
+r10 280-280 fg=#93A0A7 bg=#1C2428
+r10 281-281 bg=#1C2428
+r10 282-282 fg=#93A0A7 bg=#1C2428
+r10 283-283 bg=#1C2428
+r10 284-284 fg=#93A0A7 bg=#1C2428
+r10 285-285 bg=#1C2428
+r10 286-286 fg=#93A0A7 bg=#1C2428
+r10 287-287 bg=#1C2428
+r10 288-288 fg=#93A0A7 bg=#1C2428
+r10 289-319 bg=#1C2428
+r11 2-4 fg=#93A0A7
+r11 7-7 fg=#93A0A7
+r11 10-14 fg=#93A0A7
+r11 17-22 fg=#93A0A7
+r11 25-30 fg=#93A0A7
+r11 33-38 fg=#93A0A7
+r11 41-46 fg=#93A0A7
+r11 49-50 fg=#93A0A7
+r11 66-99 fg=#72B6D4 bg=#1C2428 +B
+r11 268-319 bg=#1C2428
+r12 0-0 fg=#72B6D4 bg=#233239 +BU
+r12 1-1 bg=#233239 +U
+r12 2-4 fg=#93A0A7 bg=#233239 +U
+r12 5-6 bg=#233239 +U
+r12 7-7 fg=#D49AD0 bg=#233239 +U
+r12 8-9 bg=#233239 +U
+r12 10-14 fg=#E6ECEE bg=#233239 +U
+r12 15-16 bg=#233239 +U
+r12 17-22 fg=#93A0A7 bg=#233239 +U
+r12 23-24 bg=#233239 +U
+r12 25-30 fg=#E6ECEE bg=#233239 +U
+r12 31-32 bg=#233239 +U
+r12 33-38 fg=#E6ECEE bg=#233239 +U
+r12 39-40 bg=#233239 +U
+r12 41-46 fg=#93A0A7 bg=#233239 +U
+r12 47-48 bg=#233239 +U
+r12 49-49 fg=#93A0A7 bg=#233239 +U
+r12 50-50 fg=#93A0A7 bg=#253540
+r12 51-64 bg=#253540
+r12 65-65 fg=#72B6D4 bg=#253540 +B
+r12 66-66 fg=#72B6D4 bg=#1C2428 +B
+r12 67-67 bg=#1C2428
+r12 68-97 fg=#E6ECEE bg=#1C2428
+r12 98-98 bg=#1C2428
+r12 99-99 fg=#72B6D4 bg=#1C2428 +B
+r12 100-266 bg=#253540
+r12 268-319 bg=#1C2428
+r13 0-6 bg=#253540
+r13 7-63 fg=#93A0A7 bg=#233239 +U
+r13 64-65 fg=#72B6D4 bg=#253540 +B
+r13 66-99 fg=#72B6D4 bg=#1C2428 +B
+r13 100-266 bg=#253540
+r13 268-319 bg=#1C2428
+r14 268-319 bg=#1C2428
+r15 268-319 bg=#1C2428
+r16 268-319 bg=#1C2428
+r17 268-319 bg=#1C2428
+r18 268-319 bg=#1C2428
+r19 268-319 bg=#1C2428
+r20 268-319 bg=#1C2428
+r21 268-319 bg=#1C2428
+r22 268-319 bg=#1C2428
+r23 268-319 bg=#1C2428
+r24 268-319 bg=#1C2428
+r25 268-319 bg=#1C2428
+r26 268-319 bg=#1C2428
+r27 268-319 bg=#1C2428
+r28 268-319 bg=#1C2428
+r29 268-319 bg=#1C2428
+r30 268-319 bg=#1C2428
+r31 268-319 bg=#1C2428
+r32 268-319 bg=#1C2428
+r33 268-319 bg=#1C2428
+r34 268-319 bg=#1C2428
+r35 268-319 bg=#1C2428
+r36 268-319 bg=#1C2428
+r37 268-319 bg=#1C2428
+r38 268-319 bg=#1C2428
+r39 268-319 bg=#1C2428
+r40 268-319 bg=#1C2428
+r41 268-319 bg=#1C2428
+r42 268-319 bg=#1C2428
+r43 268-319 bg=#1C2428
+r44 268-319 bg=#1C2428
+r45 268-319 bg=#1C2428
+r46 268-319 bg=#1C2428
+r47 268-319 bg=#1C2428
+r48 268-319 bg=#1C2428
+r49 268-319 bg=#1C2428
+r50 268-319 bg=#1C2428
+r51 268-319 bg=#1C2428
+r52 268-319 bg=#1C2428
+r53 268-319 bg=#1C2428
+r54 268-319 bg=#1C2428
+r55 268-319 bg=#1C2428
+r56 268-319 bg=#1C2428
+r57 268-319 bg=#1C2428
+r58 268-319 bg=#1C2428
+r59 268-319 bg=#1C2428
+r60 268-319 bg=#1C2428
+r61 268-319 bg=#1C2428
+r62 268-319 bg=#1C2428
+r63 268-319 bg=#1C2428
+r64 268-319 bg=#1C2428
+r65 268-319 bg=#1C2428
+r66 268-319 bg=#1C2428
+r67 268-319 bg=#1C2428
+r68 268-319 bg=#1C2428
+r69 268-319 bg=#1C2428
+r70 268-319 bg=#1C2428
+r71 268-319 bg=#1C2428
+r72 268-319 bg=#1C2428
+r73 268-319 bg=#1C2428
+r74 268-319 bg=#1C2428
+r75 268-319 bg=#1C2428
+r76 268-319 bg=#1C2428
+r77 268-319 bg=#1C2428
+r78 268-319 bg=#1C2428
+r79 0-0 bg=#1B2226
+r79 1-30 fg=#88B1EC bg=#1B2226
+r79 31-221 bg=#1B2226
+r79 222-226 fg=#FFFFFF bg=#1B2226
+r79 227-227 bg=#1B2226
+r79 228-233 fg=#93A0A7 bg=#1B2226
+r79 234-234 fg=#FFFFFF bg=#1B2226
+r79 235-235 bg=#1B2226
+r79 236-249 fg=#93A0A7 bg=#1B2226
+r79 250-250 fg=#FFFFFF bg=#1B2226
+r79 251-251 bg=#1B2226
+r79 252-257 fg=#93A0A7 bg=#1B2226
+r79 258-258 fg=#FFFFFF bg=#1B2226
+r79 259-259 bg=#1B2226
+r79 260-264 fg=#93A0A7 bg=#1B2226
+r79 265-265 fg=#FFFFFF bg=#1B2226
+r79 266-266 bg=#1B2226
+r79 267-272 fg=#93A0A7 bg=#1B2226
+r79 273-273 fg=#FFFFFF bg=#1B2226
+r79 274-274 bg=#1B2226
+r79 275-280 fg=#93A0A7 bg=#1B2226
+r79 281-282 fg=#FFFFFF bg=#1B2226
+r79 283-283 bg=#1B2226
+r79 284-290 fg=#93A0A7 bg=#1B2226
+r79 291-292 bg=#1B2226
+r79 293-307 fg=#D49AD0 bg=#1B2226 +B
+r79 308-318 fg=#717E85 bg=#1B2226
+r79 319-319 bg=#1B2226

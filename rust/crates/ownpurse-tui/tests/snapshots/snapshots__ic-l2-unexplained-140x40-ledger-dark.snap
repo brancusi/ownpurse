@@ -1,0 +1,163 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ● one ↔ ● co    as of 2025-12-31    no local record                                                                          ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──────────────────────────━━━━━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────
+  One ↔ Co › bridge at 2025-12-31                                                                                     (194.42) unexplained
+
+  side A · one                                                          side B · co · hq's share (residual)
+  0.00                                                                  Cr 1,003.26
+  no paired accounts with postings                                      Intra-group Payable – HQ (2475) · account total Cr 1,003.26
+
+  Bridge
+    Difference at year end             (1,003.26)
+      = prior-year opening difference  (1,013.47)
+      + 2025 movement difference            10.21
+          explained by 1 item below        204.63
+    ─────────────────────────────────────────────
+    Unexplained residual                 (194.42)
+
+  Items on one side only                                                                                                                 1
+  side  date        org  account                          contact                 amount  why
+▌ B     2025-06-01  co   Intra-group Payable – HQ (2475)  Fernwick Card Services  204.63  no party contact; no matching entry in one
+  why: no party contact; no matching entry in one  ·  BankTransactions bt-11
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  o Open  a A  b B  q Quit  / Filter  ? more  ⌃P palette                                                                        v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-2 fg=#E8769F bg=#243137 +B
+r0 3-3 fg=#93A0A7 bg=#243137
+r0 4-6 fg=#E8769F bg=#243137 +B
+r0 7-9 fg=#93A0A7 bg=#243137
+r0 10-10 fg=#E8834F bg=#243137 +B
+r0 11-11 fg=#93A0A7 bg=#243137
+r0 12-13 fg=#E8834F bg=#243137 +B
+r0 14-17 fg=#93A0A7 bg=#243137
+r0 18-33 fg=#B9C4C9 bg=#243137
+r0 34-37 fg=#93A0A7 bg=#243137
+r0 38-52 fg=#F0907B bg=#243137
+r0 53-126 fg=#93A0A7 bg=#243137
+r0 127-137 fg=#717E85 bg=#243137
+r0 138-139 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#E6ECEE bg=#171D20 +B
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-139 bg=#171D20
+r2 0-25 fg=#2D383E
+r2 26-39 fg=#72B6D4 +B
+r2 40-139 fg=#2D383E
+r3 2-12 fg=#93A0A7
+r3 13-32 fg=#E6ECEE
+r3 118-137 fg=#F0907B
+r5 2-13 fg=#E6ECEE +B
+r5 72-106 fg=#E6ECEE +B
+r6 2-5 fg=#E6ECEE
+r6 72-82 fg=#E6ECEE
+r7 2-33 fg=#93A0A7
+r7 72-130 fg=#93A0A7
+r9 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r9 2-7 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r9 8-139 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r10 4-25 fg=#E6ECEE
+r10 39-48 fg=#E6ECEE
+r11 4-36 fg=#E6ECEE
+r11 39-48 fg=#E6ECEE
+r12 4-31 fg=#E6ECEE
+r12 44-48 fg=#E6ECEE
+r13 4-34 fg=#E6ECEE
+r13 43-48 fg=#E6ECEE
+r14 4-48 fg=#2D383E
+r15 4-23 fg=#F0907B +B
+r15 41-48 fg=#F0907B +B
+r17 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r17 2-23 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r17 24-136 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r17 137-137 fg=#93A0A7 bg=#1A2125 +U ul=#2D383E
+r17 138-139 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r18 2-5 fg=#93A0A7
+r18 8-17 fg=#93A0A7
+r18 20-22 fg=#93A0A7
+r18 25-55 fg=#93A0A7
+r18 58-79 fg=#93A0A7
+r18 82-87 fg=#93A0A7
+r18 90-131 fg=#93A0A7
+r19 0-0 fg=#72B6D4 bg=#253540 +B
+r19 1-1 bg=#253540
+r19 2-5 fg=#E6ECEE bg=#253540
+r19 6-7 bg=#253540
+r19 8-17 fg=#E6ECEE bg=#253540
+r19 18-19 bg=#253540
+r19 20-22 fg=#93A0A7 bg=#253540
+r19 23-24 bg=#253540
+r19 25-55 fg=#E6ECEE bg=#253540
+r19 56-57 bg=#253540
+r19 58-79 fg=#93A0A7 bg=#253540
+r19 80-81 bg=#253540
+r19 82-87 fg=#E6ECEE bg=#253540
+r19 88-89 bg=#253540
+r19 90-131 fg=#93A0A7 bg=#253540
+r19 132-139 bg=#253540
+r20 2-75 fg=#E6ECEE
+r39 0-1 bg=#1B2226
+r39 2-2 fg=#FFFFFF bg=#1B2226
+r39 3-3 bg=#1B2226
+r39 4-9 fg=#93A0A7 bg=#1B2226
+r39 10-10 fg=#FFFFFF bg=#1B2226
+r39 11-11 bg=#1B2226
+r39 12-14 fg=#93A0A7 bg=#1B2226
+r39 15-15 fg=#FFFFFF bg=#1B2226
+r39 16-16 bg=#1B2226
+r39 17-19 fg=#93A0A7 bg=#1B2226
+r39 20-20 fg=#FFFFFF bg=#1B2226
+r39 21-21 bg=#1B2226
+r39 22-27 fg=#93A0A7 bg=#1B2226
+r39 28-28 fg=#FFFFFF bg=#1B2226
+r39 29-29 bg=#1B2226
+r39 30-37 fg=#93A0A7 bg=#1B2226
+r39 38-38 fg=#FFFFFF bg=#1B2226
+r39 39-39 bg=#1B2226
+r39 40-45 fg=#93A0A7 bg=#1B2226
+r39 46-47 fg=#FFFFFF bg=#1B2226
+r39 48-48 bg=#1B2226
+r39 49-55 fg=#93A0A7 bg=#1B2226
+r39 56-127 bg=#1B2226
+r39 128-138 fg=#717E85 bg=#1B2226
+r39 139-139 bg=#1B2226

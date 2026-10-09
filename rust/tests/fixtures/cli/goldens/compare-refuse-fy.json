@@ -1,0 +1,23 @@
+{
+ "argv": [
+  "--offline",
+  "--profile",
+  "wide",
+  "tb",
+  "hq,june",
+  "--compare",
+  "--date",
+  "2025-12-31"
+ ],
+ "exit": 2,
+ "json": [
+  {
+   "error": "usage",
+   "message": "Cannot compare different fiscal years: hq ends 31/12, june ends 30/6",
+   "help": [
+    "Compare orgs with the same base currency and fiscal year."
+   ]
+  }
+ ],
+ "text": "error: usage\nmessage: \"Cannot compare different fiscal years: hq ends 31/12, june ends 30/6\"\nhelp[1]:\n  Compare orgs with the same base currency and fiscal year.\n"
+}

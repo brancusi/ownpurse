@@ -1,0 +1,153 @@
+---
+source: crates/ownpurse-tui/tests/manifests.rs
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    ⎇ dec-cleanup · stopped ✗    as of 2025-12-31            ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌━━━━━━━━━━╌╌╌╌╌╌╌╌╌╌
+  Manifest › ⎇ dec-cleanup › Entries
+  ▸ applying ✗ stopped at entry 3 · 1 landed · 1 rejected · 0 not sent · 0 verified
+  Entries   Issues   Diff   Log   , . mode · b manifests · P plan
+
+  Entries                                                           planned · sha256 94a6fce03781…
+  seq     org     entity  target  change   issues  by  apply
+▌ 2    +  design  MJ      new MJ  new      ✓       H   ✓ landed · MJ 9f2c… · verifying
+       reclass the charge
+  3    ⊘  lab     MJ      mj-401  1 field  ✓       H   ✗ rejected: The journal is in a locked period
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Enter Diff  u Undo  N New  P Plan  e Edit  ? more  ⌃P palette          ⎇ dec-cleanup  v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-19 fg=#72B6D4 bg=#243137 +B
+r0 20-20 fg=#4DBFA9 bg=#243137 +B
+r0 21-21 fg=#9D8FF2 bg=#243137 +B
+r0 22-22 fg=#E8834F bg=#243137 +B
+r0 23-23 fg=#E8769F bg=#243137 +B
+r0 24-29 fg=#93A0A7 bg=#243137
+r0 30-42 fg=#D49AD0 bg=#243137 +B
+r0 43-54 fg=#F0907B bg=#243137
+r0 55-58 fg=#93A0A7 bg=#243137
+r0 59-74 fg=#B9C4C9 bg=#243137
+r0 75-86 fg=#93A0A7 bg=#243137
+r0 87-97 fg=#717E85 bg=#243137
+r0 98-99 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#E6ECEE bg=#171D20 +B
+r1 90-99 bg=#171D20
+r2 0-79 fg=#D49AD0
+r2 80-89 fg=#72B6D4 +B
+r2 90-99 fg=#D49AD0
+r3 2-28 fg=#93A0A7
+r3 29-35 fg=#E6ECEE
+r4 2-82 fg=#F0907B +B
+r5 2-8 fg=#E6ECEE +B
+r5 12-17 fg=#93A0A7
+r5 21-24 fg=#93A0A7
+r5 28-30 fg=#93A0A7
+r5 34-64 fg=#717E85
+r7 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r7 2-8 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r7 9-67 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r7 68-97 fg=#93A0A7 bg=#1A2125 +U ul=#2D383E
+r7 98-99 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r8 2-4 fg=#93A0A7
+r8 7-7 fg=#93A0A7
+r8 10-15 fg=#93A0A7
+r8 18-23 fg=#93A0A7
+r8 26-31 fg=#93A0A7
+r8 34-40 fg=#93A0A7
+r8 43-48 fg=#93A0A7
+r8 51-52 fg=#93A0A7
+r8 55-99 fg=#93A0A7
+r9 0-0 fg=#72B6D4 bg=#253540 +B
+r9 1-1 bg=#253540
+r9 2-4 fg=#93A0A7 bg=#253540
+r9 5-6 bg=#253540
+r9 7-7 fg=#D49AD0 bg=#253540
+r9 8-9 bg=#253540
+r9 10-15 fg=#E6ECEE bg=#253540
+r9 16-17 bg=#253540
+r9 18-23 fg=#93A0A7 bg=#253540
+r9 24-25 bg=#253540
+r9 26-31 fg=#E6ECEE bg=#253540
+r9 32-33 bg=#253540
+r9 34-40 fg=#E6ECEE bg=#253540
+r9 41-42 bg=#253540
+r9 43-48 fg=#93A0A7 bg=#253540
+r9 49-50 bg=#253540
+r9 51-52 fg=#93A0A7 bg=#253540
+r9 53-54 bg=#253540
+r9 55-99 fg=#8FCB92 bg=#253540
+r10 0-6 bg=#253540
+r10 7-24 fg=#93A0A7 bg=#253540
+r10 25-99 bg=#253540
+r11 2-4 fg=#93A0A7
+r11 7-7 fg=#D49AD0
+r11 10-15 fg=#E6ECEE
+r11 18-23 fg=#93A0A7
+r11 26-31 fg=#E6ECEE
+r11 34-40 fg=#E6ECEE
+r11 43-48 fg=#93A0A7
+r11 51-52 fg=#93A0A7
+r11 55-99 fg=#F0907B
+r29 0-1 bg=#1B2226
+r29 2-6 fg=#FFFFFF bg=#1B2226
+r29 7-7 bg=#1B2226
+r29 8-13 fg=#93A0A7 bg=#1B2226
+r29 14-14 fg=#FFFFFF bg=#1B2226
+r29 15-15 bg=#1B2226
+r29 16-21 fg=#93A0A7 bg=#1B2226
+r29 22-22 fg=#FFFFFF bg=#1B2226
+r29 23-23 bg=#1B2226
+r29 24-28 fg=#93A0A7 bg=#1B2226
+r29 29-29 fg=#FFFFFF bg=#1B2226
+r29 30-30 bg=#1B2226
+r29 31-36 fg=#93A0A7 bg=#1B2226
+r29 37-37 fg=#FFFFFF bg=#1B2226
+r29 38-38 bg=#1B2226
+r29 39-44 fg=#93A0A7 bg=#1B2226
+r29 45-45 fg=#FFFFFF bg=#1B2226
+r29 46-46 bg=#1B2226
+r29 47-52 fg=#93A0A7 bg=#1B2226
+r29 53-54 fg=#FFFFFF bg=#1B2226
+r29 55-55 bg=#1B2226
+r29 56-62 fg=#93A0A7 bg=#1B2226
+r29 63-72 bg=#1B2226
+r29 73-87 fg=#D49AD0 bg=#1B2226 +B
+r29 88-98 fg=#717E85 bg=#1B2226
+r29 99-99 bg=#1B2226

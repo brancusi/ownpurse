@@ -1,0 +1,34 @@
+---
+source: crates/ownpurse-tui/tests/writes.rs
+expression: s
+---
+  All organisations ●●●● ▾    as of 2025-12-31                                         ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────────────────────────────────━━━━━━━━━━───────────────────────────────────────────────
+  all › Activity
+  Calls left                                                  Xero resets each org at its own time
+  roast   ━───────────────────  967 left
+  hold    ━───────────────────  978 left
+  design  ━━──────────────────  938 left
+  lab     ━───────────────────  978 left
+
+  Recent calls                                                                146 today · 3 errors
+  filter: "create" · 2 of 149
+  time      org       endpoint                              result            ms
+▌ 09:40:00  roast     write op-1 create_journal · Owner-p…  confirmed            —
+  09:40:00  roast     write op-1 create_journal · Owner-p…  sending              —
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+  2026-10-05 09:40:00 UTC · write op-1 create_journal · Owner-paid cupping supplies
+  195bd88444f2:op-1 · 0000000a-0000-4000-8000-000000000001 · XA:fixture-write-01:op-1 · attempt c…
+  G By endpoint  q Quit  / Filter  ] Org ▸  g Scope  ? more  ⌃P palette                 v0.0.0-test

@@ -1,0 +1,58 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  [all organisations] v    as of 2025-12-31                          read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+---------------========---------------------------------------------------------
+  all > Ledger
+
+ Ledger needs one org: press g or ] to choose (roast, hold, design, lab).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  v Compare  q  /  ]  g  ?  ^P palette                              v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-77 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-79 +D
+r3 2-7 +D
+r5 1-72 +D
+r23 2-2 +B
+r23 4-12 +D
+r23 13-13 +B
+r23 14-15 +D
+r23 16-16 +B
+r23 17-18 +D
+r23 19-19 +B
+r23 20-21 +D
+r23 22-22 +B
+r23 23-24 +D
+r23 25-25 +B
+r23 26-27 +D
+r23 28-29 +B
+r23 31-37 +D
+r23 68-78 +D

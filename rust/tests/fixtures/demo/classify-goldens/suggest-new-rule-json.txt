@@ -1,0 +1,54 @@
+$ ownpurse classify suggest --json
+exit 0
+{
+ "engine": "rules",
+ "filter": "",
+ "scope": null,
+ "dry_run": false,
+ "lines": 38,
+ "suggested": 2,
+ "events": 2,
+ "store_rev": 84,
+ "by_rule": [
+  {
+   "rule": "r-intragroup",
+   "lines": 18
+  },
+  {
+   "rule": "r-bearer-design",
+   "lines": 11
+  },
+  {
+   "rule": "r-bearer-hold",
+   "lines": 11
+  },
+  {
+   "rule": "r-bearer-roast",
+   "lines": 9
+  },
+  {
+   "rule": "r-project-alias",
+   "lines": 6
+  },
+  {
+   "rule": "r-bearer-lab",
+   "lines": 4
+  },
+  {
+   "rule": "r-wholesale",
+   "lines": 3
+  },
+  {
+   "rule": "r-green-beans",
+   "lines": 2
+  },
+  {
+   "rule": "r-fuel",
+   "lines": 1
+  }
+ ],
+ "by_rule_count": 9,
+ "help": [
+  "Review them: `ownpurse classify queue` (or the TUI's Classify tab)."
+ ]
+}

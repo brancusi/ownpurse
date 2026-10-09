@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Tracked pre-push hook: refuses a push when the gate fails (install with `git config core.hooksPath .githooks`).
+# The gate includes the PRIVATE denylist (~/.config/ownpurse/denylist or $OWNPURSE_DENYLIST): without it the push
+# is refused. The only bypass is an explicit OWNPURSE_DENYLIST=skip, which prints a loud warning.
+set -euo pipefail
+root="$(git rev-parse --show-toplevel)"
+if [[ -d "$root/rust" ]]; then
+  echo "pre-push: running rust/scripts/check.sh (the release gate)…" >&2
+  log="${TMPDIR:-/tmp}/ownpurse-pre-push.log"
+  if ! env -u CI "$root/rust/scripts/check.sh" >"$log" 2>&1; then
+    tail -40 "$log" >&2
+    if grep -q "denylist: no private list" "$log"; then
+      echo "pre-push: the private denylist is missing: put it at ~/.config/ownpurse/denylist (or a symlink), or set OWNPURSE_DENYLIST=<path>." >&2
+    fi
+    echo "pre-push: GATE FAILED — push refused. Full log: $log" >&2
+    exit 1
+  fi
+  if grep -q "SKIPPED: OWNPURSE_DENYLIST=skip" "$log"; then
+    echo "pre-push: !!! WARNING: pushed WITHOUT the private denylist check (OWNPURSE_DENYLIST=skip) !!!" >&2
+  fi
+  echo "pre-push: gate OK" >&2
+fi

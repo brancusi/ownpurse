@@ -1,0 +1,44 @@
+{
+ "argv": [
+  "--offline",
+  "list",
+  "one",
+  "invoices",
+  "--status",
+  "paid"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "entity": "Invoices",
+   "as_of": "2026-10-05T07:46:00",
+   "records": [
+    {
+     "date": "2025-02-01",
+     "type": "ACCREC",
+     "number": null,
+     "contact": "Ostley Joinery",
+     "status": "PAID",
+     "total": "0.33",
+     "due": null,
+     "id": "inv-1"
+    },
+    {
+     "date": "2025-04-01",
+     "type": "ACCPAY",
+     "number": null,
+     "contact": "Harrowgate Fasteners",
+     "status": "PAID",
+     "total": "86517.43",
+     "due": null,
+     "id": "bill-1"
+    }
+   ],
+   "records_count": 2,
+   "help": [
+    "`--fields a,b.c` picks payload fields; `ownpurse show <org> Invoices <id>` for one record."
+   ]
+  }
+ ],
+ "text": "entity: Invoices\nas_of: 2026-10-05T07:46:00\nrecords[2]{date,type,number,contact,status,total,due,id}:\n  2025-02-01,ACCREC,,Ostley Joinery,PAID,0.33,,inv-1\n  2025-04-01,ACCPAY,,Harrowgate Fasteners,PAID,86517.43,,bill-1\nhelp[1]:\n  `--fields a,b.c` picks payload fields; `ownpurse show <org> Invoices <id>` for one record.\n"
+}

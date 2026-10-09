@@ -1,0 +1,77 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [all organisations] v    as of 2025-12-31    no local record                           read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+--------------------------==============------------------------------------------------------------
+  Intercompany > pairs
+  Intercompany at 2025-12-31 - balances: cached Xero TBs (oldest fetched 07:46 UTC) - items:
+  documents
+  7 pairs - 0 matches - 3 bridged - 3 unexplained - 1 not supported   sort: pair (s)
+  pair                          side B (party)  difference    residual  status
+  Card <-> Co                   co Dr 204.63      1,412.52        0.00  bridged
+  HQ 1405 only                  co Cr 1,003.26      516.46      311.83  unexplained
+  HQ <-> Co                     co Cr 1,003.26      204.63        0.00  bridged
+  hq <-> co                     co Cr 1,003.26      204.63        0.00  bridged
+  HQ <-> Co (residual, others)  co Cr 701.64        506.25  (1,013.47)  unexplained
+> Nobody <-> Co                 co                       -           -  not supported
+  One <-> Co                    co Cr 1,003.26  (1,003.26)    (194.42)  unexplained
+
+
+
+
+
+
+
+
+
+
+
+ Nobody <-> Co: org `nobody` isn't connected or configured. Check the pair in ownpurse.json.
+ Nobody <-> Co: org `nobody` isn't connected or configured. Check the pair in
+ ownpurse.json.                                                                            >Close
+  Enter close  Esc close                                                                v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-46 +D
+r0 62-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-27 +D
+r1 28-39 +B
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-25 +D
+r2 26-39 +BD
+r2 40-99 +D
+r3 2-16 +D
+r4 2-91 +D
+r5 2-10 +D
+r6 9-11 +D
+r6 21-23 +D
+r6 33-35 +D
+r6 49-51 +D
+r6 67-83 +D
+r7 2-29 +D
+r7 32-45 +D
+r7 48-57 +D
+r7 60-69 +D
+r7 72-84 +D
+r8 32-45 +D
+r9 32-45 +D
+r10 32-45 +D
+r11 32-45 +D
+r12 32-45 +D
+r13 0-0 +BR
+r13 1-99 +R
+r14 32-45 +D
+r28 91-97 +R
+r29 2-6 +B
+r29 8-14 +D
+r29 15-17 +B
+r29 19-23 +D
+r29 88-98 +D

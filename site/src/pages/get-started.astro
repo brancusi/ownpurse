@@ -1,0 +1,71 @@
+---
+import Base from '../layouts/Base.astro';
+const steps = [
+	{ title: 'Install', body: 'Clone the repository and run the installer. It builds ownpurse and its terminal UI with a pinned Rust toolchain and puts both in ~/.local/bin.',
+		code: 'git clone https://github.com/brancusi/ownpurse\ncd ownpurse\n./install.sh', href: '/docs/start/install/' },
+	{ title: 'Try the demo', body: 'A scripted walkthrough in the real terminal UI over a mock database. No account, no network, nothing to configure.',
+		code: 'ownpurse demo', href: '/docs/start/quickstart/' },
+	{ title: 'Connect Xero', body: 'Create a free Xero app for yourself (PKCE, redirect http://localhost:8765/callback), put its client id in ownpurse.json, then log in once and tick every organisation you want.',
+		code: 'cp ownpurse.example.json ownpurse.json\nownpurse login\nownpurse orgs', href: '/docs/guides/configuration/' },
+	{ title: 'Sync', body: 'The first sync reads everything and may take a few minutes per organisation. Later syncs fetch only what changed, and every call is logged against the daily budget.',
+		code: 'ownpurse sync all\nownpurse doctor', href: '/docs/start/concepts/' },
+	{ title: 'Ask your first question', body: 'Every read comes from the record on your disk, so ask as many as you like.',
+		code: 'ownpurse tb roast --date 2026-09-30\nownpurse parity roast --date 2026-09-30\nownpurse tui', href: '/docs/guides/reports/' },
+	{ title: 'Bring your agent', body: 'The CLI is built for agents: compact output, counts, structured errors, --json everywhere. The ui bridge lets an agent read and drive the terminal UI you are looking at.',
+		code: 'ownpurse ui --help', href: '/docs/guides/agents/' },
+];
+const faq = [
+	['Where does my data go?', 'Into one SQLite file in your project folder. Only sync and a few marked commands talk to your provider, and nothing is sent to us: there is no us to send it to.'],
+	['Can it change my books?', 'Login asks for read access. Writes go through a manifest and a sealed package you approve, and the record keeps every attempt and result.'],
+	['What about Xero’s API limits?', 'Reads never call Xero. Sync is incremental and shows the calls used and left for the day, per organisation.'],
+	['Does it work with several businesses?', 'Yes. One login covers every organisation you tick; address them by alias or as a group, and match balances between them.'],
+	['Which platforms?', 'macOS is tested. Linux should work. Windows is not supported yet.'],
+	['When do other connectors arrive?', 'QuickBooks, bank exports, spreadsheets, portfolios and files are next. Watch the repository, or have your agent write one.'],
+];
+---
+<Base title="Get started · ownpurse" description="Install ownpurse, try the offline demo, connect Xero and ask your first question." current="start">
+
+<section class="wrap sec stack-lg" style="padding-block: 80px 48px;">
+	<div class="eyebrow">Get started</div>
+	<h1 class="h1 sm" style="max-width: 13em;">From install to your first question in six steps.</h1>
+	<p class="lead">You need macOS, git and a Xero login. ownpurse builds itself with a pinned Rust toolchain. It is in early access: expect rough edges, and tell us about them.</p>
+</section>
+
+<section class="wrap steps" style="padding-bottom: 72px;">
+	{steps.map((s, i) => (
+		<div>
+			<div style="display: flex; gap: 18px; align-items: baseline;">
+				<span class="n">{i + 1}</span>
+				<div class="stack" style="gap: 8px;">
+					<h2 class="h3" style="font-size: 24px;">{s.title}</h2>
+					<p class="muted" style="font-size: 16px;">{s.body}</p>
+					<a href={s.href} style="font-size: 15px; font-weight: 600;">Read more</a>
+				</div>
+			</div>
+			<pre><code>{s.code}</code></pre>
+		</div>
+	))}
+</section>
+
+<section class="band">
+	<div class="wrap sec stack-lg" style="gap: 32px;">
+		<div class="stack">
+			<div class="eyebrow">Questions</div>
+			<h2 class="h2 sm">What people ask first.</h2>
+		</div>
+		<div class="cols" style="gap: 32px 48px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));">
+			{faq.map(([q, a]) => <div style="border-top: 1px solid var(--line-2); padding-top: 16px; display: flex; flex-direction: column; gap: 8px;"><h3 class="h3" style="font-size: 18px;">{q}</h3><p class="muted small">{a}</p></div>)}
+		</div>
+	</div>
+</section>
+
+<section class="wrap sec cols" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px;">
+	{[['Docs', 'Documentation', 'Install, guides, the CLI reference and the developer docs.', '/docs/'],
+	  ['Read', 'The philosophy', 'Why a log of facts, and why now.', '/philosophy/'],
+	  ['Source', 'GitHub', 'Read the code, file an issue, write a connector.', 'https://github.com/brancusi/ownpurse']].map(([k, t, d, h]) => (
+		<a href={h} style="text-decoration: none; color: var(--ink-1); border: 1px solid var(--line-2); padding: 24px; display: flex; flex-direction: column; gap: 8px;">
+			<span class="eyebrow" style="font-size: 11px;">{k}</span><span style="font-size: 22px; font-weight: 700;">{t}</span><span class="muted small">{d}</span>
+		</a>
+	))}
+</section>
+</Base>

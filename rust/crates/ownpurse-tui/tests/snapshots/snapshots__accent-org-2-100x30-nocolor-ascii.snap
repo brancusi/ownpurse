@@ -1,0 +1,95 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [hold] v    as of 2025-12-31                                                           read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+---------------========-----------------------------------------------------------------------------
+  hold > Trial balance at 2025-12-31 (accrual)                                        matches Xero
+  !  code  account                                debit     credit
+  Assets                                                 43,261.40
+     1010  Brackenridge Reserve Account       16,109.61
+>    1460  Term Loan to Tallowmere            15,568.80
+     1470  Fees Receivable from Quillfeather   4,670.51
+     1480  Equipment Advance to Saltmarsh      6,912.48
+  Equity                                               (38,648.51)
+     3010  Brackenridge Ordinary Shares                  36,742.18
+     3200  Retained Earnings                              1,906.33
+  Revenue                                               (5,940.73)
+     4610  Group Management Fee Income                    5,528.36
+     4710  Intra-group Interest Income                      412.37
+  Expenses                                                1,327.84
+     6050  Board & Audit Fees                  1,327.84
+
+
+
+
+
+
+
+
+  --------------------------------------------------------------------------------------------------
+           Total                              44,589.24  44,589.24  balanced ok
+
+  h Full history  v Compare  ! Differs  q Quit  / Filter  ? more  ^P palette            v0.0.0-test
+--- styles
+r0 8-13 +D
+r0 30-97 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-99 +D
+r3 2-8 +D
+r3 86-97 +D
+r4 2-2 +D
+r4 5-8 +D
+r4 11-43 +D
+r4 46-54 +D
+r4 57-65 +D
+r5 2-7 +B
+r5 57-65 +D
+r6 5-8 +D
+r7 0-0 +BR
+r7 1-99 +R
+r8 5-8 +D
+r9 5-8 +D
+r10 2-7 +B
+r10 55-65 +D
+r11 5-8 +D
+r12 5-8 +D
+r13 2-8 +B
+r13 56-65 +D
+r14 5-8 +D
+r15 5-8 +D
+r16 2-9 +B
+r16 58-65 +D
+r17 5-8 +D
+r26 2-99 +D
+r27 2-2 +B
+r27 5-8 +B
+r27 11-43 +B
+r27 46-54 +B
+r27 57-65 +B
+r29 2-2 +B
+r29 4-17 +D
+r29 18-18 +B
+r29 20-28 +D
+r29 29-29 +B
+r29 31-39 +D
+r29 40-40 +B
+r29 42-47 +D
+r29 48-48 +B
+r29 50-57 +D
+r29 58-58 +B
+r29 60-65 +D
+r29 66-67 +B
+r29 69-75 +D
+r29 88-98 +D

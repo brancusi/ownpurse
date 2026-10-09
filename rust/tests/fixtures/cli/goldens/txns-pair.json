@@ -1,0 +1,91 @@
+{
+ "argv": [
+  "--offline",
+  "txns",
+  "hq,co"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2026-10-05T07:46:00",
+   "net_receive_minus_spend": "-1724.35",
+   "bank_transactions": [
+    {
+     "org": "co",
+     "date": "2025-04-01",
+     "type": "SPEND",
+     "bank": null,
+     "contact": "HQ Treasury",
+     "reference": null,
+     "total": "311.83",
+     "codes": "2475",
+     "rec": true,
+     "status": "AUTHORISED",
+     "id": "bt-10",
+     "url": null
+    },
+    {
+     "org": "co",
+     "date": "2025-06-01",
+     "type": "SPEND",
+     "bank": null,
+     "contact": "Fernwick Card Services",
+     "reference": null,
+     "total": "204.63",
+     "codes": "2475",
+     "rec": true,
+     "status": "AUTHORISED",
+     "id": "bt-11",
+     "url": null
+    },
+    {
+     "org": "hq",
+     "date": "2024-05-01",
+     "type": "SPEND",
+     "bank": null,
+     "contact": "Ashgrove Estates",
+     "reference": null,
+     "total": "1013.47",
+     "codes": "1405",
+     "rec": true,
+     "status": "AUTHORISED",
+     "id": "bt-1",
+     "url": null
+    },
+    {
+     "org": "hq",
+     "date": "2025-03-01",
+     "type": "SPEND",
+     "bank": null,
+     "contact": "Ashgrove Estates",
+     "reference": null,
+     "total": "506.25",
+     "codes": "1405",
+     "rec": true,
+     "status": "AUTHORISED",
+     "id": "bt-2",
+     "url": null
+    },
+    {
+     "org": "hq",
+     "date": "2025-04-01",
+     "type": "RECEIVE",
+     "bank": null,
+     "contact": "Calderwick Trading Co",
+     "reference": null,
+     "total": "311.83",
+     "codes": "2405",
+     "rec": true,
+     "status": "AUTHORISED",
+     "id": "bt-3",
+     "url": null
+    }
+   ],
+   "bank_transactions_count": 5,
+   "help": [
+    "Run `ownpurse show <org> BankTransactions <id>` for line items and history."
+   ]
+  }
+ ],
+ "text": "as_of: 2026-10-05T07:46:00\nnet_receive_minus_spend: -1724.35\nbank_transactions[5]{org,date,type,bank,contact,total,codes,rec,id}:\n  co,2025-04-01,SPEND,,HQ Treasury,311.83,2475,true,bt-10\n  co,2025-06-01,SPEND,,Fernwick Card Services,204.63,2475,true,bt-11\n  hq,2024-05-01,SPEND,,Ashgrove Estates,1013.47,1405,true,bt-1\n  hq,2025-03-01,SPEND,,Ashgrove Estates,506.25,1405,true,bt-2\n  hq,2025-04-01,RECEIVE,,Calderwick Trading Co,311.83,2405,true,bt-3\nhelp[1]:\n  Run `ownpurse show <org> BankTransactions <id>` for line items and history.\n"
+}

@@ -1,0 +1,102 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    as of 2025-12-31                     ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+──────────────────────────━━━━━━━━━━━━━━────────────────────────────────────────
+  Filter › salt
+  Intercompany at 2025-12-31 · balances: cached Xero TBs (oldest fetched 07:46
+  UTC) · items: documents
+  4 pairs · 1 matches · 2 bridged · 1 unexplained   sort: status (s)
+  filter: "salt" · 1 of 4
+  pair                                          difference  residual  status
+▌ Brackenridge ↔ Saltmarsh (equipment advance)       57.13      0.00  bridged
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Esc clear  Enter keep                                             v0.0.0-test
+--- styles
+r0 0-1 bg=#E0E7EA
+r0 2-19 fg=#1D6A88 bg=#E0E7EA +B
+r0 20-20 fg=#17705F bg=#E0E7EA +B
+r0 21-21 fg=#5340B0 bg=#E0E7EA +B
+r0 22-22 fg=#A8461A bg=#E0E7EA +B
+r0 23-23 fg=#A33462 bg=#E0E7EA +B
+r0 24-29 fg=#566369 bg=#E0E7EA
+r0 30-45 fg=#3D4A50 bg=#E0E7EA
+r0 46-66 fg=#566369 bg=#E0E7EA
+r0 67-77 fg=#768186 bg=#E0E7EA
+r0 78-79 bg=#E0E7EA
+r1 0-1 bg=#F1F3F4
+r1 2-3 fg=#768186 bg=#F1F3F4
+r1 4-11 fg=#566369 bg=#F1F3F4
+r1 12-14 bg=#F1F3F4
+r1 15-16 fg=#768186 bg=#F1F3F4
+r1 17-22 fg=#566369 bg=#F1F3F4
+r1 23-25 bg=#F1F3F4
+r1 26-27 fg=#768186 bg=#F1F3F4
+r1 28-39 fg=#162024 bg=#F1F3F4 +B
+r1 40-42 bg=#F1F3F4
+r1 43-44 fg=#768186 bg=#F1F3F4
+r1 45-52 fg=#566369 bg=#F1F3F4
+r1 53-55 bg=#F1F3F4
+r1 56-57 fg=#768186 bg=#F1F3F4
+r1 58-63 fg=#566369 bg=#F1F3F4
+r1 64-66 bg=#F1F3F4
+r1 67-68 fg=#768186 bg=#F1F3F4
+r1 69-76 fg=#566369 bg=#F1F3F4
+r1 77-79 bg=#F1F3F4
+r2 0-25 fg=#C9D1D4
+r2 26-39 fg=#1D6A88 +B
+r2 40-79 fg=#C9D1D4
+r3 2-10 fg=#566369
+r3 11-14 fg=#162024
+r3 15-15 fg=#162024 +R
+r4 2-77 fg=#566369
+r5 2-24 fg=#566369
+r6 2-8 fg=#162024
+r6 9-11 fg=#566369
+r6 12-20 fg=#162024
+r6 21-23 fg=#566369
+r6 24-32 fg=#162024
+r6 33-35 fg=#566369
+r6 36-48 fg=#B23A24
+r6 49-67 fg=#566369
+r7 2-9 fg=#566369
+r7 10-15 fg=#162024
+r7 16-24 fg=#566369
+r8 2-45 fg=#566369
+r8 48-57 fg=#566369
+r8 60-67 fg=#566369
+r8 70-76 fg=#566369
+r9 0-0 fg=#1D6A88 bg=#D7E4EA +B
+r9 1-1 bg=#D7E4EA
+r9 2-45 fg=#162024 bg=#D7E4EA
+r9 46-47 bg=#D7E4EA
+r9 48-57 fg=#162024 bg=#D7E4EA
+r9 58-59 bg=#D7E4EA
+r9 60-67 fg=#162024 bg=#D7E4EA
+r9 68-69 bg=#D7E4EA
+r9 70-76 fg=#162024 bg=#D7E4EA
+r9 77-79 bg=#D7E4EA
+r23 0-1 bg=#ECEFF0
+r23 2-4 fg=#162024 bg=#ECEFF0
+r23 5-5 bg=#ECEFF0
+r23 6-12 fg=#566369 bg=#ECEFF0
+r23 13-17 fg=#162024 bg=#ECEFF0
+r23 18-18 bg=#ECEFF0
+r23 19-22 fg=#566369 bg=#ECEFF0
+r23 23-67 bg=#ECEFF0
+r23 68-78 fg=#768186 bg=#ECEFF0
+r23 79-79 bg=#ECEFF0

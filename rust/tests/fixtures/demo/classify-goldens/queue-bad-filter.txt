@@ -1,0 +1,6 @@
+$ ownpurse classify queue month:2025-13
+exit 2
+error: filter
+message: filter token 'month:2025-13': expected YYYY-MM
+help[1]:
+  e.g. org:roast acct:53 month:2025-09 project:harvest conf<0.7 by:agent since:today status:open

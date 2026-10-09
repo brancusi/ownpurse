@@ -1,0 +1,87 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [roast] v    as of 2025-12-31                                                          read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+---------------========-----------------------------------------------------------------------------
+  roast > Trial balance at 2025-12-31 (accrual)                                       matches Xero
+  filter: "Tallowmere " - 3 of 12
+  !  code  account                                    debit     credit
+  Assets                                                     39,680.92
+>    1010  Tallowmere Roastery Operating Account  41,671.82
+     1060  Tallowmere Green-Bean Card                         1,990.90
+  Equity                                                    (4,618.27)
+     3010  Tallowmere Paid-In Capital                         4,618.27
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --------------------------------------------------------------------------------------------------
+           Total (all accounts)                   49,886.02  49,886.02  balanced ok
+
+  h Full history  v Compare  ! Differs  q Quit  / Filter  ? more  ^P palette            v0.0.0-test
+--- styles
+r0 9-14 +D
+r0 31-97 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-99 +D
+r3 2-9 +D
+r3 86-97 +D
+r4 2-9 +D
+r4 23-32 +D
+r5 2-2 +D
+r5 5-8 +D
+r5 11-47 +D
+r5 50-58 +D
+r5 61-69 +D
+r6 2-7 +B
+r6 61-69 +D
+r7 0-0 +BR
+r7 1-99 +R
+r8 5-8 +D
+r9 2-7 +B
+r9 60-69 +D
+r10 5-8 +D
+r26 2-99 +D
+r27 2-2 +B
+r27 5-8 +B
+r27 11-47 +B
+r27 50-58 +B
+r27 61-69 +B
+r29 2-2 +B
+r29 4-17 +D
+r29 18-18 +B
+r29 20-28 +D
+r29 29-29 +B
+r29 31-39 +D
+r29 40-40 +B
+r29 42-47 +D
+r29 48-48 +B
+r29 50-57 +D
+r29 58-58 +B
+r29 60-65 +D
+r29 66-67 +B
+r29 69-75 +D
+r29 88-98 +D

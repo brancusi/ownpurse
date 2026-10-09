@@ -1,0 +1,159 @@
+{
+ "argv": [
+  "--offline",
+  "config",
+  "links"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "links": [
+    {
+     "name": "Xero developer portal — my apps",
+     "url": "https://developer.xero.com/app/manage",
+     "description": "Create or inspect the OAuth app; the redirect URI below must be registered there.",
+     "per": "app",
+     "org": null
+    },
+    {
+     "name": "OAuth callback (redirect URI)",
+     "url": "http://localhost:8765/callback",
+     "description": "Register exactly this on the Xero app. The CLI listens here during `login`.",
+     "per": "app",
+     "org": null
+    },
+    {
+     "name": "API usage and limits",
+     "url": "https://developer.xero.com/documentation/guides/oauth2/limits/",
+     "description": "Daily / minute call limits per tier.",
+     "per": "app",
+     "org": null
+    },
+    {
+     "name": "Scopes",
+     "url": "https://developer.xero.com/documentation/guides/oauth2/scopes",
+     "description": "Granular scopes required for apps created after March 2026.",
+     "per": "app",
+     "org": null
+    },
+    {
+     "name": "Xero status",
+     "url": "https://status.xero.com/",
+     "description": "Outages and API incidents.",
+     "per": "app",
+     "org": null
+    },
+    {
+     "name": "AXI conventions",
+     "url": "https://axi.md/",
+     "description": "The agent-CLI design this tool follows.",
+     "per": "app",
+     "org": null
+    },
+    {
+     "name": "Pewter Lane Ironmongery: bank accounts",
+     "url": "https://go.xero.com/Bank/BankAccounts.aspx",
+     "description": "Open the org first (link above); Xero's web UI is per active org.",
+     "per": "org",
+     "org": "one"
+    },
+    {
+     "name": "Calderwick Group HQ: bank accounts",
+     "url": "https://go.xero.com/Bank/BankAccounts.aspx",
+     "description": "Open the org first (link above); Xero's web UI is per active org.",
+     "per": "org",
+     "org": "hq"
+    },
+    {
+     "name": "Calderwick Trading Co: bank accounts",
+     "url": "https://go.xero.com/Bank/BankAccounts.aspx",
+     "description": "Open the org first (link above); Xero's web UI is per active org.",
+     "per": "org",
+     "org": "co"
+    },
+    {
+     "name": "Pewter Lane Ironmongery · Pewter Lane Checking: reconcile",
+     "url": "https://go.xero.com/BankRec/BankRec.aspx?accountId=bank-1",
+     "description": "Reconcile queue (browser only; the API cannot reconcile).",
+     "per": "bank_account",
+     "org": "one"
+    },
+    {
+     "name": "Pewter Lane Ironmongery · Pewter Lane Savings: reconcile",
+     "url": "https://go.xero.com/BankRec/BankRec.aspx?accountId=bank-2",
+     "description": "Reconcile queue (browser only; the API cannot reconcile).",
+     "per": "bank_account",
+     "org": "one"
+    },
+    {
+     "name": "Pewter Lane Ironmongery · Card, Plumline: reconcile",
+     "url": "https://go.xero.com/BankRec/BankRec.aspx?accountId=card",
+     "description": "Reconcile queue (browser only; the API cannot reconcile).",
+     "per": "bank_account",
+     "org": "one"
+    },
+    {
+     "name": "Calderwick Group HQ · Calderwick HQ Current Account: reconcile",
+     "url": "https://go.xero.com/BankRec/BankRec.aspx?accountId=h-bank",
+     "description": "Reconcile queue (browser only; the API cannot reconcile).",
+     "per": "bank_account",
+     "org": "hq"
+    },
+    {
+     "name": "Calderwick Trading Co · Calderwick Trading Current Account: reconcile",
+     "url": "https://go.xero.com/BankRec/BankRec.aspx?accountId=c-bank",
+     "description": "Reconcile queue (browser only; the API cannot reconcile).",
+     "per": "bank_account",
+     "org": "co"
+    },
+    {
+     "name": "Pewter Lane Ironmongery · Pewter Lane Checking: statement lines",
+     "url": "https://go.xero.com/Bank/Statements.aspx?accountId=bank-1",
+     "description": "Imported statement lines; import CSVs from Manage Account.",
+     "per": "bank_account",
+     "org": "one"
+    },
+    {
+     "name": "Pewter Lane Ironmongery · Pewter Lane Savings: statement lines",
+     "url": "https://go.xero.com/Bank/Statements.aspx?accountId=bank-2",
+     "description": "Imported statement lines; import CSVs from Manage Account.",
+     "per": "bank_account",
+     "org": "one"
+    },
+    {
+     "name": "Pewter Lane Ironmongery · Card, Plumline: statement lines",
+     "url": "https://go.xero.com/Bank/Statements.aspx?accountId=card",
+     "description": "Imported statement lines; import CSVs from Manage Account.",
+     "per": "bank_account",
+     "org": "one"
+    },
+    {
+     "name": "Calderwick Group HQ · Calderwick HQ Current Account: statement lines",
+     "url": "https://go.xero.com/Bank/Statements.aspx?accountId=h-bank",
+     "description": "Imported statement lines; import CSVs from Manage Account.",
+     "per": "bank_account",
+     "org": "hq"
+    },
+    {
+     "name": "Calderwick Trading Co · Calderwick Trading Current Account: statement lines",
+     "url": "https://go.xero.com/Bank/Statements.aspx?accountId=c-bank",
+     "description": "Imported statement lines; import CSVs from Manage Account.",
+     "per": "bank_account",
+     "org": "co"
+    },
+    {
+     "name": "Fixture handbook",
+     "url": "https://example.com/handbook",
+     "description": "extra",
+     "per": "app",
+     "org": null
+    }
+   ],
+   "links_count": 20,
+   "help": [
+    "Add links under `links` / `extra_links` in the config; placeholders: {org_name} {short_code} {tenant_id} {account_id} {account_name} {client_id} {redirect_uri}."
+   ]
+  }
+ ],
+ "text": "links[20]{name,url,per}:\n  Xero developer portal — my apps,https://developer.xero.com/app/manage,app\n  OAuth callback (redirect URI),http://localhost:8765/callback,app\n  API usage and limits,https://developer.xero.com/documentation/guides/oauth2/limits/,app\n  Scopes,https://developer.xero.com/documentation/guides/oauth2/scopes,app\n  Xero status,https://status.xero.com/,app\n  AXI conventions,https://axi.md/,app\n  Pewter Lane Ironmongery: bank accounts,https://go.xero.com/Bank/BankAccounts.aspx,org\n  Calderwick Group HQ: bank accounts,https://go.xero.com/Bank/BankAccounts.aspx,org\n  Calderwick Trading Co: bank accounts,https://go.xero.com/Bank/BankAccounts.aspx,org\n  Pewter Lane Ironmongery · Pewter Lane Checking: reconcile,https://go.xero.com/BankRec/BankRec.aspx?accountId=bank-1,bank_account\n  Pewter Lane Ironmongery · Pewter Lane Savings: reconcile,https://go.xero.com/BankRec/BankRec.aspx?accountId=bank-2,bank_account\n  \"Pewter Lane Ironmongery · Card, Plumline: reconcile\",https://go.xero.com/BankRec/BankRec.aspx?accountId=card,bank_account\n  Calderwick Group HQ · Calderwick HQ Current Account: reconcile,https://go.xero.com/BankRec/BankRec.aspx?accountId=h-bank,bank_account\n  Calderwick Trading Co · Calderwick Trading Current Account: reconcile,https://go.xero.com/BankRec/BankRec.aspx?accountId=c-bank,bank_account\n  Pewter Lane Ironmongery · Pewter Lane Checking: statement lines,https://go.xero.com/Bank/Statements.aspx?accountId=bank-1,bank_account\n  Pewter Lane Ironmongery · Pewter Lane Savings: statement lines,https://go.xero.com/Bank/Statements.aspx?accountId=bank-2,bank_account\n  \"Pewter Lane Ironmongery · Card, Plumline: statement lines\",https://go.xero.com/Bank/Statements.aspx?accountId=card,bank_account\n  Calderwick Group HQ · Calderwick HQ Current Account: statement lines,https://go.xero.com/Bank/Statements.aspx?accountId=h-bank,bank_account\n  Calderwick Trading Co · Calderwick Trading Current Account: statement lines,https://go.xero.com/Bank/Statements.aspx?accountId=c-bank,bank_account\n  Fixture handbook,https://example.com/handbook,app\nhelp[1]:\n  Add links under `links` / `extra_links` in the config; placeholders: {org_name} {short_code} {tenant_id} {account_id} {account_name} {client_id} {redirect_uri}.\n"
+}

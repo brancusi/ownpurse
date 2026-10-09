@@ -1,0 +1,5 @@
+---
+interface Props { size?: number; tone?: 'color' | 'mono' | 'reversed'; blink?: boolean; class?: string }
+const { size = 32, tone = 'color', blink = false, class: cls } = Astro.props;
+---
+<span class:list={['op-wordmark', tone !== 'color' && tone, cls]} style={`font-size:${size}px`} role="img" aria-label="ownpurse"><span class:list={['o', blink && 'op-blink']} aria-hidden="true"></span><span aria-hidden="true">wnpurse</span></span>

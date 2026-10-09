@@ -1,0 +1,101 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    as of 2025-12-31                                                                                 ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Overview            ╭─ Switch scope ───────────────────────────────────────────────────────────────────────────────╮
+  Organisations       │ › lab                                                                                        │   all synced 2h ago
+  org     parity (yea │──────────────────────────────────────────────────────────────────────────────────────────────│
+▌ roast   ✓ exact     │▌ lab  Saltmarsh Cupping Lab LLC · 07:46 UTC · 2h ago · 978/1,000 left                        │
+          Enter → roa ╰──────────────────────────────────────────────────────────────────────────────────────────────╯
+  hold    ✓ exact        ✓ exact             none
+  design  ✓ exact        15 accounts differ  none
+  lab     ✓ exact        ✓ exact             none
+
+  Intercompany
+  4 pairs   1 match   2 bridged   1 unexplained
+
+  Needs attention
+  ! Quillfeather ↔ Tallowmere (recharges) has an unexplained residual of 263.94. Open Intercompany (3).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                         Enter switch · Esc cancel · ↑↓ move · type to filter   v0.0.0-test
+--- styles
+r0 2-23 +B
+r0 24-29 +D
+r0 46-137 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-139 +D
+r3 22-23 +D
+r3 24-37 +BD
+r3 38-117 +D
+r4 2-14 +B
+r4 22-22 +D
+r4 24-25 +D
+r4 29-29 +R
+r4 117-117 +D
+r4 121-137 +D
+r5 2-7 +D
+r5 10-117 +D
+r6 0-0 +BR
+r6 1-21 +R
+r6 22-22 +D
+r6 23-23 +BR
+r6 24-116 +R
+r6 117-117 +D
+r6 118-139 +R
+r7 0-21 +R
+r7 22-117 +D
+r7 118-139 +R
+r8 10-22 +D
+r8 25-42 +D
+r8 45-50 +D
+r9 10-22 +D
+r9 25-42 fg=yellow
+r9 45-50 +D
+r10 10-22 +D
+r10 25-42 +D
+r10 45-50 +D
+r12 2-13 +B
+r13 34-46 fg=red
+r15 2-16 +B
+r16 2-102 fg=yellow
+r39 73-77 +B
+r39 79-87 +D
+r39 88-90 +B
+r39 92-100 +D
+r39 101-102 +B
+r39 104-124 +D
+r39 128-138 +D

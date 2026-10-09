@@ -1,0 +1,253 @@
+# The default glossary: plain-English definitions behind the [term] links in walkthroughs.
+#
+# Written for someone who knows a little bookkeeping. Each entry: `text` (2–4 sentences), optional
+# `aliases` (other spellings a walkthrough may link with), and `examples` ("in your books": generic, never
+# real names or numbers). A project may add or replace entries with its own glossary.toml beside
+# ownpurse.json.
+
+[debit]
+aliases = ["debits", "dr"]
+text = "One of the two sides of every bookkeeping entry, written on the left. A debit makes an asset or an expense bigger, and makes a liability, equity or income smaller. Every entry's debits add up to exactly its credits."
+examples = [
+  "Paying a supplier from the bank: the expense account is debited.",
+  "Buying a laptop: the equipment account (an asset) is debited.",
+]
+
+[credit]
+aliases = ["credits", "cr"]
+text = "The other side of every entry, written on the right. A credit makes a liability, equity or income bigger, and makes an asset or an expense smaller. Credits always balance the debits of the same entry."
+examples = [
+  "Money leaving the bank account is a credit to the bank.",
+  "A sale is a credit to an income account.",
+]
+
+["trial balance"]
+aliases = ["tb"]
+text = "A list of every account with its balance on one date, debits in one column and credits in the other. Because every entry balances, the two columns always add up to the same total. It is the starting point for checking the books before anything else."
+examples = [
+  "The Ledger tab's first level is each org's trial balance at the as-of date.",
+]
+
+["balance sheet"]
+aliases = ["bs"]
+text = "What an organisation owns (assets), owes (liabilities) and what is left for its owners (equity), on one date. Assets always equal liabilities plus equity. It is a snapshot, not a period."
+examples = [
+  "Bank accounts and money others owe you are assets; loans and money you owe others are liabilities.",
+]
+
+["p&l"]
+aliases = ["profit and loss", "income statement", "profit & loss"]
+text = "Income minus expenses over a period, usually a year: the profit or loss. Unlike the balance sheet it starts again at zero each year. Its result flows into equity when the year closes."
+examples = [
+  "Sales, fees and grants are income; rent, travel and wages are expenses.",
+]
+
+[reconciled]
+aliases = ["reconcile", "reconciliation", "unreconciled"]
+text = "A bank transaction is reconciled when it has been matched to a line on the real bank statement. Reconciled means \"this really happened at the bank\". Xero refuses to let software edit a reconciled transaction, so corrections to one are made with a reclass journal instead."
+examples = [
+  "A card payment matched to its statement line is reconciled; a payment typed in by hand and not yet matched is not.",
+]
+
+[suspense]
+aliases = ["suspense account"]
+text = "A parking account for money whose proper home isn't known yet. It lets the books balance while someone finds out what a payment or deposit was. Before the books are handed over, a suspense account must be back to zero."
+examples = [
+  "A deposit nobody can identify is parked in suspense until its source is found.",
+]
+
+["clearing account"]
+aliases = ["clearing"]
+text = "An account money passes through on its way somewhere else, such as transfers between two of your own organisations. After everything has been recorded on both sides it should net to zero, or to a balance you can explain."
+examples = [
+  "A transfer from one org to another goes through a clearing account in each set of books.",
+]
+
+[intercompany]
+aliases = ["ic", "inter-company"]
+text = "Money between organisations that belong to the same people. Each side records it: one as owing, the other as owed. The two sides should agree, and the Intercompany tab shows where they don't."
+examples = [
+  "A cost one organisation paid for another becomes a receivable in the payer's books and a payable in the other's.",
+]
+
+["due to / due from"]
+aliases = ["due to", "due from", "due-to", "due-from"]
+text = "\"Due to\" is money this organisation owes someone (a liability); \"due from\" is money someone owes it (an asset). Between related organisations, one side's due to should equal the other side's due from."
+examples = [
+  "If the owner paid a company bill personally, the company records a due to the owner, and the owner's books a due from the company.",
+]
+
+["reclass journal"]
+aliases = ["reclass", "reclassification"]
+text = "A manual journal that moves an amount from one account to another without touching the original transaction. It is used when the original can't be edited, for example because it is reconciled. One side undoes the old account and the other side puts the amount where it belongs."
+examples = [
+  "A reconciled card payment coded to the wrong expense is fixed by a journal: debit the right expense, credit the wrong one.",
+]
+
+[void]
+aliases = ["voided", "voiding"]
+text = "Cancelling a transaction while keeping a record that it existed. A voided entry stops counting in every balance, but it stays visible with its history. Xero never deletes; it voids."
+examples = [
+  "A journal posted twice is fixed by voiding the second one.",
+]
+
+["manual journal"]
+aliases = ["journal", "manual journals", "mj"]
+text = "An entry typed in directly with its debits and credits, rather than coming from a bank feed, a bill or an invoice. Accountants use them for corrections, accruals and year-end adjustments. Its debits must equal its credits."
+examples = [
+  "A year-end adjustment that moves costs the owner paid personally into the company's books.",
+]
+
+["accrual vs cash basis"]
+aliases = ["accrual", "cash basis", "accrual basis", "cash"]
+text = "On a cash basis, income and expenses count when money actually moves. On an accrual basis, they count when they are earned or owed, even if paid later. The same books can give different numbers on each basis, so always check which one a report uses."
+examples = [
+  "A December bill paid in January is a December expense on accrual, and a January expense on cash.",
+]
+
+["prior period"]
+aliases = ["prior year", "prior-period"]
+text = "A year that has already been closed or filed. Changing a prior period changes numbers that were already reported, so it is decided with the accountant: either a correction in the current year, or a documented carry-forward."
+examples = [
+  "A difference that started before this year shows up in the opening balances and is the accountant's call.",
+]
+
+["opening balance"]
+aliases = ["opening balances", "opening"]
+text = "An account's balance at the start of a period, carried over from the end of the period before. If last year's books were wrong, this year's opening balances inherit the error."
+examples = [
+  "The bank's balance on the first of January should equal its balance on the thirty-first of December before it.",
+]
+
+["s corporation"]
+aliases = ["s corp", "s-corp", "s-corporation"]
+text = "A US company whose profit or loss passes through to its shareholders' personal tax returns instead of being taxed at the company. The company files its own return, and each shareholder gets a K-1 with their share."
+examples = [
+  "The company's year-end profit shows up on the shareholder's personal return through the K-1.",
+]
+
+[k-1]
+aliases = ["k1", "schedule k-1"]
+text = "The form an S corporation (or partnership) gives each owner, showing their share of the year's income, losses and other items. The owner uses it to fill in their personal return, so it can only be final after the company's books are."
+examples = [
+  "A late correction to the company's books can change every shareholder's K-1.",
+]
+
+["per diem"]
+aliases = ["per-diem", "daily allowance"]
+text = "A fixed daily allowance for food and incidental costs while travelling for work, instead of paying back every receipt. The days it covers follow the actual travel dates. Costs it covers are not also claimed as expenses."
+examples = [
+  "Meals during a work trip are covered by the per diem; the flight and the hotel are separate business costs.",
+]
+
+["owner contribution / distribution"]
+aliases = ["owner contribution", "owner distribution", "contribution", "distribution", "draw", "owner draw"]
+text = "Money the owner puts into the business without expecting it back (a contribution), or takes out of it as an owner rather than as pay (a distribution). Both change equity, not income or expenses."
+examples = [
+  "The owner moving personal savings into the company to cover a shortfall, with no plan to repay it, is a contribution.",
+]
+
+["loan from owner"]
+aliases = ["owner loan", "loans from owners", "shareholder loan"]
+text = "Money the owner lends the business and expects back, or costs the owner paid for the business and is owed for. It is a liability of the business and an asset in the owner's own books. Repayments reduce it; they are not expenses."
+examples = [
+  "Company costs the owner paid on a personal card become a loan from the owner until the company pays them back.",
+]
+
+[manifest]
+aliases = ["manifests"]
+text = "A list of proposed changes to the books, prepared and checked before anything is sent to Xero. Each entry shows the document before and after the change. Nothing in a manifest touches the books until the owner approves it and it is applied."
+examples = [
+  "Recoding three card payments and adding one journal can be one manifest.",
+]
+
+[check]
+aliases = ["checks", "checked"]
+text = "The step that tests a manifest against the rules before anything is planned: every journal balances, accounts exist, nothing touches a locked or reconciled period the wrong way. Errors must be fixed; warnings can be acknowledged."
+examples = [
+  "An entry that recodes a reconciled bank line fails the check until a reclass journal is chosen.",
+]
+
+[plan]
+aliases = ["planned", "package"]
+text = "Turning a checked manifest into the exact requests that would be sent to Xero, sealed in a package with a hash. The hash proves that what the owner approves is exactly what will be sent."
+examples = [
+  "The plan of a manifest with two entries lists two requests and one package hash.",
+]
+
+[approve]
+aliases = ["approval", "approved"]
+text = "The owner's own decision, at his own terminal, that a sealed package may be sent. Approval names the package by its hash, so any later change needs a new approval. No agent and no walkthrough can approve."
+examples = [
+  "The approve command shown on the Manifest tab is run by the owner, never by an agent.",
+]
+
+[apply]
+aliases = ["applied", "applying"]
+text = "Sending an approved package to Xero, one request at a time, and reading each result back to check it landed as planned. It runs only from the command line, with the package's hash."
+examples = [
+  "After apply, each entry shows as posted once Xero's read-back matches the planned document.",
+]
+
+[books]
+aliases = ["the books", "set of books", "ledger"]
+text = "The whole set of accounting records for one organisation: every account and every entry in it. Each organisation keeps its own books, even when the same people own several. When people say the books are clean, they mean every entry is in the right account and every balance can be explained."
+examples = [
+  "A company and its owner each have their own books; money between them shows in both.",
+]
+
+[asset]
+aliases = ["assets"]
+text = "Something the organisation owns or is owed, with a value in money. Cash in the bank, equipment and money customers or related parties still owe are all assets. Assets sit on the balance sheet and are increased by a debit."
+examples = [
+  "The bank account's balance and a receivable from a related company are assets.",
+]
+
+[liability]
+aliases = ["liabilities"]
+text = "Something the organisation owes to someone else. Loans, unpaid bills and money owed to an owner are liabilities. They sit on the balance sheet and are increased by a credit."
+examples = [
+  "A loan from the owner, waiting to be repaid, is a liability of the company.",
+]
+
+[equity]
+aliases = ["owner's equity", "net assets"]
+text = "What is left for the owners when the liabilities are taken away from the assets. It grows with profits and with money the owners put in, and shrinks with losses and with money the owners take out. On the balance sheet, assets always equal liabilities plus equity."
+examples = [
+  "Paid-in capital and retained earnings are equity accounts.",
+]
+
+[expense]
+aliases = ["expenses", "cost", "costs"]
+text = "Money spent to run the organisation during a period, such as rent, travel, supplies or wages. Expenses reduce the profit on the P&L and are increased by a debit. Buying something that lasts for years is usually an asset instead."
+examples = [
+  "A supplier's invoice for workshop supplies is an expense.",
+]
+
+[revenue]
+aliases = ["income", "sales", "turnover"]
+text = "Money the organisation earns from what it does during a period: sales, fees, grants or donations. Revenue increases the profit on the P&L and is increased by a credit. Money lent to the organisation is not revenue, because it has to be paid back."
+examples = [
+  "A customer's payment for an order is revenue; a loan from the owner is not.",
+]
+
+["owner draw / distribution"]
+aliases = ["owner draws", "draws", "distributions"]
+text = "Money the owner takes out of the business as an owner, not as wages and not as a loan repayment. It reduces equity and is not an expense of the business. How it is taxed depends on the kind of organisation, so the accountant confirms the treatment."
+examples = [
+  "A transfer from the company to the owner's personal account, with nothing owed back, is a draw or distribution.",
+]
+
+[reimbursement]
+aliases = ["reimbursements", "reimburse", "repayment"]
+text = "Paying someone back for a cost they paid on the organisation's behalf. The original cost is the organisation's expense; the reimbursement only settles what it owed for it. Recording both as expenses would count the cost twice."
+examples = [
+  "The company paying the owner back for a business flight bought on a personal card is a reimbursement.",
+]
+
+[basis]
+aliases = ["cost basis", "tax basis"]
+text = "What something cost, for tax purposes, after the adjustments the rules require. When it is sold, the gain or loss is the price less the basis. An owner's basis in a company also limits how much of its losses they can use, so it is tracked year by year."
+examples = [
+  "Shares bought for a sum, plus later contributions, minus distributions, make up the owner's basis.",
+]

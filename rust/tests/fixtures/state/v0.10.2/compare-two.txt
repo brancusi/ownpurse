@@ -1,0 +1,30 @@
+  READ-ONLY  org: compare: roast · hold ▾ · as of 2025-12-31 · 07:46Z · 2h · 967/1,000 left
+ 1 Overview  2 Ledger  3 Intercompany  4 Activity  5 System
+─────────────━━━━━━━━───────────────────────────────────────────────────────────────────────────────
+ Ledger › compare trial balances at 2025-12-31 (accrual)                  record 07:46 UTC · 2h ago
+ align: code (a toggles: code ⇄ map) · basis: all ✓ TB 2024-12-31 + 2025 · record 2h
+ 1010 · roast Tallowmere Roastery Operating Account · hold Brackenridge Reserve Account
+                                                │          roast          │          hold
+                                                │         TB+25 ✓         │         TB+25 ✓
+  code    account                               │       debit       credit│       debit       credit
+▌ 1010 ≠  Tallowmere Roastery Operating Account…│   41,671.82             │   16,109.61
+  3010 ≠  Tallowmere Paid-In Capital ≠          │                 4,618.27│                36,742.18
+  3200    Retained Earnings                     │                 7,316.42│                 1,906.33
+          ── only in roast ──
+  1060    Tallowmere Green-Bean Card            │                 1,990.90│           —            —
+  2410    Brackenridge Term Loan                │                15,568.80│           —            —
+  4010    Wholesale Bean Sales                  │                20,391.63│           —            —
+  5020    Green Coffee Purchases                │    5,369.15             │           —            —
+  6140    Roaster Afterburner Servicing         │      898.06             │           —            —
+  6290    Bag Artwork & Proofs                  │    1,148.63             │           —            —
+  6310    Cupping Room Supplies                 │      147.38             │           —            —
+  6520    Delivery Van Fuel                     │      238.61             │           —            —
+  6830    Term Loan Interest                    │      412.37             │           —            —
+          ── only in hold ──
+  1460    Term Loan to Tallowmere               │           —            —│   15,568.80
+  1470    Fees Receivable from Quillfeather     │           —            —│    4,670.51
+  1480    Equipment Advance to Saltmarsh        │           —            —│    6,912.48
+  4610    Group Management Fee Income           │           —            —│                 5,528.36
+  ──────────────────────────────────────────────────────────────────────────────────────────────────
+          Total (each org's own)                │   49,886.02  49,886.02 ✓│   44,589.24  44,589.24 ✓
+ compare · 2 orgs …   q Quit  / Filter  ] Org ▸  g Scope  a Align  d As of  ⌃P palette  v0.0.0-test

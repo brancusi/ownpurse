@@ -1,0 +1,67 @@
+{
+ "argv": [
+  "--offline",
+  "txns",
+  "all",
+  "--from",
+  "2024-01-01",
+  "--to",
+  "2024-12-31"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2026-10-05T07:46:00",
+   "net_receive_minus_spend": "-919.08",
+   "bank_transactions": [
+    {
+     "org": "hq",
+     "date": "2024-05-01",
+     "type": "SPEND",
+     "bank": null,
+     "contact": "Ashgrove Estates",
+     "reference": null,
+     "total": "1013.47",
+     "codes": "1405",
+     "rec": true,
+     "status": "AUTHORISED",
+     "id": "bt-1",
+     "url": null
+    },
+    {
+     "org": "one",
+     "date": "2024-06-01",
+     "type": "SPEND",
+     "bank": "bank-1",
+     "contact": "Brindle & Oake Supply",
+     "reference": null,
+     "total": "113.47",
+     "codes": "400",
+     "rec": null,
+     "status": "AUTHORISED",
+     "id": "bt-1",
+     "url": null
+    },
+    {
+     "org": "one",
+     "date": "2024-07-01",
+     "type": "RECEIVE",
+     "bank": "bank-1",
+     "contact": "Brindle & Oake Supply",
+     "reference": null,
+     "total": "207.86",
+     "codes": "410",
+     "rec": null,
+     "status": "AUTHORISED",
+     "id": "bt-2",
+     "url": null
+    }
+   ],
+   "bank_transactions_count": 3,
+   "help": [
+    "Run `ownpurse show <org> BankTransactions <id>` for line items and history."
+   ]
+  }
+ ],
+ "text": "as_of: 2026-10-05T07:46:00\nnet_receive_minus_spend: -919.08\nbank_transactions[3]{org,date,type,bank,contact,total,codes,rec,id}:\n  hq,2024-05-01,SPEND,,Ashgrove Estates,1013.47,1405,true,bt-1\n  one,2024-06-01,SPEND,bank-1,Brindle & Oake Supply,113.47,400,,bt-1\n  one,2024-07-01,RECEIVE,bank-1,Brindle & Oake Supply,207.86,410,,bt-2\nhelp[1]:\n  Run `ownpurse show <org> BankTransactions <id>` for line items and history.\n"
+}

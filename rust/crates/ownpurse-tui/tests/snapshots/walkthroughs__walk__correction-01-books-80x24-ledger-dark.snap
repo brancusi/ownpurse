@@ -1,0 +1,189 @@
+---
+source: crates/ownpurse-tui/tests/walkthroughs.rs
+expression: styled(&buf)
+---
+  ● roast ▾    as of 2025-12-31    ◆ agent                         ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+───────────────━━━━━━━━─────────────────────────────────────────────────────────
+  roast › Trial balance at 2025-12-31 (accrual)                 ✓ matches Xero
+  !  account                                    debit     credit
+  Equity                                             (11,934.69)
+     Tallowmere Paid-In Capital                         4,618.27
+     Retained Earnings                                  7,316.42
+  Revenue                                            (20,391.63)
+     Wholesale Bean Sales                              20,391.63
+  Expenses                                             ╭───────────────────────╮
+     Green Coffee Purchases                  5,369.15  │ Here today            │
+▌    Roaster Afterburner Servicing             898.06◀─┤ The 214.77 igniter is │
+  ─────────────────────────────────────────────────────│ part of this          │
+     Total                                  49,886.02  │ account's balance.    │
+                                                       ╰───────────────────────╯
+── Step 1 of 10 · One company's books ──────────────────────────────────────────
+  The roastery's trial balance: every account's year-end balance, built from
+  entries with a debit and a credit side. One purchase, a burner igniter, sits
+  in the wrong account.
+  Why this matters: A cost in the wrong account makes both accounts wrong, and
+  the reports built on them.
+  ● ○ ○ ○ ○ ○ ○ ○ ○ ○                 → next · ← back · t contents · Esc leave
+ ◆ agent: playing walkthrou…ction (10 steps) · ` back   ⌃P palette  v0.0.0-test
+--- styles
+r0 0-1 bg=#203233
+r0 2-2 fg=#4DBFA9 bg=#203233 +B
+r0 3-3 fg=#93A0A7 bg=#203233
+r0 4-8 fg=#4DBFA9 bg=#203233 +B
+r0 9-14 fg=#93A0A7 bg=#203233
+r0 15-30 fg=#B9C4C9 bg=#203233
+r0 31-34 fg=#93A0A7 bg=#203233
+r0 35-41 fg=#88B1EC bg=#203233
+r0 42-66 fg=#93A0A7 bg=#203233
+r0 67-77 fg=#717E85 bg=#203233
+r0 78-79 bg=#203233
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#E6ECEE bg=#171D20 +B
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r2 0-14 fg=#2D383E
+r2 15-22 fg=#4DBFA9 +B
+r2 23-79 fg=#2D383E
+r3 2-9 fg=#93A0A7
+r3 10-46 fg=#E6ECEE
+r3 64-77 fg=#93A0A7
+r4 2-2 fg=#93A0A7
+r4 5-41 fg=#93A0A7
+r4 44-52 fg=#93A0A7
+r4 55-63 fg=#93A0A7
+r5 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r5 2-7 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r5 8-52 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r5 53-63 fg=#93A0A7 bg=#1A2125 +U ul=#2D383E
+r5 64-79 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r6 2-2 fg=#E6BC5E
+r6 5-41 fg=#E6ECEE
+r6 44-52 fg=#E6ECEE
+r6 55-63 fg=#E6ECEE
+r7 2-2 fg=#E6BC5E
+r7 5-41 fg=#E6ECEE
+r7 44-52 fg=#E6ECEE
+r7 55-63 fg=#E6ECEE
+r8 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r8 2-8 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r8 9-52 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r8 53-63 fg=#93A0A7 bg=#1A2125 +U ul=#2D383E
+r8 64-79 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r9 2-2 fg=#E6BC5E
+r9 5-41 fg=#E6ECEE
+r9 44-52 fg=#E6ECEE
+r9 55-63 fg=#E6ECEE
+r10 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r10 2-9 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r10 10-54 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r10 55-79 fg=#4DBFA9 bg=#1C2428 +B
+r11 2-2 fg=#E6BC5E
+r11 5-41 fg=#E6ECEE
+r11 44-52 fg=#E6ECEE
+r11 55-55 fg=#4DBFA9 bg=#1C2428 +B
+r11 56-56 bg=#1C2428
+r11 57-66 fg=#4DBFA9 bg=#1C2428 +B
+r11 67-78 bg=#1C2428
+r11 79-79 fg=#4DBFA9 bg=#1C2428 +B
+r12 0-0 fg=#4DBFA9 bg=#1D3433 +BU
+r12 1-1 bg=#1D3433 +U
+r12 2-2 fg=#E6BC5E bg=#1D3433 +U
+r12 3-4 bg=#1D3433 +U
+r12 5-41 fg=#E6ECEE bg=#1D3433 +U
+r12 42-43 bg=#1D3433 +U
+r12 44-52 fg=#E6ECEE bg=#1D3433 +U
+r12 53-54 fg=#4DBFA9 bg=#24363E +B
+r12 55-55 fg=#4DBFA9 bg=#1C2428 +B
+r12 56-56 bg=#1C2428
+r12 57-77 fg=#E6ECEE bg=#1C2428
+r12 78-78 bg=#1C2428
+r12 79-79 fg=#4DBFA9 bg=#1C2428 +B
+r13 2-54 fg=#2D383E
+r13 55-55 fg=#4DBFA9 bg=#1C2428 +B
+r13 56-56 bg=#1C2428
+r13 57-68 fg=#E6ECEE bg=#1C2428
+r13 69-78 bg=#1C2428
+r13 79-79 fg=#4DBFA9 bg=#1C2428 +B
+r14 2-2 fg=#E6ECEE +B
+r14 5-41 fg=#E6ECEE +B
+r14 44-52 fg=#E6ECEE +B
+r14 55-55 fg=#4DBFA9 bg=#1C2428 +B
+r14 56-56 bg=#1C2428
+r14 57-74 fg=#E6ECEE bg=#1C2428
+r14 75-78 bg=#1C2428
+r14 79-79 fg=#4DBFA9 bg=#1C2428 +B
+r15 55-79 fg=#4DBFA9 bg=#1C2428 +B
+r16 0-1 fg=#2D383E bg=#1C2428
+r16 2-37 fg=#4DBFA9 bg=#1C2428 +B
+r16 38-79 fg=#2D383E bg=#1C2428
+r17 0-1 bg=#1C2428
+r17 2-16 fg=#E6ECEE bg=#1C2428
+r17 17-21 fg=#4DBFA9 bg=#1C2428 +BU
+r17 22-22 fg=#E6ECEE bg=#1C2428
+r17 23-29 fg=#4DBFA9 bg=#1C2428 +BU
+r17 30-75 fg=#E6ECEE bg=#1C2428
+r17 76-79 bg=#1C2428
+r18 0-1 bg=#1C2428
+r18 2-16 fg=#E6ECEE bg=#1C2428
+r18 17-21 fg=#4DBFA9 bg=#1C2428 +BU
+r18 22-28 fg=#E6ECEE bg=#1C2428
+r18 29-34 fg=#4DBFA9 bg=#1C2428 +BU
+r18 35-77 fg=#E6ECEE bg=#1C2428
+r18 78-79 bg=#1C2428
+r19 0-1 bg=#1C2428
+r19 2-22 fg=#E6ECEE bg=#1C2428
+r19 23-79 bg=#1C2428
+r20 0-1 bg=#1C2428
+r20 2-77 fg=#93A0A7 bg=#1C2428
+r20 78-79 bg=#1C2428
+r21 0-1 bg=#1C2428
+r21 2-27 fg=#93A0A7 bg=#1C2428
+r21 28-79 bg=#1C2428
+r22 0-1 bg=#1C2428
+r22 2-2 fg=#4DBFA9 bg=#1C2428 +B
+r22 3-3 bg=#1C2428
+r22 4-4 fg=#93A0A7 bg=#1C2428
+r22 5-5 bg=#1C2428
+r22 6-6 fg=#93A0A7 bg=#1C2428
+r22 7-7 bg=#1C2428
+r22 8-8 fg=#93A0A7 bg=#1C2428
+r22 9-9 bg=#1C2428
+r22 10-10 fg=#93A0A7 bg=#1C2428
+r22 11-11 bg=#1C2428
+r22 12-12 fg=#93A0A7 bg=#1C2428
+r22 13-13 bg=#1C2428
+r22 14-14 fg=#93A0A7 bg=#1C2428
+r22 15-15 bg=#1C2428
+r22 16-16 fg=#93A0A7 bg=#1C2428
+r22 17-17 bg=#1C2428
+r22 18-18 fg=#93A0A7 bg=#1C2428
+r22 19-19 bg=#1C2428
+r22 20-20 fg=#93A0A7 bg=#1C2428
+r22 21-37 bg=#1C2428
+r22 38-77 fg=#93A0A7 bg=#1C2428
+r22 78-79 bg=#1C2428
+r23 0-0 bg=#1B2226
+r23 1-52 fg=#88B1EC bg=#1B2226
+r23 53-55 bg=#1B2226
+r23 56-57 fg=#FFFFFF bg=#1B2226
+r23 58-58 bg=#1B2226
+r23 59-65 fg=#93A0A7 bg=#1B2226
+r23 66-67 bg=#1B2226
+r23 68-78 fg=#717E85 bg=#1B2226
+r23 79-79 bg=#1B2226

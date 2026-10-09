@@ -1,0 +1,7 @@
+$ ownpurse classify rules check
+exit 1
+error: config
+message: <DEMO>/classify.toml has 2 problems.
+help[2]:
+  classify.toml:59: rules[1].set.bearer = "rost": unknown choice (did you mean "roast"?)
+  classify.toml:79: rules[4].when.payee_hass: unknown condition (did you mean "payee_has"?)

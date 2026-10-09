@@ -1,0 +1,136 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  All organisations ●●● ▾    2025-12-31    no local record         ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+──────────────────────────━━━━━━━━━━━━━━────────────────────────────────────────
+  Intercompany › pairs
+  Intercompany at 2025-12-31 · balances: cached Xero TBs (oldest fetched 07:46
+  UTC) · items: documents
+  7 pairs · 0 matches · 3 bridged · 3 unexplained · 1 not supported   sort:
+  status (s)
+  pair                        difference    residual  status
+▌ One ↔ Co                    (1,003.26)    (194.42)  unexplained
+  HQ 1405 only                    516.46      311.83  unexplained
+  HQ ↔ Co (residual, others)      506.25  (1,013.47)  unexplained
+  Nobody ↔ Co                          —           —  not supported
+  Card ↔ Co                     1,412.52        0.00  bridged
+  HQ ↔ Co                         204.63        0.00  bridged
+  hq ↔ co                         204.63        0.00  bridged
+
+
+
+
+
+
+
+  s Sort  q  /  ]  g  ?  ⌃P palette                                 v0.0.0-test
+--- styles
+r0 0-1 bg=#E0E7EA
+r0 2-19 fg=#1D6A88 bg=#E0E7EA +B
+r0 20-20 fg=#A33462 bg=#E0E7EA +B
+r0 21-21 fg=#5340B0 bg=#E0E7EA +B
+r0 22-22 fg=#A8461A bg=#E0E7EA +B
+r0 23-28 fg=#566369 bg=#E0E7EA
+r0 29-38 fg=#3D4A50 bg=#E0E7EA
+r0 39-42 fg=#566369 bg=#E0E7EA
+r0 43-57 fg=#B23A24 bg=#E0E7EA
+r0 58-66 fg=#566369 bg=#E0E7EA
+r0 67-77 fg=#768186 bg=#E0E7EA
+r0 78-79 bg=#E0E7EA
+r1 0-1 bg=#F1F3F4
+r1 2-3 fg=#768186 bg=#F1F3F4
+r1 4-11 fg=#566369 bg=#F1F3F4
+r1 12-14 bg=#F1F3F4
+r1 15-16 fg=#768186 bg=#F1F3F4
+r1 17-22 fg=#566369 bg=#F1F3F4
+r1 23-25 bg=#F1F3F4
+r1 26-27 fg=#768186 bg=#F1F3F4
+r1 28-39 fg=#162024 bg=#F1F3F4 +B
+r1 40-42 bg=#F1F3F4
+r1 43-44 fg=#768186 bg=#F1F3F4
+r1 45-52 fg=#566369 bg=#F1F3F4
+r1 53-55 bg=#F1F3F4
+r1 56-57 fg=#768186 bg=#F1F3F4
+r1 58-63 fg=#566369 bg=#F1F3F4
+r1 64-66 bg=#F1F3F4
+r1 67-68 fg=#768186 bg=#F1F3F4
+r1 69-76 fg=#566369 bg=#F1F3F4
+r1 77-79 bg=#F1F3F4
+r2 0-25 fg=#C9D1D4
+r2 26-39 fg=#1D6A88 +B
+r2 40-79 fg=#C9D1D4
+r3 2-16 fg=#566369
+r3 17-21 fg=#162024
+r4 2-77 fg=#566369
+r5 2-24 fg=#566369
+r6 2-8 fg=#162024
+r6 9-11 fg=#566369
+r6 12-20 fg=#162024
+r6 21-23 fg=#566369
+r6 24-32 fg=#162024
+r6 33-35 fg=#566369
+r6 36-48 fg=#B23A24
+r6 49-51 fg=#566369
+r6 52-66 fg=#805800
+r6 67-75 fg=#566369
+r7 2-11 fg=#566369
+r8 2-27 fg=#566369
+r8 30-39 fg=#566369
+r8 42-51 fg=#566369
+r8 54-66 fg=#566369
+r9 0-0 fg=#1D6A88 bg=#D7E4EA +B
+r9 1-1 bg=#D7E4EA
+r9 2-27 fg=#162024 bg=#D7E4EA
+r9 28-29 bg=#D7E4EA
+r9 30-39 fg=#162024 bg=#D7E4EA
+r9 40-41 bg=#D7E4EA
+r9 42-51 fg=#B23A24 bg=#D7E4EA
+r9 52-53 bg=#D7E4EA
+r9 54-66 fg=#B23A24 bg=#D7E4EA
+r9 67-79 bg=#D7E4EA
+r10 2-27 fg=#162024
+r10 30-39 fg=#162024
+r10 42-51 fg=#B23A24
+r10 54-66 fg=#B23A24
+r11 2-27 fg=#162024
+r11 30-39 fg=#162024
+r11 42-51 fg=#B23A24
+r11 54-66 fg=#B23A24
+r12 2-27 fg=#162024
+r12 30-39 fg=#162024
+r12 42-51 fg=#162024
+r12 54-66 fg=#805800
+r13 2-27 fg=#162024
+r13 30-39 fg=#162024
+r13 42-51 fg=#162024
+r13 54-66 fg=#162024
+r14 2-27 fg=#162024
+r14 30-39 fg=#162024
+r14 42-51 fg=#162024
+r14 54-66 fg=#162024
+r15 2-27 fg=#162024
+r15 30-39 fg=#162024
+r15 42-51 fg=#162024
+r15 54-66 fg=#162024
+r23 0-1 bg=#ECEFF0
+r23 2-2 fg=#162024 bg=#ECEFF0
+r23 3-3 bg=#ECEFF0
+r23 4-9 fg=#566369 bg=#ECEFF0
+r23 10-10 fg=#162024 bg=#ECEFF0
+r23 11-12 fg=#566369 bg=#ECEFF0
+r23 13-13 fg=#162024 bg=#ECEFF0
+r23 14-15 fg=#566369 bg=#ECEFF0
+r23 16-16 fg=#162024 bg=#ECEFF0
+r23 17-18 fg=#566369 bg=#ECEFF0
+r23 19-19 fg=#162024 bg=#ECEFF0
+r23 20-21 fg=#566369 bg=#ECEFF0
+r23 22-22 fg=#162024 bg=#ECEFF0
+r23 23-24 fg=#566369 bg=#ECEFF0
+r23 25-26 fg=#162024 bg=#ECEFF0
+r23 27-27 bg=#ECEFF0
+r23 28-34 fg=#566369 bg=#ECEFF0
+r23 35-67 bg=#ECEFF0
+r23 68-78 fg=#768186 bg=#ECEFF0
+r23 79-79 bg=#ECEFF0

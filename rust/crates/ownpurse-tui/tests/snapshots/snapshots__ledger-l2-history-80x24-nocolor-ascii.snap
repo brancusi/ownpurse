@@ -1,0 +1,73 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  [roast] v    as of 2025-12-31                                      read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+---------------========---------------------------------------------------------
+  roast > ... > Tallowmere Roastery Operating Account (1010)
+  opening 7,316.42 from local history - debits 38,829.25 - credits 9,092.12 -
+  closing 37,053.55
+  postings from 2025-01-01 to 2025-12-31
+  date        src  contact         debit    credit    balance
+> 2025-02-03  Re   Larkspu...   9,104.57            16,420.99
+  2025-03-04  Sp   Cordill...             4,276.31  12,144.68
+  2025-03-11  Re   Bracken...  18,437.62            30,582.30
+  2025-06-24  Re   Wren & ...  11,287.06            41,869.36
+  2025-07-14  Sp   Bracken...             3,281.19  38,588.17
+  2025-08-08  Sp   Quillfe...             1,148.63  37,439.54
+  2025-10-02  Sp   Brightw...               238.61  37,200.93
+  2025-11-07  Sp   Ridgeba...               147.38  37,053.55
+
+
+
+
+
+
+
+  f Range  h Year basis  v Compare  q  /  ?  ^P palette             v0.0.0-test
+--- styles
+r0 9-14 +D
+r0 31-77 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-79 +D
+r3 2-15 +D
+r6 2-39 +D
+r7 2-11 +D
+r7 14-16 +D
+r7 19-28 +D
+r7 31-39 +D
+r7 42-49 +D
+r7 52-60 +D
+r8 0-0 +BR
+r8 1-79 +R
+r9 14-16 +D
+r10 14-16 +D
+r11 14-16 +D
+r12 14-16 +D
+r13 14-16 +D
+r14 14-16 +D
+r15 14-16 +D
+r23 2-2 +B
+r23 4-10 +D
+r23 11-11 +B
+r23 13-24 +D
+r23 25-25 +B
+r23 27-35 +D
+r23 36-36 +B
+r23 37-38 +D
+r23 39-39 +B
+r23 40-41 +D
+r23 42-42 +B
+r23 43-44 +D
+r23 45-46 +B
+r23 48-54 +D
+r23 68-78 +D

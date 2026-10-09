@@ -1,0 +1,23 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+
+
+
+
+
+
+
+
+
+     ownpurse needs at least 60x20 - now 52x18
+
+
+
+
+
+
+
+
+--- styles

@@ -1,0 +1,17 @@
+$ ownpurse classify queue --limit 3
+exit 0
+filter: 
+scope: year:2025
+store_rev: 82
+lines: 31
+open: 31
+stale: 2
+total_lines: 42
+total_open: 31
+total_stale: 2
+rows[3 of 31]{anchor,date,payee,amount,account,suggestion,src,conf,stale}:
+  design:bt:bt-308:L1,2025-03-18,Vellum & Quoin Type Foundry,(219.47),1630,refit / design / ·,R,0.8,stale: amount
+  roast:bt:bt-110:L1,2025-10-21,Emberline Thermal Services,(214.77),6140,roaster / roast / ·,R,0.95,stale: date
+  roast:bt:bt-103:L1,2025-06-24,Wren & Ashby Cafés,"11,287.06",4010,none / roast / ·,R,0.91,
+help[1]:
+  Show every row with --full.

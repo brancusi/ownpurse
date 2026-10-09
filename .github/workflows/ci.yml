@@ -1,0 +1,33 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  gate:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: rust
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export the pinned caretline commit
+        working-directory: .
+        run: |
+          git clone --quiet https://github.com/brancusi/caretline "$RUNNER_TEMP/caretline"
+          bash rust/scripts/prepare-caretline.sh "$RUNNER_TEMP/caretline"
+      # rust/rust-toolchain.toml pins the toolchain (rustfmt and clippy included); rustup installs it on first use
+      - run: rustup show
+      - run: cargo build --workspace --locked
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo test --workspace --locked
+      # the full gate; public CI has no private denylist, so that one step reports "skipped (CI, no private list)"
+      - run: scripts/check.sh
+        env:
+          CI: "true"

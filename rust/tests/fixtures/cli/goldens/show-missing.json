@@ -1,0 +1,20 @@
+{
+ "argv": [
+  "--offline",
+  "show",
+  "one",
+  "BankTransactions",
+  "nope"
+ ],
+ "exit": 2,
+ "json": [
+  {
+   "error": "usage",
+   "message": "No BankTransactions with id starting 'nope' in the local record.",
+   "help": [
+    "Run `ownpurse sync one BankTransactions` or check the id."
+   ]
+  }
+ ],
+ "text": "error: usage\nmessage: No BankTransactions with id starting 'nope' in the local record.\nhelp[1]:\n  Run `ownpurse sync one BankTransactions` or check the id.\n"
+}

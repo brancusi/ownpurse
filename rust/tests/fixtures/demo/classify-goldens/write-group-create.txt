@@ -1,0 +1,9 @@
+$ ownpurse classify group create split Cupping kit split --expect-store-rev 82 --client claude
+exit 0
+op: group_create
+summary: "created group ""Cupping kit split"""
+batch: claude-2026-10-05T09:46:00.000000Z-82
+lines: 0
+store_rev: 83
+group: g83
+events: 83

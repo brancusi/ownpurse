@@ -1,0 +1,23 @@
+{
+ "argv": [
+  "--offline",
+  "--profile",
+  "wide",
+  "tb",
+  "hq,eur",
+  "--compare",
+  "--date",
+  "2025-12-31"
+ ],
+ "exit": 2,
+ "json": [
+  {
+   "error": "usage",
+   "message": "Cannot compare different base currencies: hq USD, eur EUR",
+   "help": [
+    "Compare orgs with the same base currency and fiscal year."
+   ]
+  }
+ ],
+ "text": "error: usage\nmessage: \"Cannot compare different base currencies: hq USD, eur EUR\"\nhelp[1]:\n  Compare orgs with the same base currency and fiscal year.\n"
+}

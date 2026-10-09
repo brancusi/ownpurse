@@ -1,0 +1,18 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  group:all-co (4) ●●●● ▾    2025-12-31        ◦ read-only
+--- styles
+r0 0-1 bg=#E0E7EA
+r0 2-13 fg=#1D6A88 bg=#E0E7EA +B
+r0 14-18 fg=#566369 bg=#E0E7EA
+r0 19-19 fg=#17705F bg=#E0E7EA +B
+r0 20-20 fg=#5340B0 bg=#E0E7EA +B
+r0 21-21 fg=#A8461A bg=#E0E7EA +B
+r0 22-22 fg=#A33462 bg=#E0E7EA +B
+r0 23-28 fg=#566369 bg=#E0E7EA
+r0 29-38 fg=#3D4A50 bg=#E0E7EA
+r0 39-46 fg=#566369 bg=#E0E7EA
+r0 47-57 fg=#768186 bg=#E0E7EA
+r0 58-59 bg=#E0E7EA

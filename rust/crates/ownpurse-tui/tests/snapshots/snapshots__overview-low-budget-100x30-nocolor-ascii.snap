@@ -1,0 +1,84 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [all organisations] v    as of 2025-12-31    62/1,000 left                             read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+--==========----------------------------------------------------------------------------------------
+  Overview
+  Organisations                                                                  all synced 2h ago
+  org     parity (year)  parity (history)    issues
+> roast   exact          2 accounts differ   none
+          Enter -> roast trial balance - 967 calls left
+  hold    exact          exact               none
+  design  exact          15 accounts differ  none
+  lab     exact          exact               none
+
+  Intercompany
+  4 pairs   1 match   2 bridged   1 unexplained
+
+  Needs attention
+  ! design has 62 calls left.
+  ! Quillfeather <-> Tallowmere (recharges) has an unexplained residual of 263.94. Open
+    Intercompany (3).
+
+
+
+
+
+
+
+
+
+
+  q Quit  / Filter  ] Org >  g Scope  i Details  ? more  ^P palette                     v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-46 +D
+r0 60-97 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-99 +D
+r4 2-14 +B
+r4 81-97 +D
+r5 2-7 +D
+r5 10-22 +D
+r5 25-42 +D
+r5 45-50 +D
+r6 0-0 +BR
+r6 1-99 +R
+r7 0-99 +R
+r8 10-22 +D
+r8 25-42 +D
+r8 45-50 +D
+r9 10-22 +D
+r9 45-50 +D
+r10 10-22 +D
+r10 25-42 +D
+r10 45-50 +D
+r12 2-13 +B
+r15 2-16 +B
+r29 2-2 +B
+r29 4-9 +D
+r29 10-10 +B
+r29 12-19 +D
+r29 20-20 +B
+r29 22-28 +D
+r29 29-29 +B
+r29 31-37 +D
+r29 38-38 +B
+r29 40-48 +D
+r29 49-49 +B
+r29 51-56 +D
+r29 57-58 +B
+r29 60-66 +D
+r29 88-98 +D

@@ -1,0 +1,41 @@
+{
+ "argv": [
+  "--offline",
+  "accounts",
+  "one",
+  "--type",
+  "expense",
+  "--archived"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2026-10-05T07:46:00",
+   "accounts": [
+    {
+     "org": "one",
+     "code": "400",
+     "name": "Pewter Lane Shop Supplies",
+     "type": "EXPENSE",
+     "status": "ACTIVE",
+     "bank_account": null,
+     "id": "exp"
+    },
+    {
+     "org": "one",
+     "code": "499",
+     "name": "Retired Display Fixtures",
+     "type": "EXPENSE",
+     "status": "ARCHIVED",
+     "bank_account": null,
+     "id": "arch"
+    }
+   ],
+   "accounts_count": 2,
+   "help": [
+    "Add --bank for bank accounts only; --search <text> to filter."
+   ]
+  }
+ ],
+ "text": "as_of: 2026-10-05T07:46:00\naccounts[2]{org,code,name,type}:\n  one,400,Pewter Lane Shop Supplies,EXPENSE\n  one,499,Retired Display Fixtures,EXPENSE\nhelp[1]:\n  Add --bank for bank accounts only; --search <text> to filter.\n"
+}

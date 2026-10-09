@@ -1,0 +1,141 @@
+---
+source: crates/ownpurse-tui/tests/viz.rs
+expression: styled(&buf)
+---
+  All organisations ●●●● ▾    as of 2025-12-31                                         ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────
+  Overview › Explain: worklist
+  Close worklist 2025
+  Where the close stands: what is done and what waits on whom
+  ../viz/close-status-demo.json · today 2026-10-05 · 2 answered · 1 blocked · 1 done · 2 open · 1
+  parked · 1 posted · 1 prepared · 1 superseded · 1 todo · 1 waiting_on_docs
+  also in the file: crypto, key_balances
+
+  Deadlines (4)
+    ◔ 10 days left      D1  hold · 1120
+                            due 2026-04-15 · extended to 2026-10-15 · date confirmed · extension
+                            filed
+    ✓ filed 2026-09-12  D2  design · 1065
+                            due 2026-03-16 · extended to 2026-09-15 · date confirmed · return
+                            filed
+    ○ 28 days left      D3  roast · 1120-S
+                            due 2026-03-16 · extended to 2026-11-02 · date not confirmed · date to
+                            confirm with the preparer
+    ! due 173 days ago  D4  lab · 1120
+                            due 2026-04-15 · date not confirmed
+
+  Waiting on Maren (2)
+    ○ open              Q1  Was the 418.27 annual-return filing paid for the parent on purpose?
+    ✓ answered          Q2  Is the sample roaster advance a loan or a capital contribution?
+
+  Waiting on Tobias (2)
+    ○ open              Q3  Book the 263.94 reprint in 2025 or carry it?
+  Esc Close  ↓ Scroll  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                    v0.0.0-test
+--- styles
+r0 0-1 bg=#E0E7EA
+r0 2-19 fg=#1D6A88 bg=#E0E7EA +B
+r0 20-20 fg=#17705F bg=#E0E7EA +B
+r0 21-21 fg=#5340B0 bg=#E0E7EA +B
+r0 22-22 fg=#A8461A bg=#E0E7EA +B
+r0 23-23 fg=#A33462 bg=#E0E7EA +B
+r0 24-29 fg=#566369 bg=#E0E7EA
+r0 30-45 fg=#3D4A50 bg=#E0E7EA
+r0 46-86 fg=#566369 bg=#E0E7EA
+r0 87-97 fg=#768186 bg=#E0E7EA
+r0 98-99 bg=#E0E7EA
+r1 0-1 bg=#F1F3F4
+r1 2-3 fg=#768186 bg=#F1F3F4
+r1 4-11 fg=#162024 bg=#F1F3F4 +B
+r1 12-14 bg=#F1F3F4
+r1 15-16 fg=#768186 bg=#F1F3F4
+r1 17-22 fg=#566369 bg=#F1F3F4
+r1 23-25 bg=#F1F3F4
+r1 26-27 fg=#768186 bg=#F1F3F4
+r1 28-39 fg=#566369 bg=#F1F3F4
+r1 40-42 bg=#F1F3F4
+r1 43-44 fg=#768186 bg=#F1F3F4
+r1 45-52 fg=#566369 bg=#F1F3F4
+r1 53-55 bg=#F1F3F4
+r1 56-57 fg=#768186 bg=#F1F3F4
+r1 58-63 fg=#566369 bg=#F1F3F4
+r1 64-66 bg=#F1F3F4
+r1 67-68 fg=#768186 bg=#F1F3F4
+r1 69-76 fg=#566369 bg=#F1F3F4
+r1 77-79 bg=#F1F3F4
+r1 80-81 fg=#768186 bg=#F1F3F4
+r1 82-89 fg=#566369 bg=#F1F3F4
+r1 90-99 bg=#F1F3F4
+r2 0-1 fg=#C9D1D4
+r2 2-11 fg=#1D6A88 +B
+r2 12-99 fg=#C9D1D4
+r3 2-12 fg=#566369
+r3 13-29 fg=#162024
+r4 2-20 fg=#162024 +B
+r5 2-60 fg=#3D4A50
+r6 2-96 fg=#566369
+r7 2-75 fg=#566369
+r8 2-39 fg=#566369
+r10 2-14 fg=#162024 +B
+r11 4-4 fg=#805800
+r11 6-17 fg=#805800
+r11 24-25 fg=#566369
+r11 28-38 fg=#162024
+r12 28-95 fg=#566369
+r13 28-32 fg=#566369
+r14 4-4 fg=#2E6B39
+r14 6-21 fg=#2E6B39
+r14 24-25 fg=#566369
+r14 28-40 fg=#162024
+r15 28-92 fg=#566369
+r16 28-32 fg=#566369
+r17 4-4 fg=#3D4A50
+r17 6-17 fg=#3D4A50
+r17 24-25 fg=#566369
+r17 28-41 fg=#162024
+r18 28-97 fg=#566369
+r19 28-52 fg=#566369
+r20 4-4 fg=#B23A24
+r20 6-21 fg=#B23A24
+r20 24-25 fg=#566369
+r20 28-37 fg=#162024
+r21 28-62 fg=#566369
+r23 2-21 fg=#162024 +B
+r24 4-4 fg=#3D4A50
+r24 6-9 fg=#3D4A50
+r24 24-25 fg=#566369
+r24 28-94 fg=#162024
+r25 4-4 fg=#2E6B39
+r25 6-13 fg=#2E6B39
+r25 24-25 fg=#566369
+r25 28-90 fg=#162024
+r27 2-22 fg=#162024 +B
+r28 4-4 fg=#3D4A50
+r28 6-9 fg=#3D4A50
+r28 24-25 fg=#566369
+r28 28-71 fg=#162024
+r29 0-1 bg=#ECEFF0
+r29 2-4 fg=#162024 bg=#ECEFF0
+r29 5-5 bg=#ECEFF0
+r29 6-12 fg=#566369 bg=#ECEFF0
+r29 13-13 fg=#162024 bg=#ECEFF0
+r29 14-14 bg=#ECEFF0
+r29 15-22 fg=#566369 bg=#ECEFF0
+r29 23-23 fg=#162024 bg=#ECEFF0
+r29 24-24 bg=#ECEFF0
+r29 25-30 fg=#566369 bg=#ECEFF0
+r29 31-31 fg=#162024 bg=#ECEFF0
+r29 32-32 bg=#ECEFF0
+r29 33-40 fg=#566369 bg=#ECEFF0
+r29 41-41 fg=#162024 bg=#ECEFF0
+r29 42-42 bg=#ECEFF0
+r29 43-49 fg=#566369 bg=#ECEFF0
+r29 50-50 fg=#162024 bg=#ECEFF0
+r29 51-51 bg=#ECEFF0
+r29 52-57 fg=#566369 bg=#ECEFF0
+r29 58-59 fg=#162024 bg=#ECEFF0
+r29 60-60 bg=#ECEFF0
+r29 61-67 fg=#566369 bg=#ECEFF0
+r29 68-87 bg=#ECEFF0
+r29 88-98 fg=#768186 bg=#ECEFF0
+r29 99-99 bg=#ECEFF0

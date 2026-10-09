@@ -1,0 +1,5 @@
+---
+interface Props { tone?: 'neutral' | 'lapis' | 'gilt' | 'verdigris' | 'coin'; dot?: boolean }
+const { tone = 'neutral', dot = false } = Astro.props;
+---
+<span class:list={['op-tag', tone !== 'neutral' && tone]}>{dot && <span class="dot" aria-hidden="true"></span>}<slot /></span>

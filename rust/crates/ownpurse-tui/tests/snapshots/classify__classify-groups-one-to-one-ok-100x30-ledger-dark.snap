@@ -1,0 +1,157 @@
+---
+source: crates/ownpurse-tui/tests/classify.rs
+assertion_line: 41
+expression: styled(&buf)
+---
+  All organisations ●●●● ▾    as of 2025-12-31    classify: 38 open · 2 stale          ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────────────────────────────────────────────────────────━━━━━━━━━━───────────────────────
+  all › Classify › Groups › Term loan drawdown
+ Queue 38 · Groups · Audition · Tree · Catalog
+ Groups ▸ members                   │ Term loan drawdown · intercompany chain · open · g83
+ Hollowpine proofs rechar…  4 · open│
+ Emberline service …  1 · accountant│ role       org    date       acct        amount description
+▌Term loan drawdown · int…  2 · open│ origin     hold   2025-03-11 1460   (18,437.62) Term loan d…
+                                    │ mirror     roast  2025-03-11 2410     18,437.62 Term loan d…
+                                    │
+                                    │ Check  origin 18,437.62 = mirror 18,437.62 ✓
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+                                    │
+  Enter Open  R Role  m Add member  n Note  S Status  ? more  ⌃P palette                v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-19 fg=#72B6D4 bg=#243137 +B
+r0 20-20 fg=#4DBFA9 bg=#243137 +B
+r0 21-21 fg=#9D8FF2 bg=#243137 +B
+r0 22-22 fg=#E8834F bg=#243137 +B
+r0 23-23 fg=#E8769F bg=#243137 +B
+r0 24-29 fg=#93A0A7 bg=#243137
+r0 30-45 fg=#B9C4C9 bg=#243137
+r0 46-49 fg=#93A0A7 bg=#243137
+r0 50-76 fg=#E6BC5E bg=#243137
+r0 77-86 fg=#93A0A7 bg=#243137
+r0 87-97 fg=#717E85 bg=#243137
+r0 98-99 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#E6ECEE bg=#171D20 +B
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-99 bg=#171D20
+r2 0-66 fg=#2D383E
+r2 67-76 fg=#72B6D4 +B
+r2 77-99 fg=#2D383E
+r3 2-27 fg=#93A0A7
+r3 28-45 fg=#E6ECEE
+r4 1-8 fg=#E6ECEE
+r4 9-11 fg=#93A0A7
+r4 12-17 fg=#72B6D4 +B
+r4 18-20 fg=#93A0A7
+r4 21-28 fg=#E6ECEE
+r4 29-31 fg=#93A0A7
+r4 32-35 fg=#E6ECEE
+r4 36-38 fg=#93A0A7
+r4 39-45 fg=#E6ECEE
+r5 1-16 fg=#93A0A7
+r5 36-36 fg=#2D383E
+r5 38-55 fg=#E6ECEE +B
+r5 56-89 fg=#93A0A7
+r6 1-25 fg=#E6ECEE
+r6 27-35 fg=#93A0A7
+r6 36-36 fg=#2D383E
+r7 1-19 fg=#E6ECEE
+r7 21-25 fg=#93A0A7
+r7 26-35 fg=#E6BC5E
+r7 36-36 fg=#2D383E
+r7 38-96 fg=#93A0A7
+r8 0-0 fg=#72B6D4 bg=#253540 +B
+r8 1-18 fg=#E6ECEE bg=#253540
+r8 19-25 fg=#93A0A7 bg=#253540
+r8 26-26 bg=#253540
+r8 27-35 fg=#93A0A7 bg=#253540
+r8 36-36 fg=#2D383E
+r8 38-48 fg=#93A0A7
+r8 49-55 fg=#E6ECEE
+r8 56-72 fg=#93A0A7
+r8 73-97 fg=#E6ECEE
+r9 36-36 fg=#2D383E
+r9 38-48 fg=#93A0A7
+r9 49-55 fg=#E6ECEE
+r9 56-72 fg=#93A0A7
+r9 73-97 fg=#E6ECEE
+r10 36-36 fg=#2D383E
+r11 36-36 fg=#2D383E
+r11 38-81 fg=#93A0A7
+r12 36-36 fg=#2D383E
+r13 36-36 fg=#2D383E
+r14 36-36 fg=#2D383E
+r15 36-36 fg=#2D383E
+r16 36-36 fg=#2D383E
+r17 36-36 fg=#2D383E
+r18 36-36 fg=#2D383E
+r19 36-36 fg=#2D383E
+r20 36-36 fg=#2D383E
+r21 36-36 fg=#2D383E
+r22 36-36 fg=#2D383E
+r23 36-36 fg=#2D383E
+r24 36-36 fg=#2D383E
+r25 36-36 fg=#2D383E
+r26 36-36 fg=#2D383E
+r27 36-36 fg=#2D383E
+r28 36-36 fg=#2D383E
+r29 0-1 bg=#1B2226
+r29 2-6 fg=#FFFFFF bg=#1B2226
+r29 7-7 bg=#1B2226
+r29 8-13 fg=#93A0A7 bg=#1B2226
+r29 14-14 fg=#FFFFFF bg=#1B2226
+r29 15-15 bg=#1B2226
+r29 16-21 fg=#93A0A7 bg=#1B2226
+r29 22-22 fg=#FFFFFF bg=#1B2226
+r29 23-23 bg=#1B2226
+r29 24-35 fg=#93A0A7 bg=#1B2226
+r29 36-36 fg=#FFFFFF bg=#1B2226
+r29 37-37 bg=#1B2226
+r29 38-43 fg=#93A0A7 bg=#1B2226
+r29 44-44 fg=#FFFFFF bg=#1B2226
+r29 45-45 bg=#1B2226
+r29 46-53 fg=#93A0A7 bg=#1B2226
+r29 54-54 fg=#FFFFFF bg=#1B2226
+r29 55-55 bg=#1B2226
+r29 56-61 fg=#93A0A7 bg=#1B2226
+r29 62-63 fg=#FFFFFF bg=#1B2226
+r29 64-64 bg=#1B2226
+r29 65-71 fg=#93A0A7 bg=#1B2226
+r29 72-87 bg=#1B2226
+r29 88-98 fg=#717E85 bg=#1B2226
+r29 99-99 bg=#1B2226

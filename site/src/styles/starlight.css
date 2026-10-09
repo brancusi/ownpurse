@@ -1,0 +1,48 @@
+/* Starlight, dressed in the ownpurse design system (tokens.css). */
+:root {
+	--sl-font: 'Bricolage Grotesque Variable', 'Helvetica Neue', Arial, sans-serif;
+	--sl-font-mono: 'DM Mono', ui-monospace, Menlo, Consolas, monospace;
+	--sl-content-width: 46rem;
+}
+
+/* light */
+:root[data-theme='light'] {
+	--sl-color-accent-low: var(--lapis-tint);
+	--sl-color-accent: var(--lapis);
+	--sl-color-accent-high: #1d3f70;
+	--sl-color-white: var(--ink-1);
+	--sl-color-gray-1: #2f2f2a;
+	--sl-color-gray-2: var(--ink-2);
+	--sl-color-gray-3: var(--ink-3);
+	--sl-color-gray-4: #8f8c82;
+	--sl-color-gray-5: var(--line-1);
+	--sl-color-gray-6: var(--surface-1);
+	--sl-color-gray-7: #f9f8f4;
+	--sl-color-black: var(--surface-0);
+}
+
+/* dark: the Night values */
+:root[data-theme='dark'] {
+	--sl-color-accent-low: #1e2a3d;
+	--sl-color-accent: #86b2ea;
+	--sl-color-accent-high: #c9dcf5;
+	--sl-color-white: #eeebe3;
+	--sl-color-gray-1: #dcd9d0;
+	--sl-color-gray-2: #c4c1b7;
+	--sl-color-gray-3: #9c998f;
+	--sl-color-gray-4: #6e6c64;
+	--sl-color-gray-5: #3b3a35;
+	--sl-color-gray-6: #1f1f1c;
+	--sl-color-black: #171715;
+}
+
+.sl-markdown-content h1, .sl-markdown-content h2, .sl-markdown-content h3, h1#_top {
+	font-weight: 750;
+	letter-spacing: -0.015em;
+	text-wrap: balance;
+}
+h1#_top { font-weight: 800; letter-spacing: -0.025em; }
+.sl-markdown-content :is(code, pre) { font-family: var(--sl-font-mono); }
+.site-title img { height: 1.6rem; width: auto; }
+.sl-markdown-content a { text-underline-offset: 0.18em; }
+.card, .sl-link-card { border-radius: 2px !important; }

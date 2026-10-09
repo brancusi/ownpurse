@@ -1,0 +1,85 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [design <-> roast]    as of 2025-12-31                                                                                         read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+--------------------------==============----------------------------------------------------------------------------------------------------
+  Quillfeather <-> Tallowmere (recharges) > bridge at 2025-12-31                                                        263.94 unexplained
+
+  side A - design                                                       side B - roast - design's share (residual)
+  Dr 263.94                                                             0.00
+  Recharges due from Tallowmere (1450)                                  Owed to Quillfeather for Recharges (2430) - account total 0.00
+
+  Bridge
+    Difference at year end             263.94
+      = prior-year opening difference    0.00
+      + 2025 movement difference       263.94
+          explained by 0 items below     0.00
+    -----------------------------------------
+    Unexplained residual               263.94
+
+  Items on one side only
+  No items on one side.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  a A  b B  q Quit  / Filter  ] Org >  ? more  ^P palette                                                                       v0.0.0-test
+--- styles
+r0 20-23 +D
+r0 40-137 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-27 +D
+r1 28-39 +B
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-25 +D
+r2 26-39 +BD
+r2 40-139 +D
+r3 2-43 +D
+r5 2-16 +B
+r5 72-113 +B
+r7 2-37 +D
+r7 72-133 +D
+r9 2-7 +B
+r14 4-44 +D
+r15 4-23 +B
+r15 39-44 +B
+r17 2-23 +B
+r18 2-22 +D
+r39 2-2 +B
+r39 4-6 +D
+r39 7-7 +B
+r39 9-11 +D
+r39 12-12 +B
+r39 14-19 +D
+r39 20-20 +B
+r39 22-29 +D
+r39 30-30 +B
+r39 32-38 +D
+r39 39-39 +B
+r39 41-46 +D
+r39 47-48 +B
+r39 50-56 +D
+r39 128-138 +D

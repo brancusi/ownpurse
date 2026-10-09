@@ -1,0 +1,95 @@
+{
+ "now": "2026-10-05T09:46Z",
+ "variants": {
+  "fresh": {
+   "roast": {
+    "estimate": 15,
+    "full": 15
+   },
+   "hold": {
+    "estimate": 15,
+    "full": 15
+   },
+   "design": {
+    "estimate": 15,
+    "full": 15
+   },
+   "lab": {
+    "estimate": 15,
+    "full": 15
+   }
+  },
+  "stale": {
+   "roast": {
+    "estimate": 15,
+    "full": 15
+   },
+   "hold": {
+    "estimate": 15,
+    "full": 15
+   },
+   "design": {
+    "estimate": 15,
+    "full": 15
+   },
+   "lab": {
+    "estimate": 15,
+    "full": 15
+   }
+  },
+  "never": {
+   "roast": {
+    "estimate": 15,
+    "full": 15
+   },
+   "hold": {
+    "estimate": 15,
+    "full": 15
+   },
+   "design": {
+    "estimate": 15,
+    "full": 15
+   },
+   "lab": {
+    "estimate": null,
+    "full": null
+   }
+  },
+  "lowbudget": {
+   "roast": {
+    "estimate": 15,
+    "full": 15
+   },
+   "hold": {
+    "estimate": 15,
+    "full": 15
+   },
+   "design": {
+    "estimate": 15,
+    "full": 15
+   },
+   "lab": {
+    "estimate": 15,
+    "full": 15
+   }
+  }
+ },
+ "cli": {
+  "one": {
+   "estimate": 16,
+   "full": 16
+  },
+  "hq": {
+   "estimate": 15,
+   "full": 15
+  },
+  "co": {
+   "estimate": 15,
+   "full": 15
+  },
+  "eur": {
+   "estimate": null,
+   "full": null
+  }
+ }
+}

@@ -1,0 +1,33 @@
+{
+ "argv": [
+  "--offline",
+  "journals",
+  "one",
+  "--status",
+  "posted"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2026-10-05T07:46:00",
+   "manual_journals": [
+    {
+     "org": "one",
+     "date": "2025-03-31",
+     "status": "POSTED",
+     "narration": "accrual",
+     "debits": "33.33",
+     "lines": 2,
+     "cash_basis": null,
+     "id": "mj-1",
+     "url": null
+    }
+   ],
+   "manual_journals_count": 1,
+   "help": [
+    "Run `ownpurse show <org> ManualJournals <id>` for journal lines."
+   ]
+  }
+ ],
+ "text": "as_of: 2026-10-05T07:46:00\nmanual_journals[1]{date,status,narration,debits,lines,id}:\n  2025-03-31,POSTED,accrual,33.33,2,mj-1\nhelp[1]:\n  Run `ownpurse show <org> ManualJournals <id>` for journal lines.\n"
+}

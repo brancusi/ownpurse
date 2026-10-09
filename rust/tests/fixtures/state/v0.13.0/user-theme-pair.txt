@@ -1,0 +1,30 @@
+  ● design ↔ ● roast    as of 2025-12-31                                               ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──────────────────────────━━━━━━━━━━━━━━────────────────────────────────────────────────────────────
+  Quillfeather ↔ Tallowmere (recharges) › bridge at 2025-12-31                  263.94 unexplained
+
+  side A · design                                   side B · roast · design's share (residual)
+  Dr 263.94                                         0.00
+  Recharges due from Tallowmere (1450)              Owed to Quillfeather for Recharges (2430) · ac…
+
+  Bridge
+    Difference at year end             263.94
+      = prior-year opening difference    0.00
+      + 2025 movement difference       263.94
+          explained by 0 items below     0.00
+    ─────────────────────────────────────────
+    Unexplained residual               263.94
+
+  Items on one side only
+  No items on one side.
+
+
+
+
+
+
+
+
+
+
+  a A  b B  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                               v0.0.0-test

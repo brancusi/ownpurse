@@ -1,0 +1,110 @@
+---
+source: crates/ownpurse-tui/tests/classify.rs
+assertion_line: 41
+expression: styled(&buf)
+---
+  [all organisations] v    as of 2025-12-31    classify: 38 open - 2 stale               read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+-------------------------------------------------------------------==========-----------------------
+  all > Classify > Groups > Term loan repayments 2025
+ Queue 38 - Groups - Audition - Tree - Catalog
+ Groups > members                   | Term loan repayments 2025 - intercompany chain - open - g83
+ Hollowpine proofs rech...  4 · open|
+ Emberline servic...  1 · accountant| role       org    date       acct        amount description
+>Term loan repayments 2025  3 · open| origin     roast  2025-07-14 2410    (3,281.19) Term loan...
+                                    | origin     roast  2025-09-30 2410      (412.37) Q3 intere...
+                                    | mirror     hold   2025-03-11 1460   (18,437.62) Term loan...
+                                    |
+                                    | Check  2 origins net (3,693.56) -> 1 mirror (18,437.62)
+                                    |        explains 20.0% of the mirror - no per-line match
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+                                    |
+  Enter Open  R Role  m Add member  n Note  S Status  ? more  ^P palette                v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-46 +D
+r0 74-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-68 +D
+r1 69-76 +B
+r1 80-89 +D
+r2 0-66 +D
+r2 67-76 +BD
+r2 77-99 +D
+r3 2-27 +D
+r4 9-11 +D
+r4 12-17 +B
+r4 18-20 +D
+r4 29-31 +D
+r4 36-38 +D
+r5 1-16 +D
+r5 36-36 +D
+r5 38-62 +B
+r5 63-96 +D
+r6 27-36 +D
+r7 21-25 +D
+r7 36-36 +D
+r7 38-96 +D
+r8 0-0 +BR
+r8 1-35 +R
+r8 36-36 +D
+r8 38-48 +D
+r8 56-72 +D
+r9 36-36 +D
+r9 38-48 +D
+r9 56-72 +D
+r10 36-36 +D
+r10 38-48 +D
+r10 56-72 +D
+r11 36-36 +D
+r12 36-36 +D
+r12 38-44 +D
+r13 36-36 +D
+r13 38-44 +D
+r14 36-36 +D
+r15 36-36 +D
+r16 36-36 +D
+r17 36-36 +D
+r18 36-36 +D
+r19 36-36 +D
+r20 36-36 +D
+r21 36-36 +D
+r22 36-36 +D
+r23 36-36 +D
+r24 36-36 +D
+r25 36-36 +D
+r26 36-36 +D
+r27 36-36 +D
+r28 36-36 +D
+r29 2-6 +B
+r29 8-13 +D
+r29 14-14 +B
+r29 16-21 +D
+r29 22-22 +B
+r29 24-35 +D
+r29 36-36 +B
+r29 38-43 +D
+r29 44-44 +B
+r29 46-53 +D
+r29 54-54 +B
+r29 56-61 +D
+r29 62-63 +B
+r29 65-71 +D
+r29 88-98 +D

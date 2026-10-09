@@ -1,0 +1,111 @@
+{
+ "argv": [
+  "--offline",
+  "accounts",
+  "one",
+  "--full"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2026-10-05T07:46:00",
+   "accounts": [
+    {
+     "org": "one",
+     "code": "090",
+     "name": "Card, Plumline",
+     "type": "BANK",
+     "status": "ACTIVE",
+     "bank_account": "12-34",
+     "id": "card"
+    },
+    {
+     "org": "one",
+     "code": "300",
+     "name": "Pewter Lane Founders' Capital",
+     "type": "EQUITY",
+     "status": "ACTIVE",
+     "bank_account": null,
+     "id": "eq"
+    },
+    {
+     "org": "one",
+     "code": "320",
+     "name": "Retained Earnings",
+     "type": "EQUITY",
+     "status": "ACTIVE",
+     "bank_account": null,
+     "id": "re"
+    },
+    {
+     "org": "one",
+     "code": "400",
+     "name": "Pewter Lane Shop Supplies",
+     "type": "EXPENSE",
+     "status": "ACTIVE",
+     "bank_account": null,
+     "id": "exp"
+    },
+    {
+     "org": "one",
+     "code": "410",
+     "name": "Pewter Lane Counter Sales",
+     "type": "REVENUE",
+     "status": "ACTIVE",
+     "bank_account": null,
+     "id": "rev"
+    },
+    {
+     "org": "one",
+     "code": "610",
+     "name": "Accounts Receivable",
+     "type": "CURRENT",
+     "status": "ACTIVE",
+     "bank_account": null,
+     "id": "ar"
+    },
+    {
+     "org": "one",
+     "code": "800",
+     "name": "Accounts Payable",
+     "type": "CURRLIAB",
+     "status": "ACTIVE",
+     "bank_account": null,
+     "id": "ap"
+    },
+    {
+     "org": "one",
+     "code": "820",
+     "name": "Sales Tax",
+     "type": "CURRLIAB",
+     "status": "ACTIVE",
+     "bank_account": null,
+     "id": "gst"
+    },
+    {
+     "org": "one",
+     "code": "",
+     "name": "Pewter Lane Checking",
+     "type": "BANK",
+     "status": "ACTIVE",
+     "bank_account": null,
+     "id": "bank-1"
+    },
+    {
+     "org": "one",
+     "code": "",
+     "name": "Pewter Lane Savings",
+     "type": "BANK",
+     "status": "ACTIVE",
+     "bank_account": null,
+     "id": "bank-2"
+    }
+   ],
+   "accounts_count": 10,
+   "help": [
+    "Add --bank for bank accounts only; --search <text> to filter."
+   ]
+  }
+ ],
+ "text": "as_of: 2026-10-05T07:46:00\naccounts[10]{org,code,name,type,status,id}:\n  one,090,\"Card, Plumline\",BANK,ACTIVE,card\n  one,300,Pewter Lane Founders' Capital,EQUITY,ACTIVE,eq\n  one,320,Retained Earnings,EQUITY,ACTIVE,re\n  one,400,Pewter Lane Shop Supplies,EXPENSE,ACTIVE,exp\n  one,410,Pewter Lane Counter Sales,REVENUE,ACTIVE,rev\n  one,610,Accounts Receivable,CURRENT,ACTIVE,ar\n  one,800,Accounts Payable,CURRLIAB,ACTIVE,ap\n  one,820,Sales Tax,CURRLIAB,ACTIVE,gst\n  one,,Pewter Lane Checking,BANK,ACTIVE,bank-1\n  one,,Pewter Lane Savings,BANK,ACTIVE,bank-2\nhelp[1]:\n  Add --bank for bank accounts only; --search <text> to filter.\n"
+}

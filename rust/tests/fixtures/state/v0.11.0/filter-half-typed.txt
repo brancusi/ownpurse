@@ -1,0 +1,30 @@
+  READ-ONLY  org: roast ▾ · as of 2025-12-31 · record 07:46 UTC · 2h ago · 967/1,000 left
+ 1 Overview  2 Ledger  3 Intercompany  4 Activity  5 System  6 Classify
+─────────────━━━━━━━━───────────────────────────────────────────────────────────────────────────────
+ Filter › Tall
+ Opening from Xero TB 2024-12-31 + 2025 activity · matches Xero ✓
+ filter: "Tall" · 3 of 12
+  !  code  account                                class       debit     credit
+▌    1010  Tallowmere Roastery Operating Account  ASSET   41,671.82
+     1060  Tallowmere Green-Bean Card             ASSET               1,990.90
+     3010  Tallowmere Paid-In Capital             EQUITY              4,618.27
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ──────────────────────────────────────────────────────────────────────────────────────────────────
+           Total (all accounts)                           49,886.02  49,886.02  balanced ✓
+
+ roast · trial balance · 12 accounts                             Esc clear  Enter keep  v0.0.0-test

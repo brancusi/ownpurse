@@ -1,0 +1,20 @@
+{
+ "argv": [
+  "--offline",
+  "open",
+  "one",
+  "BankTransactions",
+  "zz-rcv"
+ ],
+ "exit": 2,
+ "json": [
+  {
+   "error": "usage",
+   "message": "No Xero link for BankTransactions zz-rcv: the org has no ShortCode in the record yet, or Xero has no page for BankTransactions.",
+   "help": [
+    "Run `ownpurse sync one Organisation`; links exist for BankTransactions, ManualJournals, Invoices and BankRec."
+   ]
+  }
+ ],
+ "text": "error: usage\nmessage: \"No Xero link for BankTransactions zz-rcv: the org has no ShortCode in the record yet, or Xero has no page for BankTransactions.\"\nhelp[1]:\n  Run `ownpurse sync one Organisation`; links exist for BankTransactions, ManualJournals, Invoices and BankRec.\n"
+}

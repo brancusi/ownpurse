@@ -1,0 +1,174 @@
+---
+source: crates/ownpurse-tui/tests/viz.rs
+expression: styled(&buf)
+---
+  ●●●● compare: roast · hold · design · lab ▾    as of 2025-12-31                                                              ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Overview › Explain: money flow
+            Money between the orgs: what is owed
+            Who owes whom at 2025-12-31
+            Each arrow points from the org that owes to the org that is owed (as the first org of each pair records it).
+
+               ┌────────────────────┐       ┌────────────────────┐       ┌────────────────────┐       ┌────────────────────┐
+               │       roast        │       │        hold        │       │       design       │       │        lab         │
+               └──────────┬─────────┘       └──────────┬─────────┘       └──────────┬─────────┘       └──────────┬─────────┘
+                          ·──────── 15,568.80 ────────▶│                            │                            │
+                        roast owes hold 15,568.80      │                            │                            │
+                          │                            │◀─────── 4,670.51 ──────────·                            │
+                          │                          design owes hold 4,670.51 · design's books show 4,252.24 · a gap of 418.27
+                          ·─────────────── roast owes design 263.94 ───────────────▶│                            │
+                        roast's books show 0.00 · a gap of 263.94                   │                            │
+                          │                            │◀─────────────── lab owes hold 6,912.48 ─────────────────·
+                          │                          lab's books show 6,855.35 · a gap of 57.13                  │
+                          │                            │                            │                            │
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Esc Close  ↓ Scroll  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                                                            v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-2 fg=#4DBFA9 bg=#243137 +B
+r0 3-3 fg=#9D8FF2 bg=#243137 +B
+r0 4-4 fg=#E8834F bg=#243137 +B
+r0 5-5 fg=#E8769F bg=#243137 +B
+r0 6-6 fg=#93A0A7 bg=#243137
+r0 7-42 fg=#72B6D4 bg=#243137 +B
+r0 43-48 fg=#93A0A7 bg=#243137
+r0 49-64 fg=#B9C4C9 bg=#243137
+r0 65-126 fg=#93A0A7 bg=#243137
+r0 127-137 fg=#717E85 bg=#243137
+r0 138-139 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#E6ECEE bg=#171D20 +B
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-139 bg=#171D20
+r2 0-1 fg=#2D383E
+r2 2-11 fg=#72B6D4 +B
+r2 12-139 fg=#2D383E
+r3 2-12 fg=#93A0A7
+r3 13-31 fg=#E6ECEE
+r4 12-47 fg=#E6ECEE +B
+r5 12-38 fg=#B9C4C9
+r6 12-119 fg=#93A0A7
+r8 15-36 fg=#4DBFA9 +B
+r8 44-65 fg=#9D8FF2 +B
+r8 73-94 fg=#E8834F +B
+r8 102-123 fg=#E8769F +B
+r9 15-15 fg=#4DBFA9 +B
+r9 23-27 fg=#4DBFA9 +B
+r9 36-36 fg=#4DBFA9 +B
+r9 44-44 fg=#9D8FF2 +B
+r9 53-56 fg=#9D8FF2 +B
+r9 65-65 fg=#9D8FF2 +B
+r9 73-73 fg=#E8834F +B
+r9 81-86 fg=#E8834F +B
+r9 94-94 fg=#E8834F +B
+r9 102-102 fg=#E8769F +B
+r9 111-113 fg=#E8769F +B
+r9 123-123 fg=#E8769F +B
+r10 15-36 fg=#4DBFA9 +B
+r10 44-65 fg=#9D8FF2 +B
+r10 73-94 fg=#E8834F +B
+r10 102-123 fg=#E8769F +B
+r11 26-26 fg=#4DBFA9 +B
+r11 27-34 fg=#B9C4C9
+r11 35-45 fg=#E6ECEE
+r11 46-54 fg=#B9C4C9
+r11 55-55 fg=#2D383E
+r11 84-84 fg=#2D383E
+r11 113-113 fg=#2D383E
+r12 24-48 fg=#93A0A7
+r12 55-55 fg=#2D383E
+r12 84-84 fg=#2D383E
+r12 113-113 fg=#2D383E
+r13 26-26 fg=#2D383E
+r13 55-55 fg=#2D383E
+r13 56-63 fg=#B9C4C9
+r13 64-73 fg=#E6ECEE
+r13 74-83 fg=#B9C4C9
+r13 84-84 fg=#E8834F +B
+r13 113-113 fg=#2D383E
+r14 26-26 fg=#2D383E
+r14 53-126 fg=#93A0A7
+r15 26-26 fg=#4DBFA9 +B
+r15 27-41 fg=#F0907B
+r15 42-67 fg=#E6ECEE
+r15 68-83 fg=#F0907B
+r15 84-84 fg=#2D383E
+r15 113-113 fg=#2D383E
+r16 24-64 fg=#93A0A7
+r16 84-84 fg=#2D383E
+r16 113-113 fg=#2D383E
+r17 26-26 fg=#2D383E
+r17 55-55 fg=#2D383E
+r17 56-71 fg=#B9C4C9
+r17 72-95 fg=#E6ECEE
+r17 96-112 fg=#B9C4C9
+r17 113-113 fg=#E8769F +B
+r18 26-26 fg=#2D383E
+r18 53-94 fg=#93A0A7
+r18 113-113 fg=#2D383E
+r19 26-26 fg=#2D383E
+r19 55-55 fg=#2D383E
+r19 84-84 fg=#2D383E
+r19 113-113 fg=#2D383E
+r39 0-1 bg=#1B2226
+r39 2-4 fg=#FFFFFF bg=#1B2226
+r39 5-5 bg=#1B2226
+r39 6-12 fg=#93A0A7 bg=#1B2226
+r39 13-13 fg=#FFFFFF bg=#1B2226
+r39 14-14 bg=#1B2226
+r39 15-22 fg=#93A0A7 bg=#1B2226
+r39 23-23 fg=#FFFFFF bg=#1B2226
+r39 24-24 bg=#1B2226
+r39 25-30 fg=#93A0A7 bg=#1B2226
+r39 31-31 fg=#FFFFFF bg=#1B2226
+r39 32-32 bg=#1B2226
+r39 33-40 fg=#93A0A7 bg=#1B2226
+r39 41-41 fg=#FFFFFF bg=#1B2226
+r39 42-42 bg=#1B2226
+r39 43-49 fg=#93A0A7 bg=#1B2226
+r39 50-50 fg=#FFFFFF bg=#1B2226
+r39 51-51 bg=#1B2226
+r39 52-57 fg=#93A0A7 bg=#1B2226
+r39 58-59 fg=#FFFFFF bg=#1B2226
+r39 60-60 bg=#1B2226
+r39 61-67 fg=#93A0A7 bg=#1B2226
+r39 68-127 bg=#1B2226
+r39 128-138 fg=#717E85 bg=#1B2226
+r39 139-139 bg=#1B2226

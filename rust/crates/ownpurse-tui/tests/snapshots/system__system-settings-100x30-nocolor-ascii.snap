@@ -1,0 +1,99 @@
+---
+source: crates/ownpurse-tui/tests/system.rs
+assertion_line: 224
+expression: styled(&buf)
+---
+  [all organisations] v    as of 2025-12-31                                              read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+--------------------------------------------------------========------------------------------------
+  all > System
+  Connection
+  token: managed by the CLI (`ownpurse login`) - token file tokens/demo.json
+  cli: ~/.local/bin/ownpurse (0.9.0)
+  scopes: 15 read - 3 write configured (never requested by this TUI)
+  org     name                                 plan      records  last sync
+  roast   Tallowmere Coffee Roasting Co.       STANDARD       28  07:46 UTC - 2h ago
+  hold    Brackenridge Lane Holdings Ltd       PREMIUM        20  07:46 UTC - 2h ago
+  design  Quillfeather Design Consultancy LLP  STARTER        32  07:46 UTC - 2h ago
+  lab     Saltmarsh Cupping Lab LLC            STARTER        12  07:46 UTC - 2h ago
+
+  Settings
+  Config: tests/fixtures/demo/ownpurse.json - profile demo - store tests/fixtures/demo/record.sq...
+  key                                       value                                       source
+> xero.auth_url                             https://login.xero.com/identity/connect...  defaults
+  xero.token_url                            https://identity.xero.com/connect/token     defaults
+  xero.revoke_url                           https://identity.xero.com/connect/revoc...  defaults
+  xero.connections_url                      https://api.xero.com/connections            defaults
+  xero.api_base                             https://api.xero.com/api.xro/2.0            defaults
+  xero.redirect_uri                         http://localhost:8765/callback              defaults
+  xero.login_timeout_seconds                900                                         defaults
+  xero.scopes.read                          openid, profile, email, offline_access,...  defaults
+  xero.scopes.write                         accounting.banktransactions, accounting...  defaults
+  limits.calls_per_day                      1000                                        defaults
+----------------------------------------------------------------------------------------------------
+ xero.auth_url = https://login.xero.com/identity/connect/authorize (source: defaults)
+  e Edit config  q Quit  / Filter  ] Org >  g Scope  ? more  ^P palette                 v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-57 +D
+r1 58-63 +B
+r1 67-76 +D
+r1 80-89 +D
+r2 0-55 +D
+r2 56-63 +BD
+r2 64-99 +D
+r3 2-7 +D
+r4 2-11 +B
+r5 2-75 +D
+r6 2-35 +D
+r7 2-67 +D
+r8 2-7 +D
+r8 10-44 +D
+r8 47-54 +D
+r8 57-63 +D
+r8 66-83 +D
+r9 10-44 +D
+r9 47-54 +D
+r10 10-44 +D
+r10 47-54 +D
+r11 10-44 +D
+r11 47-54 +D
+r12 10-44 +D
+r12 47-54 +D
+r14 2-9 +B
+r15 2-98 +D
+r16 2-41 +D
+r16 44-85 +D
+r16 88-99 +D
+r17 0-0 +BR
+r17 1-99 +R
+r18 88-99 +D
+r19 88-99 +D
+r20 88-99 +D
+r21 88-99 +D
+r22 88-99 +D
+r23 88-99 +D
+r24 88-99 +D
+r25 88-99 +D
+r26 88-99 +D
+r27 0-99 +D
+r29 2-2 +B
+r29 4-16 +D
+r29 17-17 +B
+r29 19-24 +D
+r29 25-25 +B
+r29 27-34 +D
+r29 35-35 +B
+r29 37-43 +D
+r29 44-44 +B
+r29 46-52 +D
+r29 53-53 +B
+r29 55-60 +D
+r29 61-62 +B
+r29 64-70 +D
+r29 88-98 +D

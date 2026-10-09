@@ -1,0 +1,12 @@
+<!-- @dsCard group="Status" height=96 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Coin</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var O = window.Ownpurse, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', {className:'op-row'}, ['posted','balanced','open','held','short','over'].map(function(k){return h(O.Coin,{kind:k,key:k});}), h(O.Coin,{kind:'short',label:'Short 86.40',size:14})));
+</script>
+</body>
+</html>

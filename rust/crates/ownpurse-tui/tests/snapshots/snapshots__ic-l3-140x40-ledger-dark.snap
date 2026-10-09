@@ -1,0 +1,136 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ● design ↔ ● roast    as of 2025-12-31                                                                                       ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──────────────────────────━━━━━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────
+  Quillfeather ↔ Tallowmere (recharges) › bridge at 2025-12-31                                                          263.94 unexplained
+
+  side A · design                                                       side B · roast · design's share (residual)
+  Dr 263.94                                                             0.00
+  Recharges due from Tallowmere (1450)                                  Owed to Quillfeather for Recharges (2430) · account total 0.00
+
+  Bridge
+    Difference at year end             263.94
+      = prior-year opening difference    0.00
+      + 2025 movement difference       263.94
+          explained by 0 items below     0.00
+    ─────────────────────────────────────────
+    Unexplained residual               263.94
+
+  Items on one side only
+  No items on one side.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  a A  b B  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                                                                       v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-2 fg=#E8834F bg=#243137 +B
+r0 3-3 fg=#93A0A7 bg=#243137
+r0 4-9 fg=#E8834F bg=#243137 +B
+r0 10-12 fg=#93A0A7 bg=#243137
+r0 13-13 fg=#4DBFA9 bg=#243137 +B
+r0 14-14 fg=#93A0A7 bg=#243137
+r0 15-19 fg=#4DBFA9 bg=#243137 +B
+r0 20-23 fg=#93A0A7 bg=#243137
+r0 24-39 fg=#B9C4C9 bg=#243137
+r0 40-126 fg=#93A0A7 bg=#243137
+r0 127-137 fg=#717E85 bg=#243137
+r0 138-139 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#E6ECEE bg=#171D20 +B
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-139 bg=#171D20
+r2 0-25 fg=#2D383E
+r2 26-39 fg=#72B6D4 +B
+r2 40-139 fg=#2D383E
+r3 2-41 fg=#93A0A7
+r3 42-61 fg=#E6ECEE
+r3 120-137 fg=#F0907B
+r5 2-16 fg=#E6ECEE +B
+r5 72-113 fg=#E6ECEE +B
+r6 2-10 fg=#E6ECEE
+r6 72-75 fg=#E6ECEE
+r7 2-37 fg=#93A0A7
+r7 72-133 fg=#93A0A7
+r9 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r9 2-7 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r9 8-139 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r10 4-25 fg=#E6ECEE
+r10 39-44 fg=#E6ECEE
+r11 4-36 fg=#E6ECEE
+r11 41-44 fg=#E6ECEE
+r12 4-31 fg=#E6ECEE
+r12 39-44 fg=#E6ECEE
+r13 4-35 fg=#E6ECEE
+r13 41-44 fg=#E6ECEE
+r14 4-44 fg=#2D383E
+r15 4-23 fg=#F0907B +B
+r15 39-44 fg=#F0907B +B
+r17 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r17 2-23 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r17 24-139 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r18 2-22 fg=#93A0A7
+r39 0-1 bg=#1B2226
+r39 2-2 fg=#FFFFFF bg=#1B2226
+r39 3-3 bg=#1B2226
+r39 4-6 fg=#93A0A7 bg=#1B2226
+r39 7-7 fg=#FFFFFF bg=#1B2226
+r39 8-8 bg=#1B2226
+r39 9-11 fg=#93A0A7 bg=#1B2226
+r39 12-12 fg=#FFFFFF bg=#1B2226
+r39 13-13 bg=#1B2226
+r39 14-19 fg=#93A0A7 bg=#1B2226
+r39 20-20 fg=#FFFFFF bg=#1B2226
+r39 21-21 bg=#1B2226
+r39 22-29 fg=#93A0A7 bg=#1B2226
+r39 30-30 fg=#FFFFFF bg=#1B2226
+r39 31-31 bg=#1B2226
+r39 32-38 fg=#93A0A7 bg=#1B2226
+r39 39-39 fg=#FFFFFF bg=#1B2226
+r39 40-40 bg=#1B2226
+r39 41-46 fg=#93A0A7 bg=#1B2226
+r39 47-48 fg=#FFFFFF bg=#1B2226
+r39 49-49 bg=#1B2226
+r39 50-56 fg=#93A0A7 bg=#1B2226
+r39 57-127 bg=#1B2226
+r39 128-138 fg=#717E85 bg=#1B2226
+r39 139-139 bg=#1B2226

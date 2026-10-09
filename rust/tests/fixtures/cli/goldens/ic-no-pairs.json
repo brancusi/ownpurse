@@ -1,0 +1,19 @@
+{
+ "argv": [
+  "--offline",
+  "--profile",
+  "other",
+  "ic"
+ ],
+ "exit": 2,
+ "json": [
+  {
+   "error": "usage",
+   "message": "No intercompany pairs configured.",
+   "help": [
+    "Add \"intercompany.pairs\" (and \"parties\") to ownpurse.json; see docs/ROADMAP.md §2."
+   ]
+  }
+ ],
+ "text": "error: usage\nmessage: No intercompany pairs configured.\nhelp[1]:\n  Add \"intercompany.pairs\" (and \"parties\") to ownpurse.json; see docs/ROADMAP.md §2.\n"
+}

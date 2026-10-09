@@ -1,0 +1,20 @@
+---
+import Amount from './Amount.astro';
+import Coin from './Coin.astro';
+import Tag from './Tag.astro';
+interface Row { date: string; source: string; book: string; account: string; debit?: number; credit?: number; selected?: boolean; difference?: boolean }
+interface Props { rows: Row[] }
+const { rows } = Astro.props;
+const r2 = (n: number) => Math.round(n * 100) / 100;
+const dr = r2(rows.reduce((a, r) => a + (r.debit ?? 0), 0)), cr = r2(rows.reduce((a, r) => a + (r.credit ?? 0), 0)), diff = r2(dr - cr);
+---
+<div class="op-ledger-wrap"><table class="op-ledger">
+	<thead><tr><th>Date</th><th>Source</th><th>Book</th><th>Account</th><th class="num">Debit</th><th class="num">Credit</th></tr></thead>
+	<tbody>
+		{rows.map((r) => <tr class:list={[r.selected && 'sel', r.difference && 'diff']}>
+			<td class="mono">{r.date}</td><td><Tag>{r.source}</Tag></td><td>{r.book}</td><td>{r.account}</td>
+			<td class="num">{r.debit != null && <Amount value={r.debit} />}</td><td class="num">{r.credit != null && <Amount value={r.credit} />}</td></tr>)}
+		<tr class="totals"><td colspan="4">{diff === 0 ? <Coin kind="balanced" /> : <Coin kind={diff < 0 ? 'short' : 'over'} label={`${diff < 0 ? 'Short' : 'Over'} ${Math.abs(diff).toFixed(2)}`} />}</td>
+			<td class="num"><Amount value={dr} total /></td><td class="num"><Amount value={cr} total /></td></tr>
+	</tbody>
+</table></div>

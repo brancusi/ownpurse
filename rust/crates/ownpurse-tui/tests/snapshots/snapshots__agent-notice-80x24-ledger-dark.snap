@@ -1,0 +1,92 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  ● design ▾    as of 2025-12-31    ◆ agent                        ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+───────────────━━━━━━━━─────────────────────────────────────────────────────────
+  design › Trial balance at 2025-12-31 (accrual)                ✓ matches Xero
+  showing: differs from Xero (0) · difference = local − Xero
+  !  code  account                   debit     credit  xero  difference
+  No account differs from Xero.
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ──────────────────────────────────────────────────────────────────────────────
+           Total (all accounts)  64,644.55  64,644.55
+                                                                     balanced ✓
+ ◆ agent: opened Ledger · s…unts that differ · ` back   ⌃P palette  v0.0.0-test
+--- styles
+r0 0-1 bg=#302C2A
+r0 2-2 fg=#E8834F bg=#302C2A +B
+r0 3-3 fg=#93A0A7 bg=#302C2A
+r0 4-9 fg=#E8834F bg=#302C2A +B
+r0 10-15 fg=#93A0A7 bg=#302C2A
+r0 16-31 fg=#B9C4C9 bg=#302C2A
+r0 32-35 fg=#93A0A7 bg=#302C2A
+r0 36-42 fg=#88B1EC bg=#302C2A
+r0 43-66 fg=#93A0A7 bg=#302C2A
+r0 67-77 fg=#717E85 bg=#302C2A
+r0 78-79 bg=#302C2A
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#E6ECEE bg=#171D20 +B
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r2 0-14 fg=#2D383E
+r2 15-22 fg=#E8834F +B
+r2 23-79 fg=#2D383E
+r3 2-10 fg=#93A0A7
+r3 11-47 fg=#E6ECEE
+r3 64-77 fg=#93A0A7
+r4 2-59 fg=#E6BC5E
+r5 2-2 fg=#93A0A7
+r5 5-8 fg=#93A0A7
+r5 11-30 fg=#93A0A7
+r5 33-41 fg=#93A0A7
+r5 44-52 fg=#93A0A7
+r5 55-58 fg=#93A0A7
+r5 61-70 fg=#93A0A7
+r6 2-30 fg=#93A0A7
+r20 2-79 fg=#2D383E
+r21 2-2 fg=#E6ECEE +B
+r21 5-8 fg=#E6ECEE +B
+r21 11-30 fg=#E6ECEE +B
+r21 33-41 fg=#E6ECEE +B
+r21 44-52 fg=#E6ECEE +B
+r21 55-58 fg=#E6ECEE +B
+r21 61-70 fg=#E6ECEE +B
+r22 69-78 fg=#8FCB92
+r23 0-0 bg=#1B2226
+r23 1-52 fg=#88B1EC bg=#1B2226
+r23 53-55 bg=#1B2226
+r23 56-57 fg=#FFFFFF bg=#1B2226
+r23 58-58 bg=#1B2226
+r23 59-65 fg=#93A0A7 bg=#1B2226
+r23 66-67 bg=#1B2226
+r23 68-78 fg=#717E85 bg=#1B2226
+r23 79-79 bg=#1B2226

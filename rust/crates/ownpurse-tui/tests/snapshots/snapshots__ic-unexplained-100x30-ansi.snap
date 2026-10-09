@@ -1,0 +1,102 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  All organisations ●●● ▾    as of 2025-12-31    no local record                       ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──────────────────────────━━━━━━━━━━━━━━────────────────────────────────────────────────────────────
+  Intercompany › pairs
+  Intercompany at 2025-12-31 · balances: cached Xero TBs (oldest fetched 07:46 UTC) · items:
+  documents
+  7 pairs · 0 matches · 3 bridged · 3 unexplained · 1 not supported   sort: status (s)
+  pair                        side A          side B (party)  difference    residual  status
+▌ One ↔ Co                    one             co Cr 1,003.26  (1,003.26)    (194.42)  unexplained
+  HQ 1405 only                hq Dr 1,519.72  co Cr 1,003.26      516.46      311.83  unexplained
+  HQ ↔ Co (residual, others)  hq Dr 1,207.89  co Cr 701.64        506.25  (1,013.47)  unexplained
+  Nobody ↔ Co                 nobody          co                       —           —  not supported
+  Card ↔ Co                   hq Dr 1,207.89  co Dr 204.63      1,412.52        0.00  bridged
+  HQ ↔ Co                     hq Dr 1,207.89  co Cr 1,003.26      204.63        0.00  bridged
+  hq ↔ co                     hq Dr 1,207.89  co Cr 1,003.26      204.63        0.00  bridged
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  s Sort  q Quit  / Filter  ] Org ▸  g Scope  ? more  ⌃P palette                        v0.0.0-test
+--- styles
+r0 2-22 +B
+r0 23-28 +D
+r0 45-48 +D
+r0 49-63 fg=red
+r0 64-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-27 +D
+r1 28-39 +B
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-25 +D
+r2 26-39 +BD
+r2 40-99 +D
+r3 2-16 +D
+r4 2-91 +D
+r5 2-10 +D
+r6 9-11 +D
+r6 21-23 +D
+r6 33-35 +D
+r6 36-48 fg=red
+r6 49-51 +D
+r6 52-66 fg=yellow
+r6 67-85 +D
+r7 2-27 +D
+r7 30-43 +D
+r7 46-59 +D
+r7 62-71 +D
+r7 74-83 +D
+r7 86-98 +D
+r8 0-0 +BR
+r8 1-99 +R
+r9 30-43 +D
+r9 46-59 +D
+r9 74-83 fg=red
+r9 86-98 fg=red
+r10 30-43 +D
+r10 46-59 +D
+r10 74-83 fg=red
+r10 86-98 fg=red
+r11 30-43 +D
+r11 46-59 +D
+r11 86-98 fg=yellow
+r12 30-43 +D
+r12 46-59 +D
+r13 30-43 +D
+r13 46-59 +D
+r14 30-43 +D
+r14 46-59 +D
+r29 2-2 +B
+r29 4-9 +D
+r29 10-10 +B
+r29 12-17 +D
+r29 18-18 +B
+r29 20-27 +D
+r29 28-28 +B
+r29 30-36 +D
+r29 37-37 +B
+r29 39-45 +D
+r29 46-46 +B
+r29 48-53 +D
+r29 54-55 +B
+r29 57-63 +D
+r29 88-98 +D

@@ -1,0 +1,48 @@
+{
+ "argv": [
+  "--offline",
+  "parity",
+  "group:pair",
+  "--date",
+  "2025-12-31",
+  "--since",
+  "2024-12-31",
+  "--cached"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2025-12-31",
+   "match": true,
+   "opening_from_xero_tb": "2024-12-31",
+   "parity": [
+    {
+     "org": "hq",
+     "match": true,
+     "accounts": 5,
+     "differences": 0,
+     "net_difference": "0.00",
+     "postings": 8,
+     "unbalanced_docs": 0,
+     "uncoded_postings": 0,
+     "xero_tb_fetched": "2026-10-05T07:46:00Z"
+    },
+    {
+     "org": "co",
+     "match": true,
+     "accounts": 4,
+     "differences": 0,
+     "net_difference": "0.00",
+     "postings": 8,
+     "unbalanced_docs": 0,
+     "uncoded_postings": 0,
+     "xero_tb_fetched": "2026-10-05T07:46:00Z"
+    }
+   ],
+   "parity_count": 2,
+   "differences": [],
+   "differences_count": 0
+  }
+ ],
+ "text": "as_of: 2025-12-31\nmatch: true\nopening_from_xero_tb: 2024-12-31\nparity[2]{org,match,accounts,differences,net_difference,postings,unbalanced_docs,uncoded_postings}:\n  hq,true,5,0,0.00,8,0,0\n  co,true,4,0,0.00,8,0,0\ndifferences[0]: none\n"
+}

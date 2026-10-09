@@ -1,0 +1,125 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ● roast ▾    as of 2025-12-31                                                                                                ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  roast › … › Tallowmere Roastery Operating Account (1010) › Receive 2025-02-03
+  9,104.57  received from Larkspur Grocers Cooperative                                 Attachments and history
+  2025-02-03 · Receive money · Authorised · no tax · reconciled ✓                      Not fetched yet. ⌃P → Fetch attachments or Fetch
+                                                                                       history · 1 call each
+  Lines
+  description               account                        amount   tax
+  Wholesale beans, January  4010 · Wholesale Bean Sales  9,104.57  0.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  o Open  y Copy  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                                                                 v0.0.0-test
+--- styles
+r0 0-1 bg=#DFE7E7
+r0 2-2 fg=#17705F bg=#DFE7E7 +B
+r0 3-3 fg=#566369 bg=#DFE7E7
+r0 4-8 fg=#17705F bg=#DFE7E7 +B
+r0 9-14 fg=#566369 bg=#DFE7E7
+r0 15-30 fg=#3D4A50 bg=#DFE7E7
+r0 31-126 fg=#566369 bg=#DFE7E7
+r0 127-137 fg=#768186 bg=#DFE7E7
+r0 138-139 bg=#DFE7E7
+r1 0-1 bg=#F1F3F4
+r1 2-3 fg=#768186 bg=#F1F3F4
+r1 4-11 fg=#566369 bg=#F1F3F4
+r1 12-14 bg=#F1F3F4
+r1 15-16 fg=#768186 bg=#F1F3F4
+r1 17-22 fg=#162024 bg=#F1F3F4 +B
+r1 23-25 bg=#F1F3F4
+r1 26-27 fg=#768186 bg=#F1F3F4
+r1 28-39 fg=#566369 bg=#F1F3F4
+r1 40-42 bg=#F1F3F4
+r1 43-44 fg=#768186 bg=#F1F3F4
+r1 45-52 fg=#566369 bg=#F1F3F4
+r1 53-55 bg=#F1F3F4
+r1 56-57 fg=#768186 bg=#F1F3F4
+r1 58-63 fg=#566369 bg=#F1F3F4
+r1 64-66 bg=#F1F3F4
+r1 67-68 fg=#768186 bg=#F1F3F4
+r1 69-76 fg=#566369 bg=#F1F3F4
+r1 77-79 bg=#F1F3F4
+r1 80-81 fg=#768186 bg=#F1F3F4
+r1 82-89 fg=#566369 bg=#F1F3F4
+r1 90-139 bg=#F1F3F4
+r2 0-14 fg=#C9D1D4
+r2 15-22 fg=#17705F +B
+r2 23-139 fg=#C9D1D4
+r3 2-60 fg=#566369
+r3 61-78 fg=#162024
+r4 2-53 fg=#162024
+r4 85-86 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r4 87-109 fg=#3D4A50 bg=#EDF1F2 +U ul=#C9D1D4
+r4 110-139 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r5 2-64 fg=#566369
+r5 87-134 fg=#566369
+r6 87-107 fg=#566369
+r7 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r7 2-6 fg=#3D4A50 bg=#EDF1F2 +U ul=#C9D1D4
+r7 7-83 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r8 2-25 fg=#566369
+r8 28-54 fg=#566369
+r8 57-64 fg=#566369
+r8 67-70 fg=#566369
+r9 2-25 fg=#162024
+r9 28-54 fg=#566369
+r9 57-64 fg=#162024
+r9 67-70 fg=#566369
+r39 0-1 bg=#ECEFF0
+r39 2-2 fg=#162024 bg=#ECEFF0
+r39 3-3 bg=#ECEFF0
+r39 4-9 fg=#566369 bg=#ECEFF0
+r39 10-10 fg=#162024 bg=#ECEFF0
+r39 11-11 bg=#ECEFF0
+r39 12-17 fg=#566369 bg=#ECEFF0
+r39 18-18 fg=#162024 bg=#ECEFF0
+r39 19-19 bg=#ECEFF0
+r39 20-25 fg=#566369 bg=#ECEFF0
+r39 26-26 fg=#162024 bg=#ECEFF0
+r39 27-27 bg=#ECEFF0
+r39 28-35 fg=#566369 bg=#ECEFF0
+r39 36-36 fg=#162024 bg=#ECEFF0
+r39 37-37 bg=#ECEFF0
+r39 38-44 fg=#566369 bg=#ECEFF0
+r39 45-45 fg=#162024 bg=#ECEFF0
+r39 46-46 bg=#ECEFF0
+r39 47-52 fg=#566369 bg=#ECEFF0
+r39 53-54 fg=#162024 bg=#ECEFF0
+r39 55-55 bg=#ECEFF0
+r39 56-62 fg=#566369 bg=#ECEFF0
+r39 63-127 bg=#ECEFF0
+r39 128-138 fg=#768186 bg=#ECEFF0
+r39 139-139 bg=#ECEFF0

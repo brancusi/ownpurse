@@ -1,0 +1,192 @@
+---
+source: crates/ownpurse-tui/tests/classify.rs
+expression: styled(&buf)
+---
+  all ●●●● ▾    2025-12-31                                         ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+───────────────────────────────────────────────────────────────────━━━━━━━━━━───
+  all › Classify › Catalog
+ Queue 38 · Groups · Audition · Tree · Catalog
+ Projects · Rules   ← → list
+
+ prio id                   when            sets       matches labelled
+▌ 100 r-project-alias      alias of proje… project=$…      11        3
+   90 r-hollowpine         payee "Hollowp… bearer=ro…       2        2
+   80 r-intragroup         description ha… project=n…      24        6
+   70 r-wholesale          account 4010 ·… project=n…       3        0
+   60 r-fuel               payee has fuel  project=n…       1        0
+   50 r-emberline-split    payee "Emberli… group=spl…       2        0
+   40 r-registry-owner     payee "Corvid … treatment…       1        0 archived
+   10 r-bearer-roast       org roast       bearer=ro…      16        3
+   10 r-bearer-hold        org hold        bearer=ho…      14        3
+   10 r-bearer-design      org design      bearer=de…      14        1
+   10 r-bearer-lab         org lab         bearer=lab       5        0
+
+
+
+
+  Enter Edit  N New  D Archive  . Mode ▸  q  ?  ⌃P palette          v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-5 fg=#72B6D4 bg=#243137 +B
+r0 6-6 fg=#4DBFA9 bg=#243137 +B
+r0 7-7 fg=#9D8FF2 bg=#243137 +B
+r0 8-8 fg=#E8834F bg=#243137 +B
+r0 9-9 fg=#E8769F bg=#243137 +B
+r0 10-15 fg=#93A0A7 bg=#243137
+r0 16-25 fg=#B9C4C9 bg=#243137
+r0 26-66 fg=#93A0A7 bg=#243137
+r0 67-77 fg=#717E85 bg=#243137
+r0 78-79 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#E6ECEE bg=#171D20 +B
+r1 77-79 bg=#171D20
+r2 0-66 fg=#2D383E
+r2 67-76 fg=#72B6D4 +B
+r2 77-79 fg=#2D383E
+r3 2-18 fg=#93A0A7
+r3 19-25 fg=#E6ECEE
+r4 1-8 fg=#E6ECEE
+r4 9-11 fg=#93A0A7
+r4 12-17 fg=#E6ECEE
+r4 18-20 fg=#93A0A7
+r4 21-28 fg=#E6ECEE
+r4 29-31 fg=#93A0A7
+r4 32-35 fg=#E6ECEE
+r4 36-38 fg=#93A0A7
+r4 39-45 fg=#72B6D4 +B
+r5 1-8 fg=#E6ECEE
+r5 9-11 fg=#93A0A7
+r5 12-16 fg=#72B6D4 +B
+r5 17-27 fg=#93A0A7
+r7 1-4 fg=#93A0A7
+r7 6-25 fg=#93A0A7
+r7 27-41 fg=#93A0A7
+r7 43-52 fg=#93A0A7
+r7 54-60 fg=#93A0A7
+r7 62-69 fg=#93A0A7
+r7 71-78 fg=#93A0A7
+r8 0-0 fg=#72B6D4 bg=#253540 +B
+r8 1-4 fg=#93A0A7 bg=#253540
+r8 5-5 bg=#253540
+r8 6-25 fg=#E6ECEE bg=#253540
+r8 26-26 bg=#253540
+r8 27-41 fg=#93A0A7 bg=#253540
+r8 42-42 bg=#253540
+r8 43-52 fg=#E6ECEE bg=#253540
+r8 53-53 bg=#253540
+r8 54-60 fg=#E6ECEE bg=#253540
+r8 61-61 bg=#253540
+r8 62-69 fg=#93A0A7 bg=#253540
+r8 70-70 bg=#253540
+r8 71-78 fg=#93A0A7 bg=#253540
+r8 79-79 bg=#253540
+r9 1-4 fg=#93A0A7
+r9 6-25 fg=#E6ECEE
+r9 27-41 fg=#93A0A7
+r9 43-52 fg=#E6ECEE
+r9 54-60 fg=#E6ECEE
+r9 62-69 fg=#93A0A7
+r9 71-78 fg=#93A0A7
+r10 1-4 fg=#93A0A7
+r10 6-25 fg=#E6ECEE
+r10 27-41 fg=#93A0A7
+r10 43-52 fg=#E6ECEE
+r10 54-60 fg=#E6ECEE
+r10 62-69 fg=#93A0A7
+r10 71-78 fg=#93A0A7
+r11 1-4 fg=#93A0A7
+r11 6-25 fg=#E6ECEE
+r11 27-41 fg=#93A0A7
+r11 43-52 fg=#E6ECEE
+r11 54-60 fg=#E6ECEE
+r11 62-69 fg=#93A0A7
+r11 71-78 fg=#93A0A7
+r12 1-4 fg=#93A0A7
+r12 6-25 fg=#E6ECEE
+r12 27-41 fg=#93A0A7
+r12 43-52 fg=#E6ECEE
+r12 54-60 fg=#E6ECEE
+r12 62-69 fg=#93A0A7
+r12 71-78 fg=#93A0A7
+r13 1-4 fg=#93A0A7
+r13 6-25 fg=#E6ECEE
+r13 27-41 fg=#93A0A7
+r13 43-52 fg=#E6ECEE
+r13 54-60 fg=#E6ECEE
+r13 62-69 fg=#93A0A7
+r13 71-78 fg=#93A0A7
+r14 1-4 fg=#93A0A7
+r14 6-25 fg=#93A0A7
+r14 27-41 fg=#93A0A7
+r14 43-52 fg=#93A0A7
+r14 54-60 fg=#E6ECEE
+r14 62-69 fg=#93A0A7
+r14 71-78 fg=#93A0A7
+r15 1-4 fg=#93A0A7
+r15 6-25 fg=#E6ECEE
+r15 27-41 fg=#93A0A7
+r15 43-52 fg=#E6ECEE
+r15 54-60 fg=#E6ECEE
+r15 62-69 fg=#93A0A7
+r15 71-78 fg=#93A0A7
+r16 1-4 fg=#93A0A7
+r16 6-25 fg=#E6ECEE
+r16 27-41 fg=#93A0A7
+r16 43-52 fg=#E6ECEE
+r16 54-60 fg=#E6ECEE
+r16 62-69 fg=#93A0A7
+r16 71-78 fg=#93A0A7
+r17 1-4 fg=#93A0A7
+r17 6-25 fg=#E6ECEE
+r17 27-41 fg=#93A0A7
+r17 43-52 fg=#E6ECEE
+r17 54-60 fg=#E6ECEE
+r17 62-69 fg=#93A0A7
+r17 71-78 fg=#93A0A7
+r18 1-4 fg=#93A0A7
+r18 6-25 fg=#E6ECEE
+r18 27-41 fg=#93A0A7
+r18 43-52 fg=#E6ECEE
+r18 54-60 fg=#E6ECEE
+r18 62-69 fg=#93A0A7
+r18 71-78 fg=#93A0A7
+r23 0-1 bg=#1B2226
+r23 2-6 fg=#FFFFFF bg=#1B2226
+r23 7-7 bg=#1B2226
+r23 8-13 fg=#93A0A7 bg=#1B2226
+r23 14-14 fg=#FFFFFF bg=#1B2226
+r23 15-15 bg=#1B2226
+r23 16-20 fg=#93A0A7 bg=#1B2226
+r23 21-21 fg=#FFFFFF bg=#1B2226
+r23 22-22 bg=#1B2226
+r23 23-31 fg=#93A0A7 bg=#1B2226
+r23 32-32 fg=#FFFFFF bg=#1B2226
+r23 33-33 bg=#1B2226
+r23 34-41 fg=#93A0A7 bg=#1B2226
+r23 42-42 fg=#FFFFFF bg=#1B2226
+r23 43-44 fg=#93A0A7 bg=#1B2226
+r23 45-45 fg=#FFFFFF bg=#1B2226
+r23 46-47 fg=#93A0A7 bg=#1B2226
+r23 48-49 fg=#FFFFFF bg=#1B2226
+r23 50-50 bg=#1B2226
+r23 51-57 fg=#93A0A7 bg=#1B2226
+r23 58-67 bg=#1B2226
+r23 68-78 fg=#717E85 bg=#1B2226
+r23 79-79 bg=#1B2226

@@ -1,0 +1,59 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "ownpurse/ui-error/1",
+ "title": "ownpurse ui error reply (v 1)",
+ "description": "Every refusal of every `ownpurse ui` and classify-write command with --json. The codes and exit codes are in docs/TUI.md (Error codes).",
+ "type": "object",
+ "required": [
+  "error",
+  "message",
+  "help"
+ ],
+ "properties": {
+  "error": {
+   "type": "string",
+   "description": "The stable code (view_changed, view_mismatch, user_busy, too_small, not_found, …)."
+  },
+  "message": {
+   "type": "string",
+   "description": "What happened, for a person."
+  },
+  "help": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   },
+   "minItems": 1,
+   "description": "What to do next (always at least one line)."
+  },
+  "expected": {
+   "type": [
+    "array",
+    "object"
+   ],
+   "description": "view_mismatch: the predicates that failed {path, op, value}; too_small: the minimum size {cols, rows}."
+  },
+  "actual": {
+   "type": [
+    "array",
+    "object"
+   ],
+   "description": "view_mismatch: the values found per failing predicate [{path, value, text}]; timeout (ui wait): the current values {rev, store_rev, record, running, idle}; too_small: the terminal's size {cols, rows}."
+  },
+  "rev": {
+   "type": [
+    "integer",
+    "null"
+   ],
+   "description": "The view revision when refused."
+  },
+  "skipped": {
+   "type": "array",
+   "description": "Classify writes: what was left alone."
+  },
+  "anchors": {
+   "type": "array",
+   "description": "user_busy on a classify write: the lines the user has open."
+  }
+ }
+}

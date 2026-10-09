@@ -1,0 +1,130 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ●●●● compare: roast · hold · design · lab ▾    as of 2025-12-31                                                              ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Ledger › compare › Retained Earnings · 2025-01-01 → 2025-12-31
+  postings side by side · no pairing inferred
+  m marks postings the Intercompany engine matched · f sets the range for every column · Esc back
+ roast · Retained Earnings (3200)   opening Cr 7,316.42   closing Cr 7,316.42   0 postings
+ hold · Retained Earnings (3200)   opening Cr 1,906.33   closing Cr 1,906.33   0 postings
+ design · Retained Earnings (3200)   opening Dr 1,906.33   closing Dr 1,906.33   0 postings
+ lab · —   opening 0.00   closing 0.00   0 postings
+
+  date        │ roast                  amount│ hold                   amount│ design                 amount│ lab                    amount
+  No postings in this range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  f Range  m IC matches  h Full history  q Quit  / Filter  ? more  ⌃P palette                                                   v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-2 fg=#4DBFA9 bg=#243137 +B
+r0 3-3 fg=#9D8FF2 bg=#243137 +B
+r0 4-4 fg=#E8834F bg=#243137 +B
+r0 5-5 fg=#E8769F bg=#243137 +B
+r0 6-6 fg=#93A0A7 bg=#243137
+r0 7-42 fg=#72B6D4 bg=#243137 +B
+r0 43-48 fg=#93A0A7 bg=#243137
+r0 49-64 fg=#B9C4C9 bg=#243137
+r0 65-126 fg=#93A0A7 bg=#243137
+r0 127-137 fg=#717E85 bg=#243137
+r0 138-139 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#E6ECEE bg=#171D20 +B
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-139 bg=#171D20
+r2 0-14 fg=#2D383E
+r2 15-22 fg=#72B6D4 +B
+r2 23-139 fg=#2D383E
+r3 2-20 fg=#93A0A7
+r3 21-63 fg=#E6ECEE
+r4 2-44 fg=#E6ECEE
+r5 2-96 fg=#93A0A7
+r6 1-89 fg=#E6ECEE
+r7 1-88 fg=#E6ECEE
+r8 1-90 fg=#E6ECEE
+r9 1-50 fg=#E6ECEE
+r11 2-5 fg=#93A0A7
+r11 14-14 fg=#2D383E
+r11 16-32 fg=#E6ECEE +B
+r11 34-44 fg=#93A0A7
+r11 45-45 fg=#2D383E
+r11 47-63 fg=#E6ECEE +B
+r11 65-75 fg=#93A0A7
+r11 76-76 fg=#2D383E
+r11 78-94 fg=#E6ECEE +B
+r11 96-106 fg=#93A0A7
+r11 107-107 fg=#2D383E
+r11 109-125 fg=#E6ECEE +B
+r11 127-137 fg=#93A0A7
+r12 2-27 fg=#93A0A7
+r39 0-1 bg=#1B2226
+r39 2-2 fg=#FFFFFF bg=#1B2226
+r39 3-3 bg=#1B2226
+r39 4-10 fg=#93A0A7 bg=#1B2226
+r39 11-11 fg=#FFFFFF bg=#1B2226
+r39 12-12 bg=#1B2226
+r39 13-24 fg=#93A0A7 bg=#1B2226
+r39 25-25 fg=#FFFFFF bg=#1B2226
+r39 26-26 bg=#1B2226
+r39 27-40 fg=#93A0A7 bg=#1B2226
+r39 41-41 fg=#FFFFFF bg=#1B2226
+r39 42-42 bg=#1B2226
+r39 43-48 fg=#93A0A7 bg=#1B2226
+r39 49-49 fg=#FFFFFF bg=#1B2226
+r39 50-50 bg=#1B2226
+r39 51-58 fg=#93A0A7 bg=#1B2226
+r39 59-59 fg=#FFFFFF bg=#1B2226
+r39 60-60 bg=#1B2226
+r39 61-66 fg=#93A0A7 bg=#1B2226
+r39 67-68 fg=#FFFFFF bg=#1B2226
+r39 69-69 bg=#1B2226
+r39 70-76 fg=#93A0A7 bg=#1B2226
+r39 77-127 bg=#1B2226
+r39 128-138 fg=#717E85 bg=#1B2226
+r39 139-139 bg=#1B2226

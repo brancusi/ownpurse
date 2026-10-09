@@ -1,0 +1,120 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    as of 2025-12-31                     ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+──━━━━━ ╭─ Keys · Overview ───────────────────────────────────────────╮ ────────
+  Overv │ Move                          Tabs                          │
+  Organ │ ←           cell ◂            1           Overview          │ 2h ago
+  org   │ →           cell ▸            2           Ledger            │
+▌ roast │ ⌥←          Back              3           Intercompany      │
+        │ ⌥→          Forward           4           Activity          │
+  hold  │ ↑ k         up                5           System            │
+  desig │ ↓ j         down              6           Classify          │
+  lab   │ PgUp        page up           7           Manifest          │
+        │ PgDn        page down         Tab         next tab          │
+  Inter │ Home        first             ⇧Tab        prev tab          │
+  4 pai │ End         last                                            │
+        │ Enter       open                                            │
+  Needs │ Esc         back                                            │
+  ! Qui │                                                             │
+    263 │                                                             │
+        │                                                             │
+        │                                                             │
+        │ … 4 more groups (widen)                                     │
+        ╰─────────────────────────────────────────────────────────────╯
+
+                                                         Esc close  v0.0.0-test
+--- styles
+r0 2-23 +B
+r0 24-29 +D
+r0 46-77 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r2 0-1 +D
+r2 2-7 +BD
+r2 8-9 +D
+r2 10-26 +BD
+r2 27-79 +D
+r3 8-8 +D
+r3 10-13 +B
+r3 40-43 +B
+r3 70-70 +D
+r4 2-7 +B
+r4 8-8 +D
+r4 22-27 +D
+r4 52-59 +D
+r4 70-77 +D
+r5 2-8 +D
+r5 22-27 +D
+r5 52-57 +D
+r5 70-70 +D
+r6 0-0 +BR
+r6 1-7 +R
+r6 8-8 +D
+r6 22-25 +D
+r6 52-63 +D
+r6 70-70 +D
+r6 71-79 +R
+r7 0-7 +R
+r7 8-8 +D
+r7 22-28 +D
+r7 52-59 +D
+r7 70-70 +D
+r7 71-79 +R
+r8 8-8 +D
+r8 22-23 +D
+r8 52-57 +D
+r8 70-70 +D
+r9 8-8 +D
+r9 22-25 +D
+r9 52-59 +D
+r9 70-70 +D
+r10 8-8 +D
+r10 22-28 +D
+r10 52-59 +D
+r10 70-70 +D
+r11 8-8 +D
+r11 22-30 +D
+r11 52-59 +D
+r11 70-70 +D
+r12 2-7 +B
+r12 8-8 +D
+r12 22-26 +D
+r12 52-59 +D
+r12 70-70 +D
+r13 8-8 +D
+r13 22-25 +D
+r13 70-70 +D
+r14 8-8 +D
+r14 22-25 +D
+r14 70-70 +D
+r15 2-7 +B
+r15 8-8 +D
+r15 22-25 +D
+r15 70-70 +D
+r16 2-7 fg=yellow
+r16 8-8 +D
+r16 70-70 +D
+r16 71-71 fg=yellow
+r17 2-7 fg=yellow
+r17 8-8 +D
+r17 70-70 +D
+r18 8-8 +D
+r18 70-70 +D
+r19 8-8 +D
+r19 70-70 +D
+r20 8-8 +D
+r20 10-32 +D
+r20 70-70 +D
+r21 8-70 +D
+r23 57-59 +B
+r23 61-65 +D
+r23 68-78 +D

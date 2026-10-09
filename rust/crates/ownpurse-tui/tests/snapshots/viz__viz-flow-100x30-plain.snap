@@ -1,0 +1,123 @@
+---
+source: crates/ownpurse-tui/tests/viz.rs
+expression: styled(&buf)
+---
+  [compare: roast - hold - design - lab] v    as of 2025-12-31                           read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+--==========----------------------------------------------------------------------------------------
+  Overview > Explain: money flow
+  Money between the orgs: what is owed
+  Who owes whom at 2025-12-31
+  Each arrow points from the org that owes to the org that is owed (as the first org of each pair
+  records it).
+
+   +--------------------+  +--------------------+  +--------------------+  +--------------------+
+   |       roast        |  |        hold        |  |       design       |  |        lab         |
+   +----------+---------+  +----------+---------+  +----------+---------+  +----------+---------+
+              ------ 15,568.80 ------>|                       |                       |
+            roast owes hold 15,568.80 |                       |                       |
+              |                       |<----- 4,670.51 --------                       |
+              |                     design owes hold 4,670.51 - design's books show 4,252.24 - a
+              |                     gap of 418.27             |                       |
+              ----------- roast owes design 263.94 ---------->|                       |
+            roast's books show 0.00 - a gap of 263.94         |                       |
+              |                       |<---------- lab owes hold 6,912.48 -------------
+              |                     lab's books show 6,855.35 - a gap of 57.13        |
+              |                       |                       |                       |
+
+
+
+
+
+
+
+  Esc Close  v Scroll  q Quit  / Filter  ] Org >  ? more  ^P palette                    v0.0.0-test
+--- styles
+r0 40-45 +D
+r0 62-97 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-99 +D
+r3 2-12 +D
+r4 2-37 +B
+r6 2-96 +D
+r7 2-13 +D
+r9 3-24 +B
+r9 27-48 +B
+r9 51-72 +B
+r9 75-96 +B
+r10 3-3 +B
+r10 11-15 +B
+r10 24-24 +B
+r10 27-27 +B
+r10 36-39 +B
+r10 48-48 +B
+r10 51-51 +B
+r10 59-64 +B
+r10 72-72 +B
+r10 75-75 +B
+r10 84-86 +B
+r10 96-96 +B
+r11 3-24 +B
+r11 27-48 +B
+r11 51-72 +B
+r11 75-96 +B
+r12 14-14 +BD
+r12 38-38 +D
+r12 62-62 +D
+r12 86-86 +D
+r13 12-36 +D
+r13 38-38 +D
+r13 62-62 +D
+r13 86-86 +D
+r14 14-14 +D
+r14 38-38 +D
+r14 62-62 +BD
+r14 86-86 +D
+r15 14-14 +D
+r15 36-95 +D
+r16 14-14 +D
+r16 36-48 +D
+r16 62-62 +D
+r16 86-86 +D
+r17 14-14 +BD
+r17 38-38 +D
+r17 62-62 +D
+r17 86-86 +D
+r18 12-52 +D
+r18 62-62 +D
+r18 86-86 +D
+r19 14-14 +D
+r19 38-38 +D
+r19 62-62 +D
+r19 86-86 +BD
+r20 14-14 +D
+r20 36-77 +D
+r20 86-86 +D
+r21 14-14 +D
+r21 38-38 +D
+r21 62-62 +D
+r21 86-86 +D
+r29 2-4 +B
+r29 6-12 +D
+r29 13-13 +B
+r29 15-22 +D
+r29 23-23 +B
+r29 25-30 +D
+r29 31-31 +B
+r29 33-40 +D
+r29 41-41 +B
+r29 43-49 +D
+r29 50-50 +B
+r29 52-57 +D
+r29 58-59 +B
+r29 61-67 +D
+r29 88-98 +D

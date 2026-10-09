@@ -1,0 +1,46 @@
+{
+ "argv": [
+  "--offline",
+  "show",
+  "one",
+  "accounts",
+  "card"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "entity": "Accounts",
+   "id": "card",
+   "status": "ACTIVE",
+   "record": {
+    "AccountID": "card",
+    "BankAccountNumber": "12-34",
+    "Class": "LIABILITY",
+    "Code": "090",
+    "Name": "Card, Plumline",
+    "Status": "ACTIVE",
+    "SystemAccount": null,
+    "Type": "BANK"
+   },
+   "versions": [
+    {
+     "id": 1046,
+     "tenant_id": "11111111-1111-1111-1111-111111111111",
+     "entity": "Accounts",
+     "xero_id": "card",
+     "version": 1,
+     "content_hash": "ce640b196e747bb0e63428f97f2282f4b27eb9a535a36a660e751cb0eb4c7b8d",
+     "status": "ACTIVE",
+     "xero_updated_utc": null,
+     "observed_at": "2026-10-05T07:46:00Z",
+     "source": "sync",
+     "sync_run_id": null,
+     "caused_by_op": null,
+     "payload": "{\"AccountID\":\"card\",\"BankAccountNumber\":\"12-34\",\"Class\":\"LIABILITY\",\"Code\":\"090\",\"Name\":\"Card, Plumline\",\"Status\":\"ACTIVE\",\"SystemAccount\":null,\"Type\":\"BANK\"}"
+    }
+   ],
+   "versions_count": 1
+  }
+ ],
+ "text": "entity: Accounts\nid: card\nstatus: ACTIVE\nrecord: \"{\"\"AccountID\"\":\"\"card\"\",\"\"BankAccountNumber\"\":\"\"12-34\"\",\"\"Class\"\":\"\"LIABILITY\"\",\"\"Code\"\":\"\"090\"\",\"\"Name\"\":\"\"Card, Plumline\"\",\"\"Status\"\":\"\"ACTIVE\"\",\"\"SystemAccount\"\":null,\"\"Type\"\":\"\"BANK\"\"}\"\nversions[1]{version,observed_at,xero_updated_utc,source,status,caused_by_op}:\n  1,2026-10-05T07:46:00Z,,sync,ACTIVE,\n"
+}

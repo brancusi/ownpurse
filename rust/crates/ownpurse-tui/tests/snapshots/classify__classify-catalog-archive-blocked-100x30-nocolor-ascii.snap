@@ -1,0 +1,93 @@
+---
+source: crates/ownpurse-tui/tests/classify.rs
+assertion_line: 41
+expression: styled(&buf)
+---
+  [all organisations] v    as of 2025-12-31    classify: 38 open - 2 stale               read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+-------------------------------------------------------------------==========-----------------------
+  all > Classify > Catalog
+ Queue 38 - Groups - Audition - Tree - Catalog
+ Projects - Rules   <- -> list
+
+  name                      id       aliases                                 used  status
+> Harvest Blend launch      harvest  Harvest Blend, bag artwork, bag proofs     2  active
+  Wayfinding refit          refit    Wayfinding                                 2  active
+  Sample roaster programme  roaster  roaster, afterburner, burner               6  active
+  Cupping lab fit-out       cupping  cupping                                    2  active
+  No project                none                                               28  active
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ Used by 2 lines, so it's archived instead: hidden from pickers, kept in history.
+ 1 change to classify.toml - w write - u discard
+  Enter Edit  N New  w Write  D Archive  u Discard  ? more  ^P palette                  v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-46 +D
+r0 74-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-68 +D
+r1 69-76 +B
+r1 80-89 +D
+r2 0-66 +D
+r2 67-76 +BD
+r2 77-99 +D
+r3 2-18 +D
+r4 9-11 +D
+r4 18-20 +D
+r4 29-31 +D
+r4 36-38 +D
+r4 39-45 +B
+r5 1-8 +B
+r5 9-11 +D
+r5 17-29 +D
+r7 2-25 +D
+r7 28-34 +D
+r7 37-74 +D
+r7 77-80 +D
+r7 83-88 +D
+r8 0-0 +BR
+r8 1-99 +R
+r9 28-34 +D
+r9 37-74 +D
+r9 83-88 +D
+r10 28-34 +D
+r10 37-74 +D
+r10 83-88 +D
+r11 28-34 +D
+r11 37-74 +D
+r11 83-88 +D
+r12 28-34 +D
+r12 37-74 +D
+r12 83-88 +D
+r29 2-6 +B
+r29 8-13 +D
+r29 14-14 +B
+r29 16-20 +D
+r29 21-21 +B
+r29 23-29 +D
+r29 30-30 +B
+r29 32-40 +D
+r29 41-41 +B
+r29 43-51 +D
+r29 52-52 +B
+r29 54-59 +D
+r29 60-61 +B
+r29 63-69 +D
+r29 88-98 +D

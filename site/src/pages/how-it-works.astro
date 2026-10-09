@@ -1,0 +1,151 @@
+---
+import Base from '../layouts/Base.astro';
+import Terminal from '../components/Terminal.astro';
+import Coin from '../components/Coin.astro';
+import Note from '../components/Note.astro';
+import LedgerTable from '../components/LedgerTable.astro';
+
+const sync = [
+	[['$ ', 'dim'], ['ownpurse sync roast,hold']],
+	[['roast ', 'note'], ['invoices 12 · bills 31 · bank 88 · journals 2', 'dim']],
+	[['hold  ', 'note'], ['bills 1 · bank 6 · journals 1', 'dim']],
+	'141 new versions · 3 changed · 0 removed',
+	[['calls 46 used · 954 left today', 'dim']],
+	[['chain ', 'dim'], ['● verified', 'ok']],
+	[['hint: ', 'note'], ['ownpurse parity roast', 'dim']],
+] as any;
+const tui = [
+	[['1 Overview  ', 'dim'], ['2 Ledger', 'note'], ['  3 Intercompany  4 Activity  5 System', 'dim']],
+	[['─────────────────────────────────────────────', 'dim']],
+	[['  filter: card 4417                       3 rows', 'dim']],
+	'  09-03  roast      6420 Repairs        53.60',
+	[['▸ 09-03  household  Home upkeep         32.80  ', 'note'], ['◌ held', 'gilt']],
+	[['  09-30  bank       card 4417                   ', 'dim'], ['(86.40)', 'coin']],
+	[['─────────────────────────────────────────────', 'dim']],
+	[['  agent ', 'note'], ['The household half is held. Post it?']],
+	[['  / filter  v compare  d as-of  ? help', 'dim']],
+] as any;
+const commands = [
+	['ownpurse login', 'One browser consent for every organisation you tick. Read access by default.'],
+	['ownpurse sync', 'Fetch what changed and append it to the record, within the daily call budget.'],
+	['ownpurse tb · gl · pl · bs', 'Trial balance, general ledger, profit and loss, balance sheet; accrual or cash.'],
+	['ownpurse parity', 'Compare the rebuilt ledger with the source, account by account.'],
+	['ownpurse ic', 'Match intercompany balances between your organisations.'],
+	['ownpurse list · show', 'Any mirrored entity, or one record with its full version history.'],
+	['ownpurse history · attachments', 'A document’s history, notes and files, into the record.'],
+	['ownpurse export', 'A file for your accountant, straight from the record.'],
+	['ownpurse classify', 'Suggest projects and treatments with local rules; labels never leave your machine.'],
+	['ownpurse manifest · write', 'Collect changes, plan them into a sealed package, approve before anything is sent.'],
+	['ownpurse ui', 'Let an agent read and drive the running terminal UI.'],
+	['ownpurse doctor', 'Check the setup and print a fix for every problem.'],
+];
+---
+<Base title="How it works · ownpurse" description="Connectors turn sources into facts, the record keeps them, the CLI and terminal UI let you and your agents ask anything and change things carefully." current="how">
+
+<section class="wrap sec stack-lg" style="padding-block: 88px 64px;">
+	<div class="eyebrow">How it works</div>
+	<h1 class="h1 sm" style="max-width: 13em;">A record of facts, and everything you need to work with it.</h1>
+	<p class="lead">Connectors turn sources into facts. The record keeps them. A small daemon serves them. The CLI and the terminal UI let you and your agents ask anything and change things carefully.</p>
+	<nav aria-label="On this page" class="row" style="gap: 8px;">
+		{['connectors', 'record', 'daemon', 'cli', 'tui', 'writes'].map((id) => <a class="op-tag" href={`#${id}`} style="text-decoration: none;">{id}</a>)}
+	</nav>
+</section>
+
+<section id="connectors" class="rule-top">
+	<div class="wrap sec-sm split">
+		<div class="stack">
+			<div class="eyebrow lapis">Connectors</div>
+			<h2 class="h2 sm">Sources become facts.</h2>
+			<p class="muted">A connector reads a source and writes what it saw as facts, each tagged with where it came from. The Xero connector covers every organisation you tick in one login, watches its daily call budget, and fetches only what changed since the last sync.</p>
+			<p class="muted">Because a connector only has to describe a source, your agent can write one for your bank's export or your household sheet, and everything above it works unchanged.</p>
+		</div>
+		<Terminal meta="sync" lines={sync} label="A sync across two organisations" />
+	</div>
+</section>
+
+<section id="record" class="band">
+	<div class="wrap sec-sm split">
+		<div class="stack">
+			<div class="eyebrow lapis">The record</div>
+			<h2 class="h2 sm">One file. Append-only. Provably untouched.</h2>
+			<p class="muted">The record is a single SQLite file. Every version of every document becomes a new row, triggers refuse edits and deletes, and a SHA-256 chain links each row to the one before. Amounts keep the source's own digits as exact decimals.</p>
+			<p class="muted">ownpurse rebuilds the ledger from those documents and checks it against Xero's own trial balance, P&amp;L and balance sheet, account by account, to the cent.</p>
+		</div>
+		<div class="cells">
+			<div><Coin kind="posted" label="Append-only" /><p>Database triggers refuse updates and deletes on history.</p></div>
+			<div><Coin kind="posted" label="Hash-chained" /><p>Each row carries the hash of the one before it.</p></div>
+			<div><Coin kind="balanced" label="Exact to the cent" /><p>Decimals, never floats. Parity with the source on every account.</p></div>
+			<div><Coin kind="open" label="Accrual or cash" /><p>Both bases from the same facts, as of any date.</p></div>
+		</div>
+	</div>
+</section>
+
+<section id="daemon" class="wrap sec-sm split center">
+	<div class="stack">
+		<div class="eyebrow lapis">Daemon</div>
+		<h2 class="h2 sm">A small process that keeps the record company.</h2>
+		<p class="muted">The daemon runs on your laptop or your own server. It schedules syncs, serves facts and live updates to whatever is listening, and gives every tool and agent the same view of the record. It does nothing you can't also do from the CLI.</p>
+	</div>
+	<div class="layers">
+		<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; border: 0; padding: 0;">
+			<span style="border: 1px solid var(--ink-1); padding: 12px; text-align: center; font: 600 15px var(--font-display); color: var(--ink-1);">TUI</span>
+			<span style="border: 1px solid var(--ink-1); padding: 12px; text-align: center; font: 600 15px var(--font-display); color: var(--ink-1);">Agents</span>
+			<span style="border: 1px dashed var(--line-2); padding: 12px; text-align: center; font: 600 15px var(--font-display); color: var(--ink-2);">Your tools</span>
+		</div>
+		<div style="border-width: 2px;"><strong>ownpurse daemon</strong><span>syncs · serves · notifies</span></div>
+		<div class="base"><strong><span class="coin-dot"></span>The record</strong><span>one SQLite file</span></div>
+	</div>
+</section>
+
+<section id="cli" class="rule-top">
+	<div class="wrap sec-sm stack-lg" style="gap: 32px;">
+		<div class="split end">
+			<div class="stack">
+				<div class="eyebrow lapis">CLI</div>
+				<h2 class="h2 sm">Everything, from one command line.</h2>
+			</div>
+			<p class="muted">The CLI covers the whole surface, written for agents first: compact output, a count on every list, structured errors with stable exit codes, no prompts, and a hint for the next step. Add <code>--json</code> to anything.</p>
+		</div>
+		<div class="scroll-x" style="border: 1px solid var(--line-2);">
+			<table class="op-ledger" style="min-width: 620px; font-size: 15px;">
+				<thead><tr><th>Command</th><th>What it does</th></tr></thead>
+				<tbody>{commands.map(([c, w]) => <tr><td class="mono" style="white-space: nowrap; color: var(--ink-1);">{c}</td><td>{w}</td></tr>)}</tbody>
+			</table>
+		</div>
+		<a href="/docs/reference/cli/" style="font-weight: 600;">Full CLI reference</a>
+	</div>
+</section>
+
+<section id="tui" class="band">
+	<div class="wrap sec-sm split center">
+		<div class="stack">
+			<div class="eyebrow lapis">Terminal UI</div>
+			<h2 class="h2 sm">One state. Every screen derived. Your agent can drive it.</h2>
+			<p class="muted">The terminal UI ships with ownpurse and is built on caretline. It follows the Elm architecture: a single state value, messages that change it, and every screen derived from it. That makes each view reproducible, and it means an agent can read the state and send the same keys you would.</p>
+			<p class="muted">So your agent can do more than answer. It can open the ledger, filter to the card, put two books side by side and walk you through what it found, on your screen.</p>
+		</div>
+		<Terminal meta="0.17 · roast, household · Ledger" blink lines={tui} label="The ownpurse terminal UI, Ledger tab" />
+	</div>
+</section>
+
+<section id="writes" class="wrap sec-sm split">
+	<div class="stack">
+		<div class="eyebrow lapis">Writes and moves</div>
+		<h2 class="h2 sm">Changes go out as planned, recorded operations.</h2>
+		<p class="muted">Reading never changes anything. When you or an agent want to post a journal, create a bank transaction or attach a receipt, ownpurse collects the change into a manifest, plans it into a sealed package, and shows exactly what will be sent. Nothing reaches the source before you approve it. Each landed write leaves a note in the document's history, so anyone looking in Xero can see where it came from.</p>
+		<p class="muted">Moving to a new provider uses the same path in bulk: the facts are already yours, so a connector for the new system replays them there.</p>
+	</div>
+	<div class="stack">
+		<LedgerTable rows={[{ date: '09-03', source: 'sheet', book: 'household', account: 'Home upkeep', debit: 32.8, selected: true }, { date: '09-03', source: 'sheet', book: 'household', account: 'Groceries', credit: 32.8 }]} />
+		<Note label="Plan">One manual journal moves 32.80 from Groceries to Home upkeep in the household book. Nothing is sent until you approve it.</Note>
+	</div>
+</section>
+
+<section class="band-ink">
+	<div class="wrap sec" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 24px;">
+		<h2 class="h2" style="max-width: 16em;">Try it offline in one command.</h2>
+		<code class="cmd" style="background: transparent; color: var(--ink-inverse); border: 1px solid var(--ink-inverse);">ownpurse demo</code>
+		<a class="op-btn coin btn-lg" href="/get-started/">Get started</a>
+	</div>
+</section>
+</Base>

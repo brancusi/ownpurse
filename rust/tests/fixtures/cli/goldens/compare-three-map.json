@@ -1,0 +1,414 @@
+{
+ "argv": [
+  "--offline",
+  "tb",
+  "one,hq,co",
+  "--compare",
+  "--align",
+  "map",
+  "--date",
+  "2025-12-31"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "as_of": "2025-12-31",
+   "accounting_basis": "accrual",
+   "align": "map",
+   "columns": [
+    {
+     "org": "one",
+     "basis": "TB 2024-12-31 + 2025 differs: 1",
+     "total_debit": "86623.62",
+     "total_credit": "86623.62",
+     "balanced": true
+    },
+    {
+     "org": "hq",
+     "basis": "TB 2024-12-31 + 2025 ✓",
+     "total_debit": "6541.08",
+     "total_credit": "6541.08",
+     "balanced": true
+    },
+    {
+     "org": "co",
+     "basis": "TB 2024-12-31 + 2025 ✓",
+     "total_debit": "1519.72",
+     "total_credit": "1519.72",
+     "balanced": true
+    }
+   ],
+   "rows": [
+    {
+     "section": "aligned",
+     "key": "map:recharge_balances",
+     "code": "",
+     "label": "Recharge balances (HQ 2405/1405, Co 2475)",
+     "class": "ASSET",
+     "members": {
+      "one": [],
+      "hq": [
+       "Lease Recharge Receivable (1405)",
+       "Co Settlement Clearing (2405)"
+      ],
+      "co": [
+       "Intra-group Payable – HQ (2475)"
+      ]
+     },
+     "member_ids": {
+      "one": [],
+      "hq": [
+       "h-1405",
+       "h-2405"
+      ],
+      "co": [
+       "c-2475"
+      ]
+     },
+     "names_differ": false,
+     "names": {
+      "one": [],
+      "hq": [
+       "Lease Recharge Receivable",
+       "Co Settlement Clearing"
+      ],
+      "co": [
+       "Intra-group Payable – HQ"
+      ]
+     },
+     "cells": {
+      "one": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "hq": {
+       "exists": true,
+       "debit": "1207.89",
+       "credit": null,
+       "net": "1207.89"
+      },
+      "co": {
+       "exists": true,
+       "debit": null,
+       "credit": "1003.26",
+       "net": "-1003.26"
+      }
+     }
+    },
+    {
+     "section": "aligned",
+     "key": "map:cash",
+     "code": "",
+     "label": "cash",
+     "class": "ASSET",
+     "members": {
+      "one": [
+       "Pewter Lane Checking",
+       "Pewter Lane Savings"
+      ],
+      "hq": [
+       "Calderwick HQ Current Account"
+      ],
+      "co": [
+       "Calderwick Trading Current Account"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "bank-1",
+       "bank-2"
+      ],
+      "hq": [
+       "h-bank"
+      ],
+      "co": [
+       "c-bank"
+      ]
+     },
+     "names_differ": false,
+     "names": {
+      "one": [
+       "Pewter Lane Checking",
+       "Pewter Lane Savings"
+      ],
+      "hq": [
+       "Calderwick HQ Current Account"
+      ],
+      "co": [
+       "Calderwick Trading Current Account"
+      ]
+     },
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": null,
+       "credit": "86432.71",
+       "net": "-86432.71"
+      },
+      "hq": {
+       "exists": true,
+       "debit": null,
+       "credit": "1207.89",
+       "net": "-1207.89"
+      },
+      "co": {
+       "exists": true,
+       "debit": null,
+       "credit": "516.46",
+       "net": "-516.46"
+      }
+     }
+    },
+    {
+     "section": "aligned",
+     "key": "map:equity",
+     "code": "",
+     "label": "equity",
+     "class": "EQUITY",
+     "members": {
+      "one": [
+       "Pewter Lane Founders' Capital (300)",
+       "Retained Earnings (320)"
+      ],
+      "hq": [
+       "Calderwick Group Capital (3100)",
+       "Retained Earnings (3200)"
+      ],
+      "co": [
+       "Retained Earnings (3200)"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "eq",
+       "re"
+      ],
+      "hq": [
+       "h-eq",
+       "h-re"
+      ],
+      "co": [
+       "c-re"
+      ]
+     },
+     "names_differ": false,
+     "names": {
+      "one": [
+       "Pewter Lane Founders' Capital",
+       "Retained Earnings"
+      ],
+      "hq": [
+       "Calderwick Group Capital",
+       "Retained Earnings"
+      ],
+      "co": [
+       "Retained Earnings"
+      ]
+     },
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": null,
+       "credit": "138.09",
+       "net": "-138.09"
+      },
+      "hq": {
+       "exists": true,
+       "debit": null,
+       "credit": null,
+       "net": "0.00"
+      },
+      "co": {
+       "exists": true,
+       "debit": "1013.47",
+       "credit": null,
+       "net": "1013.47"
+      }
+     }
+    },
+    {
+     "section": "aligned",
+     "key": "map:costs",
+     "code": "",
+     "label": "costs",
+     "class": "EXPENSE",
+     "members": {
+      "one": [
+       "Pewter Lane Shop Supplies (400)"
+      ],
+      "hq": [],
+      "co": [
+       "Premises Lease (6605)"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "exp"
+      ],
+      "hq": [],
+      "co": [
+       "c-6605"
+      ]
+     },
+     "names_differ": false,
+     "names": {
+      "one": [
+       "Pewter Lane Shop Supplies"
+      ],
+      "hq": [],
+      "co": [
+       "Premises Lease"
+      ]
+     },
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": "86539.08",
+       "credit": null,
+       "net": "86539.08"
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": true,
+       "debit": "506.25",
+       "credit": null,
+       "net": "506.25"
+      }
+     }
+    },
+    {
+     "section": "only in one",
+     "key": "one:ap",
+     "code": "800",
+     "label": "Accounts Payable",
+     "class": "LIABILITY",
+     "members": {
+      "one": [
+       "Accounts Payable (800)"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "ap"
+      ],
+      "hq": [],
+      "co": []
+     },
+     "account_id": "ap",
+     "org": "one",
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": "21.68",
+       "credit": null,
+       "net": "21.68"
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in one",
+     "key": "one:gst",
+     "code": "820",
+     "label": "Sales Tax",
+     "class": "LIABILITY",
+     "members": {
+      "one": [
+       "Sales Tax (820)"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "gst"
+      ],
+      "hq": [],
+      "co": []
+     },
+     "account_id": "gst",
+     "org": "one",
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": "10.34",
+       "credit": null,
+       "net": "10.34"
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    },
+    {
+     "section": "only in one",
+     "key": "one:rev",
+     "code": "410",
+     "label": "Pewter Lane Counter Sales",
+     "class": "REVENUE",
+     "members": {
+      "one": [
+       "Pewter Lane Counter Sales (410)"
+      ]
+     },
+     "member_ids": {
+      "one": [
+       "rev"
+      ],
+      "hq": [],
+      "co": []
+     },
+     "account_id": "rev",
+     "org": "one",
+     "cells": {
+      "one": {
+       "exists": true,
+       "debit": null,
+       "credit": "0.30",
+       "net": "-0.30"
+      },
+      "hq": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      },
+      "co": {
+       "exists": false,
+       "debit": null,
+       "credit": null,
+       "net": null
+      }
+     }
+    }
+   ],
+   "rows_count": 7
+  }
+ ],
+ "text": "as_of: 2025-12-31\naccounting_basis: accrual\nalign: map\ncolumns: one: TB 2024-12-31 + 2025 differs: 1 · debit 86623.62 credit 86623.62, hq: TB 2024-12-31 + 2025 ✓ · debit 6541.08 credit 6541.08, co: TB 2024-12-31 + 2025 ✓ · debit 1519.72 credit 1519.72\nrows[7]{section,code,account,one,hq,co}:\n  aligned,,\"Recharge balances (HQ 2405/1405, Co 2475)\",—,1207.89,-1003.26\n  aligned,,cash,-86432.71,-1207.89,-516.46\n  aligned,,equity,-138.09,,1013.47\n  aligned,,costs,86539.08,—,506.25\n  only in one,800,Accounts Payable,21.68,—,—\n  only in one,820,Sales Tax,10.34,—,—\n  only in one,410,Pewter Lane Counter Sales,-0.30,—,—\nhelp[1]:\n  Cells are each org's own net balance (debit positive); — = the account does not exist there. Rows merge only on an identical code (or an account_map category with --align map); nothing is added or differenced across orgs.\n"
+}

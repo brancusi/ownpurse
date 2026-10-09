@@ -1,0 +1,112 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Mono:wght@400;500&display=swap");
+
+/* ownpurse components. Every value comes from tokens.css. */
+body { margin: 0; background: var(--surface-0); color: var(--ink-1); font-family: var(--font-display); font-size: 16px; line-height: 1.55 }
+.op-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); padding: var(--space-4) }
+.op-stack { display: grid; gap: var(--space-4); padding: var(--space-4) }
+:where(.op-btn, .op-tag, a):focus-visible { outline: 2px solid var(--focus); outline-offset: 2px }
+
+/* Mark */
+.op-mark { display: inline-block; vertical-align: middle; flex: none }
+.op-mark .fg { fill: var(--ink-1) } .op-mark .fgs { stroke: var(--ink-1) } .op-mark .eye { fill: var(--coin) }
+.op-mark.mono .eye { fill: var(--ink-1) }
+.op-mark.reversed .fg { fill: var(--ink-inverse) } .op-mark.reversed .fgs { stroke: var(--ink-inverse) }
+.op-blink { transform-box: fill-box; transform-origin: center; animation: op-blink 6s infinite }
+@keyframes op-blink { 0%, 92%, 100% { transform: scaleY(1) } 95% { transform: scaleY(.1) } }
+@media (prefers-reduced-motion: reduce) { .op-blink { animation: none } }
+
+/* Wordmark: the coin-o is measured from Bricolage 800 at optical size 96 (o ink 22..545, -14..542 in 1000 units) */
+.op-wordmark { font-family: var(--font-display); font-weight: 800; font-variation-settings: "opsz" 96; letter-spacing: -0.022em;
+  line-height: 1; white-space: nowrap; color: var(--ink-1); display: inline-block }
+.op-wordmark .o { display: inline-block; width: .556em; height: .556em; border-radius: var(--radius-coin); background: var(--coin);
+  vertical-align: -0.014em; margin-left: .022em }
+.op-wordmark.mono .o { background: currentColor }
+.op-wordmark.reversed { color: var(--ink-inverse) }
+
+/* Coin status */
+.op-coin { display: inline-flex; align-items: center; gap: var(--space-1); font-size: 14px; line-height: 1.3; white-space: nowrap }
+.op-coin svg { flex: none }
+.op-coin.posted, .op-coin.balanced { color: var(--verdigris) }
+.op-coin.open { color: var(--ink-3) }
+.op-coin.held { color: var(--gilt-text) }
+.op-coin.short, .op-coin.over { color: var(--coin-text) }
+.op-coin .g-held { color: var(--gilt) }
+
+/* Amount */
+.op-amount { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 15px }
+.op-amount.neg { color: var(--coin-text) }
+.op-amount .cur { color: var(--ink-3); margin-right: .35em; font-size: .85em }
+.op-amount.total { font-weight: 500; border-top: var(--rule-hair) solid var(--ink-1); border-bottom: var(--rule-double) double var(--ink-1); padding: 2px 0 1px }
+
+/* Button */
+.op-btn { appearance: none; font: 600 13px/1 var(--font-display); letter-spacing: .005em; border-radius: var(--radius-1); border: 1px solid transparent;
+  padding: 10px var(--space-4); cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-2); white-space: nowrap }
+.op-btn.sm { padding: 7px var(--space-3); font-size: 12px }
+.op-btn.primary { background: var(--surface-inverse); color: var(--ink-inverse) }
+.op-btn.coin { background: var(--coin); color: var(--on-coin) }
+.op-btn.quiet { background: transparent; color: var(--ink-1); border-color: var(--line-2) }
+.op-btn.quiet:hover { background: var(--surface-2) }
+.op-btn.ghost { background: transparent; color: var(--lapis); padding-inline: var(--space-2) }
+.op-btn.ghost:hover { background: var(--lapis-tint) }
+.op-btn[disabled] { opacity: .45; cursor: not-allowed }
+
+/* Tag */
+.op-tag { display: inline-flex; align-items: center; gap: 6px; font: 500 12px/1 var(--font-mono); padding: 5px 8px; border-radius: var(--radius-1);
+  background: var(--surface-2); color: var(--ink-2); white-space: nowrap }
+.op-tag .dot { width: 7px; height: 7px; border-radius: var(--radius-coin); background: currentColor }
+.op-tag.lapis { background: var(--lapis-tint); color: var(--lapis) }
+.op-tag.gilt { background: var(--gilt-tint); color: var(--gilt-text) }
+.op-tag.verdigris { background: var(--verdigris-tint); color: var(--verdigris) }
+.op-tag.coin { background: var(--coin-tint); color: var(--coin-text) }
+
+/* T-account */
+.op-taccount { min-width: 0; max-width: 520px; font-size: 14px }
+.op-taccount .head { display: flex; justify-content: space-between; gap: var(--space-3); align-items: baseline; padding: 0 2px var(--space-2) }
+.op-taccount .name { font-weight: 700; font-size: 16px }
+.op-taccount .code { font-family: var(--font-mono); color: var(--ink-3); font-size: 12px }
+.op-taccount .body { display: grid; grid-template-columns: 1fr 1fr; border-top: var(--rule-strong) solid var(--ink-1) }
+.op-taccount .side { padding: var(--space-2) var(--space-3) var(--space-3); display: grid; gap: 4px; align-content: start }
+.op-taccount .side + .side { border-left: var(--rule-strong) solid var(--ink-1) }
+.op-taccount .side-l { font: 500 11px/1.4 var(--font-mono); letter-spacing: .08em; color: var(--ink-3) }
+.op-taccount .ln { display: flex; justify-content: space-between; gap: var(--space-3); color: var(--ink-2) }
+.op-taccount .tot { display: flex; justify-content: flex-end; margin-top: 6px }
+.op-taccount .foot { display: flex; justify-content: center; padding-top: var(--space-3) }
+.op-taccount .bal { font-size: 14px; color: var(--ink-2); display: inline-flex; gap: var(--space-2); align-items: baseline }
+
+/* Ledger table */
+.op-ledger-wrap { overflow-x: auto; max-width: 100% }
+.op-ledger { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 560px }
+.op-ledger th { font: 500 11px/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); text-align: left;
+  padding: var(--space-2) var(--space-3); border-bottom: var(--rule-strong) solid var(--ink-1); background: var(--surface-1) }
+.op-ledger td { padding: var(--space-2) var(--space-3); border-bottom: var(--rule-hair) solid var(--line-1); color: var(--ink-2); vertical-align: baseline }
+.op-ledger .num { text-align: right }
+.op-ledger .mono { font-family: var(--font-mono); font-size: 13px }
+.op-ledger tr.sel td { background: var(--lapis-tint) }
+.op-ledger tr.sel td:first-child { box-shadow: inset 3px 0 0 var(--lapis) }
+.op-ledger tr.diff td { background: var(--coin-tint) }
+.op-ledger tr.totals td { border-bottom: 0; color: var(--ink-1); padding-top: var(--space-3) }
+
+/* Note */
+.op-note { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-3); align-items: baseline; padding-top: var(--space-2);
+  border-top: 1px dashed var(--lapis); color: var(--ink-2); font-size: 14px; max-width: 62ch }
+.op-note .k { font: 500 11px/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--lapis); white-space: nowrap }
+
+/* Sheet: graph paper, used as an element */
+.op-sheet { position: relative; background-color: var(--surface-0); color: var(--ink-1); border: 1px solid var(--grid-major);
+  background-image: linear-gradient(var(--grid-major) 1px, transparent 1px), linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px), linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+  background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px; background-position: -1px -1px; padding: var(--space-8) var(--space-6) var(--space-16) }
+.op-sheet .tb { position: absolute; right: var(--space-4); bottom: var(--space-4); display: grid; grid-template-columns: auto auto; background: var(--surface-0);
+  border: 1px solid var(--ink-1); font: 500 10px/1.3 var(--font-mono); letter-spacing: .06em; text-transform: uppercase }
+.op-sheet .tb div { padding: 4px 8px; border-right: 1px solid var(--ink-1) } .op-sheet .tb div:last-child { border-right: 0 }
+.op-sheet .tb span { display: block; color: var(--lapis) }
+
+/* Terminal: always dark, in both themes */
+.op-term { background: var(--term-ground); color: var(--term-ink); border: 1px solid var(--term-line); border-radius: var(--radius-2); font: 400 13px/1.6 var(--font-mono);
+  overflow: hidden; max-width: 100% }
+.op-term .bar { display: flex; align-items: center; gap: var(--space-2); padding: 8px 12px; border-bottom: 1px solid var(--term-line) }
+.op-term .bar .meta { color: var(--term-dim) }
+.op-term .op-mark .fg { fill: var(--term-ink) } .op-term .op-mark .fgs { stroke: var(--term-ink) } .op-term .op-mark .eye { fill: var(--term-coin) }
+.op-term pre { margin: 0; padding: 12px 14px; overflow-x: auto; font: inherit; white-space: pre }
+.op-term .t-coin { color: var(--term-coin) } .op-term .t-ok { color: var(--term-ok) } .op-term .t-dim { color: var(--term-dim) }
+.op-term .t-note { color: var(--term-note) } .op-term .t-gilt { color: var(--term-gilt) }

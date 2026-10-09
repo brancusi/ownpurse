@@ -1,0 +1,20 @@
+{
+ "argv": [
+  "--offline",
+  "tb",
+  "nobody",
+  "--date",
+  "2025-12-31"
+ ],
+ "exit": 2,
+ "json": [
+  {
+   "error": "usage",
+   "message": "Unknown or ambiguous org 'nobody'.",
+   "help": [
+    "Orgs: one, hq, co"
+   ]
+  }
+ ],
+ "text": "error: usage\nmessage: Unknown or ambiguous org 'nobody'.\nhelp[1]:\n  Orgs: one, hq, co\n"
+}

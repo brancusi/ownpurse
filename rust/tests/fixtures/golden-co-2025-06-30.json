@@ -1,0 +1,140 @@
+{
+ "tenant_id": "44444444-4444-4444-4444-444444444444",
+ "as_of": "2025-06-30",
+ "postings": [
+  {
+   "date": "2024-12-31",
+   "source": "ManualJournals",
+   "source_id": "mj-10",
+   "line": 0,
+   "account_id": "c-6605",
+   "amount": "1013.47",
+   "description": "",
+   "contact": "",
+   "reference": "lease recharged by HQ",
+   "kind": "Journal"
+  },
+  {
+   "date": "2024-12-31",
+   "source": "ManualJournals",
+   "source_id": "mj-10",
+   "line": 1,
+   "account_id": "c-2475",
+   "amount": "-1013.47",
+   "description": "",
+   "contact": "",
+   "reference": "lease recharged by HQ",
+   "kind": "Journal"
+  },
+  {
+   "date": "2025-04-01",
+   "source": "BankTransactions",
+   "source_id": "bt-10",
+   "line": 0,
+   "account_id": "c-2475",
+   "amount": "311.83",
+   "description": "",
+   "contact": "HQ Treasury",
+   "reference": "",
+   "kind": "Spend"
+  },
+  {
+   "date": "2025-04-01",
+   "source": "BankTransactions",
+   "source_id": "bt-10",
+   "line": 1,
+   "account_id": "c-bank",
+   "amount": "-311.83",
+   "description": "bank",
+   "contact": "HQ Treasury",
+   "reference": "",
+   "kind": "Spend"
+  },
+  {
+   "date": "2025-06-01",
+   "source": "BankTransactions",
+   "source_id": "bt-11",
+   "line": 0,
+   "account_id": "c-2475",
+   "amount": "204.63",
+   "description": "",
+   "contact": "Fernwick Card Services",
+   "reference": "",
+   "kind": "Spend"
+  },
+  {
+   "date": "2025-06-01",
+   "source": "BankTransactions",
+   "source_id": "bt-11",
+   "line": 1,
+   "account_id": "c-bank",
+   "amount": "-204.63",
+   "description": "bank",
+   "contact": "Fernwick Card Services",
+   "reference": "",
+   "kind": "Spend"
+  },
+  {
+   "date": "2025-12-31",
+   "source": "ManualJournals",
+   "source_id": "mj-11",
+   "line": 0,
+   "account_id": "c-6605",
+   "amount": "506.25",
+   "description": "",
+   "contact": "",
+   "reference": "lease recharged by HQ",
+   "kind": "Journal"
+  },
+  {
+   "date": "2025-12-31",
+   "source": "ManualJournals",
+   "source_id": "mj-11",
+   "line": 1,
+   "account_id": "c-2475",
+   "amount": "-506.25",
+   "description": "",
+   "contact": "",
+   "reference": "lease recharged by HQ",
+   "kind": "Journal"
+  }
+ ],
+ "unbalanced": [],
+ "skipped": {},
+ "bases": {
+  "auto": {
+   "kind": "xero-opening",
+   "fy_start": "2025-01-01",
+   "opening_date": "2024-12-31",
+   "matches_xero": null,
+   "balances": {
+    "c-2475": "-497.01",
+    "c-bank": "-516.46",
+    "c-re": "1013.47"
+   },
+   "diffs": [],
+   "opening_for": {
+    "c-2475": "-1013.47",
+    "c-bank": "0",
+    "c-re": "1013.47"
+   }
+  },
+  "history": {
+   "kind": "history",
+   "fy_start": "2025-01-01",
+   "opening_date": null,
+   "matches_xero": null,
+   "balances": {
+    "c-2475": "-497.01",
+    "c-bank": "-516.46",
+    "c-re": "1013.47"
+   },
+   "diffs": [],
+   "opening_for": {
+    "c-2475": "-1013.47",
+    "c-bank": "0",
+    "c-re": "1013.47"
+   }
+  }
+ }
+}

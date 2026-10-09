@@ -1,0 +1,116 @@
+---
+source: crates/ownpurse-tui/tests/classify.rs
+assertion_line: 41
+expression: styled(&buf)
+---
+  [all organisations] v    as of 2025-12-31    classify: 38 open - 2 stale               read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+-------------------------------------------------------------------==========-----------------------
+  all > Classify > Queue
+ Queue 38 - Groups - Audition - Tree - Catalog
+  filter: "stale" - 2 of 38
+ org    date  payee                     amount suggestion      conf| Bank transaction bt-308 - d...
+>design 03-18 Vellum & Quoin Ty...    (219.47) stale Wayfin... !   | 2025-03-18 - Vellum & Quoin...
+ roast  10-21 Emberline Thermal...    (214.77) stale Sample... !   | Typeface licence renewal
+                                                                   | (219.47) - 1630 Prepaid Typ...
+                                                                   | reconciled ok
+                                                                   |
+                                                                   | Project    stale  Wayfindin...
+                                                                   | Bearer     R .80  Quillfeat...
+                                                                   | Treatment         -
+                                                                   | Should-be         -
+                                                                   | line changed: amount (212.83)
+                                                                   | -> (219.47)
+                                                                   |
+                                                                   | p1 Harvest Blend launch
+                                                                   | p2 Wayfinding refit
+                                                                   | p3 Sample roaster programme
+                                                                   | p4 Cupping lab fit-out
+                                                                   | p5 No project
+                                                                   |
+                                                                   | Rule      r-bearer-design -...
+                                                                   |
+                                                                   |
+                                                                   |
+  Enter Accept  p Project  b Bearer  t Treatment  / Filter  q Quit  ^P palette          v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-46 +D
+r0 74-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-68 +D
+r1 69-76 +B
+r1 80-89 +D
+r2 0-66 +D
+r2 67-76 +BD
+r2 77-99 +D
+r3 2-18 +D
+r4 1-8 +B
+r4 9-11 +D
+r4 18-20 +D
+r4 29-31 +D
+r4 36-38 +D
+r5 2-9 +D
+r5 17-26 +D
+r6 1-67 +D
+r6 69-91 +B
+r6 92-94 +D
+r7 0-0 +BR
+r7 1-66 +R
+r7 67-67 +D
+r7 69-81 +D
+r8 8-12 +D
+r8 67-67 +D
+r8 69-92 +D
+r9 67-67 +D
+r9 77-79 +D
+r10 67-67 +D
+r10 69-81 +D
+r11 67-67 +D
+r12 67-67 +D
+r12 69-79 +D
+r13 67-67 +D
+r13 69-86 +D
+r14 67-67 +D
+r14 69-87 +D
+r15 67-67 +D
+r15 69-87 +D
+r16 67-67 +D
+r17 67-67 +D
+r18 67-67 +D
+r19 67-67 +D
+r19 72-91 +D
+r20 67-67 +D
+r20 72-87 +D
+r21 67-67 +D
+r21 72-95 +D
+r22 67-67 +D
+r22 72-90 +D
+r23 67-67 +D
+r23 72-81 +D
+r24 67-67 +D
+r25 67-67 +D
+r25 69-78 +D
+r25 94-98 +D
+r26 67-67 +D
+r27 67-67 +D
+r28 67-67 +D
+r29 2-6 +B
+r29 8-15 +D
+r29 16-16 +B
+r29 18-26 +D
+r29 27-27 +B
+r29 29-36 +D
+r29 37-37 +B
+r29 39-49 +D
+r29 50-50 +B
+r29 52-59 +D
+r29 60-60 +B
+r29 62-67 +D
+r29 68-69 +B
+r29 71-77 +D
+r29 88-98 +D

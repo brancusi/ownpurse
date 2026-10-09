@@ -1,0 +1,61 @@
+{
+ "argv": [
+  "--offline",
+  "show",
+  "one",
+  "BankTransactions",
+  "bt-1"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "entity": "BankTransactions",
+   "id": "bt-1",
+   "status": "AUTHORISED",
+   "record": {
+    "BankAccount": {
+     "AccountID": "bank-1",
+     "Code": "",
+     "Name": "bank-1"
+    },
+    "BankTransactionID": "bt-1",
+    "Contact": {
+     "Name": "Brindle & Oake Supply"
+    },
+    "DateString": "2024-06-01T00:00:00",
+    "LineAmountTypes": "Inclusive",
+    "LineItems": [
+     {
+      "AccountCode": "400",
+      "Description": "line 0",
+      "LineAmount": "113.47",
+      "TaxAmount": "10.37"
+     }
+    ],
+    "Status": "AUTHORISED",
+    "Total": "113.47",
+    "Type": "SPEND",
+    "UpdatedDateUTC": "/Date(1717200000000+0000)/"
+   },
+   "versions": [
+    {
+     "id": 11,
+     "tenant_id": "11111111-1111-1111-1111-111111111111",
+     "entity": "BankTransactions",
+     "xero_id": "bt-1",
+     "version": 1,
+     "content_hash": "5564c9cca84b29fa38aa2522d9350be5a556659cae7445f9b9db65a5fcbef7ad",
+     "status": "AUTHORISED",
+     "xero_updated_utc": null,
+     "observed_at": "2026-10-05T07:46:00Z",
+     "source": "sync",
+     "sync_run_id": null,
+     "caused_by_op": null,
+     "payload": "{\"BankAccount\":{\"AccountID\":\"bank-1\",\"Code\":\"\",\"Name\":\"bank-1\"},\"BankTransactionID\":\"bt-1\",\"Contact\":{\"Name\":\"Brindle & Oake Supply\"},\"DateString\":\"2024-06-01T00:00:00\",\"LineAmountTypes\":\"Inclusive\",\"LineItems\":[{\"AccountCode\":\"400\",\"Description\":\"line 0\",\"LineAmount\":113.47,\"TaxAmount\":10.37}],\"Status\":\"AUTHORISED\",\"Total\":113.47,\"Type\":\"SPEND\",\"UpdatedDateUTC\":\"/Date(1717200000000+0000)/\"}"
+    }
+   ],
+   "versions_count": 1
+  }
+ ],
+ "text": "entity: BankTransactions\nid: bt-1\nstatus: AUTHORISED\nrecord: \"{\"\"BankAccount\"\":{\"\"AccountID\"\":\"\"bank-1\"\",\"\"Code\"\":\"\"\"\",\"\"Name\"\":\"\"bank-1\"\"},\"\"BankTransactionID\"\":\"\"bt-1\"\",\"\"Contact\"\":{\"\"Name\"\":\"\"Brindle & Oake Supply\"\"},\"\"DateString\"\":\"\"2024-06-01T00:00:00\"\",\"\"LineAmountTypes\"\":\"\"Inclusive\"\",\"\"LineItems\"\":[{\"\"AccountCode\"\":\"\"400\"\",\"\"Description\"\":\"\"line 0\"\",\"\"LineAmount\"\":113.47,\"\"TaxAmount\"\":10.37}],\"\"Status\"\":\"\"AUTHORISED\"\",\"\"Total\"\":113.47,\"\"Type\"\":\"\"SPEND\"\",\"\"UpdatedDateUTC\"\":\"\"/Date(1717200000000+0000)/\"\"}\"\nversions[1]{version,observed_at,xero_updated_utc,source,status,caused_by_op}:\n  1,2026-10-05T07:46:00Z,,sync,AUTHORISED,\n"
+}

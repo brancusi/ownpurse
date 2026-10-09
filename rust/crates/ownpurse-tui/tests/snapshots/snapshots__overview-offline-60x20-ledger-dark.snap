@@ -1,0 +1,21 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  all ●●●● ▾  2025-12-31  offline  938 left    ◦ read-only
+--- styles
+r0 0-1 bg=#243137
+r0 2-5 fg=#72B6D4 bg=#243137 +B
+r0 6-6 fg=#4DBFA9 bg=#243137 +B
+r0 7-7 fg=#9D8FF2 bg=#243137 +B
+r0 8-8 fg=#E8834F bg=#243137 +B
+r0 9-9 fg=#E8769F bg=#243137 +B
+r0 10-13 fg=#93A0A7 bg=#243137
+r0 14-23 fg=#B9C4C9 bg=#243137
+r0 24-25 fg=#93A0A7 bg=#243137
+r0 26-32 fg=#E6BC5E bg=#243137
+r0 33-34 fg=#93A0A7 bg=#243137
+r0 35-42 fg=#E6ECEE bg=#243137
+r0 43-46 fg=#93A0A7 bg=#243137
+r0 47-57 fg=#717E85 bg=#243137
+r0 58-59 bg=#243137

@@ -1,0 +1,69 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  [all organisations] v    as of 2025-12-31                          read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+--------------------------==============----------------------------------------
+  Intercompany > pairs
+  Intercompany at 2025-12-31 - balances: cached Xero TBs (oldest fetched 07:46
+  UTC) - items: documents
+  4 pairs - 1 matches - 2 bridged - 1 unexplained   sort: pair (s)
+  pair                difference  residual  status
+> Brackenridge <-...      418.27      0.00  bridged
+  Brackenridge <-...       57.13      0.00  bridged
+  Brackenridge <-...        0.00      0.00  matches
+  Quillfeather <-...      263.94    263.94  unexplained
+
+
+
+
+
+
+
+
+
+
+
+  s Sort  q  /  ]  g  ?  ^P palette                                 v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-77 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-27 +D
+r1 28-39 +B
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r2 0-25 +D
+r2 26-39 +BD
+r2 40-79 +D
+r3 2-16 +D
+r4 2-77 +D
+r5 2-24 +D
+r6 9-11 +D
+r6 21-23 +D
+r6 33-35 +D
+r6 49-65 +D
+r7 2-19 +D
+r7 22-31 +D
+r7 34-41 +D
+r7 44-54 +D
+r8 0-0 +BR
+r8 1-79 +R
+r23 2-2 +B
+r23 4-9 +D
+r23 10-10 +B
+r23 11-12 +D
+r23 13-13 +B
+r23 14-15 +D
+r23 16-16 +B
+r23 17-18 +D
+r23 19-19 +B
+r23 20-21 +D
+r23 22-22 +B
+r23 23-24 +D
+r23 25-26 +B
+r23 28-34 +D
+r23 68-78 +D

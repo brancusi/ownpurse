@@ -1,0 +1,87 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [all organisations] v    as of 2025-12-31                                              read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+--==========----------------------------------------------------------------------------------------
+  Overview  +- Commands ---------------------------------------------------------------+
+  Organisat | > upg                                                                    | ed 2h ago
+  org     p |--------------------------------------------------------------------------|
+> roast   e |>  Upgrade to v0.99.0                                                     |
+          E +--------------------------------------------------------------------------+
+  hold    exact          exact               none
+  design  exact          15 accounts differ  none
+  lab     exact          exact               none
+
+  Intercompany
+  4 pairs   1 match   2 bridged   1 unexplained
+
+  Needs attention
+  ! Quillfeather <-> Tallowmere (recharges) has an unexplained residual of 263.94. Open
+    Intercompany (3).
+
+
+
+
+
+
+
+
+
+
+
+       Enter run - Esc close - ^v move - type to filter   v0.0.0-test  ^ v0.99.0 ready - ^P Upgrade
+--- styles
+r0 21-26 +D
+r0 43-97 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-99 +D
+r3 12-13 +D
+r3 14-23 +BD
+r3 24-87 +D
+r4 2-11 +B
+r4 12-12 +D
+r4 14-15 +D
+r4 19-19 +R
+r4 87-97 +D
+r5 2-7 +D
+r5 10-87 +D
+r6 0-0 +BR
+r6 1-11 +R
+r6 12-12 +D
+r6 13-13 +BR
+r6 14-86 +R
+r6 87-87 +D
+r6 88-99 +R
+r7 0-11 +R
+r7 12-87 +D
+r7 88-99 +R
+r8 10-22 +D
+r8 25-42 +D
+r8 45-50 +D
+r9 10-22 +D
+r9 45-50 +D
+r10 10-22 +D
+r10 25-42 +D
+r10 45-50 +D
+r12 2-13 +B
+r15 2-16 +B
+r29 7-11 +B
+r29 13-18 +D
+r29 19-21 +B
+r29 23-30 +D
+r29 31-32 +B
+r29 34-54 +D
+r29 58-68 +D
+r29 69-98 +B

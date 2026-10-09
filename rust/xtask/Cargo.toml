@@ -1,0 +1,27 @@
+[package]
+name = "xtask"
+description = "Repository checks and generators for the release gate: hygiene, docs grep, the private denylist, docs inputs, and the demo/engine fixture generator."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+aho-corasick = "1"
+regex = { workspace = true }
+serde.workspace = true
+serde_json.workspace = true
+# `xtask demo`: the records are written through the production Writer (append-only tables, SHA-256 chain)
+ownpurse-xero = { path = "../crates/ownpurse-xero" }
+ownpurse-core = { path = "../crates/ownpurse-core" }
+# `xtask demo states`: the frozen view-state fixtures are rendered by the TUI library (the TUI itself never links
+# the api crate; only this repo tool does)
+ownpurse-tui = { path = "../crates/ownpurse-tui" }
+rusqlite.workspace = true
+rust_decimal.workspace = true
+# `xtask agent-drive`: openpty, signals, winsize; grapheme widths for the screen emulator
+libc = "0.2"
+unicode-width.workspace = true
+
+[lints]
+workspace = true

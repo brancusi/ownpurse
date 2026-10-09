@@ -1,0 +1,85 @@
+---
+source: crates/ownpurse-tui/tests/classify.rs
+assertion_line: 41
+expression: styled(&buf)
+---
+  [all organisations] v    2025-12-31    classify: 38 open - 2 stale    [agent*]         read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+-------------------------------------------------------------------==========-----------------------
+  all > Classify > Catalog
+ Queue 38 - Groups - Audition - Tree - Catalog
+ Projects - Rules   <- -> list
+
+  name                      id            aliases                                 used  status
+> Harvest Blend launch      harvest       Harvest Blend, bag artwork, bag proofs     2  active
+  Wayfinding refit          refit         Wayfinding                                 2  active
+  Sample roaster programme  roaster       roaster, afterburner, burner               6  active
+  Cupping lab fit-out       cupping       cupping                                    2  active
+  No project                none                                                    28  active
+  Tasting tour              tasting-tour                                             0  active
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ * agent: project "Tasting tour" added to classify.toml - U undo            ^P palette  v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 37-40 +D
+r0 68-71 +D
+r0 80-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-68 +D
+r1 69-76 +B
+r1 80-89 +D
+r2 0-66 +D
+r2 67-76 +BD
+r2 77-99 +D
+r3 2-18 +D
+r4 9-11 +D
+r4 18-20 +D
+r4 29-31 +D
+r4 36-38 +D
+r4 39-45 +B
+r5 1-8 +B
+r5 9-11 +D
+r5 17-29 +D
+r7 2-25 +D
+r7 28-39 +D
+r7 42-79 +D
+r7 82-85 +D
+r7 88-93 +D
+r8 0-0 +BR
+r8 1-99 +R
+r9 28-39 +D
+r9 42-79 +D
+r9 88-93 +D
+r10 28-39 +D
+r10 42-79 +D
+r10 88-93 +D
+r11 28-39 +D
+r11 42-79 +D
+r11 88-93 +D
+r12 28-39 +D
+r12 42-79 +D
+r12 88-93 +D
+r13 28-39 +D
+r13 42-79 +D
+r13 88-93 +D
+r29 76-77 +B
+r29 79-85 +D
+r29 88-98 +D

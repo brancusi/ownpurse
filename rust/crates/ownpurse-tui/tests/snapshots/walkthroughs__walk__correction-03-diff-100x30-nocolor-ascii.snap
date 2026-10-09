@@ -1,0 +1,97 @@
+---
+source: crates/ownpurse-tui/tests/walkthroughs.rs
+expression: styled(&buf)
+---
+  [all organisations] v    [manifest fix-igniter - planned]    2025-12-31    [agent*]    read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ==========- - - - -
+  Manifest > ... > Entries > entry 2 > ~ bank transaction bt-110
+  draft ok - review ok - check ok - > planned - approved - applying - applied
+  ~ Bank transaction - roast - bt-110  [reconciled]   changed: 1 line                   entry 2 - H
+  via reclass journal reclass-roast-202510: Xero refuses edits of reconciled lines, so roast's
+  2025-10 reclass journal carries this account change (Dr new / Cr old)
+    ... 8 unchanged fields - z to expand
+  Lines
+    account          description                                            amount            tax
+  ~ 6140 -> 6310     Burner igniter                                         214.77           0.00
+    total 214.77            ^
+   +------------------------++
+   | The change              |
+   | Same line, new account. |
+   +-------------------------+
+
+
+
+
+
+
+
+-- Step 3 of 10 - Before and after -----------------------------------------------------------------
+  Opening the entry shows the document as it is and as it would be. Only the account on the line
+  changes: 6140 -> 6310. The amount, the date and the supplier stay the same.
+  Why this matters: A change you can see side by side is a change you can check.
+  * * * o o o o o o o                                   -> next - <- back - t contents - Esc leave
+ * agent: step 3 of 10 - ` back              y copy command  ^P palette  [fix-igniter]  v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 27-58 +B
+r0 59-62 +D
+r0 73-76 +D
+r0 85-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-81 +D
+r1 82-89 +B
+r2 0-99 +B
+r3 2-38 +D
+r4 2-35 +D
+r4 36-44 +B
+r4 45-76 +D
+r5 2-36 +B
+r5 51-68 +D
+r5 88-98 +D
+r6 2-94 +B
+r7 2-70 +B
+r8 2-39 +D
+r9 2-6 +B
+r10 4-97 +D
+r11 0-1 +R
+r11 2-3 +BR
+r11 4-11 +DR
+r11 12-99 +R
+r12 28-28 +B
+r13 3-29 +B
+r14 3-3 +B
+r14 5-14 +B
+r14 29-29 +B
+r15 3-3 +B
+r15 29-29 +B
+r16 3-29 +B
+r24 0-1 +D
+r24 2-34 +BD
+r24 35-99 +D
+r26 11-14 +B
+r26 16-17 +B
+r26 19-22 +B
+r27 2-79 +D
+r28 2-2 +D
+r28 4-4 +D
+r28 6-6 +B
+r28 8-8 +D
+r28 10-10 +D
+r28 12-12 +D
+r28 14-14 +D
+r28 16-16 +D
+r28 18-18 +D
+r28 20-20 +D
+r28 56-97 +D
+r29 45-45 +B
+r29 47-60 +D
+r29 61-62 +B
+r29 64-70 +D
+r29 73-87 +B
+r29 88-98 +D

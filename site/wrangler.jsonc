@@ -1,0 +1,12 @@
+{
+	"name": "ownpurse-site",
+	"compatibility_date": "2026-10-09",
+	"assets": {
+		"directory": "./dist",
+		"not_found_handling": "404-page"
+	},
+	"routes": [
+		{ "pattern": "ownpurse.com", "custom_domain": true },
+		{ "pattern": "www.ownpurse.com", "custom_domain": true }
+	]
+}

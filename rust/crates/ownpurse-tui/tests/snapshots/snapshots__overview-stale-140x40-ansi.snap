@@ -1,0 +1,100 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    as of 2025-12-31    record 07:46 UTC · 2d ago stale                                              ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Overview
+  Organisations                                                                                            record 07:46 UTC · 2d ago stale
+  org     parity (year)  parity (history)    issues
+▌ roast   ✓ exact        2 accounts differ   none
+          Enter → roast trial balance · 967 calls left
+  hold    ✓ exact        ✓ exact             none
+  design  ✓ exact        15 accounts differ  none
+  lab     ✓ exact        ✓ exact             none
+
+  Intercompany
+  4 pairs   1 match   2 bridged   1 unexplained
+
+  Needs attention
+  ! lab record is 2d old (TTL 1d). ⌃P → Sync lab (≈ 15 calls).
+  ! Quillfeather ↔ Tallowmere (recharges) has an unexplained residual of 263.94. Open Intercompany (3).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  q Quit  / Filter  ] Org ▸  g Scope  i Details  ? more  ⌃P palette                                                             v0.0.0-test
+--- styles
+r0 2-23 +B
+r0 24-29 +D
+r0 46-49 +D
+r0 50-80 fg=yellow
+r0 81-137 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-139 +D
+r4 2-14 +B
+r4 107-137 fg=yellow
+r5 2-7 +D
+r5 10-22 +D
+r5 25-42 +D
+r5 45-50 +D
+r6 0-0 +BR
+r6 1-139 +R
+r7 0-139 +R
+r8 10-22 +D
+r8 25-42 +D
+r8 45-50 +D
+r9 10-22 +D
+r9 25-42 fg=yellow
+r9 45-50 +D
+r10 10-22 +D
+r10 25-42 +D
+r10 45-50 +D
+r12 2-13 +B
+r13 34-46 fg=red
+r15 2-16 +B
+r16 2-61 fg=yellow
+r17 2-102 fg=yellow
+r39 2-2 +B
+r39 4-9 +D
+r39 10-10 +B
+r39 12-19 +D
+r39 20-20 +B
+r39 22-28 +D
+r39 29-29 +B
+r39 31-37 +D
+r39 38-38 +B
+r39 40-48 +D
+r39 49-49 +B
+r39 51-56 +D
+r39 57-58 +B
+r39 60-66 +D
+r39 128-138 +D

@@ -1,0 +1,185 @@
+---
+source: crates/ownpurse-tui/tests/viz.rs
+expression: styled(&buf)
+---
+  ● roast ▾    as of 2025-12-31                                                                                                                                                                                                                                                                                    ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Overview › Explain: T-account
+                                                                                                                Tallowmere Roastery Operating Account (1010) · roast
+                                                                                                                Money into (debit) and out of (credit) Tallowmere Roastery Operating Account, 2025-01-01 to
+                                                                                                                2025-12-31
+                                                                                                                2025-01-01 to 2025-12-31 · opening from Xero TB 2024-12-31 · 3 debits and 5 credits
+
+                                                                                                                                                          Debit   Credit
+                                                                                                                ════════════════════════════════════════════════┬═══════════════════════════════════════════════
+                                                                                                                Opening balance                       11,934.69 │ 03-04 Cordillera Green Imports        4,276.31
+                                                                                                                03-11 Brackenridge Lane Holdings      18,437.62 │ 07-14 Brackenridge Lane Holdings      3,281.19
+                                                                                                                06-24 Wren & Ashby Cafés              11,287.06 │ 08-08 Quillfeather Design Consu…      1,148.63
+                                                                                                                02-03 Larkspur Grocers Cooperati…      9,104.57 │ 10-02 Brightwater Fuel Co-op            238.61
+                                                                                                                                                                │ 1 more credit                           147.38
+                                                                                                                ────────────────────────────────────────────────┼───────────────────────────────────────────────
+                                                                                                                Total                                 50,763.94 │ Total                                 9,092.12
+
+                                                                                                                            Closing balance at 2025-12-31: Dr 41,671.82  (the debit side is bigger)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Esc Close  ↓ Scroll  q Quit  / Filter  ] Org ▸  ? more  ⌃P palette                                                                                                                                                                                                                                                v0.0.0-test
+--- styles
+r0 0-1 bg=#203233
+r0 2-2 fg=#4DBFA9 bg=#203233 +B
+r0 3-3 fg=#93A0A7 bg=#203233
+r0 4-8 fg=#4DBFA9 bg=#203233 +B
+r0 9-14 fg=#93A0A7 bg=#203233
+r0 15-30 fg=#B9C4C9 bg=#203233
+r0 31-306 fg=#93A0A7 bg=#203233
+r0 307-317 fg=#717E85 bg=#203233
+r0 318-319 bg=#203233
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#E6ECEE bg=#171D20 +B
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-319 bg=#171D20
+r2 0-1 fg=#2D383E
+r2 2-11 fg=#4DBFA9 +B
+r2 12-319 fg=#2D383E
+r3 2-12 fg=#93A0A7
+r3 13-30 fg=#E6ECEE
+r4 112-163 fg=#E6ECEE +B
+r5 112-202 fg=#B9C4C9
+r6 112-121 fg=#B9C4C9
+r7 112-194 fg=#93A0A7
+r9 154-158 fg=#4DBFA9 +B
+r9 162-167 fg=#4DBFA9 +B
+r10 112-207 fg=#4DBFA9 +B
+r11 112-126 fg=#B9C4C9
+r11 150-158 fg=#E6ECEE
+r11 160-160 fg=#4DBFA9 +B
+r11 162-191 fg=#E6ECEE
+r11 200-207 fg=#E6ECEE
+r12 112-143 fg=#E6ECEE
+r12 150-158 fg=#E6ECEE
+r12 160-160 fg=#4DBFA9 +B
+r12 162-193 fg=#E6ECEE
+r12 200-207 fg=#E6ECEE
+r13 112-135 fg=#E6ECEE
+r13 150-158 fg=#E6ECEE
+r13 160-160 fg=#4DBFA9 +B
+r13 162-193 fg=#E6ECEE
+r13 200-207 fg=#E6ECEE
+r14 112-144 fg=#E6ECEE
+r14 151-158 fg=#E6ECEE
+r14 160-160 fg=#4DBFA9 +B
+r14 162-189 fg=#E6ECEE
+r14 202-207 fg=#E6ECEE
+r15 160-160 fg=#4DBFA9 +B
+r15 162-174 fg=#E6ECEE
+r15 202-207 fg=#E6ECEE
+r16 112-159 fg=#2D383E
+r16 160-160 fg=#4DBFA9 +B
+r16 161-207 fg=#2D383E
+r17 112-116 fg=#B9C4C9
+r17 150-158 fg=#E6ECEE
+r17 160-160 fg=#4DBFA9 +B
+r17 162-166 fg=#B9C4C9
+r17 200-207 fg=#E6ECEE
+r19 124-194 fg=#E6ECEE
+r79 0-1 bg=#1B2226
+r79 2-4 fg=#FFFFFF bg=#1B2226
+r79 5-5 bg=#1B2226
+r79 6-12 fg=#93A0A7 bg=#1B2226
+r79 13-13 fg=#FFFFFF bg=#1B2226
+r79 14-14 bg=#1B2226
+r79 15-22 fg=#93A0A7 bg=#1B2226
+r79 23-23 fg=#FFFFFF bg=#1B2226
+r79 24-24 bg=#1B2226
+r79 25-30 fg=#93A0A7 bg=#1B2226
+r79 31-31 fg=#FFFFFF bg=#1B2226
+r79 32-32 bg=#1B2226
+r79 33-40 fg=#93A0A7 bg=#1B2226
+r79 41-41 fg=#FFFFFF bg=#1B2226
+r79 42-42 bg=#1B2226
+r79 43-49 fg=#93A0A7 bg=#1B2226
+r79 50-50 fg=#FFFFFF bg=#1B2226
+r79 51-51 bg=#1B2226
+r79 52-57 fg=#93A0A7 bg=#1B2226
+r79 58-59 fg=#FFFFFF bg=#1B2226
+r79 60-60 bg=#1B2226
+r79 61-67 fg=#93A0A7 bg=#1B2226
+r79 68-307 bg=#1B2226
+r79 308-318 fg=#717E85 bg=#1B2226
+r79 319-319 bg=#1B2226

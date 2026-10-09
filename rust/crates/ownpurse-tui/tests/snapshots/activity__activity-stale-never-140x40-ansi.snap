@@ -1,0 +1,170 @@
+---
+source: crates/ownpurse-tui/tests/activity.rs
+assertion_line: 219
+expression: styled(&buf)
+---
+  All organisations ●●●● ▾    as of 2025-12-31    no local record                                                              ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────────────────────────────────━━━━━━━━━━───────────────────────────────────────────────────────────────────────────────────────
+  all › Activity
+  Calls left                                                                                          Xero resets each org at its own time
+  roast   ━───────────────────  967 left
+  hold    ━───────────────────  978 left
+  design  ━━──────────────────  938 left
+  lab     ────────────────────  ≈ 1,000 (est.) left
+
+  Recent calls                                                                                                        117 today · 2 errors
+  time      org       endpoint                              result            ms
+▌ 07:45:33  design    Invoices                              ok                   613
+  07:45:32  design    ManualJournals                        ok                   560
+  07:45:31  design    BankTransfers                         429 rate-limited     507
+  07:45:30  design    BankTransactions                      ok                   454
+  07:45:29  design    BankTransactions                      ok                   401
+  07:45:28  design    Accounts                              ok                   348
+  07:45:27  design    Organisation                          ok                   295
+  07:45:26  design    Reports/TrialBalance                  ok                   242
+  07:45:25  design    Reports/TrialBalance                  ok                   189
+  07:45:24  design    Payments                              ok                   836
+  07:45:23  design    CreditNotes                           ok                   783
+  07:45:22  design    Invoices                              ok                   730
+  07:45:21  design    ManualJournals                        ok                   677
+  07:45:20  design    BankTransfers                         ok                   624
+  07:45:19  design    BankTransactions                      ok                   571
+  07:45:18  design    BankTransactions                      ok                   518
+  07:45:17  design    Accounts                              ok                   465
+  07:45:16  design    Organisation                          ok                   412
+  07:45:15  design    Reports/TrialBalance                  ok                   359
+  07:45:14  design    Reports/TrialBalance                  ok                   306
+  07:45:13  design    Payments                              ok                   253
+  07:45:12  design    CreditNotes                           ok                   200
+  07:45:11  design    Invoices                              ok                   847
+  07:45:10  design    ManualJournals                        ok                   794
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  #120 · 2026-10-05 07:45:33 UTC · GET Invoices
+  design (de519000) · status 200 · 613 ms · day left 938 · minute left 55
+  G By endpoint  q Quit  / Filter  ] Org ▸  g Scope  ? more  ⌃P palette                                                         v0.0.0-test
+--- styles
+r0 2-23 +B
+r0 24-29 +D
+r0 46-49 +D
+r0 50-64 fg=red
+r0 65-137 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-44 +D
+r1 45-52 +B
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-42 +D
+r2 43-52 +BD
+r2 53-139 +D
+r3 2-7 +D
+r4 2-11 +B
+r4 102-137 +D
+r5 10-10 +B
+r5 11-29 +D
+r6 10-10 +B
+r6 11-29 +D
+r7 10-11 +B
+r7 12-29 +D
+r8 10-29 +D
+r10 2-13 +B
+r10 118-137 fg=yellow
+r11 2-9 +D
+r11 12-19 +D
+r11 22-57 +D
+r11 60-75 +D
+r11 78-83 +D
+r12 0-0 +BR
+r12 1-139 +R
+r13 2-9 +D
+r13 60-75 +D
+r13 78-83 +D
+r14 2-9 +D
+r14 60-75 fg=red
+r14 78-83 +D
+r15 2-9 +D
+r15 60-75 +D
+r15 78-83 +D
+r16 2-9 +D
+r16 60-75 +D
+r16 78-83 +D
+r17 2-9 +D
+r17 60-75 +D
+r17 78-83 +D
+r18 2-9 +D
+r18 60-75 +D
+r18 78-83 +D
+r19 2-9 +D
+r19 60-75 +D
+r19 78-83 +D
+r20 2-9 +D
+r20 60-75 +D
+r20 78-83 +D
+r21 2-9 +D
+r21 60-75 +D
+r21 78-83 +D
+r22 2-9 +D
+r22 60-75 +D
+r22 78-83 +D
+r23 2-9 +D
+r23 60-75 +D
+r23 78-83 +D
+r24 2-9 +D
+r24 60-75 +D
+r24 78-83 +D
+r25 2-9 +D
+r25 60-75 +D
+r25 78-83 +D
+r26 2-9 +D
+r26 60-75 +D
+r26 78-83 +D
+r27 2-9 +D
+r27 60-75 +D
+r27 78-83 +D
+r28 2-9 +D
+r28 60-75 +D
+r28 78-83 +D
+r29 2-9 +D
+r29 60-75 +D
+r29 78-83 +D
+r30 2-9 +D
+r30 60-75 +D
+r30 78-83 +D
+r31 2-9 +D
+r31 60-75 +D
+r31 78-83 +D
+r32 2-9 +D
+r32 60-75 +D
+r32 78-83 +D
+r33 2-9 +D
+r33 60-75 +D
+r33 78-83 +D
+r34 2-9 +D
+r34 60-75 +D
+r34 78-83 +D
+r35 2-9 +D
+r35 60-75 +D
+r35 78-83 +D
+r36 0-139 +D
+r37 2-8 +D
+r37 32-34 +D
+r37 35-46 +B
+r38 19-72 +D
+r39 2-2 +B
+r39 4-16 +D
+r39 17-17 +B
+r39 19-24 +D
+r39 25-25 +B
+r39 27-34 +D
+r39 35-35 +B
+r39 37-43 +D
+r39 44-44 +B
+r39 46-52 +D
+r39 53-53 +B
+r39 55-60 +D
+r39 61-62 +B
+r39 64-70 +D
+r39 128-138 +D

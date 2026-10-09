@@ -1,0 +1,73 @@
+---
+source: crates/ownpurse-tui/tests/classify.rs
+assertion_line: 41
+expression: styled(&buf)
+---
+  [all organisations] v    as of 2025-12-31    classify: 38 open - 2 stale               read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+-------------------------------------------------------------------==========-----------------------
+  all > Classify > Tree
+ Queue 38 - Groups - Audition - Tree - Catalog
+
+ Tree: coming in this release. The Queue is ready now (, and . switch modes).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ classify.toml changed on disk - reloaded - 2 changes                                        y copy
+  . Mode >  q Quit  / Filter  ] Org >  g Scope  ? more  ^P palette                      v0.0.0-test
+--- styles
+r0 21-26 +D
+r0 43-46 +D
+r0 74-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-68 +D
+r1 69-76 +B
+r1 80-89 +D
+r2 0-66 +D
+r2 67-76 +BD
+r2 77-99 +D
+r3 2-18 +D
+r4 9-11 +D
+r4 18-20 +D
+r4 29-31 +D
+r4 32-35 +B
+r4 36-38 +D
+r6 1-76 +D
+r28 93-98 +D
+r29 2-2 +B
+r29 4-11 +D
+r29 12-12 +B
+r29 14-19 +D
+r29 20-20 +B
+r29 22-29 +D
+r29 30-30 +B
+r29 32-38 +D
+r29 39-39 +B
+r29 41-47 +D
+r29 48-48 +B
+r29 50-55 +D
+r29 56-57 +B
+r29 59-65 +D
+r29 88-98 +D

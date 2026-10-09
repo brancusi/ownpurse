@@ -1,0 +1,165 @@
+---
+source: crates/ownpurse-tui/tests/manifests.rs
+expression: styled(&shown)
+---
+  all ●●●● ▾    ⎇ dec-cleanup · approved    2025-12-31             ◦ read-only
+ 1 Ovw  2 Ldg  3 IC  4 Act  5 Sys  6 Cls  7 Mfst
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌━━━━━━╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+  Manifest › ⎇ dec-cleanup › Entries
+  ✓ ✓ ✓ ✓ ▸ approved · ·
+  Apply from your own terminal   y copies the full command
+  Apply: OWNPURSE_WRITE_RUN=94a6fce0…ef ownpurse manifest apply dec-cleanup --…
+  Entries   Issues   Diff   Log   , . mode · b manifests · P plan
+
+  Entries                                       planned · sha256 94a6fce03781…
+  seq     org     entity  target  change   issues  by  apply
+▌ 2    +  design  MJ      new MJ  new      ✓       H   ·
+       reclass the charge
+  3    ⊘  lab     MJ      mj-401  1 field  ✓       H   ·
+
+
+
+
+
+
+
+
+
+  Enter Diff  y copy command  u Undo  ⌃P palette     ⎇ dec-cleanup  v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-5 fg=#72B6D4 bg=#243137 +B
+r0 6-6 fg=#4DBFA9 bg=#243137 +B
+r0 7-7 fg=#9D8FF2 bg=#243137 +B
+r0 8-8 fg=#E8834F bg=#243137 +B
+r0 9-9 fg=#E8769F bg=#243137 +B
+r0 10-15 fg=#93A0A7 bg=#243137
+r0 16-28 fg=#D49AD0 bg=#243137 +B
+r0 29-43 fg=#93A0A7 bg=#243137
+r0 44-53 fg=#B9C4C9 bg=#243137
+r0 54-66 fg=#93A0A7 bg=#243137
+r0 67-77 fg=#717E85 bg=#243137
+r0 78-79 bg=#243137
+r1 0-0 bg=#171D20
+r1 1-2 fg=#717E85 bg=#171D20
+r1 3-5 fg=#93A0A7 bg=#171D20
+r1 6-7 bg=#171D20
+r1 8-9 fg=#717E85 bg=#171D20
+r1 10-12 fg=#93A0A7 bg=#171D20
+r1 13-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-18 fg=#93A0A7 bg=#171D20
+r1 19-20 bg=#171D20
+r1 21-22 fg=#717E85 bg=#171D20
+r1 23-25 fg=#93A0A7 bg=#171D20
+r1 26-27 bg=#171D20
+r1 28-29 fg=#717E85 bg=#171D20
+r1 30-32 fg=#93A0A7 bg=#171D20
+r1 33-34 bg=#171D20
+r1 35-36 fg=#717E85 bg=#171D20
+r1 37-39 fg=#93A0A7 bg=#171D20
+r1 40-41 bg=#171D20
+r1 42-43 fg=#717E85 bg=#171D20
+r1 44-47 fg=#E6ECEE bg=#171D20 +B
+r1 48-79 bg=#171D20
+r2 0-41 fg=#D49AD0
+r2 42-47 fg=#72B6D4 +B
+r2 48-79 fg=#D49AD0
+r3 2-28 fg=#93A0A7
+r3 29-35 fg=#E6ECEE
+r4 2-2 fg=#93A0A7
+r4 3-3 fg=#717E85
+r4 4-4 fg=#93A0A7
+r4 5-5 fg=#717E85
+r4 6-6 fg=#93A0A7
+r4 7-7 fg=#717E85
+r4 8-8 fg=#93A0A7
+r4 9-9 fg=#717E85
+r4 10-19 fg=#D49AD0 +B
+r4 20-23 fg=#717E85
+r5 0-1 bg=#1C2428
+r5 2-29 fg=#E6ECEE bg=#1C2428 +B
+r5 30-57 fg=#93A0A7 bg=#1C2428
+r5 58-79 bg=#1C2428
+r6 0-1 bg=#1C2428
+r6 2-8 fg=#93A0A7 bg=#1C2428
+r6 9-78 fg=#E6ECEE bg=#1C2428
+r6 79-79 bg=#1C2428
+r7 2-8 fg=#E6ECEE +B
+r7 12-17 fg=#93A0A7
+r7 21-24 fg=#93A0A7
+r7 28-30 fg=#93A0A7
+r7 34-64 fg=#717E85
+r9 0-1 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r9 2-8 fg=#B9C4C9 bg=#1A2125 +U ul=#2D383E
+r9 9-47 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r9 48-77 fg=#93A0A7 bg=#1A2125 +U ul=#2D383E
+r9 78-79 fg=#2D383E bg=#1A2125 +U ul=#2D383E
+r10 2-4 fg=#93A0A7
+r10 7-7 fg=#93A0A7
+r10 10-15 fg=#93A0A7
+r10 18-23 fg=#93A0A7
+r10 26-31 fg=#93A0A7
+r10 34-40 fg=#93A0A7
+r10 43-48 fg=#93A0A7
+r10 51-52 fg=#93A0A7
+r10 55-59 fg=#93A0A7
+r11 0-0 fg=#72B6D4 bg=#253540 +B
+r11 1-1 bg=#253540
+r11 2-4 fg=#93A0A7 bg=#253540
+r11 5-6 bg=#253540
+r11 7-7 fg=#D49AD0 bg=#253540
+r11 8-9 bg=#253540
+r11 10-15 fg=#E6ECEE bg=#253540
+r11 16-17 bg=#253540
+r11 18-23 fg=#93A0A7 bg=#253540
+r11 24-25 bg=#253540
+r11 26-31 fg=#E6ECEE bg=#253540
+r11 32-33 bg=#253540
+r11 34-40 fg=#E6ECEE bg=#253540
+r11 41-42 bg=#253540
+r11 43-48 fg=#93A0A7 bg=#253540
+r11 49-50 bg=#253540
+r11 51-52 fg=#93A0A7 bg=#253540
+r11 53-54 bg=#253540
+r11 55-59 fg=#717E85 bg=#253540
+r11 60-79 bg=#253540
+r12 0-6 bg=#253540
+r12 7-24 fg=#93A0A7 bg=#253540
+r12 25-79 bg=#253540
+r13 0-1 bg=#202127
+r13 2-4 fg=#93A0A7 bg=#202127
+r13 5-6 bg=#202127
+r13 7-7 fg=#D49AD0 bg=#202127
+r13 8-9 bg=#202127
+r13 10-15 fg=#E6ECEE bg=#202127
+r13 16-17 bg=#202127
+r13 18-23 fg=#93A0A7 bg=#202127
+r13 24-25 bg=#202127
+r13 26-31 fg=#E6ECEE bg=#202127
+r13 32-33 bg=#202127
+r13 34-40 fg=#E6ECEE bg=#202127
+r13 41-42 bg=#202127
+r13 43-48 fg=#93A0A7 bg=#202127
+r13 49-50 bg=#202127
+r13 51-52 fg=#93A0A7 bg=#202127
+r13 53-54 bg=#202127
+r13 55-59 fg=#717E85 bg=#202127
+r13 60-79 bg=#202127
+r23 0-1 bg=#1B2226
+r23 2-6 fg=#FFFFFF bg=#1B2226
+r23 7-7 bg=#1B2226
+r23 8-13 fg=#93A0A7 bg=#1B2226
+r23 14-14 fg=#FFFFFF bg=#1B2226
+r23 15-15 bg=#1B2226
+r23 16-29 fg=#93A0A7 bg=#1B2226
+r23 30-30 fg=#FFFFFF bg=#1B2226
+r23 31-31 bg=#1B2226
+r23 32-37 fg=#93A0A7 bg=#1B2226
+r23 38-39 fg=#FFFFFF bg=#1B2226
+r23 40-40 bg=#1B2226
+r23 41-47 fg=#93A0A7 bg=#1B2226
+r23 48-52 bg=#1B2226
+r23 53-67 fg=#D49AD0 bg=#1B2226 +B
+r23 68-78 fg=#717E85 bg=#1B2226
+r23 79-79 bg=#1B2226

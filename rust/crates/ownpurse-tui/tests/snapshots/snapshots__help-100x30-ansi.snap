@@ -1,0 +1,141 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    as of 2025-12-31                                         ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────
+  Overview
+  Organisations                                                                  all synced 2h ago
+  org     parity (year)  parity (history)    issues
+   ╭─ Keys · Overview ─────────────────────────────────────────────────────────────────────────╮
+   │ Move                          Tabs                          Find                          │
+   │ ←           cell ◂            1           Overview          /           Filter            │
+   │ →           cell ▸            2           Ledger                                          │
+   │ ⌥←          Back              3           Intercompany      Scope                         │
+   │ ⌥→          Forward           4           Activity          ]           Org ▸             │
+   │ ↑ k         up                5           System            [           Org ◂             │
+   │ ↓ j         down              6           Classify          g           Scope             │
+   │ PgUp        page up           7           Manifest                                        │
+   │ PgDn        page down         Tab         next tab          View                          │
+   │ Home        first             ⇧Tab        prev tab          i           Details           │
+   │ End         last                                            W           Walkthroughs      │
+   │ Enter       open              App                           L           Lay mode          │
+   │ Esc         back              q           Quit                                            │
+   │                               r           Reload                                          │
+   │                               ?           Help                                            │
+   │                               ⌃P :        palette                                         │
+   ╰───────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+
+
+
+                                                                             Esc close  v0.0.0-test
+--- styles
+r0 2-23 +B
+r0 24-29 +D
+r0 46-97 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-99 +D
+r4 2-14 +B
+r4 81-97 +D
+r5 2-7 +D
+r5 10-22 +D
+r5 25-42 +D
+r5 45-50 +D
+r6 0-0 +BR
+r6 1-2 +R
+r6 3-4 +D
+r6 5-21 +BD
+r6 22-95 +D
+r6 96-99 +R
+r7 0-2 +R
+r7 3-3 +D
+r7 5-8 +B
+r7 35-38 +B
+r7 65-68 +B
+r7 95-95 +D
+r7 96-99 +R
+r8 3-3 +D
+r8 17-22 +D
+r8 47-54 +D
+r8 77-82 +D
+r8 95-95 +D
+r9 3-3 +D
+r9 17-22 +D
+r9 47-52 +D
+r9 95-95 +D
+r10 3-3 +D
+r10 17-20 +D
+r10 47-58 +D
+r10 65-69 +B
+r10 95-95 +D
+r11 3-3 +D
+r11 17-23 +D
+r11 47-54 +D
+r11 77-81 +D
+r11 95-95 +D
+r12 2-2 +B
+r12 3-3 +D
+r12 17-18 +D
+r12 47-52 +D
+r12 77-81 +D
+r12 95-95 +D
+r13 3-3 +D
+r13 17-20 +D
+r13 47-54 +D
+r13 77-81 +D
+r13 95-95 +D
+r14 3-3 +D
+r14 17-23 +D
+r14 47-54 +D
+r14 95-95 +D
+r15 2-2 +B
+r15 3-3 +D
+r15 17-25 +D
+r15 47-54 +D
+r15 65-68 +B
+r15 95-95 +D
+r16 2-2 fg=yellow
+r16 3-3 +D
+r16 17-21 +D
+r16 47-54 +D
+r16 77-83 +D
+r16 95-95 +D
+r17 2-2 fg=yellow
+r17 3-3 +D
+r17 17-20 +D
+r17 77-88 +D
+r17 95-95 +D
+r18 3-3 +D
+r18 17-20 +D
+r18 35-37 +B
+r18 77-84 +D
+r18 95-95 +D
+r19 3-3 +D
+r19 17-20 +D
+r19 47-50 +D
+r19 95-95 +D
+r20 3-3 +D
+r20 47-52 +D
+r20 95-95 +D
+r21 3-3 +D
+r21 47-50 +D
+r21 95-95 +D
+r22 3-3 +D
+r22 47-53 +D
+r22 95-95 +D
+r23 3-95 +D
+r29 77-79 +B
+r29 81-85 +D
+r29 88-98 +D

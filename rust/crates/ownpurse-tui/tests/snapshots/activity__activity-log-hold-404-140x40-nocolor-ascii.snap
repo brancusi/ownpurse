@@ -1,0 +1,154 @@
+---
+source: crates/ownpurse-tui/tests/activity.rs
+assertion_line: 219
+expression: styled(&buf)
+---
+  [hold] v    as of 2025-12-31                                                                                                   read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+-------------------------------------------==========---------------------------------------------------------------------------------------
+  hold > Activity
+  Calls left                                                                                          Xero resets each org at its own time
+  hold  =-------------------  978 left
+
+  Recent calls                                                                                                          22 today - 1 error
+  time      org       endpoint                              result            ms
+> 07:44:31  hold      Reports/TrialBalance                  ok                 593
+  07:44:30  hold      BankTransactions/{id}/Attachments     404 not found      540
+  07:44:29  hold      Payments                              ok                 487
+  07:44:28  hold      CreditNotes                           ok                 434
+  07:44:27  hold      Invoices                              ok                 381
+  07:44:26  hold      ManualJournals                        ok                 328
+  07:44:25  hold      BankTransfers                         ok                 275
+  07:44:24  hold      BankTransactions                      ok                 222
+  07:44:23  hold      BankTransactions                      ok                 869
+  07:44:22  hold      Accounts                              ok                 816
+  07:44:21  hold      Organisation                          ok                 763
+  07:44:20  hold      Reports/TrialBalance                  ok                 710
+  07:44:19  hold      Reports/TrialBalance                  ok                 657
+  07:44:18  hold      Payments                              ok                 604
+  07:44:17  hold      CreditNotes                           ok                 551
+  07:44:16  hold      Invoices                              ok                 498
+  07:44:15  hold      ManualJournals                        ok                 445
+  07:44:14  hold      BankTransfers                         ok                 392
+  07:44:13  hold      BankTransactions                      ok                 339
+  07:44:12  hold      BankTransactions                      ok                 286
+  07:44:11  hold      Accounts                              ok                 233
+  07:44:10  hold      Organisation                          ok                 180
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+  #58 - 2026-10-05 07:44:31 UTC - GET Reports/TrialBalance?date=2024-12-31
+  hold (b01d0000) - status 200 - 593 ms - day left 978 - minute left 55
+  G By endpoint  q Quit  / Filter  ] Org >  g Scope  ? more  ^P palette                                                         v0.0.0-test
+--- styles
+r0 8-13 +D
+r0 30-137 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-44 +D
+r1 45-52 +B
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-42 +D
+r2 43-52 +BD
+r2 53-139 +D
+r3 2-8 +D
+r4 2-11 +B
+r4 102-137 +D
+r5 8-8 +B
+r5 9-27 +D
+r7 2-13 +B
+r8 2-9 +D
+r8 12-19 +D
+r8 22-57 +D
+r8 60-75 +D
+r8 78-81 +D
+r9 0-0 +BR
+r9 1-139 +R
+r10 2-9 +D
+r10 78-81 +D
+r11 2-9 +D
+r11 60-75 +D
+r11 78-81 +D
+r12 2-9 +D
+r12 60-75 +D
+r12 78-81 +D
+r13 2-9 +D
+r13 60-75 +D
+r13 78-81 +D
+r14 2-9 +D
+r14 60-75 +D
+r14 78-81 +D
+r15 2-9 +D
+r15 60-75 +D
+r15 78-81 +D
+r16 2-9 +D
+r16 60-75 +D
+r16 78-81 +D
+r17 2-9 +D
+r17 60-75 +D
+r17 78-81 +D
+r18 2-9 +D
+r18 60-75 +D
+r18 78-81 +D
+r19 2-9 +D
+r19 60-75 +D
+r19 78-81 +D
+r20 2-9 +D
+r20 60-75 +D
+r20 78-81 +D
+r21 2-9 +D
+r21 60-75 +D
+r21 78-81 +D
+r22 2-9 +D
+r22 60-75 +D
+r22 78-81 +D
+r23 2-9 +D
+r23 60-75 +D
+r23 78-81 +D
+r24 2-9 +D
+r24 60-75 +D
+r24 78-81 +D
+r25 2-9 +D
+r25 60-75 +D
+r25 78-81 +D
+r26 2-9 +D
+r26 60-75 +D
+r26 78-81 +D
+r27 2-9 +D
+r27 60-75 +D
+r27 78-81 +D
+r28 2-9 +D
+r28 60-75 +D
+r28 78-81 +D
+r29 2-9 +D
+r29 60-75 +D
+r29 78-81 +D
+r30 2-9 +D
+r30 60-75 +D
+r30 78-81 +D
+r36 0-139 +D
+r37 2-7 +D
+r37 31-33 +D
+r37 34-73 +B
+r38 17-70 +D
+r39 2-2 +B
+r39 4-16 +D
+r39 17-17 +B
+r39 19-24 +D
+r39 25-25 +B
+r39 27-34 +D
+r39 35-35 +B
+r39 37-43 +D
+r39 44-44 +B
+r39 46-52 +D
+r39 53-53 +B
+r39 55-60 +D
+r39 61-62 +B
+r39 64-70 +D
+r39 128-138 +D

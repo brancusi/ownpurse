@@ -1,0 +1,258 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ● roast ▾    as of 2025-12-31                                                                                                ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  roast › Trial balan ╭─ Compare orgs: space toggles, Enter opens with 2–4 ──────────────────────────────────────────╮      ✓ matches Xero
+  !  code  account    │ ›  type to filter (alias, name, short code)                                                  │
+  Assets              │──────────────────────────────────────────────────────────────────────────────────────────────│
+▌    1010  Tallowmere │  [-] all           4 orgs                                                                    │
+     1060  Tallowmere │  [x] roast         Tallowmere Coffee Roasting Co. · 07:46 UTC · 2h ago · 967/1,00… ● current │
+  Liabilities         │▌ [x] hold          Brackenridge Lane Holdings Ltd · 07:46 UTC · 2h ago · 978/1,000 left      │
+     2410  Brackenrid │  [ ] design        Quillfeather Design Consultancy LLP · 07:46 UTC · 2h ago · 938/1,000 le…  │
+  Equity              │  [ ] lab           Saltmarsh Cupping Lab LLC · 07:46 UTC · 2h ago · 978/1,000 left           │
+     3010  Tallowmere │  [-] group:all-co  4 orgs                                                                    │
+     3200  Retained E │  [-] group:ops     3 orgs                                                                    │
+  Revenue             ╰──────────────────────────────────────────────────────────────────────────────────────────────╯
+     4010  Wholesale Bean Sales                              20,391.63
+  Expenses                                                    8,214.20
+     5020  Green Coffee Purchases                  5,369.15
+     6140  Roaster Afterburner Servicing             898.06
+     6290  Bag Artwork & Proofs                    1,148.63
+     6310  Cupping Room Supplies                     147.38
+     6520  Delivery Van Fuel                         238.61
+     6830  Term Loan Interest                        412.37
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+           Total                                  49,886.02  49,886.02  balanced ✓
+
+ (2 selected: roast, hold)                               Enter compare · space toggle · Esc cancel · ↑↓ move · type to filter   v0.0.0-test
+--- styles
+r0 0-1 bg=#DFE7E7
+r0 2-2 fg=#17705F bg=#DFE7E7 +B
+r0 3-3 fg=#566369 bg=#DFE7E7
+r0 4-8 fg=#17705F bg=#DFE7E7 +B
+r0 9-14 fg=#566369 bg=#DFE7E7
+r0 15-30 fg=#3D4A50 bg=#DFE7E7
+r0 31-126 fg=#566369 bg=#DFE7E7
+r0 127-137 fg=#768186 bg=#DFE7E7
+r0 138-139 bg=#DFE7E7
+r1 0-1 bg=#F1F3F4
+r1 2-3 fg=#768186 bg=#F1F3F4
+r1 4-11 fg=#566369 bg=#F1F3F4
+r1 12-14 bg=#F1F3F4
+r1 15-16 fg=#768186 bg=#F1F3F4
+r1 17-22 fg=#162024 bg=#F1F3F4 +B
+r1 23-25 bg=#F1F3F4
+r1 26-27 fg=#768186 bg=#F1F3F4
+r1 28-39 fg=#566369 bg=#F1F3F4
+r1 40-42 bg=#F1F3F4
+r1 43-44 fg=#768186 bg=#F1F3F4
+r1 45-52 fg=#566369 bg=#F1F3F4
+r1 53-55 bg=#F1F3F4
+r1 56-57 fg=#768186 bg=#F1F3F4
+r1 58-63 fg=#566369 bg=#F1F3F4
+r1 64-66 bg=#F1F3F4
+r1 67-68 fg=#768186 bg=#F1F3F4
+r1 69-76 fg=#566369 bg=#F1F3F4
+r1 77-79 bg=#F1F3F4
+r1 80-81 fg=#768186 bg=#F1F3F4
+r1 82-89 fg=#566369 bg=#F1F3F4
+r1 90-139 bg=#F1F3F4
+r2 0-14 fg=#C9D1D4
+r2 15-22 fg=#17705F +B
+r2 23-139 fg=#C9D1D4
+r3 2-9 fg=#566369
+r3 10-21 fg=#162024
+r3 22-23 fg=#C9D1D4 bg=#EEF1F2
+r3 24-74 fg=#162024 bg=#EEF1F2 +B
+r3 75-117 fg=#C9D1D4 bg=#EEF1F2
+r3 124-137 fg=#566369
+r4 2-2 fg=#566369
+r4 5-8 fg=#566369
+r4 11-21 fg=#566369
+r4 22-22 fg=#C9D1D4 bg=#EEF1F2
+r4 23-23 bg=#EEF1F2
+r4 24-25 fg=#566369 bg=#EEF1F2
+r4 26-26 bg=#EEF1F2 +R
+r4 27-66 fg=#566369 bg=#EEF1F2
+r4 67-116 bg=#EEF1F2
+r4 117-117 fg=#C9D1D4 bg=#EEF1F2
+r5 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r5 2-7 fg=#3D4A50 bg=#EDF1F2 +U ul=#C9D1D4
+r5 8-21 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r5 22-117 fg=#C9D1D4 bg=#EEF1F2
+r5 118-139 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r6 0-0 fg=#17705F bg=#D7E4E8 +B
+r6 1-1 bg=#D7E4E8
+r6 2-2 fg=#805800 bg=#D7E4E8
+r6 3-4 bg=#D7E4E8
+r6 5-8 fg=#566369 bg=#D7E4E8
+r6 9-10 bg=#D7E4E8
+r6 11-21 fg=#162024 bg=#D7E4E8
+r6 22-22 fg=#C9D1D4 bg=#EEF1F2
+r6 23-24 bg=#EEF1F2
+r6 25-28 fg=#17705F bg=#EEF1F2 +B
+r6 29-31 fg=#162024 bg=#EEF1F2
+r6 32-42 bg=#EEF1F2
+r6 43-48 fg=#566369 bg=#EEF1F2
+r6 49-116 bg=#EEF1F2
+r6 117-117 fg=#C9D1D4 bg=#EEF1F2
+r6 118-139 bg=#D7E4E8
+r7 2-2 fg=#805800
+r7 5-8 fg=#566369
+r7 11-21 fg=#162024
+r7 22-22 fg=#C9D1D4 bg=#EEF1F2
+r7 23-24 bg=#EEF1F2
+r7 25-28 fg=#17705F bg=#EEF1F2 +B
+r7 29-33 fg=#162024 bg=#EEF1F2
+r7 34-42 bg=#EEF1F2
+r7 43-105 fg=#566369 bg=#EEF1F2
+r7 106-106 bg=#EEF1F2
+r7 107-115 fg=#17705F bg=#EEF1F2 +B
+r7 116-116 bg=#EEF1F2
+r7 117-117 fg=#C9D1D4 bg=#EEF1F2
+r8 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r8 2-12 fg=#3D4A50 bg=#EDF1F2 +U ul=#C9D1D4
+r8 13-21 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r8 22-22 fg=#C9D1D4 bg=#EEF1F2
+r8 23-23 fg=#17705F bg=#D7E4E8 +B
+r8 24-24 bg=#D7E4E8
+r8 25-28 fg=#17705F bg=#D7E4E8 +B
+r8 29-32 fg=#162024 bg=#D7E4E8
+r8 33-42 bg=#D7E4E8
+r8 43-110 fg=#566369 bg=#D7E4E8
+r8 111-116 bg=#D7E4E8
+r8 117-117 fg=#C9D1D4 bg=#EEF1F2
+r8 118-139 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r9 2-2 fg=#805800
+r9 5-8 fg=#566369
+r9 11-21 fg=#162024
+r9 22-22 fg=#C9D1D4 bg=#EEF1F2
+r9 23-24 bg=#EEF1F2
+r9 25-28 fg=#17705F bg=#EEF1F2 +B
+r9 29-34 fg=#162024 bg=#EEF1F2
+r9 35-42 bg=#EEF1F2
+r9 43-114 fg=#566369 bg=#EEF1F2
+r9 115-116 bg=#EEF1F2
+r9 117-117 fg=#C9D1D4 bg=#EEF1F2
+r10 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r10 2-7 fg=#3D4A50 bg=#EDF1F2 +U ul=#C9D1D4
+r10 8-21 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r10 22-22 fg=#C9D1D4 bg=#EEF1F2
+r10 23-24 bg=#EEF1F2
+r10 25-28 fg=#17705F bg=#EEF1F2 +B
+r10 29-31 fg=#162024 bg=#EEF1F2
+r10 32-42 bg=#EEF1F2
+r10 43-105 fg=#566369 bg=#EEF1F2
+r10 106-116 bg=#EEF1F2
+r10 117-117 fg=#C9D1D4 bg=#EEF1F2
+r10 118-139 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r11 2-2 fg=#805800
+r11 5-8 fg=#566369
+r11 11-21 fg=#162024
+r11 22-22 fg=#C9D1D4 bg=#EEF1F2
+r11 23-24 bg=#EEF1F2
+r11 25-28 fg=#17705F bg=#EEF1F2 +B
+r11 29-40 fg=#162024 bg=#EEF1F2
+r11 41-42 bg=#EEF1F2
+r11 43-48 fg=#566369 bg=#EEF1F2
+r11 49-116 bg=#EEF1F2
+r11 117-117 fg=#C9D1D4 bg=#EEF1F2
+r12 2-2 fg=#805800
+r12 5-8 fg=#566369
+r12 11-21 fg=#162024
+r12 22-22 fg=#C9D1D4 bg=#EEF1F2
+r12 23-24 bg=#EEF1F2
+r12 25-28 fg=#17705F bg=#EEF1F2 +B
+r12 29-37 fg=#162024 bg=#EEF1F2
+r12 38-42 bg=#EEF1F2
+r12 43-48 fg=#566369 bg=#EEF1F2
+r12 49-116 bg=#EEF1F2
+r12 117-117 fg=#C9D1D4 bg=#EEF1F2
+r13 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r13 2-8 fg=#3D4A50 bg=#EDF1F2 +U ul=#C9D1D4
+r13 9-21 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r13 22-117 fg=#C9D1D4 bg=#EEF1F2
+r13 118-139 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r14 2-2 fg=#805800
+r14 5-8 fg=#566369
+r14 11-47 fg=#162024
+r14 50-58 fg=#162024
+r14 61-69 fg=#162024
+r15 0-1 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r15 2-9 fg=#3D4A50 bg=#EDF1F2 +U ul=#C9D1D4
+r15 10-61 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r15 62-69 fg=#566369 bg=#EDF1F2 +U ul=#C9D1D4
+r15 70-139 fg=#C9D1D4 bg=#EDF1F2 +U ul=#C9D1D4
+r16 2-2 fg=#805800
+r16 5-8 fg=#566369
+r16 11-47 fg=#162024
+r16 50-58 fg=#162024
+r16 61-69 fg=#162024
+r17 2-2 fg=#805800
+r17 5-8 fg=#566369
+r17 11-47 fg=#162024
+r17 50-58 fg=#162024
+r17 61-69 fg=#162024
+r18 2-2 fg=#805800
+r18 5-8 fg=#566369
+r18 11-47 fg=#162024
+r18 50-58 fg=#162024
+r18 61-69 fg=#162024
+r19 2-2 fg=#805800
+r19 5-8 fg=#566369
+r19 11-47 fg=#162024
+r19 50-58 fg=#162024
+r19 61-69 fg=#162024
+r20 2-2 fg=#805800
+r20 5-8 fg=#566369
+r20 11-47 fg=#162024
+r20 50-58 fg=#162024
+r20 61-69 fg=#162024
+r21 2-2 fg=#805800
+r21 5-8 fg=#566369
+r21 11-47 fg=#162024
+r21 50-58 fg=#162024
+r21 61-69 fg=#162024
+r36 2-139 fg=#C9D1D4
+r37 2-2 fg=#162024 +B
+r37 5-8 fg=#162024 +B
+r37 11-47 fg=#162024 +B
+r37 50-58 fg=#162024 +B
+r37 61-69 fg=#162024 +B
+r37 72-81 fg=#2E6B39
+r39 0-0 bg=#ECEFF0
+r39 1-25 fg=#566369 bg=#ECEFF0
+r39 26-56 bg=#ECEFF0
+r39 57-61 fg=#162024 bg=#ECEFF0
+r39 62-62 bg=#ECEFF0
+r39 63-72 fg=#566369 bg=#ECEFF0
+r39 73-77 fg=#162024 bg=#ECEFF0
+r39 78-78 bg=#ECEFF0
+r39 79-87 fg=#566369 bg=#ECEFF0
+r39 88-90 fg=#162024 bg=#ECEFF0
+r39 91-91 bg=#ECEFF0
+r39 92-100 fg=#566369 bg=#ECEFF0
+r39 101-102 fg=#162024 bg=#ECEFF0
+r39 103-103 bg=#ECEFF0
+r39 104-124 fg=#566369 bg=#ECEFF0
+r39 125-127 bg=#ECEFF0
+r39 128-138 fg=#768186 bg=#ECEFF0
+r39 139-139 bg=#ECEFF0

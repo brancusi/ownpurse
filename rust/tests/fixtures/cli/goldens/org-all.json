@@ -1,0 +1,52 @@
+{
+ "argv": [
+  "--offline",
+  "org",
+  "all"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "organisations": [
+    {
+     "org": "one",
+     "name": "Pewter Lane Ironmongery",
+     "class": null,
+     "edition": null,
+     "type": null,
+     "currency": null,
+     "fy_end": "12/31",
+     "period_lock": null,
+     "year_end_lock": null
+    },
+    {
+     "org": "hq",
+     "name": "Calderwick Group HQ",
+     "class": null,
+     "edition": null,
+     "type": null,
+     "currency": "USD",
+     "fy_end": "12/31",
+     "period_lock": null,
+     "year_end_lock": null
+    },
+    {
+     "org": "co",
+     "name": "Calderwick Trading Co",
+     "class": null,
+     "edition": null,
+     "type": null,
+     "currency": "USD",
+     "fy_end": "12/31",
+     "period_lock": null,
+     "year_end_lock": null
+    }
+   ],
+   "organisations_count": 3,
+   "help": [
+    "No lock dates set; they can only be set in the Xero web UI (Settings → Financial settings)."
+   ]
+  }
+ ],
+ "text": "organisations[3]{org,name,class,type,currency,fy_end,period_lock,year_end_lock}:\n  one,Pewter Lane Ironmongery,,,,12/31,,\n  hq,Calderwick Group HQ,,,USD,12/31,,\n  co,Calderwick Trading Co,,,USD,12/31,,\nhelp[1]:\n  No lock dates set; they can only be set in the Xero web UI (Settings → Financial settings).\n"
+}

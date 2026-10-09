@@ -1,0 +1,86 @@
+---
+source: crates/ownpurse-tui/tests/viz.rs
+expression: styled(&buf)
+---
+  [hold] v    as of 2025-12-31                                                                                                   read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+--==========--------------------------------------------------------------------------------------------------------------------------------
+  Overview > Explain: T-account
+                      Fees Receivable from Quillfeather (1470) - hold
+                      Money into (debit) and out of (credit) Fees Receivable from Quillfeather, 2025-01-01 to
+                      2025-12-31
+                      2025-01-01 to 2025-12-31 - opening from Xero TB 2024-12-31 - 2 debits and 1 credit
+
+                                                                Debit   Credit
+                      ================================================+===============================================
+                      Opening balance                        1,906.33 | 06-17 Management fee remittance       2,764.18
+                      04-30 Management fee Jan-Apr, ...      2,764.18 |
+                      08-31 Management fee May-Aug, ...      2,764.18 |
+                      ------------------------------------------------+-----------------------------------------------
+                      Total                                  7,434.69 | Total                                 2,764.18
+
+                                   Closing balance at 2025-12-31: Dr 4,670.51  (the debit side is bigger)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Esc Close  v Scroll  q Quit  / Filter  ] Org >  ? more  ^P palette                                                            v0.0.0-test
+--- styles
+r0 8-13 +D
+r0 30-137 +D
+r1 2-3 +D
+r1 4-11 +B
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-1 +D
+r2 2-11 +BD
+r2 12-139 +D
+r3 2-12 +D
+r4 22-68 +B
+r7 22-103 +D
+r9 64-68 +B
+r9 72-77 +B
+r10 22-117 +B
+r11 70-70 +B
+r12 70-70 +B
+r13 70-70 +B
+r14 22-69 +D
+r14 70-70 +BD
+r14 71-117 +D
+r15 70-70 +B
+r39 2-4 +B
+r39 6-12 +D
+r39 13-13 +B
+r39 15-22 +D
+r39 23-23 +B
+r39 25-30 +D
+r39 31-31 +B
+r39 33-40 +D
+r39 41-41 +B
+r39 43-49 +D
+r39 50-50 +B
+r39 52-57 +D
+r39 58-59 +B
+r39 61-67 +D
+r39 128-138 +D

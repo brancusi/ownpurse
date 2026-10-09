@@ -1,0 +1,30 @@
+{
+ "argv": [
+  "--offline",
+  "org",
+  "one"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "organisations": [
+    {
+     "org": "one",
+     "name": "Pewter Lane Ironmongery",
+     "class": null,
+     "edition": null,
+     "type": null,
+     "currency": null,
+     "fy_end": "12/31",
+     "period_lock": null,
+     "year_end_lock": null
+    }
+   ],
+   "organisations_count": 1,
+   "help": [
+    "No lock dates set; they can only be set in the Xero web UI (Settings → Financial settings)."
+   ]
+  }
+ ],
+ "text": "organisations[1]{org,name,class,type,currency,fy_end,period_lock,year_end_lock}:\n  one,Pewter Lane Ironmongery,,,,12/31,,\nhelp[1]:\n  No lock dates set; they can only be set in the Xero web UI (Settings → Financial settings).\n"
+}

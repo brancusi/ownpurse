@@ -1,0 +1,6 @@
+$ ownpurse classify set roast:bt:bt-104:L1 project=harvset --expect-store-rev 82 --client claude
+exit 2
+error: usage
+message: "unknown project ""harvset"" (did you mean ""harvest""?)"
+help[1]:
+  Check the syntax with the command's --help; values (verbs, rows, choices, groups) must exist in the current view or classify.toml.

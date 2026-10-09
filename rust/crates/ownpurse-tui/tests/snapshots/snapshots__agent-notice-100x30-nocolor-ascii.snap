@@ -1,0 +1,71 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [design] v    as of 2025-12-31    [agent*]                                             read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+---------------========-----------------------------------------------------------------------------
+  design > Trial balance at 2025-12-31 (accrual)                                      matches Xero
+  showing: differs from Xero (0) - difference = local - Xero
+  !  code  account                   debit     credit  xero  local − xero
+  No account differs from Xero.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  --------------------------------------------------------------------------------------------------
+           Total (all accounts)  64,644.55  64,644.55                      balanced ok
+
+ * agent: opened Ledger - scope desi...only accounts that differ - ` back   ^P palette  v0.0.0-test
+--- styles
+r0 10-15 +D
+r0 32-35 +D
+r0 44-97 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-99 +D
+r3 2-10 +D
+r3 86-97 +D
+r5 2-2 +D
+r5 5-8 +D
+r5 11-30 +D
+r5 33-41 +D
+r5 44-52 +D
+r5 55-58 +D
+r5 61-72 +D
+r6 2-30 +D
+r26 2-99 +D
+r27 2-2 +B
+r27 5-8 +B
+r27 11-30 +B
+r27 33-41 +B
+r27 44-52 +B
+r27 55-58 +B
+r27 61-72 +B
+r29 76-77 +B
+r29 79-85 +D
+r29 88-98 +D

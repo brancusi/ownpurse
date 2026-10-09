@@ -1,0 +1,91 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ● hold ↔ ● design    as of 2025-12-31                                                ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+──────────────────────────━━━━━━━━━━━━━━────────────────────────────────────────────────────────────
+  Brackenridge ↔ Quillfeather (management fees) › bridge at 2025-12-31           ✓ fully explained
+
+  side A · hold                                     side B · design · hold's share (residual)
+  Dr 4,670.51                                       Cr 4,252.24
+  Fees Receivable from Quillfeather (1470)          Fees owed to Brackenridge (2420) · account tot…
+
+  Bridge
+    Difference at year end             418.27
+      = prior-year opening difference    0.00
+      + 2025 movement difference       418.27
+          explained by 1 item below    418.27
+    ─────────────────────────────────────────
+    Unexplained residual                 0.00 ✓
+
+  Items on one side only                                                                         1
+  side  date        account                           amount  why
+▌ B     2025-10-06  Fees owed to Brackenridge (2420)  418.27  no party contact; no matchi…
+  why: no party contact; no matching entry in hold  ·  BankTransactions bt-307
+
+
+
+
+
+
+
+
+  o Open  a A  b B  q Quit  / Filter  ? more  ⌃P palette                                v0.0.0-test
+--- styles
+r0 2-2 +B
+r0 3-3 +D
+r0 4-7 +B
+r0 8-10 +D
+r0 11-11 +B
+r0 12-12 +D
+r0 13-18 +B
+r0 19-22 +D
+r0 39-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-27 +D
+r1 28-39 +B
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-25 +D
+r2 26-39 +BD
+r2 40-99 +D
+r3 2-49 +D
+r3 81-97 +D
+r5 2-14 +B
+r5 52-92 +B
+r7 2-41 +D
+r7 52-98 +D
+r9 2-7 +B
+r14 4-44 +D
+r15 4-23 +B
+r15 41-44 +B
+r15 45-46 +D
+r17 2-23 +B
+r17 97-97 +D
+r18 2-5 +D
+r18 8-17 +D
+r18 20-51 +D
+r18 54-59 +D
+r18 62-89 +D
+r19 0-0 +BR
+r19 1-99 +R
+r29 2-2 +B
+r29 4-9 +D
+r29 10-10 +B
+r29 12-14 +D
+r29 15-15 +B
+r29 17-19 +D
+r29 20-20 +B
+r29 22-27 +D
+r29 28-28 +B
+r29 30-37 +D
+r29 38-38 +B
+r29 40-45 +D
+r29 46-47 +B
+r29 49-55 +D
+r29 88-98 +D

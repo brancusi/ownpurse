@@ -1,0 +1,30 @@
+{
+ "comment": "Demo close worklist for the Brackenridge group (invented). Same shape as a project's config/close-status-<year>.json: deadlines, questions by owner, the agent's own items, postings by state.",
+ "year": 2025,
+ "deadlines": [
+  {"id": "D1", "entity": "hold", "form": "1120", "due": "2026-04-15", "extended": "2026-10-15", "confirmed": true, "note": "extension filed"},
+  {"id": "D2", "entity": "design", "form": "1065", "due": "2026-03-16", "extended": "2026-09-15", "confirmed": true, "filed": true, "filed_on": "2026-09-12", "note": "return filed"},
+  {"id": "D3", "entity": "roast", "form": "1120-S", "due": "2026-03-16", "extended": "2026-11-02", "confirmed": false, "filed": false, "note": "date to confirm with the preparer"},
+  {"id": "D4", "entity": "lab", "form": "1120", "due": "2026-04-15", "extended": null, "confirmed": false, "note": ""}
+ ],
+ "questions": [
+  {"id": "Q1", "owner": "maren", "status": "open", "text": "Was the 418.27 annual-return filing paid for the parent on purpose?"},
+  {"id": "Q2", "owner": "maren", "status": "answered", "text": "Is the sample roaster advance a loan or a capital contribution?"},
+  {"id": "Q3", "owner": "tobias", "status": "open", "text": "Book the 263.94 reprint in 2025 or carry it?"},
+  {"id": "Q4", "owner": "tobias", "status": "waiting_on_docs", "text": "Exchange adjustment of 57.13: keep at lab or reverse?"},
+  {"id": "Q5", "owner": "agent", "status": "answered", "text": "Do both sides record the Q3 interest accrual?"}
+ ],
+ "agent_items": [
+  {"id": "A1", "owner": "agent", "status": "done", "text": "Bridge every intercompany pair at 2025-12-31"},
+  {"id": "A2", "owner": "agent", "status": "blocked", "text": "Draft the reprint journal (waits on Q3)"},
+  {"id": "A3", "owner": "agent", "status": "todo", "text": "Attach the supporting list to each correcting journal"}
+ ],
+ "postings": [
+  {"id": "P1", "state": "posted", "entity": "hold", "text": "Q3 interest accrual, both sides", "paths": ["notes/interest-q3.md"], "verify": {"status": "read back"}},
+  {"id": "P2", "state": "prepared", "entity": "roast", "text": "Recharge of the bag-artwork proofs", "paths": [], "verify": {}},
+  {"id": "P3", "state": "parked", "entity": "lab", "text": "Reverse the exchange adjustment", "paths": [], "verify": {}},
+  {"id": "P4", "state": "superseded", "entity": "design", "text": "First draft of the fee true-up", "paths": [], "verify": {}}
+ ],
+ "crypto": {"note": "none in the demo group"},
+ "key_balances": {"hold 1470": "4670.51"}
+}

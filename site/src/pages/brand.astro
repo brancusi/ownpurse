@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+const logos = [
+	['ownpurse-wordmark.svg', 'Wordmark', 'Ink letters with the coin-o. On light grounds.', 'light'],
+	['ownpurse-wordmark-mono.svg', 'Wordmark, one colour', 'For one-ink printing, or where another coin is in view.', 'light'],
+	['ownpurse-wordmark-reversed.svg', 'Wordmark, reversed', 'Paper letters with the night coin. On dark grounds.', 'dark'],
+	['ownpurse-mark.svg', 'Mark', 'The T-account face. App icon, favicon, avatars.', 'light'],
+	['ownpurse-mark-mono.svg', 'Mark, one colour', 'One ink.', 'light'],
+	['ownpurse-mark-reversed.svg', 'Mark, reversed', 'On dark grounds.', 'dark'],
+	['ownpurse-app-icon.svg', 'App icon', 'The reversed mark on an ink tile.', 'light'],
+];
+const colors = [['Coin', '#D4402B', 'The brand’s one colour.'], ['Ink', '#23231F', 'Text and the mark.'], ['Paper', '#F5F3EE', 'The ground.'],
+	['Gilt', '#B8862A', 'Money, and held entries.'], ['Verdigris', '#2A6F5E', 'Agreed and balanced.'], ['Lapis', '#2C5FA8', 'Notes, links, selection.']];
+---
+<Base title="Brand · ownpurse" description="The ownpurse mark, wordmark and colours, with the rules for using them.">
+<section class="wrap sec stack-lg" style="padding-block: 80px 48px;">
+	<div class="eyebrow">Brand</div>
+	<h1 class="h1 sm">The mark, the coin and how to use them.</h1>
+	<p class="lead">The mark is a T-account read as a face: the brow is the account's top rule, the nose divides debit from credit, and the two eyes are the two sides of an entry. Use the mark or the wordmark, never both together. The name is always lowercase: ownpurse.</p>
+</section>
+<section class="wrap" style="padding-bottom: 64px;">
+	<div class="cells">
+		{logos.map(([f, t, d, g]) => (
+			<div>
+				<div style={`height: 140px; display: grid; place-items: center; background: ${g === 'dark' ? 'var(--surface-inverse)' : 'var(--surface-1)'}; padding: 20px;`}><img src={`/brand/${f}`} alt={t} style="max-height: 72px; max-width: 100%;" /></div>
+				<h3>{t}</h3><p>{d}</p><a href={`/brand/${f}`} download style="font-size: 15px; font-weight: 600;">Download SVG</a>
+			</div>
+		))}
+	</div>
+</section>
+<section class="band">
+	<div class="wrap sec stack-lg">
+		<h2 class="h2 sm">Colour</h2>
+		<div class="cols" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 16px;">
+			{colors.map(([n, h, u]) => <div class="stack" style="gap: 6px;"><div style={`height: 72px; background: ${h};`}></div><strong>{n}</strong><code class="small">{h}</code><span class="small muted">{u}</span></div>)}
+		</div>
+		<p class="muted small">Type: Bricolage Grotesque for words, DM Mono for figures and code. Clear space around the mark: one eye's diameter. Minimum size: 16px tall.</p>
+	</div>
+</section>
+</Base>

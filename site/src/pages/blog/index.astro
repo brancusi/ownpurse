@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+const posts = (await getCollection('blog', (p) => !p.data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+---
+<Base title="Blog · ownpurse" description="Development notes from ownpurse: the record, the connectors, the terminal UI and the ideas behind them." current="blog">
+<section class="wrap sec stack-lg" style="padding-block: 80px 40px;">
+	<div class="eyebrow">Blog</div>
+	<h1 class="h1 sm">Development notes.</h1>
+	<p class="lead">What we're building, why, and what we learned on the way. <a href="/rss.xml">Subscribe by RSS</a>.</p>
+</section>
+<section class="wrap" style="padding-bottom: 96px;">
+	{posts.map((p) => (
+		<article style="border-top: 2px solid var(--ink-1); padding-block: 28px 36px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 12px 48px;">
+			<div class="stack" style="gap: 6px;">
+				<time class="eyebrow" datetime={p.data.date.toISOString()}>{fmt(p.data.date)}</time>
+				<span class="small muted">{p.data.author}</span>
+			</div>
+			<div class="stack" style="gap: 10px; grid-column: span 2;">
+				<h2 class="h2 sm"><a href={`/blog/${p.id}/`} style="color: var(--ink-1); text-decoration: none;">{p.data.title}</a></h2>
+				<p class="muted">{p.data.description}</p>
+				<a href={`/blog/${p.id}/`} style="font-weight: 600;">Read</a>
+			</div>
+		</article>
+	))}
+</section>
+</Base>

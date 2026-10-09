@@ -1,0 +1,15 @@
+---
+import Default from '@astrojs/starlight/components/SocialIcons.astro';
+---
+<nav class="op-docs-links" aria-label="Site">
+	<a href="/">Home</a>
+	<a href="/blog/">Blog</a>
+</nav>
+<Default><slot /></Default>
+
+<style>
+	.op-docs-links { display: flex; gap: 1.25rem; align-items: center; font-weight: 600; font-size: 0.9rem; margin-inline-end: 0.75rem; }
+	.op-docs-links a { color: var(--sl-color-white); text-decoration: none; }
+	.op-docs-links a:hover { color: var(--sl-color-accent); }
+	@media (max-width: 50rem) { .op-docs-links { display: none; } }
+</style>

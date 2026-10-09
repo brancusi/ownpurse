@@ -1,0 +1,362 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "ownpurse/ui-state/1",
+ "title": "ownpurse ui state (v 1)",
+ "description": "The view state `ownpurse --json ui state` answers. Every key is always present; `--fields` projects dotted paths. Field reference: docs/TUI.md.",
+ "type": "object",
+ "required": [
+  "accent",
+  "as_of",
+  "band",
+  "basis",
+  "breadcrumb",
+  "build",
+  "busy",
+  "canonical",
+  "caption",
+  "classify",
+  "clock",
+  "compare",
+  "data_refreshes",
+  "differs_only",
+  "drift",
+  "filter",
+  "filter_applies",
+  "filter_matches",
+  "filter_total",
+  "history",
+  "input",
+  "keymap",
+  "label",
+  "level",
+  "manifest",
+  "mode",
+  "note",
+  "notice",
+  "overlay",
+  "palette",
+  "profile",
+  "prompt",
+  "record",
+  "result",
+  "rev",
+  "rows",
+  "running",
+  "scope",
+  "selected",
+  "selected_label",
+  "size",
+  "sort",
+  "strip",
+  "tab",
+  "theme",
+  "truncated",
+  "update_available",
+  "v",
+  "version",
+  "view"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "accent": {
+   "type": "object",
+   "description": "The scope accent."
+  },
+  "as_of": {
+   "type": "string",
+   "description": "The as-of date (YYYY-MM-DD)."
+  },
+  "band": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "The confirm band."
+  },
+  "basis": {
+   "type": "string",
+   "description": "year | history."
+  },
+  "breadcrumb": {
+   "type": "array",
+   "description": "Where the view is, top level first (strings)."
+  },
+  "build": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "description": "The build identity (the git commit, `.dirty` with uncommitted changes), shown with the version as `0.12.1+g6dc723f`; null for a build without git."
+  },
+  "busy": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "description": "What the user is in when a send would be refused user_busy."
+  },
+  "canonical": {
+   "type": "object",
+   "description": "The importable block (ui screen --from-state, upgrade)."
+  },
+  "manifest": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "The shown manifest (null on main): name, stage, chip, head_rev, entries, issues {errors, warnings, acknowledged}, apply {sent, landed, verified, rejected, uncertain}, package_hash, approve_command, apply_command. There is no apply verb."
+  },
+  "layers": {
+   "type": "array",
+   "description": "Overlay layers on this frame: layer, owner (guide | agent:<name>), anchor, landed (on_screen | off_above | off_below | off_left | off_right | not_found), rect, box, reason, strip, no_arrow."
+  },
+  "anchors": {
+   "type": "array",
+   "description": "The overlay anchors drawn on this frame (row:…, cell:…, diff:…, chip:…, panel:…, viz:…)."
+  },
+  "narration": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "The narration panel when shown: title, body, by (the agent; null for a walkthrough step), why, scroll."
+  },
+  "walkthrough": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "The walkthrough playing: id, title, step, of, step_id, failed_checks."
+  },
+  "recording": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "A walkthrough being recorded: id, steps."
+  },
+  "lay_mode": {
+   "type": "boolean",
+   "description": "Lay mode (L): names before codes, why-lines."
+  },
+  "caption": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "The agent's caption {text, by, rev}, or null."
+  },
+  "classify": {
+   "type": "object",
+   "description": "The Classify tab: mode, filter, selected_anchor, store_rev, open, stale, agent_writes, …"
+  },
+  "clock": {
+   "type": "object",
+   "description": "The clock the TUI uses."
+  },
+  "compare": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "The compare view (null when not comparing)."
+  },
+  "data_refreshes": {
+   "type": "integer",
+   "minimum": 0,
+   "description": "How many times this session refreshed for other processes' writes (record, classification store, config); a burst of writes is at most two."
+  },
+  "differs_only": {
+   "type": "boolean",
+   "description": "Only accounts that differ from Xero are listed."
+  },
+  "drift": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "Rendered from a drifted state (null live)."
+  },
+  "filter": {
+   "type": "string",
+   "description": "The screen filter ('' when none)."
+  },
+  "filter_applies": {
+   "type": "boolean",
+   "description": "Whether a filter means something on this screen."
+  },
+  "filter_matches": {
+   "type": [
+    "integer",
+    "null"
+   ],
+   "description": "Rows the filter lets through (null without a filter)."
+  },
+  "filter_total": {
+   "type": [
+    "integer",
+    "null"
+   ],
+   "description": "Rows before the filter."
+  },
+  "history": {
+   "type": "object",
+   "description": "back/forward availability and where they land."
+  },
+  "input": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "The text being typed {field, text, caret}."
+  },
+  "keymap": {
+   "type": "object",
+   "description": "The active key contexts."
+  },
+  "label": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "description": "This session's label."
+  },
+  "level": {
+   "type": "integer",
+   "description": "Drill level on the tab (1 = top)."
+  },
+  "mode": {
+   "type": "string",
+   "description": "What the level shows (trial balance, postings, document, compare, pairs, log, queue, …)."
+  },
+  "note": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "description": "The footer's transient note."
+  },
+  "notice": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "description": "The agent's notice, as shown."
+  },
+  "overlay": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "description": "help | palette | picker, or null."
+  },
+  "palette": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "The open palette."
+  },
+  "profile": {
+   "type": "string",
+   "description": "The config profile."
+  },
+  "prompt": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "The open prompt (filter, as-of, …)."
+  },
+  "record": {
+   "type": "object",
+   "description": "The record the view is drawn from."
+  },
+  "result": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "The last run's result band."
+  },
+  "rev": {
+   "type": "integer",
+   "description": "The view revision: bumps once per change; pass it as --expect-rev."
+  },
+  "rows": {
+   "type": "array",
+   "description": "The rows on screen: {row, anchor, fields, selected}; --all-rows / --rows A..B for more."
+  },
+  "running": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "The running sync/login."
+  },
+  "scope": {
+   "type": "string",
+   "description": "all, an org alias or group:<name>."
+  },
+  "selected": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "The selected row's anchor (null when no row is selected or it is off screen)."
+  },
+  "selected_label": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "description": "A short label for the selected row."
+  },
+  "size": {
+   "type": "object",
+   "description": "{cols, rows} of the terminal."
+  },
+  "sort": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "description": "Intercompany's sort (null elsewhere)."
+  },
+  "strip": {
+   "type": "object",
+   "description": "The strip facts (record age, calls left, parity)."
+  },
+  "tab": {
+   "type": "string",
+   "description": "overview | ledger | intercompany | activity | system | classify."
+  },
+  "theme": {
+   "type": "object",
+   "description": "The theme."
+  },
+  "truncated": {
+   "type": "boolean",
+   "description": "More rows exist than the answer carries."
+  },
+  "update_available": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "A newer installed build, or null."
+  },
+  "v": {
+   "type": "integer",
+   "description": "The state schema version (1); also the bridge protocol version."
+  },
+  "version": {
+   "type": "string",
+   "description": "The TUI's version (e.g. 0.11.1)."
+  },
+  "view": {
+   "type": "object",
+   "description": "{first_visible, last_visible, total_rows} (row numbers, 1-based; null when empty)."
+  }
+ }
+}

@@ -1,0 +1,180 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  [compare: roast - hold - design - lab] v    as of 2025-12-31                           read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+---------------========-----------------------------------------------------------------------------
+  Ledger > compare trial balances at 2025-12-31 (accrual)
+  align: map                                                                             all TB+25
+                                                |   roast    |    hold    |   design   |    lab
+                                                |  TB+25 ok  |  TB+25 ok  |  TB+25 ok  |  TB+25 ok
+  code    account                               |         net|         net|         net|         net
+>         Cash and cards                        |   39,680.92|   16,109.61|   18,081.10|    9,036.95
+          roast Tallowmere Roastery Operating Account, Tallowmere Green-Bean Card - hold Bracken...
+          Intra-group balances                  | (15,568.80)|   27,151.79|  (3,988.30)|  (6,855.35)
+          Equity                                | (11,934.69)| (38,648.51)| (26,398.09)|  (2,486.19)
+          Management fees                       |           -|  (5,528.36)|    5,528.36|           -
+          Revenue                               | (20,391.63)|    (412.37)|  (5,842.16)|     (57.13)
+          Expenses                              |    8,214.20|    1,327.84|           -|      361.72
+          -- only in design --
+  1520    Large-Format Plotters                 |           -|           -|   17,914.26|           -
+  1530    Drafting Workstations                 |           -|           -|    7,066.16|           -
+  1610    Cartwright Yard Lease Bond            |           -|           -|    2,531.79|           -
+  1620    Sabbatical Reserve Fund               |           -|           -|    8,209.43|           -
+  1630    Prepaid Typeface Licences             |           -|           -|    1,132.74|           -
+  2250    Payroll Withholding Payable           |           -|           -|  (1,847.36)|           -
+  2810    Plotter Hire-Purchase                 |           -|           -| (12,614.79)|           -
+  2820    Workstation Finance Lease             |           -|           -|  (9,773.14)|           -
+
+
+
+  --------------------------------------------------------------------------------------------------
+          Total (each org's own)                | balanced ok| balanced ok| balanced ok| balanced ok
+  a Align  h Full history  > Col >  x Drop col  q Quit  ? more  ^P palette              v0.0.0-test
+--- styles
+r0 40-45 +D
+r0 62-97 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-99 +D
+r3 2-10 +D
+r4 2-11 +D
+r4 89-97 +D
+r5 48-48 +D
+r5 52-56 +B
+r5 61-61 +D
+r5 66-69 +B
+r5 74-74 +D
+r5 78-83 +B
+r5 87-87 +D
+r5 92-94 +B
+r6 48-48 +D
+r6 51-58 +D
+r6 61-61 +D
+r6 64-71 +D
+r6 74-74 +D
+r6 77-84 +D
+r6 87-87 +D
+r6 90-97 +D
+r7 2-5 +D
+r7 10-16 +D
+r7 48-48 +D
+r7 50-61 +D
+r7 63-74 +D
+r7 76-87 +D
+r7 89-99 +D
+r8 0-0 +BR
+r8 1-9 +R
+r8 10-47 +BUR
+r8 48-99 +R
+r9 0-99 +R
+r10 2-7 +D
+r10 48-48 +D
+r10 61-61 +D
+r10 74-74 +D
+r10 87-87 +D
+r11 2-7 +D
+r11 48-48 +D
+r11 61-61 +D
+r11 74-74 +D
+r11 87-87 +D
+r12 2-7 +D
+r12 48-48 +D
+r12 50-61 +D
+r12 74-74 +D
+r12 87-87 +D
+r12 89-99 +D
+r13 2-7 +D
+r13 48-48 +D
+r13 61-61 +D
+r13 74-74 +D
+r13 87-87 +D
+r14 2-7 +D
+r14 48-48 +D
+r14 61-61 +D
+r14 74-74 +D
+r14 76-87 +D
+r15 10-29 +D
+r16 2-7 +D
+r16 48-48 +D
+r16 50-61 +D
+r16 63-74 +D
+r16 87-87 +D
+r16 89-99 +D
+r17 2-7 +D
+r17 48-48 +D
+r17 50-61 +D
+r17 63-74 +D
+r17 87-87 +D
+r17 89-99 +D
+r18 2-7 +D
+r18 48-48 +D
+r18 50-61 +D
+r18 63-74 +D
+r18 87-87 +D
+r18 89-99 +D
+r19 2-7 +D
+r19 48-48 +D
+r19 50-61 +D
+r19 63-74 +D
+r19 87-87 +D
+r19 89-99 +D
+r20 2-7 +D
+r20 48-48 +D
+r20 50-61 +D
+r20 63-74 +D
+r20 87-87 +D
+r20 89-99 +D
+r21 2-7 +D
+r21 48-48 +D
+r21 50-61 +D
+r21 63-74 +D
+r21 87-87 +D
+r21 89-99 +D
+r22 2-7 +D
+r22 48-48 +D
+r22 50-61 +D
+r22 63-74 +D
+r22 87-87 +D
+r22 89-99 +D
+r23 2-7 +D
+r23 48-48 +D
+r23 50-61 +D
+r23 63-74 +D
+r23 87-87 +D
+r23 89-99 +D
+r27 2-99 +D
+r28 10-47 +B
+r28 48-48 +D
+r28 50-60 +B
+r28 61-61 +D
+r28 63-73 +B
+r28 74-74 +D
+r28 76-86 +B
+r28 87-87 +D
+r28 89-99 +B
+r29 2-2 +B
+r29 4-10 +D
+r29 11-11 +B
+r29 13-26 +D
+r29 27-27 +B
+r29 29-35 +D
+r29 36-36 +B
+r29 38-47 +D
+r29 48-48 +B
+r29 50-55 +D
+r29 56-56 +B
+r29 58-63 +D
+r29 64-65 +B
+r29 67-73 +D
+r29 88-98 +D

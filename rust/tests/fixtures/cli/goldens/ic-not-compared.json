@@ -1,0 +1,193 @@
+{
+ "argv": [
+  "--offline",
+  "ic",
+  "--as-of",
+  "2025-06-30"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "report": "ic",
+   "title": "Intercompany pairs",
+   "source": {
+    "record": "<FIXTURES>/record.sqlite",
+    "xero_tb_fetched": {
+     "hq": null,
+     "co": null,
+     "one": null
+    }
+   },
+   "as_of": "2025-06-30",
+   "basis": "accrual",
+   "orgs": [
+    "co",
+    "hq",
+    "one"
+   ],
+   "sign_convention": "net debit = positive; credits negative; amounts are decimal strings",
+   "checks": [
+    {
+     "name": "hq-co",
+     "status": "warn",
+     "detail": "not compared: no cached Xero TB at 2025-06-30 for hq, co"
+    },
+    {
+     "name": "hq-co-both",
+     "status": "warn",
+     "detail": "not compared: no cached Xero TB at 2025-06-30 for hq, co"
+    },
+    {
+     "name": "one-co",
+     "status": "warn",
+     "detail": "not compared: no cached Xero TB at 2025-06-30 for one, co"
+    }
+   ],
+   "data": {
+    "as_of": "2025-06-30",
+    "basis": "Xero TB balances (cached); party components and items from documents",
+    "summary": {
+     "pairs": 3,
+     "unexplained": 0,
+     "not compared": 3,
+     "not supported": 0,
+     "bridged": 0,
+     "matches": 0
+    },
+    "pairs": [
+     {
+      "id": "hq-co",
+      "label": "HQ ↔ Co",
+      "a_org": "hq",
+      "b_org": "co",
+      "party": "hq",
+      "as_of": "2025-06-30",
+      "residual": null,
+      "movement_items": [],
+      "matched": [],
+      "known_items": [],
+      "context": [],
+      "prior": "2024-12-31",
+      "year_start": "2025-01-01",
+      "a_account_ids": [
+       "h-1405",
+       "h-2405"
+      ],
+      "b_account_ids": [
+       "c-2475"
+      ],
+      "a_accounts": [
+       "Lease Recharge Receivable (1405)",
+       "Co Settlement Clearing (2405)"
+      ],
+      "b_accounts": [
+       "Intra-group Payable – HQ (2475)"
+      ],
+      "component": "residual",
+      "movement": "b_unexplained",
+      "tb_fetched": {
+       "hq": null,
+       "co": null
+      },
+      "status": "not compared",
+      "reason": "no cached Xero TB at 2025-06-30 for hq, co",
+      "missing_tb": {
+       "date": "2025-06-30",
+       "orgs": [
+        "hq",
+        "co"
+       ]
+      }
+     },
+     {
+      "id": "hq-co-both",
+      "label": "HQ ↔ Co (matched both ways)",
+      "a_org": "hq",
+      "b_org": "co",
+      "party": null,
+      "as_of": "2025-06-30",
+      "residual": null,
+      "movement_items": [],
+      "matched": [],
+      "known_items": [],
+      "context": [],
+      "prior": "2024-12-31",
+      "year_start": "2025-01-01",
+      "a_account_ids": [
+       "h-1405",
+       "h-2405"
+      ],
+      "b_account_ids": [
+       "c-2475"
+      ],
+      "a_accounts": [
+       "Lease Recharge Receivable (1405)",
+       "Co Settlement Clearing (2405)"
+      ],
+      "b_accounts": [
+       "Intra-group Payable – HQ (2475)"
+      ],
+      "component": "residual",
+      "movement": "match_both",
+      "tb_fetched": {
+       "hq": null,
+       "co": null
+      },
+      "status": "not compared",
+      "reason": "no cached Xero TB at 2025-06-30 for hq, co",
+      "missing_tb": {
+       "date": "2025-06-30",
+       "orgs": [
+        "hq",
+        "co"
+       ]
+      }
+     },
+     {
+      "id": "one-co",
+      "label": "One ↔ Co (equity)",
+      "a_org": "one",
+      "b_org": "co",
+      "party": null,
+      "as_of": "2025-06-30",
+      "residual": null,
+      "movement_items": [],
+      "matched": [],
+      "known_items": [],
+      "context": [],
+      "prior": "2024-12-31",
+      "year_start": "2025-01-01",
+      "a_account_ids": [
+       "eq"
+      ],
+      "b_account_ids": [
+       "c-2475"
+      ],
+      "a_accounts": [
+       "Pewter Lane Founders' Capital (300)"
+      ],
+      "b_accounts": [
+       "Intra-group Payable – HQ (2475)"
+      ],
+      "component": "residual",
+      "movement": "match_both",
+      "tb_fetched": {
+       "one": null,
+       "co": null
+      },
+      "status": "not compared",
+      "reason": "no cached Xero TB at 2025-06-30 for one, co",
+      "missing_tb": {
+       "date": "2025-06-30",
+       "orgs": [
+        "one",
+        "co"
+       ]
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "text": "as_of: 2025-06-30\nbasis: Xero TB balances (cached); party components and items from documents\nsummary: pairs=3, unexplained=0, not compared=3\npairs[3]{pair,a,b,difference,residual,status}:\n  hq-co,hq,co,,,\"not compared (no cached Xero TB at 2025-06-30 for hq, co)\"\n  hq-co-both,hq,co,,,\"not compared (no cached Xero TB at 2025-06-30 for hq, co)\"\n  one-co,one,co,,,\"not compared (no cached Xero TB at 2025-06-30 for one, co)\"\nhelp[4]:\n  hq-co: no cached Xero TB at 2025-06-30 for hq, co — fetching it needs `ownpurse report` (coming in v0.9.x), 1 call per org.\n  hq-co-both: no cached Xero TB at 2025-06-30 for hq, co — fetching it needs `ownpurse report` (coming in v0.9.x), 1 call per org.\n  one-co: no cached Xero TB at 2025-06-30 for one, co — fetching it needs `ownpurse report` (coming in v0.9.x), 1 call per org.\n  `ownpurse ic <pair-id>` shows the bridge and its items; `--json` gives the full envelope.\n"
+}

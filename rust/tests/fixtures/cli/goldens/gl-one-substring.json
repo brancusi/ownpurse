@@ -1,0 +1,143 @@
+{
+ "argv": [
+  "--offline",
+  "gl",
+  "one",
+  "--account",
+  "ount",
+  "--to",
+  "2025-12-31"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "debits": "86539.44",
+   "credits": "86725.92",
+   "net": "-186.48",
+   "postings": [
+    {
+     "org": "one",
+     "date": "2024-07-01",
+     "account": "Pewter Lane Counter Sales (410)",
+     "debit": null,
+     "credit": "207.86",
+     "balance": "-207.86",
+     "source": "BankTransactions",
+     "contact": "Brindle & Oake Supply",
+     "description": "line 0",
+     "reference": "",
+     "source_id": "bt-2"
+    },
+    {
+     "org": "one",
+     "date": "2025-02-01",
+     "account": "Pewter Lane Counter Sales (410)",
+     "debit": null,
+     "credit": "0.10",
+     "balance": "-207.96",
+     "source": "Invoices",
+     "contact": "Ostley Joinery",
+     "description": "",
+     "reference": "",
+     "source_id": "inv-1"
+    },
+    {
+     "org": "one",
+     "date": "2025-02-01",
+     "account": "Pewter Lane Counter Sales (410)",
+     "debit": null,
+     "credit": "0.10",
+     "balance": "-208.06",
+     "source": "Invoices",
+     "contact": "Ostley Joinery",
+     "description": "",
+     "reference": "",
+     "source_id": "inv-1"
+    },
+    {
+     "org": "one",
+     "date": "2025-02-01",
+     "account": "Pewter Lane Counter Sales (410)",
+     "debit": null,
+     "credit": "0.10",
+     "balance": "-208.16",
+     "source": "Invoices",
+     "contact": "Ostley Joinery",
+     "description": "",
+     "reference": "",
+     "source_id": "inv-1"
+    },
+    {
+     "org": "one",
+     "date": "2025-02-01",
+     "account": "Accounts Receivable (610)",
+     "debit": "0.33",
+     "credit": null,
+     "balance": "-207.83",
+     "source": "Invoices",
+     "contact": "Ostley Joinery",
+     "description": "control",
+     "reference": "",
+     "source_id": "inv-1"
+    },
+    {
+     "org": "one",
+     "date": "2025-02-10",
+     "account": "Accounts Receivable (610)",
+     "debit": null,
+     "credit": "0.33",
+     "balance": "-208.16",
+     "source": "Payments",
+     "contact": "",
+     "description": "ACCRECPAYMENT",
+     "reference": "",
+     "source_id": "pay-1"
+    },
+    {
+     "org": "one",
+     "date": "2025-04-01",
+     "account": "Accounts Payable (800)",
+     "debit": null,
+     "credit": "86517.43",
+     "balance": "-86725.59",
+     "source": "Invoices",
+     "contact": "Harrowgate Fasteners",
+     "description": "control",
+     "reference": "",
+     "source_id": "bill-1"
+    },
+    {
+     "org": "one",
+     "date": "2025-04-02",
+     "account": "Accounts Payable (800)",
+     "debit": "86517.43",
+     "credit": null,
+     "balance": "-208.16",
+     "source": "Payments",
+     "contact": "",
+     "description": "ACCPAYPAYMENT",
+     "reference": "",
+     "source_id": "pay-2"
+    },
+    {
+     "org": "one",
+     "date": "2025-05-01",
+     "account": "Accounts Payable (800)",
+     "debit": "21.68",
+     "credit": null,
+     "balance": "-186.48",
+     "source": "CreditNotes",
+     "contact": "",
+     "description": "control",
+     "reference": "",
+     "source_id": "cn-1"
+    }
+   ],
+   "postings_count": 9,
+   "help": [
+    "Debits positive / credits negative internally; `ownpurse show <org> <source> <source_id>` opens the source document."
+   ]
+  }
+ ],
+ "text": "debits: 86539.44\ncredits: 86725.92\nnet: -186.48\npostings[9]{org,date,account,debit,credit,source,contact,description,source_id}:\n  one,2024-07-01,Pewter Lane Counter Sales (410),,207.86,BankTransactions,Brindle & Oake Supply,line 0,bt-2\n  one,2025-02-01,Pewter Lane Counter Sales (410),,0.10,Invoices,Ostley Joinery,,inv-1\n  one,2025-02-01,Pewter Lane Counter Sales (410),,0.10,Invoices,Ostley Joinery,,inv-1\n  one,2025-02-01,Pewter Lane Counter Sales (410),,0.10,Invoices,Ostley Joinery,,inv-1\n  one,2025-02-01,Accounts Receivable (610),0.33,,Invoices,Ostley Joinery,control,inv-1\n  one,2025-02-10,Accounts Receivable (610),,0.33,Payments,,ACCRECPAYMENT,pay-1\n  one,2025-04-01,Accounts Payable (800),,86517.43,Invoices,Harrowgate Fasteners,control,bill-1\n  one,2025-04-02,Accounts Payable (800),86517.43,,Payments,,ACCPAYPAYMENT,pay-2\n  one,2025-05-01,Accounts Payable (800),21.68,,CreditNotes,,control,cn-1\nhelp[1]:\n  Debits positive / credits negative internally; `ownpurse show <org> <source> <source_id>` opens the source document.\n"
+}

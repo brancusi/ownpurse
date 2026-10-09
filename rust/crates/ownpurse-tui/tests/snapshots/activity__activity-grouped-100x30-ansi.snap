@@ -1,0 +1,114 @@
+---
+source: crates/ownpurse-tui/tests/activity.rs
+assertion_line: 219
+expression: styled(&buf)
+---
+  All organisations ●●●● ▾    as of 2025-12-31                                         ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────────────────────────────────━━━━━━━━━━───────────────────────────────────────────────
+  all › Activity
+  Calls left                                                  Xero resets each org at its own time
+  roast   ━───────────────────  967 left
+  hold    ━───────────────────  978 left
+  design  ━━──────────────────  938 left
+  lab     ━───────────────────  978 left
+
+  Recent calls                                                                139 today · 2 errors
+  endpoint                           calls  errors  avg ms  last
+▌ BankTransactions                      27       1   1,602  2h ago
+  Reports/TrialBalance                  23       0     537  2h ago
+  Accounts                              13       0     538  2h ago
+  BankTransfers                         13       1     481  2h ago
+  Invoices                              13       0     480  2h ago
+  ManualJournals                        13       0     427  2h ago
+  Organisation                          13       0     485  2h ago
+  CreditNotes                           12       0     463  2h ago
+  Payments                              12       0     516  2h ago
+  BankTransactions/{id}/Attachments      1       1     540  2h ago
+  connect/token                          1       0     412  15h ago
+  connections                            1       0     233  15h ago
+
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+  BankTransactions · 27 calls · 1 error · avg 1,602 ms · last 2026-10-05 07:45:48 UTC (2h ago)
+  G By endpoint  q Quit  / Filter  ] Org ▸  g Scope  ? more  ⌃P palette                 v0.0.0-test
+--- styles
+r0 2-23 +B
+r0 24-29 +D
+r0 46-97 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-44 +D
+r1 45-52 +B
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-42 +D
+r2 43-52 +BD
+r2 53-99 +D
+r3 2-7 +D
+r4 2-11 +B
+r4 62-97 +D
+r5 10-10 +B
+r5 11-29 +D
+r6 10-10 +B
+r6 11-29 +D
+r7 10-11 +B
+r7 12-29 +D
+r8 10-10 +B
+r8 11-29 +D
+r10 2-13 +B
+r10 78-97 fg=yellow
+r11 2-34 +D
+r11 37-41 +D
+r11 44-49 +D
+r11 52-57 +D
+r11 60-66 +D
+r12 0-0 +BR
+r12 1-99 +R
+r13 44-49 +D
+r13 60-66 +D
+r14 44-49 +D
+r14 60-66 +D
+r15 44-49 fg=red
+r15 60-66 +D
+r16 44-49 +D
+r16 60-66 +D
+r17 44-49 +D
+r17 60-66 +D
+r18 44-49 +D
+r18 60-66 +D
+r19 44-49 +D
+r19 60-66 +D
+r20 44-49 +D
+r20 60-66 +D
+r21 44-49 fg=red
+r21 60-66 +D
+r22 44-49 +D
+r22 60-66 +D
+r23 44-49 +D
+r23 60-66 +D
+r27 0-99 +D
+r28 2-17 +B
+r28 18-20 +D
+r28 29-31 +D
+r28 32-38 fg=red
+r28 39-41 +D
+r28 54-93 +D
+r29 2-2 +B
+r29 4-16 +D
+r29 17-17 +B
+r29 19-24 +D
+r29 25-25 +B
+r29 27-34 +D
+r29 35-35 +B
+r29 37-43 +D
+r29 44-44 +B
+r29 46-52 +D
+r29 53-53 +B
+r29 55-60 +D
+r29 61-62 +B
+r29 64-70 +D
+r29 88-98 +D

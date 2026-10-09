@@ -1,0 +1,95 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ● roast ▾    as of 2025-12-31                                                        ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────
+  Overview › roast › Trial balance at 2025-12-31 (accrual)
+  Local full-history balances: 2 accounts differ from Xero (marked !; usually pre-2025 setup
+  balances). ⌃P → Refetch TB to open from Xero.
+  showing: differs from Xero (2) · difference = local − Xero
+  !  code  account                                    debit     credit          xero  local − xero
+  Assets                                                                                 37,053.55
+▌ !  1010  Tallowmere Roastery Operating Account  37,053.55             Dr 41,671.82   Cr 4,618.27
+  Equity                                                                                      0.00
+  !  3010  Tallowmere Paid-In Capital                                    Cr 4,618.27   Dr 4,618.27
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ──────────────────────────────────────────────────────────────────────────────────────────────────
+           Total (all accounts)                   45,267.75  45,267.75
+                                                                                         balanced ✓
+ roast · 2 differ …   h Year basis  v Compare  ! Differs  q Quit  / Filter  ⌃P palette  v0.0.0-test
+--- styles
+r0 2-2 +B
+r0 3-3 +D
+r0 4-8 +B
+r0 9-14 +D
+r0 31-97 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-99 +D
+r3 2-20 +D
+r4 2-91 fg=yellow
+r5 2-46 fg=yellow
+r6 2-59 fg=yellow
+r7 2-2 +D
+r7 5-8 +D
+r7 11-47 +D
+r7 50-58 +D
+r7 61-69 +D
+r7 72-83 +D
+r7 86-97 +D
+r8 2-7 +B
+r8 89-97 +D
+r9 0-0 +BR
+r9 1-99 +R
+r10 2-7 +B
+r10 94-97 +D
+r11 2-2 fg=yellow
+r11 5-8 +D
+r11 86-97 fg=yellow
+r26 2-99 +D
+r27 2-2 +B
+r27 5-8 +B
+r27 11-47 +B
+r27 50-58 +B
+r27 61-69 +B
+r27 72-83 +B
+r27 86-97 +B
+r28 89-98 fg=green
+r29 1-18 +D
+r29 22-22 +B
+r29 24-35 +D
+r29 36-36 +B
+r29 38-46 +D
+r29 47-47 +B
+r29 49-57 +D
+r29 58-58 +B
+r29 60-65 +D
+r29 66-66 +B
+r29 68-75 +D
+r29 76-77 +B
+r29 79-85 +D
+r29 88-98 +D

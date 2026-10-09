@@ -1,0 +1,84 @@
+/* ownpurse — generated from tokens.json */
+:root, [data-theme="light"] {
+  --surface-0: #F5F3EE;
+  --surface-1: #EDEBE4;
+  --surface-2: #E2DFD6;
+  --surface-inverse: #23231F;
+  --line-1: #DEDAD0;
+  --line-2: #8F8C82;
+  --ink-1: #23231F;
+  --ink-2: #4D4C45;
+  --ink-3: #6B695F;
+  --ink-inverse: #F5F3EE;
+  --coin: #D4402B;
+  --coin-text: #B2341F;
+  --coin-tint: #F8DDD5;
+  --on-coin: #FFFFFF;
+  --gilt: #B8862A;
+  --gilt-text: #7F5C17;
+  --gilt-tint: #F3E6C6;
+  --verdigris: #2A6F5E;
+  --verdigris-tint: #D6EAE3;
+  --lapis: #2C5FA8;
+  --lapis-tint: #DCE6F4;
+  --focus: var(--lapis);
+  --grid-major: #8FC0E2;
+  --grid-minor: #D3E4F0;
+  --term-ground: #1B1B19;
+  --term-ink: #E9E6DD;
+  --term-dim: #9A978D;
+  --term-coin: #EE5A3F;
+  --term-ok: #6FC0AA;
+  --term-gilt: #E0B04F;
+  --term-note: #8DB6EC;
+  --term-line: #3A3934;
+  --shadow-float: 0 1px 0 rgba(35,35,31,0.06), 0 10px 30px rgba(35,35,31,0.12);
+}
+[data-theme="dark"] {
+  --surface-0: #171715;
+  --surface-1: #1F1F1C;
+  --surface-2: #2A2A26;
+  --surface-inverse: #EEEBE3;
+  --line-1: #2E2D29;
+  --line-2: #6E6C64;
+  --ink-1: #EEEBE3;
+  --ink-2: #C4C1B7;
+  --ink-3: #9C998F;
+  --ink-inverse: #171715;
+  --coin: #EE5A3F;
+  --coin-text: #F47D66;
+  --coin-tint: #3A211B;
+  --on-coin: #171715;
+  --gilt: #E0B04F;
+  --gilt-text: #E0B04F;
+  --gilt-tint: #3A3020;
+  --verdigris: #5FB39E;
+  --verdigris-tint: #1C3330;
+  --lapis: #86B2EA;
+  --lapis-tint: #1E2A3D;
+  --grid-major: #2A4258;
+  --grid-minor: #1F2B36;
+  --shadow-float: 0 1px 0 rgba(0,0,0,0.4), 0 12px 32px rgba(0,0,0,0.5);
+  --focus: var(--lapis);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+  --radius-0: 0px;
+  --radius-1: 2px;
+  --radius-2: 4px;
+  --radius-tile: 22%;
+  --radius-coin: 50%;
+  --rule-hair: 1px;
+  --rule-strong: 2px;
+  --rule-double: 3px;
+  --font-display: "Bricolage Grotesque Variable", "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, Menlo, Consolas, monospace;
+}

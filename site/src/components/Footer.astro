@@ -1,0 +1,39 @@
+---
+import Wordmark from './Wordmark.astro';
+import Coin from './Coin.astro';
+const year = new Date().getFullYear();
+const groups = [
+	{ title: 'Product', links: [
+		['Philosophy', '/philosophy/'], ['How it works', '/how-it-works/'], ['Get started', '/get-started/'],
+		['Roadmap', '/docs/reference/roadmap/'], ['Changelog', '/docs/reference/changelog/'] ] },
+	{ title: 'Developers', links: [
+		['Documentation', '/docs/'], ['CLI reference', '/docs/reference/cli/'], ['Architecture', '/docs/developers/architecture/'],
+		['Data model', '/docs/developers/data-model/'], ['Writing a connector', '/docs/developers/connectors/'], ['Working with agents', '/docs/guides/agents/'] ] },
+	{ title: 'Resources', links: [
+		['Blog', '/blog/'], ['RSS feed', '/rss.xml'], ['Brand', '/brand/'], ['Security', '/docs/developers/security/'] ] },
+	{ title: 'Project', links: [
+		['GitHub', 'https://github.com/brancusi/ownpurse'], ['Issues', 'https://github.com/brancusi/ownpurse/issues'],
+		['Contributing', '/docs/developers/contributing/'], ['caretline', 'https://github.com/brancusi/caretline'] ] },
+];
+---
+<footer class="site-footer">
+	<div class="wrap">
+		<div class="top">
+			<div class="brand">
+				<a href="/" aria-label="ownpurse home" style="color: var(--ink-1); text-decoration: none; display: inline-flex;"><Wordmark size={28} /></a>
+				<p>Local books for you and your agents. Every fact about your money, in a record you hold.</p>
+				<span class="status"><Coin kind="posted" label="Early access" /> · Xero connector available</span>
+			</div>
+			{groups.map((g) => (
+				<nav aria-label={g.title}>
+					<h2>{g.title}</h2>
+					<ul>{g.links.map(([label, href]) => <li><a href={href}>{label}</a></li>)}</ul>
+				</nav>
+			))}
+		</div>
+		<div class="bottom">
+			<span>© {year} ownpurse. Open source under the MIT licence.</span>
+			<span>Not affiliated with or endorsed by Xero Limited. Xero is a trademark of Xero Limited.</span>
+		</div>
+	</div>
+</footer>

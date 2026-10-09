@@ -1,0 +1,20 @@
+{
+ "argv": [
+  "--offline",
+  "show",
+  "all",
+  "Accounts",
+  "x"
+ ],
+ "exit": 2,
+ "json": [
+  {
+   "error": "usage",
+   "message": "'all' names 3 orgs; this command works on one.",
+   "help": [
+    "Pick one of: one, hq, co"
+   ]
+  }
+ ],
+ "text": "error: usage\nmessage: 'all' names 3 orgs; this command works on one.\nhelp[1]:\n  Pick one of: one, hq, co\n"
+}

@@ -1,0 +1,20 @@
+{
+ "argv": [
+  "--offline",
+  "tb",
+  "group:nope",
+  "--date",
+  "2025-12-31"
+ ],
+ "exit": 2,
+ "json": [
+  {
+   "error": "usage",
+   "message": "Unknown group 'nope'.",
+   "help": [
+    "Groups: pair, every, duo"
+   ]
+  }
+ ],
+ "text": "error: usage\nmessage: Unknown group 'nope'.\nhelp[1]:\n  Groups: pair, every, duo\n"
+}

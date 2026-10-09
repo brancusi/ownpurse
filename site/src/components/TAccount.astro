@@ -1,0 +1,17 @@
+---
+import Amount from './Amount.astro';
+import Coin from './Coin.astro';
+interface Line { label: string; amount: number }
+interface Props { title: string; code?: string; debits?: Line[]; credits?: Line[] }
+const { title, code, debits = [], credits = [] } = Astro.props;
+const sum = (xs: Line[]) => Math.round(xs.reduce((a, x) => a + x.amount * 100, 0)) / 100;
+const dr = sum(debits), cr = sum(credits), diff = Math.round((dr - cr) * 100) / 100;
+---
+<div class="op-taccount">
+	<div class="head"><span class="name">{title}</span>{code && <span class="code">{code}</span>}</div>
+	<div class="body">
+		<div class="side"><div class="side-l">DR</div>{debits.map((l) => <div class="ln"><span>{l.label}</span><Amount value={l.amount} /></div>)}<div class="tot"><Amount value={dr} total /></div></div>
+		<div class="side"><div class="side-l">CR</div>{credits.map((l) => <div class="ln"><span>{l.label}</span><Amount value={l.amount} /></div>)}<div class="tot"><Amount value={cr} total /></div></div>
+	</div>
+	<div class="foot">{diff === 0 ? <Coin kind="balanced" label="Nil balance" /> : <span class="bal">{diff < 0 ? 'Credit balance' : 'Debit balance'} <Amount value={Math.abs(diff)} /></span>}</div>
+</div>

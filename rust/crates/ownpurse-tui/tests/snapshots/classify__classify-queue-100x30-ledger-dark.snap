@@ -1,0 +1,305 @@
+---
+source: crates/ownpurse-tui/tests/classify.rs
+assertion_line: 41
+expression: styled(&buf)
+---
+  All organisations ●●●● ▾    as of 2025-12-31    classify: 38 open · 2 stale          ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────────────────────────────────────────────────────────━━━━━━━━━━───────────────────────
+  all › Classify › Queue
+ Queue 38 · Groups · Audition · Tree · Catalog
+  org: all · account: any · month: any · project: any · status: open
+ org    date       payee                amount suggestion      conf│ Bank transaction bt-308 · des…
+▌design 2025-03-18 Vellum & Quoin…    (219.47) stale Wayfindi… !   │ 2025-03-18 · Vellum & Quoin T…
+ roast  2025-10-21 Emberline Ther…    (214.77) stale Sample r… !   │ Typeface licence renewal
+ hold   2024-10-08 Halberd Mutual…   36,742.18 no project +1   .80 │ (219.47) · 1630 Prepaid Typef…
+ roast  2025-06-24 Wren & Ashby C…   11,287.06 no project +1   .91 │ reconciled ✓
+ roast  2025-02-03 Larkspur Groce…    9,104.57 no project +1   .91 │
+ roast  2024-08-19 Larkspur Groce…    7,316.42 no project +2   .91 │ Project    stale  Wayfinding …
+ hold   2025-02-26 Saltmarsh Cupp…  (6,912.48) Sample roas… +1 .80 │ Bearer     R .80  Quillfeathe…
+ lab    2025-02-26 Brackenridge L…    6,912.48 Sample roas… +1 .80 │ Treatment         —
+ roast  2025-03-04 Cordillera Gre…  (4,276.31) no project +1   .80 │ Should-be         —
+ design 2024-09-16 Corbel Worksta…  (3,418.31) no project +1   .80 │ line changed: amount (212.83)
+ design 2025-04-30 Management fee…    2,764.18 no project +2   .80 │ → (219.47)
+ design 2025-04-30 Management fee…  (2,764.18) no project +2   .80 │
+ hold   2025-04-30 Management fee…    2,764.18 no project +2   .80 │ p1 Harvest Blend launch
+ hold   2025-04-30 Management fee…  (2,764.18) no project +2   .80 │ p2 Wayfinding refit
+ design 2025-06-17 Brackenridge L…  (2,764.18) no project +2   .80 │ p3 Sample roaster programme
+ hold   2025-06-17 Quillfeather D…    2,764.18 no project +2   .80 │ p4 Cupping lab fit-out
+ design 2025-08-31 Management fee…    2,764.18 no project +2   .80 │ p5 No project
+ design 2025-08-31 Management fee…  (2,764.18) no project +2   .80 │
+ hold   2025-08-31 Management fee…    2,764.18 no project +2   .80 │ Rule      r-bearer-design · o…
+ hold   2025-08-31 Management fee…  (2,764.18) no project +2   .80 │
+ lab    2025-01-07 Saltmarsh Memb…    2,486.19 no project +1   .80 │
+ design 2024-11-30 Management fee…    1,906.33 no project +2   .80 │
+  Enter Accept  p Project  b Bearer  t Treatment  / Filter  q Quit  ⌃P palette          v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-19 fg=#72B6D4 bg=#243137 +B
+r0 20-20 fg=#4DBFA9 bg=#243137 +B
+r0 21-21 fg=#9D8FF2 bg=#243137 +B
+r0 22-22 fg=#E8834F bg=#243137 +B
+r0 23-23 fg=#E8769F bg=#243137 +B
+r0 24-29 fg=#93A0A7 bg=#243137
+r0 30-45 fg=#B9C4C9 bg=#243137
+r0 46-49 fg=#93A0A7 bg=#243137
+r0 50-76 fg=#E6BC5E bg=#243137
+r0 77-86 fg=#93A0A7 bg=#243137
+r0 87-97 fg=#717E85 bg=#243137
+r0 98-99 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#93A0A7 bg=#171D20
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#E6ECEE bg=#171D20 +B
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-99 bg=#171D20
+r2 0-66 fg=#2D383E
+r2 67-76 fg=#72B6D4 +B
+r2 77-99 fg=#2D383E
+r3 2-18 fg=#93A0A7
+r3 19-23 fg=#E6ECEE
+r4 1-8 fg=#72B6D4 +B
+r4 9-11 fg=#93A0A7
+r4 12-17 fg=#E6ECEE
+r4 18-20 fg=#93A0A7
+r4 21-28 fg=#E6ECEE
+r4 29-31 fg=#93A0A7
+r4 32-35 fg=#E6ECEE
+r4 36-38 fg=#93A0A7
+r4 39-45 fg=#E6ECEE
+r5 2-67 fg=#93A0A7
+r6 1-66 fg=#93A0A7
+r6 67-67 fg=#2D383E
+r6 69-91 fg=#E6ECEE +B
+r6 92-94 fg=#93A0A7
+r6 95-98 fg=#E6ECEE
+r7 0-0 fg=#72B6D4 bg=#253540 +B
+r7 1-6 fg=#E6ECEE bg=#253540
+r7 7-7 bg=#253540
+r7 8-17 fg=#93A0A7 bg=#253540
+r7 18-18 bg=#253540
+r7 19-33 fg=#E6ECEE bg=#253540
+r7 34-34 bg=#253540
+r7 35-45 fg=#E6ECEE bg=#253540
+r7 46-46 bg=#253540
+r7 47-61 fg=#E6BC5E bg=#253540
+r7 62-62 bg=#253540
+r7 63-66 fg=#E6BC5E bg=#253540
+r7 67-67 fg=#2D383E
+r7 69-81 fg=#93A0A7
+r7 82-98 fg=#E6ECEE
+r8 1-6 fg=#E6ECEE
+r8 8-17 fg=#93A0A7
+r8 19-33 fg=#E6ECEE
+r8 35-45 fg=#E6ECEE
+r8 47-61 fg=#E6BC5E
+r8 63-66 fg=#E6BC5E
+r8 67-67 fg=#2D383E
+r8 69-92 fg=#93A0A7
+r9 1-6 fg=#E6ECEE
+r9 8-17 fg=#93A0A7
+r9 19-33 fg=#E6ECEE
+r9 35-45 fg=#E6ECEE
+r9 47-61 fg=#93A0A7
+r9 63-66 fg=#93A0A7
+r9 67-67 fg=#2D383E
+r9 69-76 fg=#E6ECEE
+r9 77-79 fg=#93A0A7
+r9 80-98 fg=#E6ECEE
+r10 1-6 fg=#E6ECEE
+r10 8-17 fg=#93A0A7
+r10 19-33 fg=#E6ECEE
+r10 35-45 fg=#E6ECEE
+r10 47-61 fg=#93A0A7
+r10 63-66 fg=#93A0A7
+r10 67-67 fg=#2D383E
+r10 69-80 fg=#93A0A7
+r11 1-6 fg=#E6ECEE
+r11 8-17 fg=#93A0A7
+r11 19-33 fg=#E6ECEE
+r11 35-45 fg=#E6ECEE
+r11 47-61 fg=#93A0A7
+r11 63-66 fg=#93A0A7
+r11 67-67 fg=#2D383E
+r12 1-6 fg=#E6ECEE
+r12 8-17 fg=#93A0A7
+r12 19-33 fg=#E6ECEE
+r12 35-45 fg=#E6ECEE
+r12 47-61 fg=#93A0A7
+r12 63-66 fg=#93A0A7
+r12 67-67 fg=#2D383E
+r12 69-79 fg=#93A0A7
+r12 80-86 fg=#E6BC5E
+r12 87-98 fg=#E6ECEE
+r13 1-6 fg=#E6ECEE
+r13 8-17 fg=#93A0A7
+r13 19-33 fg=#E6ECEE
+r13 35-45 fg=#E6ECEE
+r13 47-61 fg=#E6ECEE
+r13 63-66 fg=#93A0A7
+r13 67-67 fg=#2D383E
+r13 69-86 fg=#93A0A7
+r13 87-98 fg=#E6ECEE
+r14 1-6 fg=#E6ECEE
+r14 8-17 fg=#93A0A7
+r14 19-33 fg=#E6ECEE
+r14 35-45 fg=#E6ECEE
+r14 47-61 fg=#E6ECEE
+r14 63-66 fg=#93A0A7
+r14 67-67 fg=#2D383E
+r14 69-87 fg=#93A0A7
+r15 1-6 fg=#E6ECEE
+r15 8-17 fg=#93A0A7
+r15 19-33 fg=#E6ECEE
+r15 35-45 fg=#E6ECEE
+r15 47-61 fg=#93A0A7
+r15 63-66 fg=#93A0A7
+r15 67-67 fg=#2D383E
+r15 69-87 fg=#93A0A7
+r16 1-6 fg=#E6ECEE
+r16 8-17 fg=#93A0A7
+r16 19-33 fg=#E6ECEE
+r16 35-45 fg=#E6ECEE
+r16 47-61 fg=#93A0A7
+r16 63-66 fg=#93A0A7
+r16 67-67 fg=#2D383E
+r16 69-97 fg=#E6BC5E
+r17 1-6 fg=#E6ECEE
+r17 8-17 fg=#93A0A7
+r17 19-33 fg=#E6ECEE
+r17 35-45 fg=#E6ECEE
+r17 47-61 fg=#93A0A7
+r17 63-66 fg=#93A0A7
+r17 67-67 fg=#2D383E
+r17 69-78 fg=#E6BC5E
+r18 1-6 fg=#E6ECEE
+r18 8-17 fg=#93A0A7
+r18 19-33 fg=#E6ECEE
+r18 35-45 fg=#E6ECEE
+r18 47-61 fg=#93A0A7
+r18 63-66 fg=#93A0A7
+r18 67-67 fg=#2D383E
+r19 1-6 fg=#E6ECEE
+r19 8-17 fg=#93A0A7
+r19 19-33 fg=#E6ECEE
+r19 35-45 fg=#E6ECEE
+r19 47-61 fg=#93A0A7
+r19 63-66 fg=#93A0A7
+r19 67-67 fg=#2D383E
+r19 69-71 fg=#E6ECEE
+r19 72-91 fg=#93A0A7
+r20 1-6 fg=#E6ECEE
+r20 8-17 fg=#93A0A7
+r20 19-33 fg=#E6ECEE
+r20 35-45 fg=#E6ECEE
+r20 47-61 fg=#93A0A7
+r20 63-66 fg=#93A0A7
+r20 67-67 fg=#2D383E
+r20 69-71 fg=#E6ECEE
+r20 72-87 fg=#93A0A7
+r21 1-6 fg=#E6ECEE
+r21 8-17 fg=#93A0A7
+r21 19-33 fg=#E6ECEE
+r21 35-45 fg=#E6ECEE
+r21 47-61 fg=#93A0A7
+r21 63-66 fg=#93A0A7
+r21 67-67 fg=#2D383E
+r21 69-71 fg=#E6ECEE
+r21 72-95 fg=#93A0A7
+r22 1-6 fg=#E6ECEE
+r22 8-17 fg=#93A0A7
+r22 19-33 fg=#E6ECEE
+r22 35-45 fg=#E6ECEE
+r22 47-61 fg=#93A0A7
+r22 63-66 fg=#93A0A7
+r22 67-67 fg=#2D383E
+r22 69-71 fg=#E6ECEE
+r22 72-90 fg=#93A0A7
+r23 1-6 fg=#E6ECEE
+r23 8-17 fg=#93A0A7
+r23 19-33 fg=#E6ECEE
+r23 35-45 fg=#E6ECEE
+r23 47-61 fg=#93A0A7
+r23 63-66 fg=#93A0A7
+r23 67-67 fg=#2D383E
+r23 69-71 fg=#E6ECEE
+r23 72-81 fg=#93A0A7
+r24 1-6 fg=#E6ECEE
+r24 8-17 fg=#93A0A7
+r24 19-33 fg=#E6ECEE
+r24 35-45 fg=#E6ECEE
+r24 47-61 fg=#93A0A7
+r24 63-66 fg=#93A0A7
+r24 67-67 fg=#2D383E
+r25 1-6 fg=#E6ECEE
+r25 8-17 fg=#93A0A7
+r25 19-33 fg=#E6ECEE
+r25 35-45 fg=#E6ECEE
+r25 47-61 fg=#93A0A7
+r25 63-66 fg=#93A0A7
+r25 67-67 fg=#2D383E
+r25 69-78 fg=#93A0A7
+r25 79-93 fg=#E6ECEE
+r25 94-98 fg=#93A0A7
+r26 1-6 fg=#E6ECEE
+r26 8-17 fg=#93A0A7
+r26 19-33 fg=#E6ECEE
+r26 35-45 fg=#E6ECEE
+r26 47-61 fg=#93A0A7
+r26 63-66 fg=#93A0A7
+r26 67-67 fg=#2D383E
+r27 1-6 fg=#E6ECEE
+r27 8-17 fg=#93A0A7
+r27 19-33 fg=#E6ECEE
+r27 35-45 fg=#E6ECEE
+r27 47-61 fg=#93A0A7
+r27 63-66 fg=#93A0A7
+r27 67-67 fg=#2D383E
+r28 1-6 fg=#E6ECEE
+r28 8-17 fg=#93A0A7
+r28 19-33 fg=#E6ECEE
+r28 35-45 fg=#E6ECEE
+r28 47-61 fg=#93A0A7
+r28 63-66 fg=#93A0A7
+r28 67-67 fg=#2D383E
+r29 0-1 bg=#1B2226
+r29 2-6 fg=#FFFFFF bg=#1B2226
+r29 7-7 bg=#1B2226
+r29 8-15 fg=#93A0A7 bg=#1B2226
+r29 16-16 fg=#FFFFFF bg=#1B2226
+r29 17-17 bg=#1B2226
+r29 18-26 fg=#93A0A7 bg=#1B2226
+r29 27-27 fg=#FFFFFF bg=#1B2226
+r29 28-28 bg=#1B2226
+r29 29-36 fg=#93A0A7 bg=#1B2226
+r29 37-37 fg=#FFFFFF bg=#1B2226
+r29 38-38 bg=#1B2226
+r29 39-49 fg=#93A0A7 bg=#1B2226
+r29 50-50 fg=#FFFFFF bg=#1B2226
+r29 51-51 bg=#1B2226
+r29 52-59 fg=#93A0A7 bg=#1B2226
+r29 60-60 fg=#FFFFFF bg=#1B2226
+r29 61-61 bg=#1B2226
+r29 62-67 fg=#93A0A7 bg=#1B2226
+r29 68-69 fg=#FFFFFF bg=#1B2226
+r29 70-70 bg=#1B2226
+r29 71-77 fg=#93A0A7 bg=#1B2226
+r29 78-87 bg=#1B2226
+r29 88-98 fg=#717E85 bg=#1B2226
+r29 99-99 bg=#1B2226

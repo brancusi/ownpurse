@@ -1,0 +1,299 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ●●●● compare: roast · hold · design · lab ▾    as of 2025-12-31                                                              ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Ledger › compare trial balances at 2025-12-31 (accrual)
+  align: map                                                                                                                   ✓ all TB+25
+                                    │          roast          │          hold           │         design          │           lab
+                                    │         TB+25 ✓         │         TB+25 ✓         │         TB+25 ✓         │         TB+25 ✓
+  code    account                   │       debit       credit│       debit       credit│       debit       credit│       debit       credit
+▌         Cash and cards            │   39,680.92             │   16,109.61             │   18,081.10             │    9,036.95
+          roast Tallowmere Roastery Operating Account, Tallowmere Green-Bean Card · hold Brackenridge Reserve Account · design Quillfeathe…
+          Intra-group balances      │                15,568.80│   27,151.79             │                 3,988.30│                 6,855.35
+          Equity                    │                11,934.69│                38,648.51│                26,398.09│                 2,486.19
+          Management fees           │           —            —│                 5,528.36│    5,528.36             │           —            —
+          Revenue                   │                20,391.63│                   412.37│                 5,842.16│                    57.13
+          Expenses                  │    8,214.20             │    1,327.84             │           —            —│      361.72
+          ── only in design ──
+  1520    Large-Format Plotters     │           —            —│           —            —│   17,914.26             │           —            —
+  1530    Drafting Workstations     │           —            —│           —            —│    7,066.16             │           —            —
+  1610    Cartwright Yard Lease Bond│           —            —│           —            —│    2,531.79             │           —            —
+  1620    Sabbatical Reserve Fund   │           —            —│           —            —│    8,209.43             │           —            —
+  1630    Prepaid Typeface Licences │           —            —│           —            —│    1,132.74             │           —            —
+  2250    Payroll Withholding Payab…│           —            —│           —            —│                 1,847.36│           —            —
+  2810    Plotter Hire-Purchase     │           —            —│           —            —│                12,614.79│           —            —
+  2820    Workstation Finance Lease │           —            —│           —            —│                 9,773.14│           —            —
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+          Total (each org's own)    │   49,886.02  49,886.02 ✓│   44,589.24  44,589.24 ✓│   64,644.55  64,644.55 ✓│    9,760.39   9,760.39 ✓
+  a Align  h Full history  > Col ▸  x Drop col  q Quit  ? more  ⌃P palette                                                      v0.0.0-test
+--- styles
+r0 0-1 bg=#243137
+r0 2-2 fg=#4DBFA9 bg=#243137 +B
+r0 3-3 fg=#9D8FF2 bg=#243137 +B
+r0 4-4 fg=#E8834F bg=#243137 +B
+r0 5-5 fg=#E8769F bg=#243137 +B
+r0 6-6 fg=#93A0A7 bg=#243137
+r0 7-42 fg=#72B6D4 bg=#243137 +B
+r0 43-48 fg=#93A0A7 bg=#243137
+r0 49-64 fg=#B9C4C9 bg=#243137
+r0 65-126 fg=#93A0A7 bg=#243137
+r0 127-137 fg=#717E85 bg=#243137
+r0 138-139 bg=#243137
+r1 0-1 bg=#171D20
+r1 2-3 fg=#717E85 bg=#171D20
+r1 4-11 fg=#93A0A7 bg=#171D20
+r1 12-14 bg=#171D20
+r1 15-16 fg=#717E85 bg=#171D20
+r1 17-22 fg=#E6ECEE bg=#171D20 +B
+r1 23-25 bg=#171D20
+r1 26-27 fg=#717E85 bg=#171D20
+r1 28-39 fg=#93A0A7 bg=#171D20
+r1 40-42 bg=#171D20
+r1 43-44 fg=#717E85 bg=#171D20
+r1 45-52 fg=#93A0A7 bg=#171D20
+r1 53-55 bg=#171D20
+r1 56-57 fg=#717E85 bg=#171D20
+r1 58-63 fg=#93A0A7 bg=#171D20
+r1 64-66 bg=#171D20
+r1 67-68 fg=#717E85 bg=#171D20
+r1 69-76 fg=#93A0A7 bg=#171D20
+r1 77-79 bg=#171D20
+r1 80-81 fg=#717E85 bg=#171D20
+r1 82-89 fg=#93A0A7 bg=#171D20
+r1 90-139 bg=#171D20
+r2 0-14 fg=#2D383E
+r2 15-22 fg=#72B6D4 +B
+r2 23-139 fg=#2D383E
+r3 2-10 fg=#93A0A7
+r3 11-56 fg=#E6ECEE
+r4 2-11 fg=#93A0A7
+r4 127-137 fg=#93A0A7
+r5 36-36 fg=#2D383E
+r5 47-51 fg=#E6ECEE +B
+r5 62-62 fg=#2D383E
+r5 73-76 fg=#E6ECEE +B
+r5 88-88 fg=#2D383E
+r5 98-103 fg=#E6ECEE +B
+r5 114-114 fg=#2D383E
+r5 126-128 fg=#E6ECEE +B
+r6 36-36 fg=#2D383E
+r6 46-52 fg=#93A0A7
+r6 62-62 fg=#2D383E
+r6 72-78 fg=#93A0A7
+r6 88-88 fg=#2D383E
+r6 98-104 fg=#93A0A7
+r6 114-114 fg=#2D383E
+r6 124-130 fg=#93A0A7
+r7 2-5 fg=#93A0A7
+r7 10-16 fg=#93A0A7
+r7 36-36 fg=#2D383E
+r7 38-61 fg=#93A0A7
+r7 62-62 fg=#2D383E
+r7 64-87 fg=#93A0A7
+r7 88-88 fg=#2D383E
+r7 90-113 fg=#93A0A7
+r7 114-114 fg=#2D383E
+r7 116-139 fg=#93A0A7
+r8 0-0 fg=#72B6D4 bg=#253540 +B
+r8 1-1 bg=#253540
+r8 2-7 fg=#93A0A7 bg=#253540
+r8 8-9 bg=#253540
+r8 10-35 fg=#E6ECEE bg=#253540 +BR
+r8 36-36 fg=#2D383E bg=#253540
+r8 37-37 bg=#253540
+r8 38-61 fg=#E6ECEE bg=#253540
+r8 62-62 fg=#2D383E bg=#253540
+r8 63-63 bg=#253540
+r8 64-87 fg=#E6ECEE bg=#253540
+r8 88-88 fg=#2D383E bg=#253540
+r8 89-89 bg=#253540
+r8 90-113 fg=#E6ECEE bg=#253540
+r8 114-114 fg=#2D383E bg=#253540
+r8 115-115 bg=#253540
+r8 116-139 fg=#E6ECEE bg=#253540
+r9 0-9 bg=#253540
+r9 10-138 fg=#93A0A7 bg=#253540
+r9 139-139 bg=#253540
+r10 2-7 fg=#93A0A7
+r10 10-35 fg=#E6ECEE
+r10 36-36 fg=#2D383E
+r10 38-61 fg=#E6ECEE
+r10 62-62 fg=#2D383E
+r10 64-87 fg=#E6ECEE
+r10 88-88 fg=#2D383E
+r10 90-113 fg=#E6ECEE
+r10 114-114 fg=#2D383E
+r10 116-139 fg=#E6ECEE
+r11 2-7 fg=#93A0A7
+r11 10-35 fg=#E6ECEE
+r11 36-36 fg=#2D383E
+r11 38-61 fg=#E6ECEE
+r11 62-62 fg=#2D383E
+r11 64-87 fg=#E6ECEE
+r11 88-88 fg=#2D383E
+r11 90-113 fg=#E6ECEE
+r11 114-114 fg=#2D383E
+r11 116-139 fg=#E6ECEE
+r12 2-7 fg=#93A0A7
+r12 10-35 fg=#E6ECEE
+r12 36-36 fg=#2D383E
+r12 38-61 fg=#93A0A7
+r12 62-62 fg=#2D383E
+r12 64-87 fg=#E6ECEE
+r12 88-88 fg=#2D383E
+r12 90-113 fg=#E6ECEE
+r12 114-114 fg=#2D383E
+r12 116-139 fg=#93A0A7
+r13 2-7 fg=#93A0A7
+r13 10-35 fg=#E6ECEE
+r13 36-36 fg=#2D383E
+r13 38-61 fg=#E6ECEE
+r13 62-62 fg=#2D383E
+r13 64-87 fg=#E6ECEE
+r13 88-88 fg=#2D383E
+r13 90-113 fg=#E6ECEE
+r13 114-114 fg=#2D383E
+r13 116-139 fg=#E6ECEE
+r14 2-7 fg=#93A0A7
+r14 10-35 fg=#E6ECEE
+r14 36-36 fg=#2D383E
+r14 38-61 fg=#E6ECEE
+r14 62-62 fg=#2D383E
+r14 64-87 fg=#E6ECEE
+r14 88-88 fg=#2D383E
+r14 90-113 fg=#93A0A7
+r14 114-114 fg=#2D383E
+r14 116-139 fg=#E6ECEE
+r15 10-29 fg=#93A0A7
+r16 2-7 fg=#93A0A7
+r16 10-35 fg=#E6ECEE
+r16 36-36 fg=#2D383E
+r16 38-61 fg=#93A0A7
+r16 62-62 fg=#2D383E
+r16 64-87 fg=#93A0A7
+r16 88-88 fg=#2D383E
+r16 90-113 fg=#E6ECEE
+r16 114-114 fg=#2D383E
+r16 116-139 fg=#93A0A7
+r17 2-7 fg=#93A0A7
+r17 10-35 fg=#E6ECEE
+r17 36-36 fg=#2D383E
+r17 38-61 fg=#93A0A7
+r17 62-62 fg=#2D383E
+r17 64-87 fg=#93A0A7
+r17 88-88 fg=#2D383E
+r17 90-113 fg=#E6ECEE
+r17 114-114 fg=#2D383E
+r17 116-139 fg=#93A0A7
+r18 2-7 fg=#93A0A7
+r18 10-35 fg=#E6ECEE
+r18 36-36 fg=#2D383E
+r18 38-61 fg=#93A0A7
+r18 62-62 fg=#2D383E
+r18 64-87 fg=#93A0A7
+r18 88-88 fg=#2D383E
+r18 90-113 fg=#E6ECEE
+r18 114-114 fg=#2D383E
+r18 116-139 fg=#93A0A7
+r19 2-7 fg=#93A0A7
+r19 10-35 fg=#E6ECEE
+r19 36-36 fg=#2D383E
+r19 38-61 fg=#93A0A7
+r19 62-62 fg=#2D383E
+r19 64-87 fg=#93A0A7
+r19 88-88 fg=#2D383E
+r19 90-113 fg=#E6ECEE
+r19 114-114 fg=#2D383E
+r19 116-139 fg=#93A0A7
+r20 2-7 fg=#93A0A7
+r20 10-35 fg=#E6ECEE
+r20 36-36 fg=#2D383E
+r20 38-61 fg=#93A0A7
+r20 62-62 fg=#2D383E
+r20 64-87 fg=#93A0A7
+r20 88-88 fg=#2D383E
+r20 90-113 fg=#E6ECEE
+r20 114-114 fg=#2D383E
+r20 116-139 fg=#93A0A7
+r21 2-7 fg=#93A0A7
+r21 10-35 fg=#E6ECEE
+r21 36-36 fg=#2D383E
+r21 38-61 fg=#93A0A7
+r21 62-62 fg=#2D383E
+r21 64-87 fg=#93A0A7
+r21 88-88 fg=#2D383E
+r21 90-113 fg=#E6ECEE
+r21 114-114 fg=#2D383E
+r21 116-139 fg=#93A0A7
+r22 2-7 fg=#93A0A7
+r22 10-35 fg=#E6ECEE
+r22 36-36 fg=#2D383E
+r22 38-61 fg=#93A0A7
+r22 62-62 fg=#2D383E
+r22 64-87 fg=#93A0A7
+r22 88-88 fg=#2D383E
+r22 90-113 fg=#E6ECEE
+r22 114-114 fg=#2D383E
+r22 116-139 fg=#93A0A7
+r23 2-7 fg=#93A0A7
+r23 10-35 fg=#E6ECEE
+r23 36-36 fg=#2D383E
+r23 38-61 fg=#93A0A7
+r23 62-62 fg=#2D383E
+r23 64-87 fg=#93A0A7
+r23 88-88 fg=#2D383E
+r23 90-113 fg=#E6ECEE
+r23 114-114 fg=#2D383E
+r23 116-139 fg=#93A0A7
+r37 2-139 fg=#2D383E
+r38 10-35 fg=#E6ECEE +B
+r38 36-36 fg=#2D383E
+r38 38-61 fg=#E6ECEE +B
+r38 62-62 fg=#2D383E
+r38 64-87 fg=#E6ECEE +B
+r38 88-88 fg=#2D383E
+r38 90-113 fg=#E6ECEE +B
+r38 114-114 fg=#2D383E
+r38 116-139 fg=#E6ECEE +B
+r39 0-1 bg=#1B2226
+r39 2-2 fg=#FFFFFF bg=#1B2226
+r39 3-3 bg=#1B2226
+r39 4-10 fg=#93A0A7 bg=#1B2226
+r39 11-11 fg=#FFFFFF bg=#1B2226
+r39 12-12 bg=#1B2226
+r39 13-26 fg=#93A0A7 bg=#1B2226
+r39 27-27 fg=#FFFFFF bg=#1B2226
+r39 28-28 bg=#1B2226
+r39 29-35 fg=#93A0A7 bg=#1B2226
+r39 36-36 fg=#FFFFFF bg=#1B2226
+r39 37-37 bg=#1B2226
+r39 38-47 fg=#93A0A7 bg=#1B2226
+r39 48-48 fg=#FFFFFF bg=#1B2226
+r39 49-49 bg=#1B2226
+r39 50-55 fg=#93A0A7 bg=#1B2226
+r39 56-56 fg=#FFFFFF bg=#1B2226
+r39 57-57 bg=#1B2226
+r39 58-63 fg=#93A0A7 bg=#1B2226
+r39 64-65 fg=#FFFFFF bg=#1B2226
+r39 66-66 bg=#1B2226
+r39 67-73 fg=#93A0A7 bg=#1B2226
+r39 74-127 bg=#1B2226
+r39 128-138 fg=#717E85 bg=#1B2226
+r39 139-139 bg=#1B2226

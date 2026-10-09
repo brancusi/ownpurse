@@ -1,0 +1,32 @@
+{
+ "argv": [
+  "--offline",
+  "list",
+  "one",
+  "CreditNotes"
+ ],
+ "exit": 0,
+ "json": [
+  {
+   "entity": "CreditNotes",
+   "as_of": "2026-10-05T07:46:00",
+   "records": [
+    {
+     "date": "2025-05-01",
+     "type": "ACCPAYCREDIT",
+     "number": null,
+     "contact": null,
+     "status": "AUTHORISED",
+     "total": "21.68",
+     "remaining": null,
+     "id": "cn-1"
+    }
+   ],
+   "records_count": 1,
+   "help": [
+    "`--fields a,b.c` picks payload fields; `ownpurse show <org> CreditNotes <id>` for one record."
+   ]
+  }
+ ],
+ "text": "entity: CreditNotes\nas_of: 2026-10-05T07:46:00\nrecords[1]{date,type,number,contact,status,total,remaining,id}:\n  2025-05-01,ACCPAYCREDIT,,,AUTHORISED,21.68,,cn-1\nhelp[1]:\n  `--fields a,b.c` picks payload fields; `ownpurse show <org> CreditNotes <id>` for one record.\n"
+}

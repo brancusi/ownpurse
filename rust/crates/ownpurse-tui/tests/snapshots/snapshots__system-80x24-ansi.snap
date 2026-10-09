@@ -1,0 +1,81 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+expression: styled(&shown)
+---
+  All organisations ●●●● ▾    as of 2025-12-31                     ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify
+────────────────────────────────────────────────────────━━━━━━━━────────────────
+  all › System
+  Connection
+  token: managed by the CLI (`ownpurse login`) · token file tokens/demo.json
+  cli: ~/.local/bin/ownpurse (0.9.0)
+  scopes: 15 read · 3 write (unused)
+  org     name                                 records  last sync
+▌ roast   Tallowmere Coffee Roasting Co.            28  07:46 UTC · 2h ago
+  hold    Brackenridge Lane Holdings Ltd            20  07:46 UTC · 2h ago
+  design  Quillfeather Design Consultancy LLP       32  07:46 UTC · 2h ago
+  lab     Saltmarsh Cupping Lab LLC                 12  07:46 UTC · 2h ago
+
+  Settings
+  Config: tests/fixtures/demo/ownpurse.json · profile demo · store tests/fixtu…
+  key                                       value                   source
+  xero.auth_url                             https://login.xero.co…  defaults
+  xero.token_url                            https://identity.xero…  defaults
+  xero.revoke_url                           https://identity.xero…  defaults
+  xero.connections_url                      https://api.xero.com/…  defaults
+────────────────────────────────────────────────────────────────────────────────
+ roast · Tallowmere Coffee Roasting Co. · tenant c0ffee00-0000-4000-8000-00000…
+  q  /  ]  g  i  ?  ⌃P palette                                      v0.0.0-test
+--- styles
+r0 2-23 +B
+r0 24-29 +D
+r0 46-77 +D
+r1 2-11 +D
+r1 15-22 +D
+r1 26-39 +D
+r1 43-52 +D
+r1 56-57 +D
+r1 58-63 +B
+r1 67-76 +D
+r2 0-55 +D
+r2 56-63 +BD
+r2 64-79 +D
+r3 2-7 +D
+r4 2-11 +B
+r5 2-75 +D
+r6 2-35 +D
+r7 2-35 +D
+r8 2-7 +D
+r8 10-44 +D
+r8 47-53 +D
+r8 56-73 +D
+r9 0-0 +BR
+r9 1-79 +R
+r10 10-44 +D
+r11 10-44 +D
+r12 10-44 +D
+r14 2-9 +B
+r15 2-78 +D
+r16 2-41 +D
+r16 44-65 +D
+r16 68-79 +D
+r17 68-79 +D
+r18 68-79 +D
+r19 68-79 +D
+r20 68-79 +D
+r21 0-79 +D
+r23 2-2 +B
+r23 3-4 +D
+r23 5-5 +B
+r23 6-7 +D
+r23 8-8 +B
+r23 9-10 +D
+r23 11-11 +B
+r23 12-13 +D
+r23 14-14 +B
+r23 15-16 +D
+r23 17-17 +B
+r23 18-19 +D
+r23 20-21 +B
+r23 23-29 +D
+r23 68-78 +D

@@ -1,0 +1,12 @@
+<!-- @dsCard group="Figures" height=110 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Amount</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var O = window.Ownpurse, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div', {className:'op-row', style:{alignItems:'baseline'}}, h(O.Amount,{value:12480.06}), h(O.Amount,{value:-400}), h(O.Amount,{value:-86.4,sign:'minus'}), h(O.Amount,{value:3083.19,currency:'NZD'}), h(O.Amount,{value:15563.25,total:true})));
+</script>
+</body>
+</html>

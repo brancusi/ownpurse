@@ -1,0 +1,20 @@
+$ ownpurse classify config add-project market Holiday market stall --alias market stall --dry-run --expect-store-rev 82 --client claude
+exit 0
+op: config
+summary: "would change classify.toml: added project ""Holiday market stall"""
+batch: claude-2026-10-05T09:46:00.000000Z-82
+lines: 0
+store_rev: 82
+dry_run: true
+events: (none)
+diff:
+--- classify.toml
++++ classify.toml
+@@ -13,6 +13,7 @@
+   { id = "roaster", name = "Sample roaster programme", aliases = ["roaster", "afterburner", "burner"] },
+   { id = "cupping", name = "Cupping lab fit-out",    aliases = ["cupping"] },
+   { id = "none",    name = "No project" },
++  { id = "market", name = "Holiday market stall", aliases = ["market stall"] },
+ ]
+ 
+ [label_types.bearer]

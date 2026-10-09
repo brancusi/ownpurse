@@ -1,0 +1,23 @@
+$ ownpurse classify suggest status:all
+exit 0
+engine: rules
+filter: status:all
+scope: 
+dry_run: false
+lines: 49
+suggested: 2
+events: 2
+store_rev: 84
+by_rule[10]{rule,lines}:
+  r-intragroup,24
+  r-bearer-hold,14
+  r-bearer-roast,13
+  r-bearer-design,12
+  r-project-alias,11
+  r-bearer-lab,5
+  r-wholesale,3
+  r-green-beans,2
+  r-hollowpine,2
+  r-fuel,1
+help[1]:
+  Review them: `ownpurse classify queue` (or the TUI's Classify tab).

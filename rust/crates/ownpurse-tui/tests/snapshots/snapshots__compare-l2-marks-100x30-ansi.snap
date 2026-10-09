@@ -1,0 +1,146 @@
+---
+source: crates/ownpurse-tui/tests/snapshots.rs
+assertion_line: 100
+expression: styled(&shown)
+---
+  ●●●● compare: roast · hold · design · lab ▾    as of 2025-12-31                      ◦ read-only
+  1 Overview   2 Ledger   3 Intercompany   4 Activity   5 System   6 Classify   7 Manifest
+───────────────━━━━━━━━─────────────────────────────────────────────────────────────────────────────
+  Ledger › … › Tallowmere Roastery Operating Account / Brackenridge Reserve Account / Quillfeather…
+  postings side by side · no pairing inferred
+  m: highlighting existing Intercompany matches · 4 marked ≡ (none inferred here) · f sets the
+  range for every column · Esc back
+ roast · Tallowmere Roastery Operating Account (1010)   opening Dr 11,934.69   closing Dr 41,671.8…
+ hold · Brackenridge Reserve Account (1010)   opening Dr 36,742.18   closing Dr 16,109.61   5 post…
+ design · Quillfeather Client Receipts Account (1010)   opening Cr 210.90   closing Dr 2,184.87   …
+ lab · Saltmarsh Lab Account (1010)   opening 0.00   closing Dr 9,398.67   2 postings
+
+  date        │ roast        amount│ hold         amount│ design       amount│ lab          amount
+▌ 2025-01-07  │                    │                    │                    │ Receiv…    2,486.19
+  2025-01-28  │                    │                    │ Receiv…    5,842.16│
+  2025-02-03  │ Receiv…    9,104.57│                    │                    │
+  2025-02-26  │                    │ Spend …  (6,912.48)│                    │ Receiv…    6,912.48
+  2025-03-04  │ Spend …  (4,276.31)│                    │                    │
+  2025-03-11  │ ≡ Rece…   18,437.62│ ≡ Spen… (18,437.62)│                    │
+  2025-05-06  │                    │ Spend …  (1,327.84)│                    │
+  2025-05-22  │                    │                    │ Spend …  (1,148.63)│
+  2025-06-17  │                    │ Receiv…    2,764.18│ Spend …  (2,764.18)│
+  2025-06-24  │ Receiv…   11,287.06│                    │                    │
+  2025-07-14  │ ≡ Spen…  (3,281.19)│                    │                    │
+  2025-07-15  │                    │ ≡ Rece…    3,281.19│                    │
+  2025-08-08  │ Spend …  (1,148.63)│                    │ Receiv…    1,148.63│
+  2025-10-02  │ Spend …    (238.61)│                    │                    │
+  2025-10-06  │                    │                    │ Spend …    (418.27)│
+  2025-11-07  │ Spend …    (147.38)│                    │                    │
+  f Range  m IC matches  h Full history  q Quit  / Filter  ? more  ⌃P palette           v0.0.0-test
+--- styles
+r0 2-5 +B
+r0 6-6 +D
+r0 7-42 +B
+r0 43-48 +D
+r0 65-97 +D
+r1 2-11 +D
+r1 15-16 +D
+r1 17-22 +B
+r1 26-39 +D
+r1 43-52 +D
+r1 56-63 +D
+r1 67-76 +D
+r1 80-89 +D
+r2 0-14 +D
+r2 15-22 +BD
+r2 23-99 +D
+r3 2-14 +D
+r5 2-93 +D
+r6 2-34 +D
+r12 2-5 +D
+r12 14-14 +D
+r12 16-22 +B
+r12 24-35 +D
+r12 37-43 +B
+r12 45-56 +D
+r12 58-64 +B
+r12 66-77 +D
+r12 79-85 +B
+r12 87-97 +D
+r13 0-0 +BR
+r13 1-99 +R
+r14 14-14 +D
+r14 35-35 +D
+r14 56-56 +D
+r14 77-77 +D
+r15 14-14 +D
+r15 35-35 +D
+r15 56-56 +D
+r15 77-77 +D
+r16 14-14 +D
+r16 35-35 +D
+r16 56-56 +D
+r16 77-77 +D
+r17 14-14 +D
+r17 35-35 +D
+r17 56-56 +D
+r17 77-77 +D
+r18 14-14 +D
+r18 24-34 +B
+r18 35-35 +D
+r18 45-55 +B
+r18 56-56 +D
+r18 77-77 +D
+r19 14-14 +D
+r19 35-35 +D
+r19 56-56 +D
+r19 77-77 +D
+r20 14-14 +D
+r20 35-35 +D
+r20 56-56 +D
+r20 77-77 +D
+r21 14-14 +D
+r21 35-35 +D
+r21 56-56 +D
+r21 77-77 +D
+r22 14-14 +D
+r22 35-35 +D
+r22 56-56 +D
+r22 77-77 +D
+r23 14-14 +D
+r23 24-34 +B
+r23 35-35 +D
+r23 56-56 +D
+r23 77-77 +D
+r24 14-14 +D
+r24 35-35 +D
+r24 45-55 +B
+r24 56-56 +D
+r24 77-77 +D
+r25 14-14 +D
+r25 35-35 +D
+r25 56-56 +D
+r25 77-77 +D
+r26 14-14 +D
+r26 35-35 +D
+r26 56-56 +D
+r26 77-77 +D
+r27 14-14 +D
+r27 35-35 +D
+r27 56-56 +D
+r27 77-77 +D
+r28 14-14 +D
+r28 35-35 +D
+r28 56-56 +D
+r28 77-77 +D
+r29 2-2 +B
+r29 4-10 +D
+r29 11-11 +B
+r29 13-24 +D
+r29 25-25 +B
+r29 27-40 +D
+r29 41-41 +B
+r29 43-48 +D
+r29 49-49 +B
+r29 51-58 +D
+r29 59-59 +B
+r29 61-66 +D
+r29 67-68 +B
+r29 70-76 +D
+r29 88-98 +D

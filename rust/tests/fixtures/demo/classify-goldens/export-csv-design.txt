@@ -1,0 +1,17 @@
+$ ownpurse classify export --csv org:design
+exit 0
+anchor,org,date,payee,description,amount,account,project,project_source,bearer,bearer_source,treatment,treatment_source,should_be_account,should_be_account_source,stale,notes
+design:bt:bt-301:L1,design,2024-09-16,Corbel Workstation Supply,Two drafting workstations,-3418.31,1530,,,,,,,1530,human,,
+design:mj:mj-301:L1,design,2024-11-30,,Management fee Sep-Nov 2024 from Brackenridge,1906.33,6420,,,,,,,,,,
+design:mj:mj-301:L2,design,2024-11-30,,Management fee Sep-Nov 2024 from Brackenridge,-1906.33,2420,,,,,,,,,,
+design:bt:bt-302:L1,design,2025-01-28,Pemberton Ferry Authority,"Wayfinding identity, phase 1",5842.16,4120,refit,rule:r-project-alias,design,rule:r-bearer-design,owner-paid,human,,,,
+design:bt:bt-308:L1,design,2025-03-18,Vellum & Quoin Type Foundry,Typeface licence renewal,-219.47,1630,refit,human,,,,,,,true,
+design:mj:mj-302:L1,design,2025-04-30,,Management fee Jan-Apr from Brackenridge,2764.18,6420,,,,,,,,,,
+design:mj:mj-302:L2,design,2025-04-30,,Management fee Jan-Apr from Brackenridge,-2764.18,2420,,,,,,,,,,
+design:bt:bt-303:L1,design,2025-05-22,Hollowpine Packaging Works,Bag artwork proofs for Tallowmere,-1148.63,1450,harvest,rule:r-project-alias,roast,rule:r-hollowpine,intercompany,rule:r-hollowpine,,,,
+design:bt:bt-306:L1,design,2025-06-17,Brackenridge Lane Holdings,Management fee remittance,-2764.18,2420,,,,,,,,,,
+design:bt:bt-304:L1,design,2025-08-08,Tallowmere Coffee Roasting Co.,Proofs recharge settled,1148.63,1450,,,,,,,,,,
+design:mj:mj-303:L1,design,2025-08-31,,Management fee May-Aug from Brackenridge,2764.18,6420,,,,,,,,,,
+design:mj:mj-303:L2,design,2025-08-31,,Management fee May-Aug from Brackenridge,-2764.18,2420,,,,,,,,,,
+design:bt:bt-307:L1,design,2025-10-06,Corvid Registry Services,Annual return filing for the parent,-418.27,2420,,,,,,,,,,
+design:bt:bt-305:L1,design,2025-11-19,Hollowpine Packaging Works,Reprinted bag proofs for Tallowmere,-263.94,1450,harvest,rule:r-project-alias,roast,rule:r-hollowpine,intercompany,rule:r-hollowpine,,,,
