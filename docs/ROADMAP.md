@@ -14,7 +14,7 @@ In order of intent, not scheduled:
 - **A connector interface** so sources beyond Xero (QuickBooks, bank exports, spreadsheets, portfolios, files) can
   append facts with provenance, and a guide for writing one.
 - **Facts in the record**: move the record toward entity, attribute, value, time and source, with entries that can
-  be held before they are posted (`docs/PHILOSOPHY.md`).
+  be held before they are posted (`docs/PHILOSOPHY.md`). Plan: [docs/plans/FACTS.md](plans/FACTS.md).
 - **The daemon**: a small local process that schedules syncs and serves facts and live updates to tools and agents.
 - **An agent skill that installs with the CLI**, built from `docs/agent-bridge-skill-snippet.md`.
 

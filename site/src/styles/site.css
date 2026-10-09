@@ -127,3 +127,108 @@ a.op-btn { text-decoration: none }
 .demo .panel[hidden] { display: none }
 .layers > .sources { display: grid; border: 0; padding: 0 }
 .cells.three { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)) }
+
+/* blog: the fact model figures (fm-) */
+.prose table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.45; display: block; overflow-x: auto }
+.prose th { text-align: left; font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3);
+	padding: 10px 12px; background: var(--surface-1); border-bottom: 2px solid var(--ink-1); white-space: nowrap }
+.prose td { padding: 10px 12px; border-bottom: 1px solid var(--line-1); vertical-align: top; color: var(--ink-2) }
+.prose td:first-child { color: var(--ink-1); font-weight: 600 }
+.prose .fm-wide { width: min(1152px, calc(100vw - 64px)); max-width: none }
+@media (max-width: 640px) { .prose .fm-wide { width: calc(100vw - 48px) } }
+.fm-k, .fm-n { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lapis) }
+.fm-mono { font-family: var(--font-mono); font-size: 13px }
+.fm-fine { font-size: 14px; color: var(--ink-3) !important; border-top: 1px solid var(--line-1); padding-top: 16px; margin-top: 2.4em !important }
+.fm-convo-note { display: grid; gap: 6px; border-top: 1px dashed var(--lapis); padding-top: 12px; font-size: 16px }
+.fm-convo-note p { color: var(--ink-2) }
+
+.fm-atom { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1.5px solid var(--ink-1) }
+.fm-atom > div { padding: 14px 16px; border-right: 1px solid var(--line-1); display: grid; gap: 4px; align-content: start; min-width: 0 }
+.fm-atom > div:last-child { border-right: 0 }
+.fm-atom-k { font-family: var(--font-mono); font-size: 18px; font-weight: 500 }
+.fm-atom-d { font-size: 14px; line-height: 1.4; color: var(--ink-2) }
+.fm-atom-x { font-family: var(--font-mono); font-size: 12px; color: var(--lapis); overflow-wrap: anywhere }
+@media (max-width: 720px) { .fm-atom { grid-template-columns: 1fr } .fm-atom > div { border-right: 0; border-bottom: 1px solid var(--line-1) } .fm-atom > div:last-child { border-bottom: 0 } }
+.fm-txline { border: 1.5px solid var(--ink-1); border-top: 0; background: var(--surface-1); padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; font-size: 15px }
+.fm-txline span { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2) }
+
+.fm-sheet { border: 1.5px solid var(--ink-1); overflow-x: auto; background-color: var(--surface-0);
+	background-image: linear-gradient(var(--grid-major) 1px, transparent 1px), linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+		linear-gradient(var(--grid-minor) 1px, transparent 1px), linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+	background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px }
+.fm-sheet svg { display: block; min-width: 900px; width: 100%; height: auto; max-width: none }
+.fm-sheet .box { fill: var(--surface-0); stroke: var(--ink-1); stroke-width: 1.5 }
+.fm-sheet .head { fill: var(--surface-1) }
+.fm-sheet .sep { stroke: var(--ink-1); stroke-width: 1 }
+.fm-sheet .fm-band { fill: var(--surface-1); stroke: var(--ink-1); stroke-width: 1.5 }
+.fm-sheet .dash { fill: var(--surface-0); stroke: var(--line-2); stroke-width: 1; stroke-dasharray: 4 3 }
+.fm-sheet .t-name { font-family: var(--font-display); font-weight: 700; font-size: 15px; fill: var(--ink-1) }
+.fm-sheet .t-attr { font-family: var(--font-mono); font-size: 11.5px; fill: var(--ink-2) }
+.fm-sheet .t-ref { fill: var(--lapis) }
+.fm-sheet .t-col { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; fill: var(--lapis) }
+.fm-sheet .t-note { font-family: var(--font-mono); font-size: 10.5px; fill: var(--ink-3) }
+.fm-sheet .edge { stroke: var(--ink-2); stroke-width: 1.25; fill: none }
+.fm-sheet .arrow { fill: var(--ink-2) }
+.fm-titleblock { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; border: 1.5px solid var(--ink-1); border-top: 0; padding: 10px 16px; background: var(--surface-1) }
+.fm-titleblock span { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lapis) }
+
+.fm-legend { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px }
+.fm-legend > div { display: grid; gap: 6px; align-content: start; min-width: 0 }
+.fm-legend p { font-size: 14px; line-height: 1.5; color: var(--ink-2) }
+@media (max-width: 860px) { .fm-legend { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+@media (max-width: 480px) { .fm-legend { grid-template-columns: 1fr } }
+
+.fm-timeline { border-left: 2px solid var(--ink-1) }
+.fm-tx { display: grid; gap: 10px; padding: 0 0 26px 20px; position: relative; min-width: 0 }
+.fm-tx::before { content: ''; position: absolute; left: -7px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--surface-0); border: 2px solid var(--ink-1) }
+.fm-tx.fm-post::before { background: var(--verdigris); border-color: var(--verdigris) }
+.fm-tx.fm-held::before { border: 2px dashed var(--gilt) }
+.fm-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline }
+.fm-id { font-family: var(--font-mono); font-weight: 500; font-size: 14px }
+.fm-who { font-family: var(--font-mono); font-size: 12px; color: var(--lapis) }
+.fm-when { font-family: var(--font-mono); font-size: 12px; color: var(--ink-3) }
+.fm-why { font-weight: 600; font-size: 16px }
+.fm-facts { overflow-x: auto; background: var(--surface-1); border: 1px solid var(--line-1); width: fit-content; max-width: 100% }
+.prose .fm-facts table { display: table; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.4; width: auto }
+.prose .fm-facts td { padding: 5px 10px; white-space: nowrap; color: var(--ink-1); font-weight: 400 }
+.prose .fm-facts tr:last-child td { border-bottom: 0 }
+.prose .fm-facts td.op { width: 1.5em; color: var(--verdigris) }
+.prose .fm-facts td.op.r { color: var(--coin-text) }
+.prose .fm-facts td.e, .prose .fm-facts td.ref { color: var(--ink-2) }
+.prose .fm-facts td.a { color: var(--lapis) }
+.prose .fm-facts tr.retract td:last-child { text-decoration: line-through; color: var(--ink-3) }
+.fm-status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600 }
+.fm-status i { width: 10px; height: 10px; border-radius: 50%; display: inline-block }
+.fm-s-posted { color: var(--verdigris) } .fm-s-posted i { background: var(--verdigris) }
+.fm-s-held { color: var(--gilt-text) } .fm-s-held i { border: 2px dashed var(--gilt); width: 8px; height: 8px }
+
+.fm-tree { border: 1.5px solid var(--ink-1); padding: 16px 18px; max-width: 42rem }
+.fm-root { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-bottom: 12px; border-bottom: 1px solid var(--line-1) }
+.fm-amt { font-family: var(--font-mono); font-weight: 500; font-size: 18px; font-variant-numeric: tabular-nums }
+.fm-node { position: relative; padding: 10px 0 10px 22px; border-left: 2px solid var(--lapis); margin-left: 6px; display: grid; gap: 2px; min-width: 0 }
+.fm-node .fm-node { margin-left: 0 }
+.fm-node::before { content: ''; position: absolute; left: 0; top: 21px; width: 14px; border-top: 2px solid var(--lapis) }
+.fm-node:last-child { border-left-color: transparent }
+.fm-node:last-child::after { content: ''; position: absolute; left: -2px; top: 0; height: 23px; border-left: 2px solid var(--lapis) }
+.fm-rel { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--lapis); text-transform: uppercase }
+.fm-what { font-weight: 600; font-size: 16px }
+.fm-where { font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); overflow-wrap: anywhere }
+.fm-answer { border: 1px solid var(--line-1); border-top: 2px solid var(--verdigris); padding: 12px 16px; display: grid; gap: 4px; font-size: 16px }
+.fm-answer .fm-k { color: var(--verdigris) }
+
+.fm-sources { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1.5px solid var(--ink-1) }
+.fm-sources > div { padding: 16px; border-right: 1px solid var(--line-1); display: grid; gap: 8px; align-content: start; min-width: 0 }
+.fm-sources > div:last-child { border-right: 0 }
+.fm-h { font-weight: 700; font-size: 18px }
+.fm-sources dl { margin: 0; display: grid; gap: 4px }
+.fm-sources dt { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3) }
+.fm-sources dd { margin: 0 0 4px; font-size: 14px; color: var(--ink-2) }
+@media (max-width: 860px) { .fm-sources { grid-template-columns: repeat(2, minmax(0, 1fr)) } .fm-sources > div:nth-child(2) { border-right: 0 } .fm-sources > div:nth-child(-n+2) { border-bottom: 1px solid var(--line-1) } }
+@media (max-width: 480px) { .fm-sources { grid-template-columns: 1fr } .fm-sources > div { border-right: 0; border-bottom: 1px solid var(--line-1) } .fm-sources > div:last-child { border-bottom: 0 } }
+.fm-merge { border: 1.5px solid var(--ink-1); border-top: 0; padding: 12px 16px; background: var(--surface-1); font-size: 15px; color: var(--ink-2) }
+.fm-merge strong { color: var(--ink-1) }
+.fm-checks { border-top: 1px solid var(--line-1) }
+.fm-checks > div { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line-1); align-items: baseline }
+.fm-checks > div > span:last-child { font-family: var(--font-mono); font-size: 13px; font-variant-numeric: tabular-nums; color: var(--ink-2) }
+.fm-ok { color: var(--verdigris); font-weight: 600; font-size: 15px }
+.fm-short { color: var(--coin-text); font-weight: 600; font-size: 15px }
