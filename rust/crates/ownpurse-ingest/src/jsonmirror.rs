@@ -3,8 +3,8 @@
 //!
 //! Every field becomes an attribute `<ns>.<Kind>/<Field>` (`xero.Invoice/Reference`), typed by its first
 //! value and installed on first sight (schemas grow by accretion). Nested objects become component entities
-//! (`xero.Invoice.LineItems/LineAmount`); an object carrying another collection's id (`ContactID`) becomes a
-//! ref to that entity instead. Arrays of objects become many components with their position in `<ns>/index`.
+//! (`xero.Invoice.LineItems/LineAmount`); an object under a field the source declares a reference
+//! (`Contact`) becomes a ref to that entity instead. Arrays of objects become many components with their position in `<ns>/index`.
 //! The result is a `Snapshot`, so a second read of the same document asserts only what changed.
 
 use crate::snapshot::Snapshot;
@@ -21,8 +21,10 @@ pub struct JsonSource {
     pub root: &'static [&'static str],
     /// Top-level collections: (list key, kind, id field).
     pub collections: &'static [(&'static str, &'static str, &'static str)],
-    /// An object holding one of these fields is a reference to that kind: (id field, kind).
-    pub ref_ids: &'static [(&'static str, &'static str)],
+    /// Fields whose object (or list of objects) refers to another entity: (field, kind, id field). Declared
+    /// by field name, not guessed from an id inside the object: a journal line holds an `AccountID` and is
+    /// still a line, not a reference to the account.
+    pub refs: &'static [(&'static str, &'static str, &'static str)],
     /// Lists inside a document whose items are entities of their own kind, described here and nowhere else:
     /// (field, kind, id field). A tracking category's options, say.
     pub owned: &'static [(&'static str, &'static str, &'static str)],
@@ -70,7 +72,31 @@ pub fn doc_id(source_id: &str, kind: &str, id: &str) -> String {
     format!("{source_id}/{kind}/{id}")
 }
 
-fn id_text(v: &Json) -> Option<String> {
+/// When a document was last read: the latest `tx/observed-at` among the transactions that cited a file
+/// carrying it. Snapshot sources compare it with the incoming read, so replaying an old file is harmless.
+pub fn last_read(db: &Db, doc_id: &str) -> Option<ownpurse_facts::Instant> {
+    let e = db.lookup(&Kw::lit("doc/id"), &Value::str(doc_id))?;
+    let file_attr = db.attr(&Kw::lit("doc/file"))?.id;
+    let obs = Kw::lit("tx/observed-at");
+    db.entity(e)?
+        .get(&file_attr)?
+        .values()
+        .filter_map(|tx| match db.get(*tx, &obs) {
+            Some(Value::Instant(i)) => Some(i.clone()),
+            _ => None,
+        })
+        .max()
+}
+
+/// The (kind, id field) a field refers to, if the source declares it a reference.
+pub(crate) fn ref_rule(cfg: &JsonSource, field: &str) -> Option<(&'static str, &'static str)> {
+    cfg.refs
+        .iter()
+        .find(|(f, _, _)| *f == field)
+        .map(|(_, k, i)| (*k, *i))
+}
+
+pub(crate) fn id_text(v: &Json) -> Option<String> {
     match v {
         Json::String(s) if !s.is_empty() => Some(s.clone()),
         Json::Number(n) => Some(n.to_string()),
@@ -79,7 +105,7 @@ fn id_text(v: &Json) -> Option<String> {
 }
 
 /// A field name as an attribute name part: letters, digits, `.`, `-`, `_`; anything else becomes `_`.
-fn clean(field: &str) -> (String, bool) {
+pub(crate) fn clean(field: &str) -> (String, bool) {
     let c: String = field
         .chars()
         .map(|ch| {
@@ -151,6 +177,14 @@ pub fn mirror<'j>(
                 }
             };
             let did = doc_id(w.source_id, kind, &id);
+            if let Some(last) = last_read(db, &did).filter(|last| *last > input.observed_at) {
+                w.press(
+                    "stale-read",
+                    kind.to_string(),
+                    format!("a read from before the last one ({last}); an older snapshot never overwrites a newer one"),
+                );
+                continue;
+            }
             let key = format!("doc:{did}");
             w.snap.ent(&key, &Kw::lit("doc/id"), Value::str(&did));
             w.walk(obj, &key, &format!("{}.{kind}", cfg.ns), &did, &p);
@@ -284,7 +318,7 @@ impl<'a, 'j> Walker<'a, 'j> {
                     "null is stored as no fact: null and absent read the same",
                 ),
                 Json::Object(child) => {
-                    if let Some(target) = self.reference(child, &attr) {
+                    if let Some(target) = self.reference(child, &attr, field) {
                         if self.typed(&attr, REF, false, false).is_some() {
                             self.snap.add(key, &attr, ValIn::Ref(target));
                         }
@@ -353,6 +387,11 @@ impl<'a, 'j> Walker<'a, 'j> {
                 let did = doc_id(self.source_id, kind, &id);
                 let ck = format!("doc:{did}");
                 self.snap.ent(&ck, &Kw::lit("doc/id"), Value::str(&did));
+                // the list's order is the parent's to keep; without this a re-render reorders it
+                if let Ok(ix) = Kw::new(&format!("{}/index", self.cfg.ns)) {
+                    self.snap
+                        .add(&ck, &ix, Value::Int(i64::try_from(i).unwrap_or(i64::MAX)));
+                }
                 if self.typed(attr, REF, true, false).is_some() {
                     self.snap.add(key, attr, ValIn::Ref(crate::temp(&ck)));
                 }
@@ -372,7 +411,7 @@ impl<'a, 'j> Walker<'a, 'j> {
                 let Some(obj) = item.as_object() else {
                     continue;
                 };
-                if let Some(target) = self.reference(obj, attr) {
+                if let Some(target) = self.reference(obj, attr, field) {
                     if self.typed(attr, REF, true, false).is_some() {
                         self.snap.add(key, attr, ValIn::Ref(target));
                     }
@@ -443,16 +482,24 @@ impl<'a, 'j> Walker<'a, 'j> {
     /// An embedded object that names another collection's entity becomes a ref to it. Its other fields are a
     /// copy of that entity as of this document; they are not asserted (the entity's own collection says what
     /// is true about it), and the copy is reported.
-    fn reference(&mut self, obj: &Map<String, Json>, attr: &Kw) -> Option<ownpurse_facts::EntRef> {
-        let (id_field, kind) = self
-            .cfg
-            .ref_ids
-            .iter()
-            .find(|(f, _)| obj.contains_key(*f))?;
-        let id = obj.get(*id_field).and_then(id_text)?;
+    fn reference(
+        &mut self,
+        obj: &Map<String, Json>,
+        attr: &Kw,
+        field: &str,
+    ) -> Option<ownpurse_facts::EntRef> {
+        let (kind, id_field) = ref_rule(self.cfg, field)?;
+        let Some(id) = obj.get(id_field).and_then(id_text) else {
+            self.press(
+                "no-identity",
+                attr.to_string(),
+                format!("a {kind} reference without {id_field}; kept as a component"),
+            );
+            return None;
+        };
         let others: Vec<&str> = obj
             .keys()
-            .filter(|k| k != id_field)
+            .filter(|k| *k != id_field)
             .map(String::as_str)
             .collect();
         if !others.is_empty() {

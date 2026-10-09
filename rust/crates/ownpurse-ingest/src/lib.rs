@@ -15,6 +15,8 @@
 
 pub mod facts;
 pub mod jsonmirror;
+pub mod roundtrip;
+pub mod rules;
 pub mod snapshot;
 
 pub mod sources;
@@ -123,8 +125,18 @@ pub struct Plan {
 /// names, types and sizes), the source, and the metadata that says who wrote it and from what.
 pub fn plan(db: &Db, p: &dyn Projector, input: &Input<'_>) -> Result<Plan, IngestError> {
     let proj = p.project(db, input)?;
-    let install = ownpurse_facts::install(&serde_json::Value::Array(proj.install))
+    let mut install = ownpurse_facts::install(&serde_json::Value::Array(proj.install))
         .map_err(|e| IngestError(format!("{}: bad attribute definitions: {e}", p.id())))?;
+    if !install.is_empty() {
+        install.meta(
+            &Kw::lit("tx/actor"),
+            Value::str(&format!("projector:{}", p.id())),
+        );
+        install.meta(
+            &Kw::lit("tx/reason"),
+            Value::str(&format!("attributes first seen in {}", input.file.name)),
+        );
+    }
     let mut tx = facts::envelope(input);
     let k = Kw::lit;
     tx.meta(&k("tx/projector"), Value::str(p.id()));

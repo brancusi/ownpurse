@@ -90,7 +90,13 @@ enum Cmd {
     },
     /// Read-only SQL over the log's views (facts, history, transactions, files, observations, links, postings);
     /// dsum(text) sums decimals exactly
-    Sql { query: String },
+    Sql {
+        #[arg(allow_hyphen_values = true)]
+        query: Option<String>,
+        /// Read the query from a file (samples/queries/*.sql)
+        #[arg(short = 'f', long)]
+        file: Option<PathBuf>,
+    },
     /// The installed attributes (optionally one namespace prefix)
     Schema { prefix: Option<String> },
     /// Where sources did not fit the model, grouped by kind
@@ -98,6 +104,12 @@ enum Cmd {
         /// Show every line, not just counts
         #[arg(long)]
         all: bool,
+    },
+    /// Run the link rules (same-event across sources) and append what they propose
+    Link {
+        /// Show the links, write nothing
+        #[arg(long)]
+        dry_run: bool,
     },
     /// Re-derive the hash chain and re-hash every cited drawer file
     Verify,
@@ -274,14 +286,27 @@ fn run(cli: &Cli) -> Result<(), String> {
                 ),
             )?;
         }
-        Cmd::Sql { query } => {
+        Cmd::Sql { query, file } => {
+            let q = match (query, file) {
+                (Some(q), None) => q.clone(),
+                (None, Some(f)) => {
+                    std::fs::read_to_string(f).map_err(|e| format!("{}: {e}", f.display()))?
+                }
+                _ => return Err("give a query or --file <path>, not both".into()),
+            };
+            if !cli.log.exists() {
+                return Err(format!(
+                    "no log at {}; create one with `init` or pass --log",
+                    cli.log.display()
+                ));
+            }
             let conn = rusqlite::Connection::open_with_flags(
                 &cli.log,
                 rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
             )
             .map_err(|e| format!("{}: {e}", cli.log.display()))?;
             ownpurse_store::sql::register(&conn).map_err(|e| e.to_string())?;
-            out::sql(cli.json, &conn, query)?;
+            out::sql(cli.json, &conn, &q)?;
         }
         Cmd::Schema { prefix } => {
             let store = open(cli)?;
@@ -290,6 +315,49 @@ fn run(cli: &Cli) -> Result<(), String> {
         Cmd::Pressure { all } => {
             let store = open(cli)?;
             out::pressure(cli.json, store.db(), *all);
+        }
+        Cmd::Link { dry_run } => {
+            let mut store = open(cli)?;
+            let mut tx = ownpurse_ingest::rules::same_event(store.db());
+            tx.meta(&Kw::lit("tx/actor"), Value::str("rule:same-event@1"));
+            tx.meta(
+                &Kw::lit("tx/reason"),
+                Value::str("witnesses of one movement of money, across sources"),
+            );
+            let at = now(cli)?;
+            let r = if *dry_run {
+                store.db().with(&tx, &at).map_err(|e| e.to_string())?
+            } else {
+                store.transact(&tx, &at).map_err(|e| e.to_string())?
+            };
+            let links = r
+                .datoms
+                .iter()
+                .filter(|d| {
+                    d.added
+                        && store
+                            .db()
+                            .schema()
+                            .ident(d.a)
+                            .is_some_and(|i| i.as_str() == "link/id")
+                })
+                .count();
+            if !cli.json {
+                println!(
+                    "{links} new links{}",
+                    if *dry_run {
+                        " (dry run: nothing written)"
+                    } else {
+                        ""
+                    }
+                );
+                println!("help[1]: ownpurse-facts sql \"SELECT * FROM links\"");
+            } else {
+                println!(
+                    "{}",
+                    json!({"links": links, "tx": r.tx.map(|t| t.0), "dry_run": dry_run})
+                );
+            }
         }
         Cmd::Verify => {
             let store = open(cli)?;

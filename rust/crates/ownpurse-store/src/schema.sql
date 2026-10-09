@@ -32,18 +32,40 @@ CREATE TRIGGER meta_append_only_u BEFORE UPDATE ON meta BEGIN SELECT RAISE(ABORT
 CREATE VIEW attr AS
   SELECT e AS id, v AS ident FROM datom WHERE a = 1 AND added = 1;
 
--- every datom, readable: the history
+-- every datom, readable: the history. `shown` names a ref's target by its label.
 CREATE VIEW history AS
-  SELECT d.tx, d.e, at.ident AS attr, d.v AS value, CASE d.added WHEN 1 THEN 'assert' ELSE 'retract' END AS op
+  SELECT d.tx, d.e, at.ident AS attr, d.v AS value,
+    CASE d.added WHEN 1 THEN 'assert' ELSE 'retract' END AS op,
+    CASE d.vt WHEN 1 THEN coalesce((SELECT label FROM label WHERE e = d.v), d.v) ELSE d.v END AS shown
   FROM datom d JOIN attr at ON at.id = d.a;
 
 -- the facts that are true now: asserted, and not retracted by a later transaction
 CREATE VIEW facts AS
-  SELECT d.e, at.ident AS attr, d.v AS value, d.tx
+  SELECT d.e, at.ident AS attr, d.v AS value, d.tx, d.vt
   FROM datom d JOIN attr at ON at.id = d.a
   WHERE d.added = 1
     AND NOT EXISTS (SELECT 1 FROM datom r
                     WHERE r.e = d.e AND r.a = d.a AND r.v IS d.v AND r.added = 0 AND r.tx > d.tx);
+
+-- one name per entity: its strongest identity (a document id before an observation id, and so on)
+CREATE VIEW label AS
+  SELECT e, label FROM (
+    SELECT f.e, f.value AS label, min(CASE f.attr
+      WHEN 'doc/id' THEN 1 WHEN 'obs/id' THEN 2 WHEN 'entry/id' THEN 3 WHEN 'posting/id' THEN 4
+      WHEN 'account/id' THEN 5 WHEN 'party/id' THEN 6 WHEN 'commodity/code' THEN 7 WHEN 'source/id' THEN 8
+      WHEN 'book/id' THEN 9 WHEN 'link/id' THEN 10 WHEN 'region/id' THEN 11 WHEN 'file/sha256' THEN 12
+      WHEN 'db/ident' THEN 13 END) AS rank
+    FROM facts f
+    WHERE f.attr IN ('doc/id', 'obs/id', 'entry/id', 'posting/id', 'account/id', 'party/id', 'commodity/code',
+                     'source/id', 'book/id', 'link/id', 'region/id', 'file/sha256', 'db/ident')
+    GROUP BY f.e);
+
+-- the facts that are true now, with refs named
+CREATE VIEW facts_shown AS
+  SELECT f.e, (SELECT label FROM label WHERE e = f.e) AS entity, f.attr,
+    CASE f.vt WHEN 1 THEN coalesce((SELECT label FROM label WHERE e = f.value), f.value) ELSE f.value END AS value,
+    f.tx
+  FROM facts f;
 
 -- one row per transaction, with who, why and from what
 CREATE VIEW transactions AS
@@ -92,11 +114,9 @@ CREATE VIEW observations AS
 CREATE VIEW links AS
   SELECT l.e,
     max(CASE WHEN f.attr = 'link/kind' THEN f.value END) AS kind,
-    (SELECT group_concat(i.value) FROM facts r JOIN facts i ON i.e = r.value
-       AND i.attr IN ('obs/id', 'entry/id', 'doc/id', 'file/sha256', 'account/id')
+    (SELECT lb.label FROM facts r JOIN label lb ON lb.e = r.value
       WHERE r.e = l.e AND r.attr = 'link/from') AS from_id,
-    (SELECT group_concat(i.value) FROM facts r JOIN facts i ON i.e = r.value
-       AND i.attr IN ('obs/id', 'entry/id', 'doc/id', 'file/sha256', 'account/id')
+    (SELECT lb.label FROM facts r JOIN label lb ON lb.e = r.value
       WHERE r.e = l.e AND r.attr = 'link/to') AS to_id,
     max(CASE WHEN f.attr = 'link/confidence' THEN f.value END) AS confidence,
     max(CASE WHEN f.attr = 'link/amount' THEN f.value END) AS amount,
