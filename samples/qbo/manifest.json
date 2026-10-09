@@ -1,0 +1,58 @@
+{
+  "files": [
+    {
+      "file": "qbo/CompanyInfo.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Account.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Customer.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Item.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Invoice.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Payment.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Purchase.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/JournalEntry.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Invoice-2026-04-02.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-04-02T09:12:00Z"
+    }
+  ]
+}

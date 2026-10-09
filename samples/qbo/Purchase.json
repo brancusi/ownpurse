@@ -1,0 +1,72 @@
+{
+  "QueryResponse": {
+    "Purchase": [
+      {
+        "AccountRef": {
+          "value": "41",
+          "name": "Studio Mastercard"
+        },
+        "PaymentType": "CreditCard",
+        "EntityRef": {
+          "value": "64",
+          "name": "Lumen Vector Software",
+          "type": "Vendor"
+        },
+        "Credit": false,
+        "TotalAmt": 49.0,
+        "PurchaseEx": {
+          "any": [
+            {
+              "name": "{http://schema.intuit.com/finance/v3}NameValue",
+              "declaredType": "com.intuit.schema.finance.v3.NameValue",
+              "scope": "javax.xml.bind.JAXBElement$GlobalScope",
+              "value": {
+                "Name": "TxnType",
+                "Value": "54"
+              },
+              "nil": false,
+              "globalScope": true,
+              "typeSubstituted": false
+            }
+          ]
+        },
+        "domain": "QBO",
+        "sparse": false,
+        "Id": "132",
+        "SyncToken": "0",
+        "MetaData": {
+          "CreateTime": "2026-03-09T16:47:10-07:00",
+          "LastUpdatedTime": "2026-03-09T16:47:10-07:00"
+        },
+        "CustomField": [],
+        "TxnDate": "2026-03-09",
+        "CurrencyRef": {
+          "value": "USD",
+          "name": "United States Dollar"
+        },
+        "PrivateNote": "Vector editor, monthly seat",
+        "Line": [
+          {
+            "Id": "1",
+            "Description": "Vector editor, monthly seat, March",
+            "Amount": 49.0,
+            "DetailType": "AccountBasedExpenseLineDetail",
+            "AccountBasedExpenseLineDetail": {
+              "AccountRef": {
+                "value": "7",
+                "name": "Software subscriptions"
+              },
+              "BillableStatus": "NotBillable",
+              "TaxCodeRef": {
+                "value": "NON"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "startPosition": 1,
+    "maxResults": 1
+  },
+  "time": "2026-03-20T10:05:00.000-07:00"
+}

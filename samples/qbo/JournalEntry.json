@@ -1,0 +1,56 @@
+{
+  "QueryResponse": {
+    "JournalEntry": [
+      {
+        "Adjustment": false,
+        "domain": "QBO",
+        "sparse": false,
+        "Id": "133",
+        "SyncToken": "0",
+        "MetaData": {
+          "CreateTime": "2026-03-15T09:30:00-07:00",
+          "LastUpdatedTime": "2026-03-15T09:30:00-07:00"
+        },
+        "DocNumber": "JE-0007",
+        "TxnDate": "2026-03-15",
+        "CurrencyRef": {
+          "value": "USD",
+          "name": "United States Dollar"
+        },
+        "PrivateNote": "Studio equipment depreciation, first half of March",
+        "Line": [
+          {
+            "Id": "0",
+            "Description": "Depreciation, studio equipment",
+            "Amount": 85.0,
+            "DetailType": "JournalEntryLineDetail",
+            "JournalEntryLineDetail": {
+              "PostingType": "Debit",
+              "AccountRef": {
+                "value": "60",
+                "name": "Depreciation"
+              }
+            }
+          },
+          {
+            "Id": "1",
+            "Description": "Depreciation, studio equipment",
+            "Amount": 85.0,
+            "DetailType": "JournalEntryLineDetail",
+            "JournalEntryLineDetail": {
+              "PostingType": "Credit",
+              "AccountRef": {
+                "value": "17",
+                "name": "Accumulated depreciation"
+              }
+            }
+          }
+        ],
+        "TxnTaxDetail": {}
+      }
+    ],
+    "startPosition": 1,
+    "maxResults": 1
+  },
+  "time": "2026-03-20T10:05:00.000-07:00"
+}

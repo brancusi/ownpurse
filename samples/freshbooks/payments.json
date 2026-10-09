@@ -1,0 +1,36 @@
+{
+  "response": {
+    "result": {
+      "payments": [
+        {
+          "accounting_systemid": "Xk9Pq",
+          "amount": {
+            "amount": "362.18",
+            "code": "USD"
+          },
+          "bulk_paymentid": null,
+          "clientid": 12,
+          "creditid": null,
+          "date": "2026-03-24",
+          "from_credit": false,
+          "gateway": null,
+          "id": 31,
+          "invoiceid": 57,
+          "logid": 31,
+          "note": "ACH from Tallowmere",
+          "orderid": null,
+          "overpaymentid": null,
+          "send_client_notification": false,
+          "transactionid": null,
+          "type": "ACH",
+          "updated": "2026-03-24 10:41:09",
+          "vis_state": 0
+        }
+      ],
+      "page": 1,
+      "pages": 1,
+      "per_page": 15,
+      "total": 1
+    }
+  }
+}

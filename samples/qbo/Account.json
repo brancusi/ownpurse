@@ -1,0 +1,174 @@
+{
+  "QueryResponse": {
+    "Account": [
+      {
+        "Name": "Checking",
+        "SubAccount": false,
+        "FullyQualifiedName": "Checking",
+        "Active": true,
+        "Classification": "Asset",
+        "AccountType": "Bank",
+        "AccountSubType": "Checking",
+        "CurrentBalance": 18420.55,
+        "CurrentBalanceWithSubAccounts": 18420.55,
+        "CurrencyRef": {
+          "value": "USD",
+          "name": "United States Dollar"
+        },
+        "domain": "QBO",
+        "sparse": false,
+        "Id": "35",
+        "SyncToken": "0",
+        "MetaData": {
+          "CreateTime": "2021-06-01T08:20:11-07:00",
+          "LastUpdatedTime": "2026-03-18T14:02:37-07:00"
+        }
+      },
+      {
+        "Name": "Accounts Receivable (A/R)",
+        "SubAccount": false,
+        "FullyQualifiedName": "Accounts Receivable (A/R)",
+        "Active": true,
+        "Classification": "Asset",
+        "AccountType": "Accounts Receivable",
+        "AccountSubType": "AccountsReceivable",
+        "CurrentBalance": 0,
+        "CurrentBalanceWithSubAccounts": 0,
+        "CurrencyRef": {
+          "value": "USD",
+          "name": "United States Dollar"
+        },
+        "domain": "QBO",
+        "sparse": false,
+        "Id": "84",
+        "SyncToken": "0",
+        "MetaData": {
+          "CreateTime": "2021-06-01T08:20:12-07:00",
+          "LastUpdatedTime": "2026-03-18T14:02:37-07:00"
+        }
+      },
+      {
+        "Name": "Studio Mastercard",
+        "SubAccount": false,
+        "FullyQualifiedName": "Studio Mastercard",
+        "Active": true,
+        "Classification": "Liability",
+        "AccountType": "Credit Card",
+        "AccountSubType": "CreditCard",
+        "CurrentBalance": 49.0,
+        "CurrentBalanceWithSubAccounts": 49.0,
+        "CurrencyRef": {
+          "value": "USD",
+          "name": "United States Dollar"
+        },
+        "domain": "QBO",
+        "sparse": false,
+        "Id": "41",
+        "SyncToken": "0",
+        "MetaData": {
+          "CreateTime": "2022-02-14T10:03:55-08:00",
+          "LastUpdatedTime": "2026-03-09T16:47:10-07:00"
+        }
+      },
+      {
+        "Name": "Design services",
+        "SubAccount": false,
+        "FullyQualifiedName": "Design services",
+        "Active": true,
+        "Classification": "Revenue",
+        "AccountType": "Income",
+        "AccountSubType": "ServiceFeeIncome",
+        "AcctNum": "4010",
+        "CurrentBalance": 0,
+        "CurrentBalanceWithSubAccounts": 0,
+        "CurrencyRef": {
+          "value": "USD",
+          "name": "United States Dollar"
+        },
+        "domain": "QBO",
+        "sparse": false,
+        "Id": "1",
+        "SyncToken": "0",
+        "MetaData": {
+          "CreateTime": "2021-06-01T08:20:13-07:00",
+          "LastUpdatedTime": "2021-06-01T08:20:13-07:00"
+        }
+      },
+      {
+        "Name": "Software subscriptions",
+        "SubAccount": false,
+        "FullyQualifiedName": "Software subscriptions",
+        "Active": true,
+        "Classification": "Expense",
+        "AccountType": "Expense",
+        "AccountSubType": "OfficeGeneralAdministrativeExpenses",
+        "AcctNum": "6120",
+        "CurrentBalance": 0,
+        "CurrentBalanceWithSubAccounts": 0,
+        "CurrencyRef": {
+          "value": "USD",
+          "name": "United States Dollar"
+        },
+        "domain": "QBO",
+        "sparse": false,
+        "Id": "7",
+        "SyncToken": "0",
+        "MetaData": {
+          "CreateTime": "2021-06-01T08:20:15-07:00",
+          "LastUpdatedTime": "2021-06-01T08:20:15-07:00"
+        }
+      },
+      {
+        "Name": "Depreciation",
+        "SubAccount": false,
+        "FullyQualifiedName": "Depreciation",
+        "Active": true,
+        "Classification": "Expense",
+        "AccountType": "Other Expense",
+        "AccountSubType": "Depreciation",
+        "AcctNum": "6900",
+        "CurrentBalance": 0,
+        "CurrentBalanceWithSubAccounts": 0,
+        "CurrencyRef": {
+          "value": "USD",
+          "name": "United States Dollar"
+        },
+        "domain": "QBO",
+        "sparse": false,
+        "Id": "60",
+        "SyncToken": "0",
+        "MetaData": {
+          "CreateTime": "2021-06-01T08:20:16-07:00",
+          "LastUpdatedTime": "2021-06-01T08:20:16-07:00"
+        }
+      },
+      {
+        "Name": "Accumulated depreciation",
+        "SubAccount": false,
+        "FullyQualifiedName": "Accumulated depreciation",
+        "Active": true,
+        "Classification": "Asset",
+        "AccountType": "Fixed Asset",
+        "AccountSubType": "AccumulatedDepreciation",
+        "AcctNum": "1590",
+        "CurrentBalance": -1360.0,
+        "CurrentBalanceWithSubAccounts": -1360.0,
+        "CurrencyRef": {
+          "value": "USD",
+          "name": "United States Dollar"
+        },
+        "domain": "QBO",
+        "sparse": false,
+        "Id": "17",
+        "SyncToken": "0",
+        "MetaData": {
+          "CreateTime": "2021-06-01T08:20:17-07:00",
+          "LastUpdatedTime": "2026-03-15T09:30:00-07:00"
+        }
+      }
+    ],
+    "startPosition": 1,
+    "maxResults": 7
+  },
+  "time": "2026-03-20T10:05:00.000-07:00"
+}
