@@ -114,7 +114,7 @@ pub fn progress(n: usize, of: usize, l: &Loaded) -> String {
     );
     let width = of.to_string().len();
     format!(
-        "[{n:>width$}/{of}] {:<48} {:<16} {what}",
+        "[{n:>width$}/{of}] {:<48} {:<18} {what}",
         short(&l.file),
         l.projector
     )
