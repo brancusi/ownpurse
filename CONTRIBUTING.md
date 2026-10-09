@@ -34,19 +34,15 @@ Read [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md) first: every change is checked aga
 
 ## The gate and the pre-push hook
 
-`rust/scripts/check.sh` is the release gate: fixture tracking, repository hygiene, the docs grep, the private
-denylist, fmt, clippy, every test (fixture goldens, invariants, snapshots, the V21 round-trip law) and the benches
+`rust/scripts/check.sh` is the release gate: fixture tracking, repository hygiene, the docs grep, fmt, clippy, every test (fixture goldens, invariants, snapshots, the V21 round-trip law) and the benches
 at 2× budget. `CHECK_COVERAGE=1` adds the coverage threshold. Install the tracked hook once per clone:
 
     git config core.hooksPath .githooks
 
 `.githooks/pre-push` runs the gate and refuses the push when it fails.
 
-**Private denylist.** The gate checks every tracked file (text and binary fixtures) against a private list of
-terms that must never appear here. The list is never committed; the checker reads it from `$OWNPURSE_DENYLIST` or
-`~/.config/ownpurse/denylist`. Without it the gate fails locally and the push is refused; CI (`CI=true`) reports
-`denylist: skipped (CI, no private list)`. `OWNPURSE_DENYLIST=skip` bypasses it with a loud warning. Hits print
-the file, the line and the list's line number, never the term.
+**Private data.** The repository is public and works only with synthetic data and the Xero Demo Company. Read
+[SECURITY.md](SECURITY.md#what-never-goes-in-this-repository) before your first commit.
 
 The repository tools are one crate, `rust/xtask`:
 
@@ -54,7 +50,6 @@ The repository tools are one crate, `rust/xtask`:
 |---|---|
 | `cargo run -q -p xtask -- hygiene [--self-test]` | no stray toolchain files, no real paths, UUIDs only from `rust/scripts/uuid-allow.txt`, synthetic configs |
 | `cargo run -q -p xtask -- docs-grep [--self-test]` | no references to retired tools in any doc or the CLI help |
-| `cargo run -q -p xtask -- denylist [--self-test] [DIR …]` | the private denylist |
 | `cargo run -q -p xtask -- docs-inputs <out-dir>` | the docs-site inputs, from the demo fixture only |
 
 ## Releases

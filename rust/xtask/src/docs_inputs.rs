@@ -6,7 +6,7 @@
 //! doctor.txt, examples/config-min.json, examples/quickstart.txt, keys.md and renders/{ledger-dark,ledger-light}.
 //! Every command runs in a sandbox: a temp copy of the demo config and record, HOME set to the sandbox, a fake
 //! token file (mode 600) and PATH holding only the built binaries, so no real path, record or token is
-//! reachable. The hygiene rules and the private denylist then run on the output.
+//! reachable. The hygiene rules then run on the output.
 
 use crate::files;
 use std::os::unix::fs::PermissionsExt;
@@ -277,14 +277,13 @@ requested by login)\n\n{}",
         }
     }
 
-    // the output must pass the public hygiene rules and the private denylist
+    // the output must pass the hygiene rules
     let rules = crate::hygiene::Rules::new(crate::hygiene::allowed_uuids(&root));
     let items = files::under(out);
     let hits = crate::hygiene::check(&items, &rules);
     for h in &hits {
         println!("docs-inputs: {h}");
     }
-    let deny = crate::denylist::run(&["--no-tracked".to_string(), out.display().to_string()]);
     println!("docs-inputs: {} files in {}", items.len(), out.display());
-    if hits.is_empty() && deny == 0 { 0 } else { 1 }
+    if hits.is_empty() { 0 } else { 1 }
 }

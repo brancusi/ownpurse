@@ -17,7 +17,7 @@ Everything lives in the Cargo workspace under `rust/`.
 | `ownpurse-xero` | OAuth PKCE, the token store (cross-process lock), HTTP client, rate limits, the call log, sync, the record's write side | core, ureq |
 | `ownpurse-cli` (binary `ownpurse`) | the CLI: read commands over the record; `sync`, `login`, `orgs`; the agent-bridge client (`ui …`) | core, api, clap |
 | `ownpurse-tui` (binary `ownpurse-tui`) | the ratatui terminal UI; runs the installed CLI as a child for anything that calls Xero | core (never api: V1, compile-time), notify, toml_edit, sha2, similar, caretline-layers, caretline-tour |
-| `xtask` | repository checks and generators for the gate (hygiene, docs grep, the private denylist, docs inputs) | aho-corasick, regex |
+| `xtask` | repository checks and generators for the gate (hygiene, docs grep, docs inputs) | aho-corasick, regex |
 
 A future write path (Xero writes, through an operations log) will be a separate crate; the TUI cannot depend on it
 (V1, compile-time).
@@ -43,7 +43,6 @@ A future write path (Xero writes, through an operations log) will be a separate 
 | `fontdue` + `png` (core `raster`) | `ownpurse ui screen --format png` and `ownpurse-tui --state … --format png`: the TUI's cell grid is rasterised and encoded as a PNG. fontdue (pure Rust, small) rasterises single glyphs, which is all a cell grid needs; `png` (pure Rust) encodes. An SVG renderer would pull an SVG parser, text shaping and a raster stack to draw what is already a grid. Font: Hack Regular (MIT + Bitstream Vera licence) embedded from `crates/ownpurse-core/assets/`; characters Hack lacks fall back to system fonts and render blank when none is installed |
 | `notify` (TUI, `macos_fsevent` only) | The Classify tab reloads `classify.toml`, and (v0.12.0) one watcher on `~/.config/ownpurse/` reloads `keys.toml` and `themes/*.toml`, the moment they are saved. The OS file-event API (FSEvents, inotify) wakes the loop through its channel, so there is no polling timer and an idle TUI still writes nothing (V13). It watches the config's folder (an editor's atomic save replaces the file) |
 | `libc` | `flock` (token file, session registry), `kill(pid, 0)` (pruning dead TUI sessions), terminal and signal handling |
-| `aho-corasick` (xtask) | The private denylist: thousands of terms in one automaton |
 | dev: `insta`, `proptest`, `criterion` | Snapshots, property tests, benches |
 | dev: `cargo-llvm-cov` (tool) | Coverage |
 
@@ -64,7 +63,7 @@ No tokio, no chrono-tz (dates are ISO strings and day arithmetic in a small modu
 | Coverage | `cargo llvm-cov` | ≥ 85 % lines |
 | Benches | criterion: cold start → first frame ≤ 200 ms; tab/drill ≤ 8 ms; org switch ≤ 16 ms; compare ≤ 30 ms | fail at 2× |
 
-`rust/scripts/check.sh` runs all of it, plus repository hygiene, the docs grep and the private denylist (see
+`rust/scripts/check.sh` runs all of it, plus repository hygiene and the docs grep (see
 CONTRIBUTING.md). Every tag is gated on it.
 
 ## Safety rules

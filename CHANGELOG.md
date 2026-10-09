@@ -12,7 +12,7 @@ Changed (breaking: the project is now **ownpurse**):
   `ownpurse-tui`. The crates are `ownpurse-core`, `ownpurse-cli`, `ownpurse-tui` and `ownpurse-xero` (the Xero
   connector and the record, formerly the API crate).
 - The config file is `ownpurse.json` (was `xero-axi.json`); the config folder is `~/.config/ownpurse/` (keys,
-  denylist); environment variables start with `OWNPURSE_` (was `XERO_AXI_`). Rename your existing files to keep them.
+  tokens); environment variables start with `OWNPURSE_` (was `XERO_AXI_`). Rename your existing files to keep them.
 - Notes this tool adds to a document's history in Xero now read `ownpurse package <hash12> op <id>: <why>`.
 - Accounting-system agnostic positioning: Xero is the first connector. New: `docs/PHILOSOPHY.md`, `brand/` (logos,
   tokens, the brand book, reference components) and `site/` (ownpurse.com: marketing pages, docs, blog).

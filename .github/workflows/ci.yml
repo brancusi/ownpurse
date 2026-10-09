@@ -27,7 +27,7 @@ jobs:
       - run: cargo build --workspace --locked
       - run: cargo clippy --workspace --all-targets -- -D warnings
       - run: cargo test --workspace --locked
-      # the full gate; public CI has no private denylist, so that one step reports "skipped (CI, no private list)"
+      # the full gate
       - run: scripts/check.sh
         env:
           CI: "true"

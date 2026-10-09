@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
-# The release gate (binding while CI is billing-blocked): every merge and tag must pass this.
+# The release gate: every merge and tag must pass this (CI runs it too).
 #   rust/scripts/check.sh            fmt, clippy, all tests (fixture goldens, invariants, snapshots), benches
 #   OWNPURSE_GOLDEN_RECORD=… OWNPURSE_GOLDEN_REAL=… rust/scripts/check.sh   + real-record goldens
 #   CHECK_COVERAGE=1 rust/scripts/check.sh                                   + coverage threshold (cargo-llvm-cov)
-#   CHECK_DENYLIST_DIRS="dir …" rust/scripts/check.sh                      + denylist scan of extra folders (docs inputs)
-# The private denylist is read from $OWNPURSE_DENYLIST or ~/.config/ownpurse/denylist (never from this repo).
-# Without it the gate fails, except in CI (CI=true: "skipped") or with OWNPURSE_DENYLIST=skip (a loud warning).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 step() { printf '\n== %s\n' "$*"; }
@@ -29,11 +26,6 @@ xtask hygiene
 step "docs (no retired-tool references in any doc or the CLI help)"
 xtask docs-grep --self-test >/dev/null
 xtask docs-grep
-
-step "denylist (the private list: no private names, amounts or ids anywhere in the tree)"
-xtask denylist --self-test >/dev/null
-# shellcheck disable=SC2086
-xtask denylist ${CHECK_DENYLIST_DIRS:-}
 
 step "fmt"
 cargo fmt --all -- --check

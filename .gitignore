@@ -11,10 +11,6 @@ tokens*.json
 *.sqlite-wal
 *.sqlite-shm
 /ownpurse.json
-# the private denylist (and any hashed form of it) never lives in this repository
-denylist
-*.denylist
-denylist.sha256
 
 # test fixtures are generic, committed test data (see rust/tests/fixtures/*/README.md)
 !rust/tests/fixtures/**/*.sqlite

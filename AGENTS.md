@@ -16,7 +16,7 @@ add Xero assumptions to code that is not the Xero connector.
 - `rust/`: the Cargo workspace. `ownpurse-core` (ledger, config, views; no I/O to providers), `ownpurse-xero`
   (the Xero connector, auth, sync, the record), `ownpurse-cli` (the `ownpurse` binary), `ownpurse-tui` (the
   `ownpurse-tui` binary; never links `ownpurse-xero`, it runs the CLI for anything that calls a provider), `xtask`
-  (hygiene, docs grep, denylist, demo fixtures, agent-drive tests).
+  (hygiene, docs grep, demo fixtures, agent-drive tests).
 - `docs/`: engineering docs. `brand/`: the identity and tokens. `site/`: ownpurse.com (Astro + Starlight).
 - `vendor/caretline/`: an ignored export of the caretline commit pinned in `caretline.rev`. Never commit it.
 
@@ -28,6 +28,13 @@ add Xero assumptions to code that is not the Xero connector.
 - Copy is plain and exact: second person, sentence case, numbers to the cent, no emoji, no hype ("seamless",
   "magic", "AI-powered"). Errors say what went wrong and how to fix it.
 - "Xero" is Xero Limited's trademark: keep the "not affiliated" line wherever the name is used prominently.
+
+## Private data
+
+The repository is public. Work only with synthetic fixtures and the Xero Demo Company, never real books. Before
+every commit, read your diff for credentials, real records or configs, real ids, personal names, emails, paths and
+real amounts. The full list is in [SECURITY.md](SECURITY.md#what-never-goes-in-this-repository). Never commit a
+`*.sqlite` record, a real `ownpurse.json`, a token file or an `.env` file.
 
 ## Rules that do not bend
 
@@ -45,11 +52,10 @@ add Xero assumptions to code that is not the Xero connector.
 ```sh
 cd rust
 cargo test --workspace --locked
-scripts/check.sh                 # the release gate: hygiene, docs grep, denylist, fmt, clippy, tests, laws, benches
+scripts/check.sh                 # the release gate: hygiene, docs grep, fmt, clippy, tests, laws, benches
 ```
 
-The gate reads a private denylist from `$OWNPURSE_DENYLIST` or `~/.config/ownpurse/denylist` and fails without it
-(CI reports it as skipped). Install the pre-push hook once per clone: `git config core.hooksPath .githooks`.
+Install the pre-push hook once per clone: `git config core.hooksPath .githooks`.
 
 TUI snapshots: `INSTA_UPDATE=always cargo test -p ownpurse-tui --test snapshots`, then review every changed
 `.snap` before committing.

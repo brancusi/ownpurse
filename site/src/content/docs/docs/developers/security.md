@@ -54,6 +54,23 @@ The SQLite record contains your accounting data. Keep it out of version control,
 backups. The record is append-only and hash-chained, so later tampering is detectable, but it is not encrypted by
 ownpurse.
 
+
+## What never goes in the repository
+
+The ownpurse repository is public. Development and testing use only synthetic data and the Xero Demo Company.
+Never commit:
+
+- **Credentials**: tokens, refresh tokens, API keys, client secrets, passwords, private keys, `.env` files.
+- **Records and configs from real books**: any `*.sqlite` record outside the synthetic test fixtures, a real
+  `ownpurse.json`, exports, reports, attachments, statements, or screenshots of real organisations.
+- **Identifiers from real accounts**: tenant ids, client ids, contact or invoice ids, bank account numbers.
+- **Personal details**: real names of people or businesses, personal emails, phone numbers, addresses, and absolute
+  paths from your machine. Use `~/…` and the demo names.
+- **Real amounts**: figures in fixtures, docs and screenshots come from the demo data or are invented.
+
+If something private lands in a commit, tell the maintainer, rotate any credential involved, and rewrite the
+history before it is pushed.
+
 ## Reporting a vulnerability
 
 Report vulnerabilities privately to the maintainer, the owner of the

@@ -36,6 +36,12 @@ See [Install](/docs/start/install/#the-caretline-dependency) for the caretline e
 - The TUI never links the API crate. It reads the record and runs the CLI for anything that calls Xero.
 - No write to Xero without the operations log. See [Data model](/docs/developers/data-model/#writes).
 
+## Private data
+
+The repository is public and works only with synthetic data and the Xero Demo Company, never real books. Before every
+commit, read your diff for credentials, real records or configs, real ids, personal names, emails, local paths and
+real amounts. The full list is in [Security](/docs/developers/security/#what-never-goes-in-the-repository).
+
 ## The gate
 
 `rust/scripts/check.sh` is the release gate. It runs fixture tracking, repository hygiene, the docs grep, `cargo fmt`,
