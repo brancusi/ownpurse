@@ -72,6 +72,7 @@ pub static CONFIG: JsonSource = JsonSource {
         ("Deposit", "Deposit", "Id"),
         ("Transfer", "Transfer", "Id"),
     ],
+    refs: &[],
     ref_ids: REF_IDS,
     owned: &[],
     // Not "Id": QuickBooks appends a subtotal line with no Id, and the mirror's position fallback would give it
@@ -524,7 +525,7 @@ impl Interp<'_, '_> {
         };
         let mut legs: Vec<Leg> = vec![(ar, total.unwrap_or_default(), String::new())];
         for (i, l) in lines(o) {
-            let lk = format!("{key}/Line/{i}");
+            let lk = format!("{key}/Line/@{i}");
             let (ty, d) = detail(l);
             let amount = dec(l, "Amount").unwrap_or_default();
             let description = s(l, "Description").unwrap_or("").to_string();
@@ -555,7 +556,8 @@ impl Interp<'_, '_> {
             if !self.0.snap.has(&lk) {
                 continue;
             }
-            self.0.line(&lk, &format!("{}/Line/{i}", r.doc_id), &key, i);
+            self.0
+                .line(&lk, &format!("{}/Line/@{i}", r.doc_id), &key, i);
             let signed = if ty == "DiscountLineDetail" {
                 -amount
             } else {
@@ -702,7 +704,7 @@ impl Interp<'_, '_> {
         }
         let mut legs: Vec<Leg> = vec![(paid_from, sign * total.unwrap_or_default(), String::new())];
         for (i, l) in lines(o) {
-            let lk = format!("{key}/Line/{i}");
+            let lk = format!("{key}/Line/@{i}");
             let (ty, d) = detail(l);
             let amount = dec(l, "Amount").unwrap_or_default();
             let description = s(l, "Description").unwrap_or("").to_string();
@@ -732,7 +734,8 @@ impl Interp<'_, '_> {
             if !self.0.snap.has(&lk) {
                 continue;
             }
-            self.0.line(&lk, &format!("{}/Line/{i}", r.doc_id), &key, i);
+            self.0
+                .line(&lk, &format!("{}/Line/@{i}", r.doc_id), &key, i);
             self.0.add(&lk, "obs/amount", Value::Dec(sign * amount));
             if !description.is_empty() {
                 self.0.add(&lk, "obs/description", Value::str(&description));

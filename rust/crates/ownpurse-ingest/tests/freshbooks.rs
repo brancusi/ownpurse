@@ -114,6 +114,8 @@ fn reading_the_same_file_again_changes_nothing() {
 /// rolled back to unpaid: nothing in the model knows the file is older (FreshBooks' `updated`, QuickBooks'
 /// `SyncToken` would say so, but the projector does not compare them).
 #[test]
+/// Still open: the old file is read late, so its read time is the newest. Only the source's own version
+/// (`updated`) could say it is older; see the edges doc (`version` on `JsonSource`, `tx/source-time`).
 fn an_older_file_read_late_rolls_the_invoice_back() {
     let a = ingest(
         &pull_2(),
@@ -127,6 +129,24 @@ fn an_older_file_read_late_rolls_the_invoice_back() {
     assert_eq!(
         obs(&a.db, "invoice/57", "obs/status"),
         Some(Value::Kw(Kw::lit("obs.status/sent")))
+    );
+}
+
+#[test]
+fn an_older_read_replayed_with_its_own_time_is_skipped() {
+    let a = ingest(
+        &pull_2(),
+        &FreshBooks,
+        SRC,
+        "freshbooks/invoices-2026-03-20.json",
+        &[],
+        PULL_1,
+    );
+    assert_eq!(a.tx, None);
+    assert!(
+        common::pressure_kinds(&a.plan)
+            .iter()
+            .any(|k| k == "stale-read")
     );
 }
 

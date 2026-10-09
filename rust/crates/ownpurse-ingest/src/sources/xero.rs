@@ -51,6 +51,7 @@ pub static CONFIG: JsonSource = JsonSource {
         ("Prepayments", "Prepayment", "PrepaymentID"),
         ("Tracking", "TrackingOption", "TrackingOptionID"),
     ],
+    ref_ids: &[],
     owned: &[("Options", "TrackingOption", "TrackingOptionID")],
     child_ids: &[
         "LineItemID",
@@ -446,7 +447,7 @@ impl Interp<'_, '_> {
             .enumerate()
         {
             let Some(li) = li.as_object() else { continue };
-            let seg = s(li, "LineItemID").map_or_else(|| i.to_string(), str::to_string);
+            let seg = s(li, "LineItemID").map_or_else(|| format!("@{i}"), str::to_string);
             let lk = format!("{}/LineItems/{seg}", r.key);
             if !self.snap.has(&lk) {
                 continue;

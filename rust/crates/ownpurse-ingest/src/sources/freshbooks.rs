@@ -49,6 +49,7 @@ pub static CONFIG: JsonSource = JsonSource {
         ("expenses", "expense", "id"),
         ("categories", "category", "id"),
     ],
+    refs: &[],
     ref_ids: &[
         ("@client", "client"),
         ("@invoice", "invoice"),
@@ -67,6 +68,7 @@ pub static IDENTITY: JsonSource = JsonSource {
     ns: NS,
     root: &["response"],
     collections: &[("business_memberships", "business_membership", "id")],
+    refs: &[],
     ref_ids: &[],
     owned: &[],
     child_ids: &[],
@@ -398,7 +400,7 @@ impl Interp<'_, '_> {
             let seg = l
                 .get("lineid")
                 .map(|v| v.to_string().trim_matches('"').to_string())
-                .unwrap_or_else(|| i.to_string());
+                .unwrap_or_else(|| format!("@{i}"));
             let lk = format!("{key}/lines/{seg}");
             if !self.0.snap.has(&lk) {
                 continue;

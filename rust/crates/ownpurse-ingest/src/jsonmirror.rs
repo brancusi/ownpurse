@@ -25,6 +25,10 @@ pub struct JsonSource {
     /// by field name, not guessed from an id inside the object: a journal line holds an `AccountID` and is
     /// still a line, not a reference to the account.
     pub refs: &'static [(&'static str, &'static str, &'static str)],
+    /// An object holding one of these keys is a reference to that kind: (key, kind). Only safe for keys that
+    /// mark a reference and nothing else, such as the `@Customer` markers a projector writes when it
+    /// normalises a source's own reference shapes before mirroring.
+    pub ref_ids: &'static [(&'static str, &'static str)],
     /// Lists inside a document whose items are entities of their own kind, described here and nowhere else:
     /// (field, kind, id field). A tracking category's options, say.
     pub owned: &'static [(&'static str, &'static str, &'static str)],
@@ -88,12 +92,23 @@ pub fn last_read(db: &Db, doc_id: &str) -> Option<ownpurse_facts::Instant> {
         .max()
 }
 
-/// The (kind, id field) a field refers to, if the source declares it a reference.
-pub(crate) fn ref_rule(cfg: &JsonSource, field: &str) -> Option<(&'static str, &'static str)> {
+/// The (kind, id field) an object under `field` refers to, if the source declares it a reference: by field
+/// name first, then by a marker key inside the object.
+pub(crate) fn ref_rule(
+    cfg: &JsonSource,
+    field: &str,
+    obj: &Map<String, Json>,
+) -> Option<(&'static str, &'static str)> {
     cfg.refs
         .iter()
         .find(|(f, _, _)| *f == field)
         .map(|(_, k, i)| (*k, *i))
+        .or_else(|| {
+            cfg.ref_ids
+                .iter()
+                .find(|(key, _)| obj.contains_key(*key))
+                .map(|(key, k)| (*k, *key))
+        })
 }
 
 pub(crate) fn id_text(v: &Json) -> Option<String> {
@@ -429,7 +444,8 @@ impl<'a, 'j> Walker<'a, 'j> {
                         "list items without their own id are identified by position: inserting one renames the rest",
                     );
                 }
-                let seg = local.unwrap_or_else(|| i.to_string());
+                // a position is written `@n` so it can never equal an item's own id
+                let seg = local.unwrap_or_else(|| format!("@{i}"));
                 let ck = format!("{key}/{field}/{seg}");
                 self.component(&ck, &format!("{path}/{field}/{seg}"));
                 let index = Kw::new(&format!("{}/index", self.cfg.ns)).ok();
@@ -488,7 +504,7 @@ impl<'a, 'j> Walker<'a, 'j> {
         attr: &Kw,
         field: &str,
     ) -> Option<ownpurse_facts::EntRef> {
-        let (kind, id_field) = ref_rule(self.cfg, field)?;
+        let (kind, id_field) = ref_rule(self.cfg, field, obj)?;
         let Some(id) = obj.get(id_field).and_then(id_text) else {
             self.press(
                 "no-identity",

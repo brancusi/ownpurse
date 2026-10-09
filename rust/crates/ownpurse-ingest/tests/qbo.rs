@@ -209,7 +209,7 @@ fn the_subtotal_line_is_mirrored_but_not_observed() {
     let subtotal = db
         .lookup(
             &Kw::lit("qbo/path"),
-            &Value::str(&format!("{SRC}/Invoice/130/Line/1")),
+            &Value::str(&format!("{SRC}/Invoice/130/Line/@1")),
         )
         .expect("the subtotal line is in the mirror");
     assert_eq!(
@@ -383,10 +383,10 @@ fn the_pressure_it_reports() {
 
 /// The generic mirror identifies a list item by its id field, or else by its position, in one namespace. An
 /// invoice's sales line has `Id: "1"`; the subtotal line QuickBooks appends has no Id and sits at position 1:
-/// both get the key `…/Line/1`, and the transaction is refused. This is why the projector does not list
+/// both got the key `…/Line/1` and the transaction was refused; positions are now keyed `@1`. The projector still does not list
 /// `Id` in `child_ids`.
 #[test]
-fn line_ids_and_positions_collide_in_the_generic_mirror() {
+fn line_ids_and_positions_no_longer_collide_in_the_generic_mirror() {
     use ownpurse_facts::encode::sha256;
     use ownpurse_ingest::jsonmirror::{self, JsonSource};
     use ownpurse_ingest::{FileIn, Input};
@@ -394,6 +394,7 @@ fn line_ids_and_positions_collide_in_the_generic_mirror() {
         ns: "qbotest",
         root: &["QueryResponse"],
         collections: &[("Invoice", "Invoice", "Id")],
+        refs: &[],
         ref_ids: &[],
         owned: &[],
         child_ids: &["Id"],
@@ -418,12 +419,6 @@ fn line_ids_and_positions_collide_in_the_generic_mirror() {
     let defs = ownpurse_facts::install(&serde_json::Value::Array(first.install)).unwrap();
     let db = db.with(&defs, &at(PULL_1)).unwrap().db_after;
     let m = jsonmirror::mirror(&BY_ID, &db, &input, &body).unwrap();
-    let err = db
-        .with(&m.snap.diff(&db, &|_| true), &at(PULL_1))
-        .unwrap_err();
-    assert!(
-        err.to_string()
-            .contains("two values for qbotest.Invoice.Line/DetailType"),
-        "{err}"
-    );
+    // fixed in the mirror: a position is keyed `@1`, an id `1`
+    db.with(&m.snap.diff(&db, &|_| true), &at(PULL_1)).unwrap();
 }

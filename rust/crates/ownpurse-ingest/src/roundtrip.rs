@@ -80,7 +80,7 @@ fn scalar_text(cfg: &JsonSource, field: &str, v: &Json) -> String {
 /// An embedded reference reduced to its id field, the way the mirror stores it. Owned children (a tracking
 /// category's options) are not references.
 fn reference(cfg: &JsonSource, field: &str, o: &Map<String, Json>) -> Option<Json> {
-    let (_, idf) = ref_rule(cfg, field)?;
+    let (_, idf) = ref_rule(cfg, field, o)?;
     let id = o.get(idf).and_then(id_text)?;
     Some(json!({ idf: id }))
 }
@@ -155,7 +155,14 @@ fn target(db: &Db, cfg: &JsonSource, t: Eid, field: &str, child_ns: &str, compon
         .and_then(Value::as_str)
         .unwrap_or("");
     let id = did.rsplit('/').next().unwrap_or("");
-    match ref_rule(cfg, field) {
+    let kind = did.rsplit('/').nth(1).unwrap_or("");
+    let by_field = ref_rule(cfg, field, &Map::new());
+    let by_key = cfg
+        .ref_ids
+        .iter()
+        .find(|(_, k)| *k == kind)
+        .map(|(key, k)| (*k, *key));
+    match by_field.or(by_key) {
         Some((_, idf)) => json!({ idf: id }),
         None => json!({ "?": did }),
     }
