@@ -3,6 +3,10 @@
 Guidance for coding agents (and people) working in this repository. Read [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md)
 before changing behaviour, and [brand/README.md](brand/README.md) before changing anything visual or any copy.
 
+## Current work
+
+Next up is the TUI redesign: [docs/plans/TUI-REDESIGN.md](docs/plans/TUI-REDESIGN.md). Start a session there.
+
 ## What this is
 
 ownpurse is a local accounting tool for people and their agents: connectors append what each source reports to one

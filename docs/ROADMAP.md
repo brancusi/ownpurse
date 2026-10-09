@@ -9,7 +9,8 @@ from configuration, never code.
 In order of intent, not scheduled:
 
 - **The TUI in the ownpurse design system**: the new name, the Night terminal theme (`brand/TERMINAL.md`), the coin
-  status glyphs, and the mark in the frame header with its blinking eye.
+  status glyphs, and the mark in the frame header with its blinking eye. Plan:
+  [docs/plans/TUI-REDESIGN.md](plans/TUI-REDESIGN.md).
 - **A connector interface** so sources beyond Xero (QuickBooks, bank exports, spreadsheets, portfolios, files) can
   append facts with provenance, and a guide for writing one.
 - **Facts in the record**: move the record toward entity, attribute, value, time and source, with entries that can
