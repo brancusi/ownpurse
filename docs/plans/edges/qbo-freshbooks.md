@@ -95,7 +95,7 @@ offset, which moves with daylight saving: the 4 March invoice was created at `-0
 is `-07:00`. **Model.** `Instant::parse_offset` stores UTC and drops the offset (reported as `offset-dropped`).
 **Lost.** The local wall-clock time, and so the local date: 19:30 at `-08:00` is the next day in UTC. **Does it
 matter here?** No: the business dates (`TxnDate`, `DueDate`) are plain dates and become `obs/date` untouched;
-only metadata is affected. **Recommendation.** Fits for now. If a source ever gives the business date *only* as an
+only metadata is affected. **Recommendation.** Fits today. If a source ever gives the business date *only* as an
 offset timestamp, take the date from the local text before converting; a small helper beside `parse_offset`
 (`local_date(text) -> Date`) would make that the easy path.
 

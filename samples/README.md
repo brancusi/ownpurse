@@ -10,11 +10,14 @@ once and the model has to say how the witnesses relate.
 cd rust
 cargo run -p ownpurse-facts-cli -- --log /tmp/march.sqlite init
 cargo run -p ownpurse-facts-cli -- --log /tmp/march.sqlite load ../samples/ingest.json
-cargo run -p ownpurse-facts-cli -- --log /tmp/march.sqlite sql "SELECT * FROM observations LIMIT 20"
+cargo run -p ownpurse-facts-cli -- --log /tmp/march.sqlite link
+cargo run -p ownpurse-facts-cli -- --log /tmp/march.sqlite sql -f ../samples/queries/09-what-backs-the-dinner.sql
 ```
 
+The files load in the order they were read (`observed_at`), across sources. Loading them again changes nothing.
+
 `queries/` holds SQL you can run against the result; `docs/plans/FACTS-EDGES.md` is what loading all of this
-taught us about the model.
+taught us about the model, with one write-up per source family in `docs/plans/edges/`.
 
 ## The world
 
@@ -25,13 +28,13 @@ books in other systems and appear here too, because the same invoice exists on b
 | Source id | What | Files |
 |---|---|---|
 | `xero:tallowmere` | The roastery's Xero org | `xero/pull-1/*.json` (2026-03-20), `xero/pull-2/*.json` (2026-04-02) |
-| `bank:ridgeway-4821` | Operating checking | `bank/activity-2026-03.csv` + mapping, `bank/2026-03.ofx`, `bank/statement-2026-03.pdf` + extraction, `bank/check-1042.png` + extraction |
+| `bank:ridgeway-4821` | Operating checking | `bank/activity-2026-03-20.csv` and `bank/activity-2026-04-02.csv` (overlapping downloads) + mapping, `bank/2026-03.ofx`, `bank/statement-2026-03.pdf` + extraction, `bank/check-1042.png` + extraction |
 | `receipts:tallowmere` | Phone photos of receipts | `receipts/copper-pot-2026-03-12.jpg` + extraction |
 | `qbo:quillfeather` | Quillfeather Design Consultancy LLP's QuickBooks Online | `qbo/*.json` |
 | `freshbooks:saltmarsh` | Saltmarsh Cupping Lab LLC's FreshBooks | `freshbooks/*.json` |
-| `sheet:tallowmere-budget-2026` | The 2026 budget, a Google Sheet | `sheets/budget-2026.values.json` + mapping |
+| `sheet:tallowmere-budget-2026` | The 2026 budget, a Google Sheet | `sheets/budget-2026.values.json` + formulas + mapping; a second read after edits |
 | `xlsx:ridgeway-loan-2207` | The lender's amortisation schedule for the roaster loan | `xlsx/loan-2207-schedule.xlsx` + mapping |
-| `eth:0x51ab…7c3e` | The roastery's Ethereum wallet | `eth/*.json` (JSON-RPC responses), `eth/prices-2026-03.csv` |
+| `eth:0x51ab7c3e` | The roastery's Ethereum wallet `0x51ab9e04c2d7f3a1b6e85d20c4f9a7136b0e7c3e` | `eth/*.rpc.json` (JSON-RPC responses), `eth/token-list.json`, `eth/wallet.json`, `eth/prices-2026-03.csv` |
 
 ## The month
 
@@ -65,8 +68,8 @@ Off the bank account:
 - **Wallet** `0x51ab…7c3e`: 0.05 ETH arrives from an exchange on 03-02; 1,250.00 USDC from Fernhill on 03-21;
   1,000.00 USDC goes back to the exchange on 03-26, paying gas in ETH.
 - **Budget**: twelve months by category, with a total column computed by formula.
-- **Loan 2207**: 60,000.00 at 2.40 %, monthly payment 1,126.84; the March row splits it 1,004.12 principal and
-  122.72 interest.
+- **Loan 2207**: 2.40 % a year, monthly payment 1,126.84; 63,362.24 owed at the start of 2026, 61,360.00 before
+  the March payment, which splits 1,004.12 principal and 122.72 interest.
 
 ## Chart (Xero)
 
