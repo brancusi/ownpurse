@@ -77,11 +77,9 @@ fn touched(db: &Db, tx: Eid) -> Vec<String> {
 
 #[test]
 fn every_sample_loads() {
-    let manifest: serde_json::Value =
-        serde_json::from_slice(&std::fs::read(samples().join("freshbooks/manifest.json")).unwrap())
-            .unwrap();
     let mut db = core();
-    let files = manifest["files"].as_array().unwrap();
+    let files = common::manifest_files(SRC);
+    let files = &files;
     assert_eq!(files.len(), 6);
     for f in files {
         let a = ingest(

@@ -180,3 +180,19 @@ pub fn projector(id: &str) -> Option<&'static dyn Projector> {
 pub fn temp(key: &str) -> EntRef {
     EntRef::Temp(key.to_string())
 }
+
+/// A snapshot source's guard: if the document was last read after this read was taken, the read is older and
+/// must not overwrite what the newer one said. Returns the empty projection to use instead.
+pub fn stale(db: &Db, doc_id: &str, input: &Input<'_>) -> Option<Projection> {
+    let last = jsonmirror::last_read(db, doc_id).filter(|last| *last > input.observed_at)?;
+    Some(Projection {
+        pressure: vec![Pressure::new(
+            "stale-read",
+            doc_id,
+            format!(
+                "a read from before the last one ({last}); an older snapshot never overwrites a newer one"
+            ),
+        )],
+        ..Projection::default()
+    })
+}

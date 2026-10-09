@@ -116,3 +116,16 @@ pub fn pressure_kinds(plan: &Plan) -> Vec<String> {
     k.dedup();
     k
 }
+
+/// The entries of `samples/ingest.json` for one source, in load order.
+pub fn manifest_files(source: &str) -> Vec<serde_json::Value> {
+    let m: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(samples().join("ingest.json")).unwrap()).unwrap();
+    m["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|f| f["source"] == source)
+        .cloned()
+        .collect()
+}

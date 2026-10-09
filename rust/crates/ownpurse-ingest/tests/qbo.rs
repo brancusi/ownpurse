@@ -70,11 +70,9 @@ fn postings(db: &Db, entry: &str) -> Vec<Decimal> {
 
 #[test]
 fn every_sample_loads() {
-    let manifest: serde_json::Value =
-        serde_json::from_slice(&std::fs::read(samples().join("qbo/manifest.json")).unwrap())
-            .unwrap();
     let mut db = core();
-    let files = manifest["files"].as_array().unwrap();
+    let files = common::manifest_files(SRC);
+    let files = &files;
     assert_eq!(files.len(), 9);
     for f in files {
         let a = ingest(

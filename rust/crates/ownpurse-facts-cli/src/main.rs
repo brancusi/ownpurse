@@ -105,7 +105,7 @@ enum Cmd {
         #[arg(long)]
         all: bool,
     },
-    /// Run the link rules (same-event across sources) and append what they propose
+    /// Run the link rules (same-event, evidences, counterpart) and append what they propose
     Link {
         /// Show the links, write nothing
         #[arg(long)]
@@ -318,11 +318,14 @@ fn run(cli: &Cli) -> Result<(), String> {
         }
         Cmd::Link { dry_run } => {
             let mut store = open(cli)?;
-            let mut tx = ownpurse_ingest::rules::same_event(store.db());
-            tx.meta(&Kw::lit("tx/actor"), Value::str("rule:same-event@1"));
+            let mut tx = ownpurse_ingest::rules::all(store.db());
+            tx.meta(
+                &Kw::lit("tx/actor"),
+                Value::str("rules:same-event@1,evidences@1,counterpart@1"),
+            );
             tx.meta(
                 &Kw::lit("tx/reason"),
-                Value::str("witnesses of one movement of money, across sources"),
+                Value::str("witnesses of one movement of money, the evidence behind it, and invoices seen from both sides"),
             );
             let at = now(cli)?;
             let r = if *dry_run {

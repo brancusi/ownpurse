@@ -90,6 +90,9 @@ impl Projector for Sheets {
             ),
             None => None,
         };
+        if let Some(p) = crate::stale(db, &format!("{}/{}", input.source.id, map.sheet), input) {
+            return Ok(p);
+        }
         let shown = Grid::read(&main, &map.sheet).map_err(bad)?;
         let typed = formulas
             .as_ref()

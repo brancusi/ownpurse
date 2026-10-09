@@ -190,3 +190,51 @@ fn errors_say_what_to_do() {
     ]);
     assert!(!ok && err.contains("projectors"), "{err}");
 }
+
+/// The whole month from every source: it loads, verifies, reloads as no change, and the link rules join the
+/// witnesses of the dinner and both sides of the two supplier invoices.
+#[test]
+fn the_whole_month_from_every_source() {
+    let log = Log::new();
+    log.ok(&["init"]);
+    let manifest = samples().join("ingest.json");
+    let m = manifest.to_str().unwrap();
+    log.ok(&["load", m]);
+    let again = log.json(&["load", m]);
+    for row in again["rows"].as_array().unwrap() {
+        assert_eq!(row["tx"], "no change", "{row}");
+    }
+    log.ok(&["link"]);
+    let relink = log.json(&["link"]);
+    assert_eq!(relink["links"], 0, "rules are idempotent");
+    let dinner = log.json(&[
+        "sql",
+        "-f",
+        samples()
+            .join("queries/09-what-backs-the-dinner.sql")
+            .to_str()
+            .unwrap(),
+    ]);
+    let sources: Vec<&str> = dinner["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter_map(|r| r["source"].as_str())
+        .collect();
+    assert_eq!(
+        dinner["count"], 5,
+        "Xero, CSV, OFX, statement, receipt: {dinner}"
+    );
+    assert!(sources.contains(&"receipts:tallowmere") && sources.contains(&"xero:tallowmere"));
+    let both = log.json(&[
+        "sql",
+        "-f",
+        samples()
+            .join("queries/10-both-sides-of-an-invoice.sql")
+            .to_str()
+            .unwrap(),
+    ]);
+    assert_eq!(both["count"], 2);
+    let v = log.json(&["verify"]);
+    assert_eq!(v["files"], 60);
+}

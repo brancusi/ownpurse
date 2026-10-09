@@ -98,6 +98,9 @@ impl Projector for Xlsx {
                 serde_json::from_slice(f.bytes).map_err(|e| bad(format!("mapping: not JSON ({e})")))
             })?;
         let map = Mapping::read(&mapping).map_err(bad)?;
+        if let Some(p) = crate::stale(db, &format!("{}/{}", input.source.id, map.sheet), input) {
+            return Ok(p);
+        }
         let mut wb: Workbook<_> = Workbook::new(Cursor::new(input.file.bytes))
             .map_err(|e| bad(format!("not an .xlsx workbook ({e})")))?;
         let date1904 = wb.has_1904_epoch();

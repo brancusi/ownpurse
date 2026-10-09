@@ -35,6 +35,24 @@
   },
   "files": [
     {
+      "file": "bank/check-1042.extraction.json",
+      "projector": "extraction@1",
+      "source": "bank:ridgeway-4821",
+      "observed_at": "2026-03-04T16:02:00Z",
+      "with": {
+        "reads": "bank/check-1042.png"
+      }
+    },
+    {
+      "file": "receipts/copper-pot-2026-03-12.extraction.json",
+      "projector": "extraction@1",
+      "source": "receipts:tallowmere",
+      "observed_at": "2026-03-13T08:30:00Z",
+      "with": {
+        "reads": "receipts/copper-pot-2026-03-12.jpg"
+      }
+    },
+    {
       "file": "xero/pull-1/Organisations.json",
       "projector": "xero.json@1",
       "source": "xero:tallowmere",
@@ -101,6 +119,146 @@
       "observed_at": "2026-03-20T17:05:00Z"
     },
     {
+      "file": "freshbooks/identity.json",
+      "projector": "freshbooks.json@1",
+      "source": "freshbooks:saltmarsh",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "freshbooks/clients.json",
+      "projector": "freshbooks.json@1",
+      "source": "freshbooks:saltmarsh",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "freshbooks/invoices-2026-03-20.json",
+      "projector": "freshbooks.json@1",
+      "source": "freshbooks:saltmarsh",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "freshbooks/expenses.json",
+      "projector": "freshbooks.json@1",
+      "source": "freshbooks:saltmarsh",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/CompanyInfo.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Account.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Customer.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Item.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Invoice.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Payment.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/Purchase.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "qbo/JournalEntry.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "sheets/budget-2026.values.json",
+      "projector": "sheet.values@1",
+      "source": "sheet:tallowmere-budget-2026",
+      "with": {
+        "formulas": "sheets/budget-2026.formulas.json",
+        "mapping": "sheets/budget-2026.mapping.json"
+      },
+      "observed_at": "2026-03-20T17:10:00Z"
+    },
+    {
+      "file": "bank/activity-2026-03-20.csv",
+      "projector": "bank.csv@1",
+      "source": "bank:ridgeway-4821",
+      "with": {
+        "mapping": "bank/ridgeway-csv-mapping.json"
+      },
+      "observed_at": "2026-03-20T17:15:00Z"
+    },
+    {
+      "file": "xlsx/loan-2207-schedule.xlsx",
+      "projector": "xlsx@1",
+      "source": "xlsx:ridgeway-loan-2207",
+      "with": {
+        "mapping": "xlsx/loan-2207.mapping.json"
+      },
+      "observed_at": "2026-03-20T17:20:00Z"
+    },
+    {
+      "file": "eth/2026-03-02-eth-in.rpc.json",
+      "projector": "eth.rpc@1",
+      "source": "eth:0x51ab7c3e",
+      "with": {
+        "mapping": "eth/wallet.json",
+        "tokens": "eth/token-list.json"
+      },
+      "observed_at": "2026-04-01T08:00:00Z"
+    },
+    {
+      "file": "eth/2026-03-21-usdc-in.rpc.json",
+      "projector": "eth.rpc@1",
+      "source": "eth:0x51ab7c3e",
+      "with": {
+        "mapping": "eth/wallet.json",
+        "tokens": "eth/token-list.json"
+      },
+      "observed_at": "2026-04-01T08:00:00Z"
+    },
+    {
+      "file": "eth/2026-03-26-usdc-out.rpc.json",
+      "projector": "eth.rpc@1",
+      "source": "eth:0x51ab7c3e",
+      "with": {
+        "mapping": "eth/wallet.json",
+        "tokens": "eth/token-list.json"
+      },
+      "observed_at": "2026-04-01T08:00:00Z"
+    },
+    {
+      "file": "eth/prices-2026-03.csv",
+      "projector": "eth.rpc@1",
+      "source": "eth:0x51ab7c3e",
+      "with": {
+        "mapping": "eth/wallet.json",
+        "tokens": "eth/token-list.json"
+      },
+      "observed_at": "2026-04-01T08:00:00Z"
+    },
+    {
       "file": "xero/pull-2/Organisations.json",
       "projector": "xero.json@1",
       "source": "xero:tallowmere",
@@ -165,6 +323,58 @@
       "projector": "xero.json@1",
       "source": "xero:tallowmere",
       "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "freshbooks/payments.json",
+      "projector": "freshbooks.json@1",
+      "source": "freshbooks:saltmarsh",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "freshbooks/invoices-2026-04-02.json",
+      "projector": "freshbooks.json@1",
+      "source": "freshbooks:saltmarsh",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "qbo/Invoice-2026-04-02.json",
+      "projector": "qbo.json@1",
+      "source": "qbo:quillfeather",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "sheets/budget-2026-read-2.values.json",
+      "projector": "sheet.values@1",
+      "source": "sheet:tallowmere-budget-2026",
+      "with": {
+        "formulas": "sheets/budget-2026-read-2.formulas.json",
+        "mapping": "sheets/budget-2026.mapping.json"
+      },
+      "observed_at": "2026-04-02T09:15:00Z"
+    },
+    {
+      "file": "bank/activity-2026-04-02.csv",
+      "projector": "bank.csv@1",
+      "source": "bank:ridgeway-4821",
+      "with": {
+        "mapping": "bank/ridgeway-csv-mapping.json"
+      },
+      "observed_at": "2026-04-02T13:10:00Z"
+    },
+    {
+      "file": "bank/2026-03.ofx",
+      "projector": "bank.ofx@1",
+      "source": "bank:ridgeway-4821",
+      "observed_at": "2026-04-02T13:15:00Z"
+    },
+    {
+      "file": "bank/statement-2026-03.extraction.json",
+      "projector": "extraction@1",
+      "source": "bank:ridgeway-4821",
+      "observed_at": "2026-04-03T10:15:00Z",
+      "with": {
+        "reads": "bank/statement-2026-03.pdf"
+      }
     }
   ]
 }

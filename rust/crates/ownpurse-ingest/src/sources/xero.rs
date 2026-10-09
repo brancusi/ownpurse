@@ -100,16 +100,17 @@ fn k(s: &'static str) -> Kw {
 }
 
 /// Attributes the Xero projector owns on the entities it describes: everything in its own namespace and the
-/// interpretation it writes. `doc/file` and `doc/source` accumulate; a person's notes and links are never
+/// interpretation it writes. `doc/file`, `doc/source` and `obs/region` accumulate (every read adds where it
+/// found the document); a person's notes and links are never
 /// touched by a re-read.
 fn owns(a: &Kw) -> bool {
     let ns = a.ns();
     ns == "xero"
         || ns.starts_with("xero.")
-        || matches!(
+        || (matches!(
             ns,
             "obs" | "account" | "party" | "entry" | "posting" | "book" | "link"
-        )
+        ) && a.as_str() != "obs/region")
         || matches!(a.as_str(), "doc/kind" | "doc/external-id")
 }
 
@@ -235,6 +236,14 @@ impl Interp<'_, '_> {
         let (src, file) = (self.source_key(), self.file_key());
         self.add(&key, "doc/source", ValIn::Ref(temp(&src)));
         self.add(&key, "doc/file", ValIn::Ref(temp(&file)));
+        // where in this file the document sits, so "show me what backs this" can open it at the right place
+        let h = self.input.file.hash;
+        let rid = format!("{}#{}", h.hex(), r.pointer);
+        let rk = format!("region:{rid}");
+        self.snap.ent(&rk, &k("region/id"), Value::str(&rid));
+        self.add(&rk, "region/file", ValIn::Ref(temp(&file)));
+        self.add(&rk, "region/locator", Value::str(&r.pointer));
+        self.add(&key, "obs/region", ValIn::Ref(temp(&rk)));
         let o = r.json;
         match r.kind {
             "Organisation" => self.organisation(o),
