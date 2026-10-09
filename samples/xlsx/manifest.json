@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "file": "xlsx/loan-2207-schedule.xlsx",
+      "projector": "xlsx@1",
+      "source": "xlsx:ridgeway-loan-2207",
+      "with": {
+        "mapping": "xlsx/loan-2207.mapping.json"
+      },
+      "observed_at": "2026-03-20T17:20:00Z"
+    }
+  ]
+}

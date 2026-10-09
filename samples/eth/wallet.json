@@ -1,0 +1,43 @@
+{
+  "mapping": "eth.rpc/wallet@1",
+  "written_by": "agent:tally",
+  "chain": "ethereum",
+  "chain_id": 1,
+  "address": "0x51ab9e04c2d7f3a1b6e85d20c4f9a7136b0e7c3e",
+  "name": "Roastery wallet",
+  "native": {
+    "symbol": "ETH",
+    "name": "Ether",
+    "decimals": 18
+  },
+  "timezone": "America/Chicago",
+  "utc_offsets": [
+    {
+      "from": "2025-11-02T07:00:00Z",
+      "offset": "-06:00"
+    },
+    {
+      "from": "2026-03-08T08:00:00Z",
+      "offset": "-05:00"
+    },
+    {
+      "from": "2026-11-01T07:00:00Z",
+      "offset": "-06:00"
+    }
+  ],
+  "address_book": {
+    "0x3f1e7b2c9a04d6e85f1b3c7a2d9e0f4a6b8c1d52": "Exchange (hot wallet)",
+    "0x8d4c2e1f7a3b9c05d6e8f1a2b4c7d9e03f5a6b71": "Exchange (deposit address)",
+    "0xfe41a7c3d9b2e5f80a6c4d1e7b3f9a2c5d8e0b14": "Fernhill Grocers",
+    "0xc4ec0a5b7d2e9f13a8c6b4d0e2f7a9c1b3d5e868": "Checkout contract"
+  },
+  "prices": {
+    "columns": {
+      "date": "date",
+      "base": "base",
+      "quote": "quote",
+      "close": "close"
+    },
+    "close_at": "end of the UTC day"
+  }
+}

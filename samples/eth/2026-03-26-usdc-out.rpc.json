@@ -1,0 +1,87 @@
+[
+  {
+    "method": "eth_getTransactionByHash",
+    "params": [
+      "0xb5d7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b3d5f7a9c1e3b5d7"
+    ],
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "from": "0x51ab9e04c2d7f3a1b6e85d20c4f9a7136b0e7c3e",
+        "to": "0x0c5d7e2f9a1b3c4d6e8f0a2b4c6d8e0f1a3b5c79",
+        "value": "0x0",
+        "gas": "0xfde8",
+        "nonce": "0x0",
+        "maxFeePerGas": "0x9502f9000",
+        "maxPriorityFeePerGas": "0x77359400",
+        "gasPrice": "0x573de132b",
+        "input": "0xa9059cbb0000000000000000000000008d4c2e1f7a3b9c05d6e8f1a2b4c7d9e03f5a6b71000000000000000000000000000000000000000000000000000000003b9aca00",
+        "transactionIndex": "0x40",
+        "hash": "0xb5d7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b3d5f7a9c1e3b5d7",
+        "blockNumber": "0x17bf891",
+        "blockHash": "0x3c6f9b2e5a8d1c4f7b0e3a6d9c2f5b8e1a4d7c0f3b6e9a2d5c8f1b4e7a0d3c6f",
+        "chainId": "0x1",
+        "type": "0x2"
+      }
+    }
+  },
+  {
+    "method": "eth_getTransactionReceipt",
+    "params": [
+      "0xb5d7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b3d5f7a9c1e3b5d7"
+    ],
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": {
+        "from": "0x51ab9e04c2d7f3a1b6e85d20c4f9a7136b0e7c3e",
+        "to": "0x0c5d7e2f9a1b3c4d6e8f0a2b4c6d8e0f1a3b5c79",
+        "status": "0x1",
+        "gasUsed": "0xb41d",
+        "cumulativeGasUsed": "0x5469d6",
+        "effectiveGasPrice": "0x573de132b",
+        "logs": [
+          {
+            "address": "0x0c5d7e2f9a1b3c4d6e8f0a2b4c6d8e0f1a3b5c79",
+            "logIndex": "0x8f",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x00000000000000000000000051ab9e04c2d7f3a1b6e85d20c4f9a7136b0e7c3e",
+              "0x0000000000000000000000008d4c2e1f7a3b9c05d6e8f1a2b4c7d9e03f5a6b71"
+            ],
+            "data": "0x000000000000000000000000000000000000000000000000000000003b9aca00",
+            "transactionHash": "0xb5d7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b3d5f7a9c1e3b5d7",
+            "blockNumber": "0x17bf891",
+            "blockHash": "0x3c6f9b2e5a8d1c4f7b0e3a6d9c2f5b8e1a4d7c0f3b6e9a2d5c8f1b4e7a0d3c6f",
+            "transactionIndex": "0x40",
+            "removed": false
+          }
+        ],
+        "transactionHash": "0xb5d7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b3d5f7a9c1e3b5d7",
+        "blockNumber": "0x17bf891",
+        "blockHash": "0x3c6f9b2e5a8d1c4f7b0e3a6d9c2f5b8e1a4d7c0f3b6e9a2d5c8f1b4e7a0d3c6f",
+        "type": "0x2",
+        "contractAddress": null,
+        "transactionIndex": "0x40"
+      }
+    }
+  },
+  {
+    "method": "eth_getBlockByNumber",
+    "params": [
+      "0x17bf891",
+      false
+    ],
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": {
+        "number": "0x17bf891",
+        "hash": "0x3c6f9b2e5a8d1c4f7b0e3a6d9c2f5b8e1a4d7c0f3b6e9a2d5c8f1b4e7a0d3c6f",
+        "timestamp": "0x69c5595b",
+        "baseFeePerGas": "0x4fca87f2b"
+      }
+    }
+  }
+]
