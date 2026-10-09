@@ -1,0 +1,32 @@
+{
+  "QueryResponse": {
+    "Item": [
+      {
+        "Name": "Packaging design",
+        "Description": "Packaging design, per range",
+        "Active": true,
+        "FullyQualifiedName": "Packaging design",
+        "Taxable": false,
+        "UnitPrice": 2400,
+        "Type": "Service",
+        "IncomeAccountRef": {
+          "value": "1",
+          "name": "Design services"
+        },
+        "PurchaseCost": 0,
+        "TrackQtyOnHand": false,
+        "domain": "QBO",
+        "sparse": false,
+        "Id": "12",
+        "SyncToken": "1",
+        "MetaData": {
+          "CreateTime": "2024-02-19T09:41:30-08:00",
+          "LastUpdatedTime": "2025-10-02T15:12:44-07:00"
+        }
+      }
+    ],
+    "startPosition": 1,
+    "maxResults": 1
+  },
+  "time": "2026-03-20T10:05:00.000-07:00"
+}

@@ -1,0 +1,55 @@
+{
+  "response": {
+    "result": {
+      "expenses": [
+        {
+          "id": 88,
+          "expenseid": 88,
+          "accounting_systemid": "Xk9Pq",
+          "accountid": null,
+          "account_name": "",
+          "amount": {
+            "amount": "54.30",
+            "code": "USD"
+          },
+          "bank_name": "",
+          "categoryid": 3,
+          "clientid": 0,
+          "compounded_tax": false,
+          "date": "2026-03-10",
+          "ext_accountid": null,
+          "ext_invoiceid": 0,
+          "ext_systemid": 0,
+          "has_receipt": true,
+          "include_receipt": false,
+          "invoiceid": null,
+          "is_cogs": false,
+          "isduplicate": false,
+          "markup_percent": "0",
+          "notes": "Courier, sample boxes to Tallowmere",
+          "profileid": null,
+          "projectid": 0,
+          "staffid": 1,
+          "status": 0,
+          "taxAmount1": null,
+          "taxAmount2": null,
+          "taxName1": null,
+          "taxName2": null,
+          "taxPercent1": null,
+          "taxPercent2": null,
+          "transactionid": null,
+          "updated": "2026-03-10 16:22:05",
+          "vendor": "Pelican Freight Co.",
+          "vis_state": 0,
+          "background_jobid": null,
+          "potential_bill_payment": false,
+          "is_bill_match": false
+        }
+      ],
+      "page": 1,
+      "pages": 1,
+      "per_page": 15,
+      "total": 1
+    }
+  }
+}

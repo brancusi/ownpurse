@@ -1,0 +1,108 @@
+{
+  "QueryResponse": {
+    "Invoice": [
+      {
+        "AllowIPNPayment": false,
+        "AllowOnlinePayment": false,
+        "AllowOnlineCreditCardPayment": false,
+        "AllowOnlineACHPayment": true,
+        "domain": "QBO",
+        "sparse": false,
+        "Id": "130",
+        "SyncToken": "1",
+        "MetaData": {
+          "CreateTime": "2026-03-04T09:18:52-08:00",
+          "LastUpdatedTime": "2026-03-18T14:02:37-07:00"
+        },
+        "CustomField": [
+          {
+            "DefinitionId": "1",
+            "Name": "Project",
+            "Type": "StringType",
+            "StringValue": "Spring packaging"
+          }
+        ],
+        "DocNumber": "1031",
+        "TxnDate": "2026-03-04",
+        "CurrencyRef": {
+          "value": "USD",
+          "name": "United States Dollar"
+        },
+        "LinkedTxn": [
+          {
+            "TxnId": "131",
+            "TxnType": "Payment"
+          }
+        ],
+        "Line": [
+          {
+            "Id": "1",
+            "LineNum": 1,
+            "Description": "Packaging design, spring range",
+            "Amount": 2400.0,
+            "DetailType": "SalesItemLineDetail",
+            "SalesItemLineDetail": {
+              "ItemRef": {
+                "value": "12",
+                "name": "Packaging design"
+              },
+              "UnitPrice": 2400,
+              "Qty": 1,
+              "ItemAccountRef": {
+                "value": "1",
+                "name": "Design services"
+              },
+              "TaxCodeRef": {
+                "value": "NON"
+              }
+            }
+          },
+          {
+            "Amount": 2400.0,
+            "DetailType": "SubTotalLineDetail",
+            "SubTotalLineDetail": {}
+          }
+        ],
+        "TxnTaxDetail": {
+          "TotalTax": 0
+        },
+        "CustomerRef": {
+          "value": "58",
+          "name": "Tallowmere Coffee Roasting Co."
+        },
+        "CustomerMemo": {
+          "value": "Thank you for the brief. Payment by ACH to the account on file."
+        },
+        "BillAddr": {
+          "Id": "71",
+          "Line1": "4 Kiln Row",
+          "City": "Ferrisport",
+          "CountrySubDivisionCode": "WA",
+          "PostalCode": "98000"
+        },
+        "FreeFormAddress": true,
+        "SalesTermRef": {
+          "value": "2",
+          "name": "Net 15"
+        },
+        "DueDate": "2026-03-18",
+        "TotalAmt": 2400.0,
+        "ApplyTaxAfterDiscount": false,
+        "PrintStatus": "NotSet",
+        "EmailStatus": "EmailSent",
+        "BillEmail": {
+          "Address": "accounts@tallowmere.example"
+        },
+        "Balance": 0,
+        "DeliveryInfo": {
+          "DeliveryType": "Email",
+          "DeliveryTime": "2026-03-04T09:20:11-08:00"
+        },
+        "PrivateNote": "Spring range: three SKUs, two rounds of changes."
+      }
+    ],
+    "startPosition": 1,
+    "maxResults": 1
+  },
+  "time": "2026-03-20T10:05:00.000-07:00"
+}

@@ -1,0 +1,53 @@
+{
+  "response": {
+    "result": {
+      "clients": [
+        {
+          "id": 12,
+          "userid": 12,
+          "accounting_systemid": "Xk9Pq",
+          "organization": "Tallowmere Coffee Roasting Co.",
+          "fname": "Jo",
+          "lname": "Tallow",
+          "email": "accounts@tallowmere.example",
+          "currency_code": "USD",
+          "language": "en",
+          "p_street": "4 Kiln Row",
+          "p_street2": "",
+          "p_city": "Ferrisport",
+          "p_province": "Washington",
+          "p_code": "98000",
+          "p_country": "United States",
+          "s_street": "",
+          "s_street2": "",
+          "s_city": "",
+          "s_province": "",
+          "s_code": "",
+          "s_country": "",
+          "bus_phone": "",
+          "home_phone": null,
+          "mob_phone": "",
+          "fax": "",
+          "note": null,
+          "vat_name": null,
+          "vat_number": "",
+          "vis_state": 0,
+          "signup_date": "2025-12-01 09:30:00",
+          "updated": "2026-02-02 11:15:40",
+          "allow_late_fees": false,
+          "allow_late_notifications": true,
+          "has_retainer": null,
+          "retainer_id": null,
+          "statement_token": null,
+          "num_logins": 0,
+          "role": "client",
+          "level": 0
+        }
+      ],
+      "page": 1,
+      "pages": 1,
+      "per_page": 15,
+      "total": 1
+    }
+  }
+}

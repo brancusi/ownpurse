@@ -1,0 +1,58 @@
+{
+  "QueryResponse": {
+    "CompanyInfo": [
+      {
+        "CompanyName": "Quillfeather Design Consultancy LLP",
+        "LegalName": "Quillfeather Design Consultancy LLP",
+        "CompanyAddr": {
+          "Id": "1",
+          "Line1": "17 Larchmont Yard",
+          "City": "Port Halden",
+          "CountrySubDivisionCode": "OR",
+          "PostalCode": "97000"
+        },
+        "CustomerCommunicationAddr": {
+          "Id": "1",
+          "Line1": "17 Larchmont Yard",
+          "City": "Port Halden",
+          "CountrySubDivisionCode": "OR",
+          "PostalCode": "97000"
+        },
+        "PrimaryPhone": {},
+        "CompanyStartDate": "2021-06-01",
+        "FiscalYearStartMonth": "January",
+        "Country": "US",
+        "Email": {
+          "Address": "studio@quillfeather.example"
+        },
+        "WebAddr": {},
+        "SupportedLanguages": "en",
+        "NameValue": [
+          {
+            "Name": "NeoEnabled",
+            "Value": "true"
+          },
+          {
+            "Name": "IndustryType",
+            "Value": "Design services"
+          },
+          {
+            "Name": "CompanyType",
+            "Value": "Partnership"
+          }
+        ],
+        "domain": "QBO",
+        "sparse": false,
+        "Id": "1",
+        "SyncToken": "4",
+        "MetaData": {
+          "CreateTime": "2021-06-01T08:14:02-07:00",
+          "LastUpdatedTime": "2026-01-09T11:40:19-08:00"
+        }
+      }
+    ],
+    "startPosition": 1,
+    "maxResults": 1
+  },
+  "time": "2026-03-20T10:05:00.000-07:00"
+}
