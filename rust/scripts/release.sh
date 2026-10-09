@@ -29,6 +29,7 @@ perl -0pi -e "s/^version = \"[^\"]+\"/version = \"$v\"/m" rust/Cargo.toml
 (cd rust && cargo check --workspace --quiet)
 
 # freeze this release's own view states (the next release's upgrade tests read them)
+perl -pi -e "s/^const FREEZE: &str = \"v[^\"]+\";/const FREEZE: &str = \"v$v\";/" rust/crates/ownpurse-tui/tests/v21.rs
 (cd rust && cargo test --quiet -p ownpurse-tui --test v21 write_frozen_states -- --ignored >/dev/null)
 
 git add -A
