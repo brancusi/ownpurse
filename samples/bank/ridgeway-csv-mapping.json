@@ -1,0 +1,45 @@
+{
+  "mapping": "bank-csv@1",
+  "written_by": "agent:intake",
+  "written_at": "2026-03-20T17:20:00Z",
+  "looked_at": "activity-2026-03-20.csv",
+  "notes": "Ridgeway's activity download. Three preamble lines, then the header. Newest first. Debits and credits are separate positive columns. Pending card authorisations sit at the top with Type PENDING, a 'PENDING - ' prefix and no running balance.",
+  "account": {
+    "id": "ridgeway:checking:4821",
+    "mask": "4821",
+    "name": "Operating checking",
+    "institution": "Ridgeway Federal Bank",
+    "commodity": "USD",
+    "scale": 2
+  },
+  "preamble": {
+    "lines": 3,
+    "account_number_line": 2,
+    "window_line": 3,
+    "window_format": "MM/DD/YYYY - MM/DD/YYYY"
+  },
+  "header_line": 4,
+  "columns": {
+    "date": "Posting Date",
+    "description": "Description",
+    "debit": "Debit",
+    "credit": "Credit",
+    "balance": "Balance",
+    "check_number": "Check Number",
+    "type": "Type"
+  },
+  "date_format": "MM/DD/YYYY",
+  "amounts": {
+    "thousands_separator": ",",
+    "decimal_separator": ".",
+    "debit_means": "money out",
+    "credit_means": "money in"
+  },
+  "balance": "after this line",
+  "order": "newest-first",
+  "pending": {
+    "column": "Type",
+    "equals": "PENDING",
+    "strip_prefix": "PENDING - "
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "file": "bank/activity-2026-03-20.csv",
+      "projector": "bank.csv@1",
+      "source": "bank:ridgeway-4821",
+      "with": {"mapping": "bank/ridgeway-csv-mapping.json"},
+      "observed_at": "2026-03-20T17:15:00Z"
+    },
+    {
+      "file": "bank/activity-2026-04-02.csv",
+      "projector": "bank.csv@1",
+      "source": "bank:ridgeway-4821",
+      "with": {"mapping": "bank/ridgeway-csv-mapping.json"},
+      "observed_at": "2026-04-02T13:10:00Z"
+    },
+    {
+      "file": "bank/2026-03.ofx",
+      "projector": "bank.ofx@1",
+      "source": "bank:ridgeway-4821",
+      "observed_at": "2026-04-02T13:15:00Z"
+    }
+  ]
+}
