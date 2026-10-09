@@ -57,10 +57,17 @@ The repository tools are one crate, `rust/xtask`:
 [Semantic Versioning](https://semver.org/). While `0.x`, minor bumps may break the CLI surface; every break is
 called out in the changelog.
 
-1. Add a section for the new version to `CHANGELOG.md`.
-2. Bump `version` in `rust/Cargo.toml` (the workspace version).
-3. Freeze the release's own view states: `cargo test -p ownpurse-tui --test v21 write_frozen_states -- --ignored`
-   (the next release must read them).
-4. Commit `release: vX.Y.Z`, tag `vX.Y.Z`, push with the tag.
-5. The `release` workflow runs the gate, checks the tag matches the workspace version and publishes a GitHub
-   Release with the changelog section. Install from a tag with `./install.sh`.
+During rapid development nothing waits on CI. Write changes under `## [Unreleased]` in `CHANGELOG.md` as you go,
+then cut a release in one command:
+
+```sh
+rust/scripts/release.sh 0.17.0             # changelog section, version bump, frozen view states, commit, tag, push
+rust/scripts/release.sh 0.17.0 --no-push   # the same, without the push
+```
+
+Pushing the tag makes the `release` workflow publish a GitHub Release with the changelog section; it does not rerun
+the gate. Install from a tag with `./install.sh`.
+
+The pre-push hook runs `cargo fmt --check` and `cargo check` (about a minute when the build is warm).
+`OWNPURSE_FULL_GATE=1 git push` runs the whole gate instead, and CI runs it on every push without blocking anything.
+Run the full gate yourself before a release that matters: `rust/scripts/check.sh`.

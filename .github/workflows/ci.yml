@@ -3,6 +3,10 @@ on:
   push:
     branches: [main]
   pull_request:
+# Informational: nothing waits on CI. A newer push cancels the run for an older one.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:

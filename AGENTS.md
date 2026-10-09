@@ -55,7 +55,11 @@ cargo test --workspace --locked
 scripts/check.sh                 # the release gate: hygiene, docs grep, fmt, clippy, tests, laws, benches
 ```
 
-Install the pre-push hook once per clone: `git config core.hooksPath .githooks`.
+Install the pre-push hook once per clone: `git config core.hooksPath .githooks`. It runs fmt and `cargo check`
+only; `OWNPURSE_FULL_GATE=1 git push` runs the whole gate. Nothing waits on CI.
+
+Releases: add notes under `## [Unreleased]` in `CHANGELOG.md` as you go, then `rust/scripts/release.sh X.Y.Z`
+(bump, freeze view states, commit, tag, push; the tag publishes a GitHub Release).
 
 TUI snapshots: `INSTA_UPDATE=always cargo test -p ownpurse-tui --test snapshots`, then review every changed
 `.snap` before committing.

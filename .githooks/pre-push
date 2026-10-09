@@ -1,14 +1,22 @@
 #!/usr/bin/env bash
-# Tracked pre-push hook: refuses a push when the gate fails (install with `git config core.hooksPath .githooks`).
+# Tracked pre-push hook (install with `git config core.hooksPath .githooks`). Fast by default, for rapid development:
+# formatting and a compile check, about a minute when the build is warm.
+#   OWNPURSE_FULL_GATE=1 git push    runs the whole release gate (rust/scripts/check.sh) instead
+#   git push --no-verify             skips the hook
 set -euo pipefail
 root="$(git rev-parse --show-toplevel)"
-if [[ -d "$root/rust" ]]; then
-  echo "pre-push: running rust/scripts/check.sh (the release gate)…" >&2
-  log="${TMPDIR:-/tmp}/ownpurse-pre-push.log"
-  if ! env -u CI "$root/rust/scripts/check.sh" >"$log" 2>&1; then
-    tail -40 "$log" >&2
-    echo "pre-push: GATE FAILED — push refused. Full log: $log" >&2
-    exit 1
+[[ -d "$root/rust" ]] || exit 0
+cd "$root/rust"
+log="${TMPDIR:-/tmp}/ownpurse-pre-push.log"
+if [[ "${OWNPURSE_FULL_GATE:-}" == 1 ]]; then
+  echo "pre-push: running the full gate (rust/scripts/check.sh)…" >&2
+  if ! env -u CI scripts/check.sh >"$log" 2>&1; then
+    tail -40 "$log" >&2; echo "pre-push: GATE FAILED — push refused. Full log: $log" >&2; exit 1
   fi
-  echo "pre-push: gate OK" >&2
+  echo "pre-push: gate OK" >&2; exit 0
 fi
+echo "pre-push: fmt + cargo check (OWNPURSE_FULL_GATE=1 for the whole gate)…" >&2
+if ! { cargo fmt --all -- --check && cargo check --workspace --all-targets --quiet; } >"$log" 2>&1; then
+  tail -40 "$log" >&2; echo "pre-push: checks failed — push refused. Full log: $log" >&2; exit 1
+fi
+echo "pre-push: OK" >&2
