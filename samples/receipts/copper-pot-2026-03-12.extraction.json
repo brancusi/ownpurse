@@ -1,0 +1,206 @@
+{
+  "format": "extraction@1",
+  "extractor": {
+    "id": "agent:tally",
+    "version": "tally-reader 0.4.1",
+    "read_at": "2026-03-13T08:30:00Z"
+  },
+  "reads": {
+    "name": "copper-pot-2026-03-12.jpg",
+    "media_type": "image/jpeg",
+    "sha256": "4e9cf7a657b3bbd7a4e5bcc7a2ace5b11931bb81443bc2c0d8c6b407d9225e7a"
+  },
+  "kind": "receipt",
+  "pages": [
+    {
+      "page": 1,
+      "width": 942,
+      "height": 1710,
+      "unit": "px",
+      "origin": "top-left",
+      "rotation_deg": 2.3
+    }
+  ],
+  "fields": {
+    "merchant": {
+      "text": "COPPER POT BISTRO",
+      "value": "Copper Pot Bistro",
+      "page": 1,
+      "box": [272, 133, 614, 173],
+      "confidence": 0.98
+    },
+    "date": {
+      "text": "03/12/2026",
+      "value": "2026-03-12",
+      "page": 1,
+      "box": [119, 330, 291, 362],
+      "confidence": 0.97
+    },
+    "time": {
+      "text": "8:47 PM",
+      "value": "20:47",
+      "page": 1,
+      "box": [660, 312, 781, 337],
+      "confidence": 0.95
+    },
+    "card": {
+      "text": "DEBIT XXXXXXXXXXXX4821",
+      "value": "4821",
+      "page": 1,
+      "box": [142, 888, 518, 924],
+      "confidence": 0.96
+    },
+    "auth_code": {
+      "text": "AUTH CODE 0A7731",
+      "value": "0A7731",
+      "page": 1,
+      "box": [144, 933, 417, 966],
+      "confidence": 0.88
+    },
+    "subtotal": {
+      "text": "152.80",
+      "value": "152.80",
+      "page": 1,
+      "box": [692, 690, 796, 716],
+      "confidence": 0.97
+    },
+    "tax": {
+      "text": "13.60",
+      "value": "13.60",
+      "page": 1,
+      "box": [711, 732, 798, 758],
+      "confidence": 0.97
+    },
+    "printed_total": {
+      "text": "166.40",
+      "value": "166.40",
+      "page": 1,
+      "box": [678, 776, 800, 807],
+      "confidence": 0.97
+    },
+    "tip": {
+      "text": "20.00",
+      "value": "20.00",
+      "page": 1,
+      "box": [566, 1005, 685, 1036],
+      "confidence": 0.62,
+      "handwritten": true
+    },
+    "total": {
+      "text": "186.40",
+      "value": "186.40",
+      "page": 1,
+      "box": [539, 1094, 687, 1129],
+      "confidence": 0.81,
+      "handwritten": true
+    }
+  },
+  "balances": [],
+  "items": [
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [124, 436, 786, 484],
+      "fields": {
+        "description": {
+          "text": "1 Burrata",
+          "value": "Burrata",
+          "page": 1,
+          "box": [125, 457, 279, 484],
+          "confidence": 0.93
+        },
+        "amount": {
+          "text": "16.00",
+          "value": "16.00",
+          "page": 1,
+          "box": [699, 436, 786, 461],
+          "confidence": 0.96
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [126, 478, 787, 526],
+      "fields": {
+        "description": {
+          "text": "1 Roast half chicken",
+          "value": "Roast half chicken",
+          "page": 1,
+          "box": [126, 490, 468, 526],
+          "confidence": 0.93
+        },
+        "amount": {
+          "text": "34.00",
+          "value": "34.00",
+          "page": 1,
+          "box": [701, 478, 787, 503],
+          "confidence": 0.96
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [128, 520, 789, 574],
+      "fields": {
+        "description": {
+          "text": "1 Hanger steak frites",
+          "value": "Hanger steak frites",
+          "page": 1,
+          "box": [128, 532, 487, 574],
+          "confidence": 0.93
+        },
+        "amount": {
+          "text": "42.00",
+          "value": "42.00",
+          "page": 1,
+          "box": [702, 520, 789, 545],
+          "confidence": 0.96
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [130, 561, 791, 610],
+      "fields": {
+        "description": {
+          "text": "1 Mushroom risotto",
+          "value": "Mushroom risotto",
+          "page": 1,
+          "box": [130, 576, 437, 610],
+          "confidence": 0.93
+        },
+        "amount": {
+          "text": "29.00",
+          "value": "29.00",
+          "page": 1,
+          "box": [704, 561, 791, 587],
+          "confidence": 0.96
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [131, 603, 793, 652],
+      "fields": {
+        "description": {
+          "text": "1 Btl Cotes du Rhone",
+          "value": "Btl Cotes du Rhone",
+          "page": 1,
+          "box": [131, 616, 473, 652],
+          "confidence": 0.93
+        },
+        "amount": {
+          "text": "31.80",
+          "value": "31.80",
+          "page": 1,
+          "box": [706, 603, 793, 629],
+          "confidence": 0.96
+        }
+      }
+    }
+  ]
+}
