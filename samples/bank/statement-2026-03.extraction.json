@@ -1,0 +1,620 @@
+{
+  "format": "extraction@1",
+  "extractor": {
+    "id": "agent:tally",
+    "version": "tally-reader 0.4.1",
+    "read_at": "2026-04-03T10:15:00Z"
+  },
+  "reads": {
+    "name": "statement-2026-03.pdf",
+    "media_type": "application/pdf",
+    "sha256": "ec1be415798c9b1aba395548cd14a472e1188253a89a8c0548d6e416fe36c7d7"
+  },
+  "kind": "bank-statement",
+  "pages": [
+    {
+      "page": 1,
+      "width": 612,
+      "height": 792,
+      "unit": "pt",
+      "origin": "top-left"
+    },
+    {
+      "page": 2,
+      "width": 612,
+      "height": 792,
+      "unit": "pt",
+      "origin": "top-left"
+    }
+  ],
+  "fields": {
+    "institution": {
+      "text": "Ridgeway Federal Bank",
+      "value": "Ridgeway Federal Bank",
+      "page": 1,
+      "box": [54, 40.5, 233.6, 55.3],
+      "confidence": 0.99
+    },
+    "account_name": {
+      "text": "Operating checking",
+      "value": "Operating checking",
+      "page": 1,
+      "box": [360, 88.8, 453.4, 98.1],
+      "confidence": 0.98
+    },
+    "account_mask": {
+      "text": "4821",
+      "value": "4821",
+      "page": 1,
+      "box": [428, 102.5, 448.0, 110.9],
+      "confidence": 0.99
+    },
+    "period_start": {
+      "text": "03/01/2026",
+      "value": "2026-03-01",
+      "page": 1,
+      "box": [434, 114.5, 479.0, 122.9],
+      "confidence": 0.99
+    },
+    "period_end": {
+      "text": "03/31/2026",
+      "value": "2026-03-31",
+      "page": 1,
+      "box": [496, 114.5, 541.0, 122.9],
+      "confidence": 0.99
+    },
+    "deposits_count": {
+      "text": "(3)",
+      "value": "3",
+      "page": 1,
+      "box": [152, 181.5, 163.0, 189.9],
+      "confidence": 0.97
+    },
+    "deposits_total": {
+      "text": "+$4,165.56",
+      "value": "4165.56",
+      "page": 1,
+      "box": [502.7, 181.5, 548.0, 189.9],
+      "confidence": 0.99
+    },
+    "withdrawals_count": {
+      "text": "(10)",
+      "value": "10",
+      "page": 1,
+      "box": [162, 197.5, 178.0, 205.9],
+      "confidence": 0.97
+    },
+    "withdrawals_total": {
+      "text": "-$15,062.89",
+      "value": "15062.89",
+      "page": 1,
+      "box": [500.0, 197.5, 548.0, 205.9],
+      "confidence": 0.99
+    }
+  },
+  "balances": [
+    {
+      "name": "opening",
+      "fields": {
+        "date": {
+          "text": "03/01/2026",
+          "value": "2026-03-01",
+          "page": 1,
+          "box": [160, 165.5, 205.0, 173.9],
+          "confidence": 0.99
+        },
+        "amount": {
+          "text": "$24,310.55",
+          "value": "24310.55",
+          "page": 1,
+          "box": [503.0, 165.5, 548.0, 173.9],
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "name": "closing",
+      "fields": {
+        "date": {
+          "text": "03/31/2026",
+          "value": "2026-03-31",
+          "page": 1,
+          "box": [146, 215.5, 191.0, 223.9],
+          "confidence": 0.99
+        },
+        "amount": {
+          "text": "$13,413.22",
+          "value": "13413.22",
+          "page": 1,
+          "box": [503.0, 215.5, 548.0, 223.9],
+          "confidence": 0.99
+        }
+      }
+    }
+  ],
+  "items": [
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [54, 291.5, 558.0, 299.9],
+      "fields": {
+        "date": {
+          "text": "03/02",
+          "value": "--03-02",
+          "page": 1,
+          "box": [54, 291.5, 76.5, 299.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "DEPOSIT OSTLEY JOINERY",
+          "value": "DEPOSIT OSTLEY JOINERY",
+          "page": 1,
+          "box": [100, 291.5, 219.0, 299.9],
+          "confidence": 0.96
+        },
+        "amount": {
+          "text": "1,846.13",
+          "value": "1846.13",
+          "page": 1,
+          "box": [435.0, 291.5, 470.0, 299.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "26,156.68",
+          "value": "26156.68",
+          "page": 1,
+          "box": [518.0, 291.5, 558.0, 299.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [54, 307.5, 558.0, 315.9],
+      "fields": {
+        "date": {
+          "text": "03/06",
+          "value": "--03-06",
+          "page": 1,
+          "box": [54, 307.5, 76.5, 315.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "HARBOR STREET COFFEE",
+          "value": "HARBOR STREET COFFEE",
+          "page": 1,
+          "box": [100, 307.5, 215.5, 315.9],
+          "confidence": 0.96
+        },
+        "amount": {
+          "text": "-4.75",
+          "value": "-4.75",
+          "page": 1,
+          "box": [449.5, 307.5, 470.0, 315.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "26,151.93",
+          "value": "26151.93",
+          "page": 1,
+          "box": [518.0, 307.5, 558.0, 315.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [54, 323.5, 558.0, 331.9],
+      "fields": {
+        "date": {
+          "text": "03/06",
+          "value": "--03-06",
+          "page": 1,
+          "box": [54, 323.5, 76.5, 331.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "HARBOR STREET COFFEE",
+          "value": "HARBOR STREET COFFEE",
+          "page": 1,
+          "box": [100, 323.5, 215.5, 331.9],
+          "confidence": 0.96
+        },
+        "amount": {
+          "text": "-4.75",
+          "value": "-4.75",
+          "page": 1,
+          "box": [449.5, 323.5, 470.0, 331.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "26,147.18",
+          "value": "26147.18",
+          "page": 1,
+          "box": [518.0, 323.5, 558.0, 331.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [54, 339.5, 558.0, 347.9],
+      "fields": {
+        "date": {
+          "text": "03/09",
+          "value": "--03-09",
+          "page": 1,
+          "box": [54, 339.5, 76.5, 347.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "CHECK 1042",
+          "value": "CHECK 1042",
+          "page": 1,
+          "box": [100, 339.5, 154.0, 347.9],
+          "confidence": 0.96
+        },
+        "amount": {
+          "text": "-3,215.47",
+          "value": "-3215.47",
+          "page": 1,
+          "box": [432.0, 339.5, 470.0, 347.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "22,931.71",
+          "value": "22931.71",
+          "page": 1,
+          "box": [518.0, 339.5, 558.0, 347.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [54, 355.5, 558.0, 363.9],
+      "fields": {
+        "date": {
+          "text": "03/13",
+          "value": "--03-13",
+          "page": 1,
+          "box": [54, 355.5, 76.5, 363.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "COPPER POT BISTRO",
+          "value": "COPPER POT BISTRO",
+          "page": 1,
+          "box": [100, 355.5, 195.0, 363.9],
+          "confidence": 0.96
+        },
+        "amount": {
+          "text": "-186.40",
+          "value": "-186.40",
+          "page": 1,
+          "box": [439.5, 355.5, 470.0, 363.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "22,745.31",
+          "value": "22745.31",
+          "page": 1,
+          "box": [518.0, 355.5, 558.0, 363.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [54, 371.5, 558.0, 379.9],
+      "fields": {
+        "date": {
+          "text": "03/16",
+          "value": "--03-16",
+          "page": 1,
+          "box": [54, 371.5, 76.5, 379.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "TRANSFER TO SAV 9067",
+          "value": "TRANSFER TO SAV 9067",
+          "page": 1,
+          "box": [100, 371.5, 206.5, 379.9],
+          "confidence": 0.96
+        },
+        "amount": {
+          "text": "-5,000.00",
+          "value": "-5000.00",
+          "page": 1,
+          "box": [432.0, 371.5, 470.0, 379.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "17,745.31",
+          "value": "17745.31",
+          "page": 1,
+          "box": [518.0, 371.5, 558.0, 379.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [54, 387.5, 558.0, 395.9],
+      "fields": {
+        "date": {
+          "text": "03/18",
+          "value": "--03-18",
+          "page": 1,
+          "box": [54, 387.5, 76.5, 395.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "QUILLFEATHER DESIGN ACH",
+          "value": "QUILLFEATHER DESIGN ACH",
+          "page": 1,
+          "box": [100, 387.5, 226.5, 395.9],
+          "confidence": 0.91
+        },
+        "amount": {
+          "text": "-2,400.00",
+          "value": "-2400.00",
+          "page": 1,
+          "box": [432.0, 387.5, 470.0, 395.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "15,345.31",
+          "value": "15345.31",
+          "page": 1,
+          "box": [518.0, 387.5, 558.0, 395.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 1,
+      "box": [54, 403.5, 558.0, 411.9],
+      "fields": {
+        "date": {
+          "text": "03/20",
+          "value": "--03-20",
+          "page": 1,
+          "box": [54, 403.5, 76.5, 411.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "LARKSPUR PROPERTY RENT",
+          "value": "LARKSPUR PROPERTY RENT",
+          "page": 1,
+          "box": [100, 403.5, 227.5, 411.9],
+          "confidence": 0.96
+        },
+        "amount": {
+          "text": "-2,750.00",
+          "value": "-2750.00",
+          "page": 1,
+          "box": [432.0, 403.5, 470.0, 411.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "12,595.31",
+          "value": "12595.31",
+          "page": 1,
+          "box": [518.0, 403.5, 558.0, 411.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 2,
+      "box": [54, 101.5, 558.0, 109.9],
+      "fields": {
+        "date": {
+          "text": "03/24",
+          "value": "--03-24",
+          "page": 2,
+          "box": [54, 101.5, 76.5, 109.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "SALTMARSH CUPPING LAB",
+          "value": "SALTMARSH CUPPING LAB",
+          "page": 2,
+          "box": [100, 101.5, 218.0, 109.9],
+          "confidence": 0.96
+        },
+        "amount": {
+          "text": "-362.18",
+          "value": "-362.18",
+          "page": 2,
+          "box": [439.5, 101.5, 470.0, 109.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "12,233.13",
+          "value": "12233.13",
+          "page": 2,
+          "box": [518.0, 101.5, 558.0, 109.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 2,
+      "box": [54, 117.5, 558.0, 125.9],
+      "fields": {
+        "date": {
+          "text": "03/25",
+          "value": "--03-25",
+          "page": 2,
+          "box": [54, 117.5, 76.5, 125.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "STRIPE PAYOUT",
+          "value": "STRIPE PAYOUT",
+          "page": 2,
+          "box": [100, 117.5, 172.0, 125.9],
+          "confidence": 0.96
+        },
+        "amount": {
+          "text": "2,318.06",
+          "value": "2318.06",
+          "page": 2,
+          "box": [435.0, 117.5, 470.0, 125.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "14,551.19",
+          "value": "14551.19",
+          "page": 2,
+          "box": [518.0, 117.5, 558.0, 125.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 2,
+      "box": [54, 133.5, 558.0, 141.9],
+      "fields": {
+        "date": {
+          "text": "03/28",
+          "value": "--03-28",
+          "page": 2,
+          "box": [54, 133.5, 76.5, 141.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "RIDGEWAY LOAN PMT 2207",
+          "value": "RIDGEWAY LOAN PMT 2207",
+          "page": 2,
+          "box": [100, 133.5, 220.0, 141.9],
+          "confidence": 0.96
+        },
+        "amount": {
+          "text": "-1,126.84",
+          "value": "-1126.84",
+          "page": 2,
+          "box": [432.0, 133.5, 470.0, 141.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "13,424.35",
+          "value": "13424.35",
+          "page": 2,
+          "box": [518.0, 133.5, 558.0, 141.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 2,
+      "box": [54, 149.5, 558.0, 157.9],
+      "fields": {
+        "date": {
+          "text": "03/31",
+          "value": "--03-31",
+          "page": 2,
+          "box": [54, 149.5, 76.5, 157.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "MONTHLY SERVICE FEE",
+          "value": "MONTHLY SERVICE FEE",
+          "page": 2,
+          "box": [100, 149.5, 206.0, 157.9],
+          "confidence": 0.96
+        },
+        "amount": {
+          "text": "-12.50",
+          "value": "-12.50",
+          "page": 2,
+          "box": [444.5, 149.5, 470.0, 157.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "13,411.85",
+          "value": "13411.85",
+          "page": 2,
+          "box": [518.0, 149.5, 558.0, 157.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "line",
+      "page": 2,
+      "box": [54, 165.5, 558.0, 173.9],
+      "fields": {
+        "date": {
+          "text": "03/31",
+          "value": "--03-31",
+          "page": 2,
+          "box": [54, 165.5, 76.5, 173.9],
+          "confidence": 0.99
+        },
+        "description": {
+          "text": "INTEREST PAID",
+          "value": "INTEREST PAID",
+          "page": 2,
+          "box": [100, 165.5, 168.0, 173.9],
+          "confidence": 0.96
+        },
+        "amount": {
+          "text": "1.37",
+          "value": "1.37",
+          "page": 2,
+          "box": [452.5, 165.5, 470.0, 173.9],
+          "confidence": 0.99
+        },
+        "balance": {
+          "text": "13,413.22",
+          "value": "13413.22",
+          "page": 2,
+          "box": [518.0, 165.5, 558.0, 173.9],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "kind": "check-paid",
+      "page": 2,
+      "box": [54, 231.5, 265.0, 239.9],
+      "fields": {
+        "number": {
+          "text": "1042",
+          "value": "1042",
+          "page": 2,
+          "box": [54, 231.5, 74.0, 239.9],
+          "confidence": 0.99
+        },
+        "date": {
+          "text": "03/09",
+          "value": "--03-09",
+          "page": 2,
+          "box": [130, 231.5, 152.5, 239.9],
+          "confidence": 0.99
+        },
+        "amount": {
+          "text": "3,215.47",
+          "value": "3215.47",
+          "page": 2,
+          "box": [230, 231.5, 265.0, 239.9],
+          "confidence": 0.99
+        }
+      }
+    }
+  ]
+}

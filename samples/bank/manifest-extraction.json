@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "file": "bank/statement-2026-03.extraction.json",
+      "projector": "extraction@1",
+      "source": "bank:ridgeway-4821",
+      "observed_at": "2026-04-03T10:15:00Z",
+      "with": {"reads": "bank/statement-2026-03.pdf"}
+    },
+    {
+      "file": "bank/check-1042.extraction.json",
+      "projector": "extraction@1",
+      "source": "bank:ridgeway-4821",
+      "observed_at": "2026-03-04T16:02:00Z",
+      "with": {"reads": "bank/check-1042.png"}
+    }
+  ]
+}

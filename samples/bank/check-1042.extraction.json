@@ -1,0 +1,96 @@
+{
+  "format": "extraction@1",
+  "extractor": {
+    "id": "agent:tally",
+    "version": "tally-reader 0.4.1",
+    "read_at": "2026-03-04T16:02:00Z"
+  },
+  "reads": {
+    "name": "check-1042.png",
+    "media_type": "image/png",
+    "sha256": "102d2e81075264d6b7d5457c932a70af7f443c3685782f370efb57481e3a2f0f"
+  },
+  "kind": "check",
+  "pages": [
+    {
+      "page": 1,
+      "width": 1500,
+      "height": 660,
+      "unit": "px",
+      "origin": "top-left"
+    }
+  ],
+  "fields": {
+    "bank": {
+      "text": "Ridgeway Federal Bank",
+      "value": "Ridgeway Federal Bank",
+      "page": 1,
+      "box": [620, 51, 909, 75],
+      "confidence": 0.98
+    },
+    "number": {
+      "text": "1042",
+      "value": "1042",
+      "page": 1,
+      "box": [1384, 51, 1440, 70],
+      "confidence": 0.99
+    },
+    "date": {
+      "text": "03/03/2026",
+      "value": "2026-03-03",
+      "page": 1,
+      "box": [1110, 135, 1333, 159],
+      "confidence": 0.95,
+      "handwritten": true
+    },
+    "payee": {
+      "text": "Brindle & Oake Supply",
+      "value": "Brindle & Oake Supply",
+      "page": 1,
+      "box": [198, 239, 610, 284],
+      "confidence": 0.93,
+      "handwritten": true
+    },
+    "amount": {
+      "text": "3,215.47",
+      "value": "3215.47",
+      "page": 1,
+      "box": [1225, 251, 1395, 280],
+      "confidence": 0.97,
+      "handwritten": true
+    },
+    "amount_words": {
+      "text": "Three thousand two hundred fifteen and 47/100",
+      "value": "Three thousand two hundred fifteen and 47/100",
+      "page": 1,
+      "box": [70, 325, 794, 360],
+      "confidence": 0.9,
+      "handwritten": true
+    },
+    "memo": {
+      "text": "Inv BO-7781 green coffee",
+      "value": "Inv BO-7781 green coffee",
+      "page": 1,
+      "box": [130, 450, 514, 484],
+      "confidence": 0.86,
+      "handwritten": true
+    },
+    "signer": {
+      "text": "Odile Fenwick",
+      "value": "Odile Fenwick",
+      "page": 1,
+      "box": [900, 435, 1230, 475],
+      "confidence": 0.38,
+      "handwritten": true
+    },
+    "micr": {
+      "text": "⑆999999999⑆ 99990004821⑈ 1042",
+      "value": "999999999 99990004821 1042",
+      "page": 1,
+      "box": [300, 575, 852, 600],
+      "confidence": 0.99
+    }
+  },
+  "balances": [],
+  "items": []
+}
