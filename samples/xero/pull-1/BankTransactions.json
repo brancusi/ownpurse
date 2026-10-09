@@ -1,0 +1,225 @@
+{
+  "Id": "c0ffee09-0000-4000-8000-000000000009",
+  "Status": "OK",
+  "ProviderName": "ownpurse samples",
+  "DateTimeUTC": "/Date(1774026300000+0000)/",
+  "BankTransactions": [
+    {
+      "BankTransactionID": "c0ffee05-0000-4000-8000-000000000001",
+      "Type": "SPEND",
+      "Contact": {
+        "ContactID": "c0ffee02-0000-4000-8000-000000000007",
+        "Name": "Harbor Street Coffee"
+      },
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000010",
+          "Description": "Cortado",
+          "Quantity": 1.0000,
+          "UnitAmount": 4.7500,
+          "AccountCode": "6100",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 4.75,
+          "Tracking": []
+        }
+      ],
+      "BankAccount": {
+        "AccountID": "c0ffee01-0000-4000-8000-000000000001",
+        "Code": "1010",
+        "Name": "Operating account"
+      },
+      "IsReconciled": true,
+      "Date": "/Date(1772755200000+0000)/",
+      "DateString": "2026-03-06T00:00:00",
+      "Status": "AUTHORISED",
+      "LineAmountTypes": "NoTax",
+      "SubTotal": 4.75,
+      "TotalTax": 0.00,
+      "Total": 4.75,
+      "CurrencyCode": "USD",
+      "UpdatedDateUTC": "/Date(1772820000000+0000)/",
+      "HasAttachments": false
+    },
+    {
+      "BankTransactionID": "c0ffee05-0000-4000-8000-000000000002",
+      "Type": "SPEND",
+      "Contact": {
+        "ContactID": "c0ffee02-0000-4000-8000-000000000007",
+        "Name": "Harbor Street Coffee"
+      },
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000011",
+          "Description": "Cortado",
+          "Quantity": 1.0000,
+          "UnitAmount": 4.7500,
+          "AccountCode": "6100",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 4.75,
+          "Tracking": []
+        }
+      ],
+      "BankAccount": {
+        "AccountID": "c0ffee01-0000-4000-8000-000000000001",
+        "Code": "1010",
+        "Name": "Operating account"
+      },
+      "IsReconciled": true,
+      "Date": "/Date(1772755200000+0000)/",
+      "DateString": "2026-03-06T00:00:00",
+      "Status": "AUTHORISED",
+      "LineAmountTypes": "NoTax",
+      "SubTotal": 4.75,
+      "TotalTax": 0.00,
+      "Total": 4.75,
+      "CurrencyCode": "USD",
+      "UpdatedDateUTC": "/Date(1772820001000+0000)/",
+      "HasAttachments": false
+    },
+    {
+      "BankTransactionID": "c0ffee05-0000-4000-8000-000000000003",
+      "Type": "SPEND",
+      "Contact": {
+        "ContactID": "c0ffee02-0000-4000-8000-000000000003",
+        "Name": "Copper Pot Bistro"
+      },
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000009",
+          "Description": "Dinner",
+          "Quantity": 1.0000,
+          "UnitAmount": 186.4000,
+          "AccountCode": "6100",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 186.40,
+          "Tracking": []
+        }
+      ],
+      "BankAccount": {
+        "AccountID": "c0ffee01-0000-4000-8000-000000000001",
+        "Code": "1010",
+        "Name": "Operating account"
+      },
+      "IsReconciled": true,
+      "Date": "/Date(1773273600000+0000)/",
+      "DateString": "2026-03-12T00:00:00",
+      "Status": "AUTHORISED",
+      "LineAmountTypes": "NoTax",
+      "SubTotal": 186.40,
+      "TotalTax": 0.00,
+      "Total": 186.40,
+      "CurrencyCode": "USD",
+      "UpdatedDateUTC": "/Date(1773392400000+0000)/",
+      "HasAttachments": false
+    },
+    {
+      "BankTransactionID": "c0ffee05-0000-4000-8000-000000000004",
+      "Type": "SPEND-TRANSFER",
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000012",
+          "Description": "Transfer to savings",
+          "Quantity": 1.0000,
+          "UnitAmount": 5000.0000,
+          "AccountCode": "1020",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 5000.00,
+          "Tracking": []
+        }
+      ],
+      "BankAccount": {
+        "AccountID": "c0ffee01-0000-4000-8000-000000000001",
+        "Code": "1010",
+        "Name": "Operating account"
+      },
+      "IsReconciled": true,
+      "Date": "/Date(1773619200000+0000)/",
+      "DateString": "2026-03-16T00:00:00",
+      "Status": "AUTHORISED",
+      "LineAmountTypes": "NoTax",
+      "SubTotal": 5000.00,
+      "TotalTax": 0.00,
+      "Total": 5000.00,
+      "CurrencyCode": "USD",
+      "UpdatedDateUTC": "/Date(1773662400000+0000)/",
+      "HasAttachments": false,
+      "Reference": ""
+    },
+    {
+      "BankTransactionID": "c0ffee05-0000-4000-8000-000000000005",
+      "Type": "RECEIVE-TRANSFER",
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000013",
+          "Description": "Transfer from operating",
+          "Quantity": 1.0000,
+          "UnitAmount": 5000.0000,
+          "AccountCode": "1010",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 5000.00,
+          "Tracking": []
+        }
+      ],
+      "BankAccount": {
+        "AccountID": "c0ffee01-0000-4000-8000-000000000002",
+        "Code": "1020",
+        "Name": "Reserve savings"
+      },
+      "IsReconciled": true,
+      "Date": "/Date(1773619200000+0000)/",
+      "DateString": "2026-03-16T00:00:00",
+      "Status": "AUTHORISED",
+      "LineAmountTypes": "NoTax",
+      "SubTotal": 5000.00,
+      "TotalTax": 0.00,
+      "Total": 5000.00,
+      "CurrencyCode": "USD",
+      "UpdatedDateUTC": "/Date(1773662400000+0000)/",
+      "HasAttachments": false,
+      "Reference": ""
+    },
+    {
+      "BankTransactionID": "c0ffee05-0000-4000-8000-000000000006",
+      "Type": "SPEND",
+      "Contact": {
+        "ContactID": "c0ffee02-0000-4000-8000-000000000004",
+        "Name": "Larkspur Property Management"
+      },
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000014",
+          "Description": "Rent, March",
+          "Quantity": 1.0000,
+          "UnitAmount": 2750.0000,
+          "AccountCode": "6200",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 2750.00,
+          "Tracking": []
+        }
+      ],
+      "BankAccount": {
+        "AccountID": "c0ffee01-0000-4000-8000-000000000001",
+        "Code": "1010",
+        "Name": "Operating account"
+      },
+      "IsReconciled": true,
+      "Date": "/Date(1773964800000+0000)/",
+      "DateString": "2026-03-20T00:00:00",
+      "Status": "AUTHORISED",
+      "LineAmountTypes": "NoTax",
+      "SubTotal": 2750.00,
+      "TotalTax": 0.00,
+      "Total": 2750.00,
+      "CurrencyCode": "USD",
+      "UpdatedDateUTC": "/Date(1774011600000+0000)/",
+      "HasAttachments": false,
+      "Reference": "March rent"
+    }
+  ]
+}

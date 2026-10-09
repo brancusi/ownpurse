@@ -1,0 +1,287 @@
+{
+  "Id": "c0ffee09-0000-4000-8000-000000000006",
+  "Status": "OK",
+  "ProviderName": "ownpurse samples",
+  "DateTimeUTC": "/Date(1774026300000+0000)/",
+  "Contacts": [
+    {
+      "ContactID": "c0ffee02-0000-4000-8000-000000000001",
+      "ContactStatus": "ACTIVE",
+      "Name": "Ostley Joinery",
+      "EmailAddress": "accounts@ostley.example",
+      "Addresses": [
+        {
+          "AddressType": "STREET"
+        },
+        {
+          "AddressType": "POBOX",
+          "City": "Portsmouth",
+          "Region": "NH",
+          "Country": "USA"
+        }
+      ],
+      "Phones": [
+        {
+          "PhoneType": "DEFAULT"
+        },
+        {
+          "PhoneType": "MOBILE"
+        }
+      ],
+      "UpdatedDateUTC": "/Date(1767607200000+0000)/",
+      "ContactGroups": [],
+      "IsSupplier": false,
+      "IsCustomer": true,
+      "HasAttachments": false,
+      "HasValidationErrors": false
+    },
+    {
+      "ContactID": "c0ffee02-0000-4000-8000-000000000002",
+      "ContactStatus": "ACTIVE",
+      "Name": "Brindle & Oake Supply",
+      "EmailAddress": "ar@brindle-oake.example",
+      "Addresses": [
+        {
+          "AddressType": "STREET"
+        },
+        {
+          "AddressType": "POBOX"
+        }
+      ],
+      "Phones": [
+        {
+          "PhoneType": "DEFAULT"
+        },
+        {
+          "PhoneType": "MOBILE"
+        }
+      ],
+      "UpdatedDateUTC": "/Date(1767607200000+0000)/",
+      "ContactGroups": [],
+      "IsSupplier": true,
+      "IsCustomer": false,
+      "HasAttachments": false,
+      "HasValidationErrors": false
+    },
+    {
+      "ContactID": "c0ffee02-0000-4000-8000-000000000003",
+      "ContactStatus": "ACTIVE",
+      "Name": "Copper Pot Bistro",
+      "Addresses": [
+        {
+          "AddressType": "STREET"
+        },
+        {
+          "AddressType": "POBOX"
+        }
+      ],
+      "Phones": [
+        {
+          "PhoneType": "DEFAULT"
+        },
+        {
+          "PhoneType": "MOBILE"
+        }
+      ],
+      "UpdatedDateUTC": "/Date(1767607200000+0000)/",
+      "ContactGroups": [],
+      "IsSupplier": true,
+      "IsCustomer": false,
+      "HasAttachments": false,
+      "HasValidationErrors": false
+    },
+    {
+      "ContactID": "c0ffee02-0000-4000-8000-000000000004",
+      "ContactStatus": "ACTIVE",
+      "Name": "Larkspur Property Management",
+      "EmailAddress": "rent@larkspur.example",
+      "Addresses": [
+        {
+          "AddressType": "STREET"
+        },
+        {
+          "AddressType": "POBOX"
+        }
+      ],
+      "Phones": [
+        {
+          "PhoneType": "DEFAULT"
+        },
+        {
+          "PhoneType": "MOBILE"
+        }
+      ],
+      "UpdatedDateUTC": "/Date(1767607200000+0000)/",
+      "ContactGroups": [],
+      "IsSupplier": true,
+      "IsCustomer": false,
+      "HasAttachments": false,
+      "HasValidationErrors": false
+    },
+    {
+      "ContactID": "c0ffee02-0000-4000-8000-000000000005",
+      "ContactStatus": "ACTIVE",
+      "Name": "Quillfeather Design Consultancy LLP",
+      "EmailAddress": "billing@quillfeather.example",
+      "Addresses": [
+        {
+          "AddressType": "STREET"
+        },
+        {
+          "AddressType": "POBOX"
+        }
+      ],
+      "Phones": [
+        {
+          "PhoneType": "DEFAULT"
+        },
+        {
+          "PhoneType": "MOBILE"
+        }
+      ],
+      "UpdatedDateUTC": "/Date(1767607200000+0000)/",
+      "ContactGroups": [],
+      "IsSupplier": true,
+      "IsCustomer": false,
+      "HasAttachments": false,
+      "HasValidationErrors": false
+    },
+    {
+      "ContactID": "c0ffee02-0000-4000-8000-000000000006",
+      "ContactStatus": "ACTIVE",
+      "Name": "Saltmarsh Cupping Lab LLC",
+      "EmailAddress": "hello@saltmarsh.example",
+      "Addresses": [
+        {
+          "AddressType": "STREET"
+        },
+        {
+          "AddressType": "POBOX"
+        }
+      ],
+      "Phones": [
+        {
+          "PhoneType": "DEFAULT"
+        },
+        {
+          "PhoneType": "MOBILE"
+        }
+      ],
+      "UpdatedDateUTC": "/Date(1767607200000+0000)/",
+      "ContactGroups": [],
+      "IsSupplier": true,
+      "IsCustomer": false,
+      "HasAttachments": false,
+      "HasValidationErrors": false
+    },
+    {
+      "ContactID": "c0ffee02-0000-4000-8000-000000000007",
+      "ContactStatus": "ACTIVE",
+      "Name": "Harbor Street Coffee",
+      "Addresses": [
+        {
+          "AddressType": "STREET"
+        },
+        {
+          "AddressType": "POBOX"
+        }
+      ],
+      "Phones": [
+        {
+          "PhoneType": "DEFAULT"
+        },
+        {
+          "PhoneType": "MOBILE"
+        }
+      ],
+      "UpdatedDateUTC": "/Date(1767607200000+0000)/",
+      "ContactGroups": [],
+      "IsSupplier": true,
+      "IsCustomer": false,
+      "HasAttachments": false,
+      "HasValidationErrors": false
+    },
+    {
+      "ContactID": "c0ffee02-0000-4000-8000-000000000008",
+      "ContactStatus": "ACTIVE",
+      "Name": "Fernhill Grocers",
+      "EmailAddress": "ap@fernhill.example",
+      "Addresses": [
+        {
+          "AddressType": "STREET"
+        },
+        {
+          "AddressType": "POBOX"
+        }
+      ],
+      "Phones": [
+        {
+          "PhoneType": "DEFAULT"
+        },
+        {
+          "PhoneType": "MOBILE"
+        }
+      ],
+      "UpdatedDateUTC": "/Date(1767607200000+0000)/",
+      "ContactGroups": [],
+      "IsSupplier": false,
+      "IsCustomer": true,
+      "HasAttachments": false,
+      "HasValidationErrors": false
+    },
+    {
+      "ContactID": "c0ffee02-0000-4000-8000-000000000009",
+      "ContactStatus": "ACTIVE",
+      "Name": "Ridgeway Federal Bank",
+      "Addresses": [
+        {
+          "AddressType": "STREET"
+        },
+        {
+          "AddressType": "POBOX"
+        }
+      ],
+      "Phones": [
+        {
+          "PhoneType": "DEFAULT"
+        },
+        {
+          "PhoneType": "MOBILE"
+        }
+      ],
+      "UpdatedDateUTC": "/Date(1767607200000+0000)/",
+      "ContactGroups": [],
+      "IsSupplier": true,
+      "IsCustomer": false,
+      "HasAttachments": false,
+      "HasValidationErrors": false
+    },
+    {
+      "ContactID": "c0ffee02-0000-4000-8000-000000000010",
+      "ContactStatus": "ACTIVE",
+      "Name": "Stripe",
+      "Addresses": [
+        {
+          "AddressType": "STREET"
+        },
+        {
+          "AddressType": "POBOX"
+        }
+      ],
+      "Phones": [
+        {
+          "PhoneType": "DEFAULT"
+        },
+        {
+          "PhoneType": "MOBILE"
+        }
+      ],
+      "UpdatedDateUTC": "/Date(1767607200000+0000)/",
+      "ContactGroups": [],
+      "IsSupplier": false,
+      "IsCustomer": true,
+      "HasAttachments": false,
+      "HasValidationErrors": false
+    }
+  ]
+}

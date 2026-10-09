@@ -1,0 +1,54 @@
+{
+  "Id": "c0ffee09-0000-4000-8000-000000000012",
+  "Status": "OK",
+  "ProviderName": "ownpurse samples",
+  "DateTimeUTC": "/Date(1775121120000+0000)/",
+  "Organisations": [
+    {
+      "OrganisationID": "c0ffee00-0000-4000-8000-0000000000a1",
+      "APIKey": "",
+      "Name": "Tallowmere Coffee Roasting Co.",
+      "LegalName": "Tallowmere Coffee Roasting Co.",
+      "PaysTax": true,
+      "Version": "US",
+      "OrganisationType": "COMPANY",
+      "BaseCurrency": "USD",
+      "CountryCode": "US",
+      "IsDemoCompany": false,
+      "OrganisationStatus": "ACTIVE",
+      "FinancialYearEndDay": 31,
+      "FinancialYearEndMonth": 12,
+      "SalesTaxBasis": "ACCRUALS",
+      "DefaultSalesTax": "Tax Exclusive",
+      "DefaultPurchasesTax": "Tax Inclusive",
+      "CreatedDateUTC": "/Date(1762179725000+0000)/",
+      "OrganisationEntityType": "COMPANY",
+      "Timezone": "EASTERNSTANDARDTIME",
+      "ShortCode": "!TmR4q",
+      "Edition": "BUSINESS",
+      "Class": "STANDARD",
+      "Addresses": [
+        {
+          "AddressType": "POBOX",
+          "AddressLine1": "40 Wharf Row",
+          "City": "Portsmouth",
+          "Region": "NH",
+          "PostalCode": "03801",
+          "Country": "USA"
+        }
+      ],
+      "Phones": [],
+      "ExternalLinks": [],
+      "PaymentTerms": {
+        "Bills": {
+          "Day": 30,
+          "Type": "DAYSAFTERBILLDATE"
+        },
+        "Sales": {
+          "Day": 30,
+          "Type": "DAYSAFTERBILLDATE"
+        }
+      }
+    }
+  ]
+}

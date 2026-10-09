@@ -1,0 +1,56 @@
+{
+  "Id": "c0ffee09-0000-4000-8000-000000000014",
+  "Status": "OK",
+  "ProviderName": "ownpurse samples",
+  "DateTimeUTC": "/Date(1775121120000+0000)/",
+  "TaxRates": [
+    {
+      "Name": "Sales Tax",
+      "TaxType": "OUTPUT",
+      "ReportTaxType": "OUTPUT",
+      "CanApplyToAssets": false,
+      "CanApplyToEquity": false,
+      "CanApplyToExpenses": false,
+      "CanApplyToLiabilities": false,
+      "CanApplyToRevenue": true,
+      "DisplayTaxRate": 8.5000,
+      "EffectiveRate": 8.5000,
+      "Status": "ACTIVE",
+      "TaxComponents": [
+        {
+          "Name": "State",
+          "Rate": 6.2500,
+          "IsCompound": false,
+          "IsNonRecoverable": false
+        },
+        {
+          "Name": "City",
+          "Rate": 2.2500,
+          "IsCompound": false,
+          "IsNonRecoverable": false
+        }
+      ]
+    },
+    {
+      "Name": "Tax Exempt",
+      "TaxType": "NONE",
+      "ReportTaxType": "NONE",
+      "CanApplyToAssets": true,
+      "CanApplyToEquity": true,
+      "CanApplyToExpenses": true,
+      "CanApplyToLiabilities": true,
+      "CanApplyToRevenue": true,
+      "DisplayTaxRate": 0.0000,
+      "EffectiveRate": 0.0000,
+      "Status": "ACTIVE",
+      "TaxComponents": [
+        {
+          "Name": "None",
+          "Rate": 0.0000,
+          "IsCompound": false,
+          "IsNonRecoverable": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,11 @@
 [workspace]
 resolver = "2"
-members = ["crates/ownpurse-core", "crates/ownpurse-cli", "crates/ownpurse-tui", "crates/ownpurse-xero", "xtask"]
+members = [
+  "crates/ownpurse-core", "crates/ownpurse-cli", "crates/ownpurse-tui", "crates/ownpurse-xero", "xtask",
+  # the fact model (branch `facts`): a clean break from the record above
+  "crates/ownpurse-facts", "crates/ownpurse-store", "crates/ownpurse-ingest",
+  "crates/ownpurse-facts-cli",
+]
 
 [workspace.package]
 version = "0.16.0"

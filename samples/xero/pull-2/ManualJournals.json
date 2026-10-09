@@ -1,0 +1,36 @@
+{
+  "Id": "c0ffee09-0000-4000-8000-000000000022",
+  "Status": "OK",
+  "ProviderName": "ownpurse samples",
+  "DateTimeUTC": "/Date(1775121120000+0000)/",
+  "ManualJournals": [
+    {
+      "ManualJournalID": "c0ffee07-0000-4000-8000-000000000001",
+      "Date": "/Date(1774915200000+0000)/",
+      "Status": "POSTED",
+      "LineAmountTypes": "NoTax",
+      "Narration": "Depreciation, roaster, March",
+      "JournalLines": [
+        {
+          "Description": "Depreciation, roaster",
+          "TaxType": "NONE",
+          "LineAmount": 412.08,
+          "AccountCode": "6700",
+          "AccountID": "c0ffee01-0000-4000-8000-000000000018",
+          "IsBlank": false
+        },
+        {
+          "Description": "Depreciation, roaster",
+          "TaxType": "NONE",
+          "LineAmount": -412.08,
+          "AccountCode": "1510",
+          "AccountID": "c0ffee01-0000-4000-8000-000000000005",
+          "IsBlank": false
+        }
+      ],
+      "ShowOnCashBasisReports": false,
+      "HasAttachments": false,
+      "UpdatedDateUTC": "/Date(1775034000000+0000)/"
+    }
+  ]
+}

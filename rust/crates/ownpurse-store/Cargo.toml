@@ -1,0 +1,20 @@
+[package]
+name = "ownpurse-store"
+description = "The log in SQLite (append-only, hash-chained) and the drawer of evidence files. The I/O shell around ownpurse-facts."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+ownpurse-facts = { path = "../ownpurse-facts" }
+# `functions`: dsum(), exact decimal sums in SQL (SQLite's own SUM would go through floating point)
+rusqlite = { workspace = true, features = ["functions"] }
+rust_decimal.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

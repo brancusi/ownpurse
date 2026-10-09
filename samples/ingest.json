@@ -1,0 +1,170 @@
+{
+  "sources": {
+    "xero:tallowmere": {
+      "kind": "xero",
+      "name": "Tallowmere Coffee Roasting Co. (Xero)"
+    },
+    "bank:ridgeway-4821": {
+      "kind": "bank",
+      "name": "Ridgeway Federal Bank, checking \u20264821"
+    },
+    "receipts:tallowmere": {
+      "kind": "receipts",
+      "name": "Receipt photos"
+    },
+    "qbo:quillfeather": {
+      "kind": "qbo",
+      "name": "Quillfeather Design Consultancy LLP (QuickBooks Online)"
+    },
+    "freshbooks:saltmarsh": {
+      "kind": "freshbooks",
+      "name": "Saltmarsh Cupping Lab LLC (FreshBooks)"
+    },
+    "sheet:tallowmere-budget-2026": {
+      "kind": "sheet",
+      "name": "Budget 2026 (Google Sheets)"
+    },
+    "xlsx:ridgeway-loan-2207": {
+      "kind": "xlsx",
+      "name": "Loan 2207 amortisation schedule (Excel)"
+    },
+    "eth:0x51ab7c3e": {
+      "kind": "eth",
+      "name": "Roastery wallet (Ethereum)"
+    }
+  },
+  "files": [
+    {
+      "file": "xero/pull-1/Organisations.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "xero/pull-1/Currencies.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "xero/pull-1/TaxRates.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "xero/pull-1/Accounts.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "xero/pull-1/TrackingCategories.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "xero/pull-1/Contacts.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "xero/pull-1/Invoices.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "xero/pull-1/Payments.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "xero/pull-1/BankTransactions.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "xero/pull-1/BankTransfers.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "xero/pull-1/ManualJournals.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-03-20T17:05:00Z"
+    },
+    {
+      "file": "xero/pull-2/Organisations.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "xero/pull-2/Currencies.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "xero/pull-2/TaxRates.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "xero/pull-2/Accounts.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "xero/pull-2/TrackingCategories.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "xero/pull-2/Contacts.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "xero/pull-2/Invoices.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "xero/pull-2/Payments.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "xero/pull-2/BankTransactions.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "xero/pull-2/BankTransfers.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-04-02T09:12:00Z"
+    },
+    {
+      "file": "xero/pull-2/ManualJournals.json",
+      "projector": "xero.json@1",
+      "source": "xero:tallowmere",
+      "observed_at": "2026-04-02T09:12:00Z"
+    }
+  ]
+}

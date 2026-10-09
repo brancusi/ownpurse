@@ -1,0 +1,25 @@
+[package]
+name = "ownpurse-facts-cli"
+description = "The fact model's CLI: ingest evidence, transact, pull, history, SQL, verify. A clean break from `ownpurse`; folds into it when the model settles."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "ownpurse-facts"
+path = "src/main.rs"
+
+[dependencies]
+ownpurse-facts = { path = "../ownpurse-facts" }
+ownpurse-store = { path = "../ownpurse-store" }
+ownpurse-ingest = { path = "../ownpurse-ingest" }
+clap = { workspace = true, features = ["env"] }
+serde_json.workspace = true
+rusqlite = { workspace = true, features = ["functions"] }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

@@ -1,0 +1,32 @@
+{
+  "Id": "c0ffee09-0000-4000-8000-000000000010",
+  "Status": "OK",
+  "ProviderName": "ownpurse samples",
+  "DateTimeUTC": "/Date(1774026300000+0000)/",
+  "BankTransfers": [
+    {
+      "BankTransferID": "c0ffee06-0000-4000-8000-000000000001",
+      "FromBankAccount": {
+        "AccountID": "c0ffee01-0000-4000-8000-000000000001",
+        "Code": "1010",
+        "Name": "Operating account"
+      },
+      "ToBankAccount": {
+        "AccountID": "c0ffee01-0000-4000-8000-000000000002",
+        "Code": "1020",
+        "Name": "Reserve savings"
+      },
+      "Amount": 5000.00,
+      "Date": "/Date(1773619200000+0000)/",
+      "DateString": "2026-03-16T00:00:00",
+      "CurrencyRate": 1.0000000000,
+      "FromBankTransactionID": "c0ffee05-0000-4000-8000-000000000004",
+      "ToBankTransactionID": "c0ffee05-0000-4000-8000-000000000005",
+      "FromIsReconciled": true,
+      "ToIsReconciled": true,
+      "Reference": "To savings",
+      "HasAttachments": false,
+      "CreatedDateUTC": "/Date(1773662400000+0000)/"
+    }
+  ]
+}

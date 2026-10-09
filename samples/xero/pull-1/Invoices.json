@@ -1,0 +1,353 @@
+{
+  "Id": "c0ffee09-0000-4000-8000-000000000007",
+  "Status": "OK",
+  "ProviderName": "ownpurse samples",
+  "DateTimeUTC": "/Date(1774026300000+0000)/",
+  "Invoices": [
+    {
+      "Type": "ACCREC",
+      "InvoiceID": "c0ffee03-0000-4000-8000-000000000001",
+      "InvoiceNumber": "INV-0412",
+      "Reference": "PO 5531",
+      "Contact": {
+        "ContactID": "c0ffee02-0000-4000-8000-000000000001",
+        "Name": "Ostley Joinery"
+      },
+      "Date": "/Date(1771200000000+0000)/",
+      "DateString": "2026-02-16T00:00:00",
+      "DueDate": "/Date(1772409600000+0000)/",
+      "DueDateString": "2026-03-02T00:00:00",
+      "Status": "PAID",
+      "LineAmountTypes": "Exclusive",
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000001",
+          "Description": "Ethiopia Guji, 5 lb bags",
+          "Quantity": 25.0000,
+          "UnitAmount": 68.0600,
+          "AccountCode": "4000",
+          "TaxType": "OUTPUT",
+          "TaxAmount": 144.63,
+          "LineAmount": 1701.50,
+          "Tracking": [
+            {
+              "TrackingCategoryID": "c0ffee0b-0000-4000-8000-000000000001",
+              "Name": "Channel",
+              "Option": "Wholesale",
+              "TrackingOptionID": "c0ffee0b-0000-4000-8000-000000000002"
+            }
+          ]
+        }
+      ],
+      "SubTotal": 1701.50,
+      "TotalTax": 144.63,
+      "Total": 1846.13,
+      "AmountDue": 0.00,
+      "AmountPaid": 1846.13,
+      "AmountCredited": 0.00,
+      "CurrencyCode": "USD",
+      "CurrencyRate": 1.0000000000,
+      "UpdatedDateUTC": "/Date(1772464800000+0000)/",
+      "HasAttachments": false,
+      "IsDiscounted": false,
+      "Payments": [
+        {
+          "PaymentID": "c0ffee04-0000-4000-8000-000000000001",
+          "Date": "/Date(1772409600000+0000)/",
+          "Amount": 1846.13,
+          "Reference": "Ostley 1846.13",
+          "CurrencyRate": 1.0000000000,
+          "HasAccount": false,
+          "HasValidationErrors": false
+        }
+      ],
+      "FullyPaidOnDate": "/Date(1772409600000+0000)/"
+    },
+    {
+      "Type": "ACCREC",
+      "InvoiceID": "c0ffee03-0000-4000-8000-000000000002",
+      "InvoiceNumber": "INV-0415",
+      "Reference": "PO 5540",
+      "Contact": {
+        "ContactID": "c0ffee02-0000-4000-8000-000000000001",
+        "Name": "Ostley Joinery"
+      },
+      "Date": "/Date(1773100800000+0000)/",
+      "DateString": "2026-03-10T00:00:00",
+      "DueDate": "/Date(1775692800000+0000)/",
+      "DueDateString": "2026-04-09T00:00:00",
+      "Status": "AUTHORISED",
+      "LineAmountTypes": "Exclusive",
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000002",
+          "Description": "Colombia Huila, 5 lb bags",
+          "Quantity": 12.0000,
+          "UnitAmount": 71.4000,
+          "AccountCode": "4000",
+          "TaxType": "OUTPUT",
+          "TaxAmount": 72.83,
+          "LineAmount": 856.80,
+          "Tracking": [
+            {
+              "TrackingCategoryID": "c0ffee0b-0000-4000-8000-000000000001",
+              "Name": "Channel",
+              "Option": "Wholesale",
+              "TrackingOptionID": "c0ffee0b-0000-4000-8000-000000000002"
+            }
+          ]
+        }
+      ],
+      "SubTotal": 856.80,
+      "TotalTax": 72.83,
+      "Total": 929.63,
+      "AmountDue": 929.63,
+      "AmountPaid": 0.00,
+      "AmountCredited": 0.00,
+      "CurrencyCode": "USD",
+      "CurrencyRate": 1.0000000000,
+      "UpdatedDateUTC": "/Date(1773135000000+0000)/",
+      "HasAttachments": false,
+      "IsDiscounted": false,
+      "Payments": []
+    },
+    {
+      "Type": "ACCREC",
+      "InvoiceID": "c0ffee03-0000-4000-8000-000000000003",
+      "InvoiceNumber": "INV-0416",
+      "Reference": "",
+      "Contact": {
+        "ContactID": "c0ffee02-0000-4000-8000-000000000001",
+        "Name": "Ostley Joinery"
+      },
+      "Date": "/Date(1773273600000+0000)/",
+      "DateString": "2026-03-12T00:00:00",
+      "DueDate": "/Date(1775865600000+0000)/",
+      "DueDateString": "2026-04-11T00:00:00",
+      "Status": "AUTHORISED",
+      "LineAmountTypes": "NoTax",
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000003",
+          "Description": "Sample roast, mixed lots",
+          "Quantity": 1.0000,
+          "UnitAmount": 412.0800,
+          "AccountCode": "4000",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 412.08,
+          "Tracking": []
+        }
+      ],
+      "SubTotal": 412.08,
+      "TotalTax": 0.00,
+      "Total": 412.08,
+      "AmountDue": 412.08,
+      "AmountPaid": 0.00,
+      "AmountCredited": 0.00,
+      "CurrencyCode": "USD",
+      "CurrencyRate": 1.0000000000,
+      "UpdatedDateUTC": "/Date(1773309600000+0000)/",
+      "HasAttachments": false,
+      "IsDiscounted": false,
+      "Payments": []
+    },
+    {
+      "Type": "ACCREC",
+      "InvoiceID": "c0ffee03-0000-4000-8000-000000000004",
+      "InvoiceNumber": "INV-0418",
+      "Reference": "Fernhill wholesale March",
+      "Contact": {
+        "ContactID": "c0ffee02-0000-4000-8000-000000000008",
+        "Name": "Fernhill Grocers"
+      },
+      "Date": "/Date(1773878400000+0000)/",
+      "DateString": "2026-03-19T00:00:00",
+      "DueDate": "/Date(1774483200000+0000)/",
+      "DueDateString": "2026-03-26T00:00:00",
+      "Status": "AUTHORISED",
+      "LineAmountTypes": "NoTax",
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000004",
+          "Description": "House espresso blend, 2 lb bags",
+          "Quantity": 50.0000,
+          "UnitAmount": 25.0000,
+          "AccountCode": "4000",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 1250.00,
+          "Tracking": []
+        }
+      ],
+      "SubTotal": 1250.00,
+      "TotalTax": 0.00,
+      "Total": 1250.00,
+      "AmountDue": 1250.00,
+      "AmountPaid": 0.00,
+      "AmountCredited": 0.00,
+      "CurrencyCode": "USD",
+      "CurrencyRate": 1.0000000000,
+      "UpdatedDateUTC": "/Date(1773927900000+0000)/",
+      "HasAttachments": false,
+      "IsDiscounted": false,
+      "Payments": []
+    },
+    {
+      "Type": "ACCPAY",
+      "InvoiceID": "c0ffee03-0000-4000-8000-000000000005",
+      "InvoiceNumber": "BO-7781",
+      "Reference": "Green coffee, lot 44",
+      "Contact": {
+        "ContactID": "c0ffee02-0000-4000-8000-000000000002",
+        "Name": "Brindle & Oake Supply"
+      },
+      "Date": "/Date(1772409600000+0000)/",
+      "DateString": "2026-03-02T00:00:00",
+      "DueDate": "/Date(1775001600000+0000)/",
+      "DueDateString": "2026-04-01T00:00:00",
+      "Status": "PAID",
+      "LineAmountTypes": "NoTax",
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000005",
+          "Description": "Green coffee, Guji lot 44, 60 kg",
+          "Quantity": 1.0000,
+          "UnitAmount": 3215.4700,
+          "AccountCode": "5000",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 3215.47,
+          "Tracking": []
+        }
+      ],
+      "SubTotal": 3215.47,
+      "TotalTax": 0.00,
+      "Total": 3215.47,
+      "AmountDue": 0.00,
+      "AmountPaid": 3215.47,
+      "AmountCredited": 0.00,
+      "CurrencyCode": "USD",
+      "CurrencyRate": 1.0000000000,
+      "UpdatedDateUTC": "/Date(1773072000000+0000)/",
+      "HasAttachments": false,
+      "IsDiscounted": false,
+      "Payments": [
+        {
+          "PaymentID": "c0ffee04-0000-4000-8000-000000000002",
+          "Date": "/Date(1773014400000+0000)/",
+          "Amount": 3215.47,
+          "Reference": "Check 1042",
+          "CurrencyRate": 1.0000000000,
+          "HasAccount": false,
+          "HasValidationErrors": false
+        }
+      ],
+      "FullyPaidOnDate": "/Date(1773014400000+0000)/"
+    },
+    {
+      "Type": "ACCPAY",
+      "InvoiceID": "c0ffee03-0000-4000-8000-000000000006",
+      "InvoiceNumber": "QF-1031",
+      "Reference": "Spring packaging",
+      "Contact": {
+        "ContactID": "c0ffee02-0000-4000-8000-000000000005",
+        "Name": "Quillfeather Design Consultancy LLP"
+      },
+      "Date": "/Date(1772582400000+0000)/",
+      "DateString": "2026-03-04T00:00:00",
+      "DueDate": "/Date(1773792000000+0000)/",
+      "DueDateString": "2026-03-18T00:00:00",
+      "Status": "PAID",
+      "LineAmountTypes": "NoTax",
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000006",
+          "Description": "Packaging design, spring range",
+          "Quantity": 1.0000,
+          "UnitAmount": 2400.0000,
+          "AccountCode": "6400",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 2400.00,
+          "Tracking": []
+        }
+      ],
+      "SubTotal": 2400.00,
+      "TotalTax": 0.00,
+      "Total": 2400.00,
+      "AmountDue": 0.00,
+      "AmountPaid": 2400.00,
+      "AmountCredited": 0.00,
+      "CurrencyCode": "USD",
+      "CurrencyRate": 1.0000000000,
+      "UpdatedDateUTC": "/Date(1773835200000+0000)/",
+      "HasAttachments": false,
+      "IsDiscounted": false,
+      "Payments": [
+        {
+          "PaymentID": "c0ffee04-0000-4000-8000-000000000003",
+          "Date": "/Date(1773792000000+0000)/",
+          "Amount": 2400.00,
+          "Reference": "ACH Quillfeather",
+          "CurrencyRate": 1.0000000000,
+          "HasAccount": false,
+          "HasValidationErrors": false
+        }
+      ],
+      "FullyPaidOnDate": "/Date(1773792000000+0000)/"
+    },
+    {
+      "Type": "ACCPAY",
+      "InvoiceID": "c0ffee03-0000-4000-8000-000000000007",
+      "InvoiceNumber": "SC-0057",
+      "Reference": "Invoice 57",
+      "Contact": {
+        "ContactID": "c0ffee02-0000-4000-8000-000000000006",
+        "Name": "Saltmarsh Cupping Lab LLC"
+      },
+      "Date": "/Date(1773187200000+0000)/",
+      "DateString": "2026-03-11T00:00:00",
+      "DueDate": "/Date(1774396800000+0000)/",
+      "DueDateString": "2026-03-25T00:00:00",
+      "Status": "AUTHORISED",
+      "LineAmountTypes": "NoTax",
+      "LineItems": [
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000007",
+          "Description": "Cupping sessions",
+          "Quantity": 3.0000,
+          "UnitAmount": 98.0000,
+          "AccountCode": "6600",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 294.00,
+          "Tracking": []
+        },
+        {
+          "LineItemID": "c0ffee08-0000-4000-8000-000000000008",
+          "Description": "Sample shipping",
+          "Quantity": 1.0000,
+          "UnitAmount": 68.1800,
+          "AccountCode": "6600",
+          "TaxType": "NONE",
+          "TaxAmount": 0.00,
+          "LineAmount": 68.18,
+          "Tracking": []
+        }
+      ],
+      "SubTotal": 362.18,
+      "TotalTax": 0.00,
+      "Total": 362.18,
+      "AmountDue": 362.18,
+      "AmountPaid": 0.00,
+      "AmountCredited": 0.00,
+      "CurrencyCode": "USD",
+      "CurrencyRate": 1.0000000000,
+      "UpdatedDateUTC": "/Date(1773216000000+0000)/",
+      "HasAttachments": false,
+      "IsDiscounted": false,
+      "Payments": []
+    }
+  ]
+}

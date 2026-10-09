@@ -1,0 +1,92 @@
+{
+  "Id": "c0ffee09-0000-4000-8000-000000000008",
+  "Status": "OK",
+  "ProviderName": "ownpurse samples",
+  "DateTimeUTC": "/Date(1774026300000+0000)/",
+  "Payments": [
+    {
+      "PaymentID": "c0ffee04-0000-4000-8000-000000000001",
+      "Date": "/Date(1772409600000+0000)/",
+      "Amount": 1846.13,
+      "Reference": "Ostley 1846.13",
+      "CurrencyRate": 1.0000000000,
+      "HasAccount": true,
+      "HasValidationErrors": false,
+      "BankAmount": 1846.13,
+      "PaymentType": "ACCRECPAYMENT",
+      "Status": "AUTHORISED",
+      "UpdatedDateUTC": "/Date(1772464800000+0000)/",
+      "IsReconciled": true,
+      "Account": {
+        "AccountID": "c0ffee01-0000-4000-8000-000000000001",
+        "Code": "1010"
+      },
+      "Invoice": {
+        "Type": "ACCREC",
+        "InvoiceID": "c0ffee03-0000-4000-8000-000000000001",
+        "InvoiceNumber": "INV-0412",
+        "Contact": {
+          "ContactID": "c0ffee02-0000-4000-8000-000000000001",
+          "Name": "Ostley Joinery"
+        },
+        "CurrencyCode": "USD"
+      }
+    },
+    {
+      "PaymentID": "c0ffee04-0000-4000-8000-000000000002",
+      "Date": "/Date(1773014400000+0000)/",
+      "Amount": 3215.47,
+      "Reference": "Check 1042",
+      "CurrencyRate": 1.0000000000,
+      "HasAccount": true,
+      "HasValidationErrors": false,
+      "BankAmount": 3215.47,
+      "PaymentType": "ACCPAYPAYMENT",
+      "Status": "AUTHORISED",
+      "UpdatedDateUTC": "/Date(1773072000000+0000)/",
+      "IsReconciled": true,
+      "Account": {
+        "AccountID": "c0ffee01-0000-4000-8000-000000000001",
+        "Code": "1010"
+      },
+      "Invoice": {
+        "Type": "ACCPAY",
+        "InvoiceID": "c0ffee03-0000-4000-8000-000000000005",
+        "InvoiceNumber": "BO-7781",
+        "Contact": {
+          "ContactID": "c0ffee02-0000-4000-8000-000000000002",
+          "Name": "Brindle & Oake Supply"
+        },
+        "CurrencyCode": "USD"
+      }
+    },
+    {
+      "PaymentID": "c0ffee04-0000-4000-8000-000000000003",
+      "Date": "/Date(1773792000000+0000)/",
+      "Amount": 2400.00,
+      "Reference": "ACH Quillfeather",
+      "CurrencyRate": 1.0000000000,
+      "HasAccount": true,
+      "HasValidationErrors": false,
+      "BankAmount": 2400.00,
+      "PaymentType": "ACCPAYPAYMENT",
+      "Status": "AUTHORISED",
+      "UpdatedDateUTC": "/Date(1773835200000+0000)/",
+      "IsReconciled": true,
+      "Account": {
+        "AccountID": "c0ffee01-0000-4000-8000-000000000001",
+        "Code": "1010"
+      },
+      "Invoice": {
+        "Type": "ACCPAY",
+        "InvoiceID": "c0ffee03-0000-4000-8000-000000000006",
+        "InvoiceNumber": "QF-1031",
+        "Contact": {
+          "ContactID": "c0ffee02-0000-4000-8000-000000000005",
+          "Name": "Quillfeather Design Consultancy LLP"
+        },
+        "CurrencyCode": "USD"
+      }
+    }
+  ]
+}

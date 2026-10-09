@@ -1,0 +1,12 @@
+{
+  "Id": "c0ffee09-0000-4000-8000-000000000016",
+  "Status": "OK",
+  "ProviderName": "ownpurse samples",
+  "DateTimeUTC": "/Date(1775121120000+0000)/",
+  "Currencies": [
+    {
+      "Code": "USD",
+      "Description": "United States Dollar"
+    }
+  ]
+}

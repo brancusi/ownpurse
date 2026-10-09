@@ -239,6 +239,9 @@ give byte-identical output before and after.
 
 ## Phases
 
+The build order, milestones and tests are in [FACTS-ROLLOUT.md](FACTS-ROLLOUT.md), which puts Xero first and
+moves the benchmark after the Xero cutover.
+
 1. **Benchmark** (decides D7). Write the ten queries below against (a) SQLite plus a `redb` index cache and running
    totals and (b) XTDB v2 over the Postgres wire, with each query in SQL and XTQL; add Datomic Local if a pure
    Datalog comparison is wanted. Scale the synthetic record to 10M facts (`xtask demo big`). Measure cold open,
