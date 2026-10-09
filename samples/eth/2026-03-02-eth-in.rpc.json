@@ -1,0 +1,71 @@
+[
+  {
+    "method": "eth_getTransactionByHash",
+    "params": [
+      "0x7d3e5a1c9b2f4e608a1d3c5b7e9f0a2c4d6e8b1a3c5d7e9f0b2a4c6d8e0f1a2b"
+    ],
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "from": "0x3f1e7b2c9a04d6e85f1b3c7a2d9e0f4a6b8c1d52",
+        "to": "0x51ab9e04c2d7f3a1b6e85d20c4f9a7136b0e7c3e",
+        "value": "0xb1a2bc2ec50000",
+        "gas": "0x5208",
+        "nonce": "0xd7df5",
+        "maxFeePerGas": "0x98bca5a00",
+        "maxPriorityFeePerGas": "0x59682f00",
+        "gasPrice": "0x4980f3c06",
+        "input": "0x",
+        "transactionIndex": "0x25",
+        "hash": "0x7d3e5a1c9b2f4e608a1d3c5b7e9f0a2c4d6e8b1a3c5d7e9f0b2a4c6d8e0f1a2b",
+        "blockNumber": "0x17714d9",
+        "blockHash": "0x4b1e7c9d2a5f3e8b0c6d1a4f7e2b9c5d8a3f6e1b4c7d0a9e2f5b8c1d4e7a0b3c",
+        "chainId": "0x1",
+        "type": "0x2"
+      }
+    }
+  },
+  {
+    "method": "eth_getTransactionReceipt",
+    "params": [
+      "0x7d3e5a1c9b2f4e608a1d3c5b7e9f0a2c4d6e8b1a3c5d7e9f0b2a4c6d8e0f1a2b"
+    ],
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": {
+        "from": "0x3f1e7b2c9a04d6e85f1b3c7a2d9e0f4a6b8c1d52",
+        "to": "0x51ab9e04c2d7f3a1b6e85d20c4f9a7136b0e7c3e",
+        "status": "0x1",
+        "gasUsed": "0x5208",
+        "cumulativeGasUsed": "0x2f9eea",
+        "effectiveGasPrice": "0x4980f3c06",
+        "logs": [],
+        "transactionHash": "0x7d3e5a1c9b2f4e608a1d3c5b7e9f0a2c4d6e8b1a3c5d7e9f0b2a4c6d8e0f1a2b",
+        "blockNumber": "0x17714d9",
+        "blockHash": "0x4b1e7c9d2a5f3e8b0c6d1a4f7e2b9c5d8a3f6e1b4c7d0a9e2f5b8c1d4e7a0b3c",
+        "type": "0x2",
+        "contractAddress": null,
+        "transactionIndex": "0x25"
+      }
+    }
+  },
+  {
+    "method": "eth_getBlockByNumber",
+    "params": [
+      "0x17714d9",
+      false
+    ],
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": {
+        "number": "0x17714d9",
+        "hash": "0x4b1e7c9d2a5f3e8b0c6d1a4f7e2b9c5d8a3f6e1b4c7d0a9e2f5b8c1d4e7a0b3c",
+        "timestamp": "0x69a5aaab",
+        "baseFeePerGas": "0x43ea70d06"
+      }
+    }
+  }
+]

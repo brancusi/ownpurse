@@ -1,0 +1,52 @@
+{
+  "mapping": "sheet.values/budget@1",
+  "written_by": "agent:tally",
+  "reason": "The 2026 budget: one row per category, one column per month. Read it wide to long: one plan figure per category per month.",
+  "sheet": "Budget",
+  "header_row": 3,
+  "key_column": "Category",
+  "what": "budget",
+  "currency": "USD",
+  "periods": {
+    "Jan": "2026-01",
+    "Feb": "2026-02",
+    "Mar": "2026-03",
+    "Apr": "2026-04",
+    "May": "2026-05",
+    "Jun": "2026-06",
+    "Jul": "2026-07",
+    "Aug": "2026-08",
+    "Sep": "2026-09",
+    "Oct": "2026-10",
+    "Nov": "2026-11",
+    "Dec": "2026-12"
+  },
+  "note_column": "Notes",
+  "computed": {
+    "rows": ["Total expenses", "Net"],
+    "columns": ["Total"]
+  },
+  "number": {
+    "symbol": "$",
+    "thousands": ",",
+    "decimal": ".",
+    "negative": ["-$", "($)"],
+    "blank": "no figure"
+  },
+  "sign": {
+    "income_rows": ["Wholesale coffee sales", "Interest income"],
+    "rule": "figures are typed positive; income rows are money in, every other row is money out"
+  },
+  "accounts": {
+    "Wholesale coffee sales": "4000",
+    "Interest income": "4900",
+    "Green coffee": "5000",
+    "Meals and entertainment": "6100",
+    "Rent": "6200",
+    "Bank fees": "6300",
+    "Design and branding": "6400",
+    "Interest expense": "6500",
+    "Cupping and quality": "6600",
+    "Depreciation": "6700"
+  }
+}

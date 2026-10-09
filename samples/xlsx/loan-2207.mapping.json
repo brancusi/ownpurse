@@ -1,0 +1,25 @@
+{
+  "mapping": "xlsx/loan-schedule@1",
+  "written_by": "agent:tally",
+  "reason": "The lender's amortisation schedule for loan 2207: one row per scheduled payment, each split into interest and principal.",
+  "sheet": "Schedule",
+  "header_row": 3,
+  "key_column": "Payment #",
+  "what": "loan-schedule",
+  "loan": "2207",
+  "currency": "USD",
+  "columns": {
+    "date": "Date",
+    "payment": "Payment",
+    "interest": "Interest",
+    "principal": "Principal",
+    "balance": "Balance"
+  },
+  "rows": "a row whose key cell is a whole number is a payment; every other row (the balance carried forward, the totals) is not",
+  "decimals": 2,
+  "sign": "the borrower's side: a payment is money out, the balance is owed",
+  "accounts": {
+    "interest": "6500",
+    "principal": "2500"
+  }
+}

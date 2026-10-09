@@ -1,0 +1,44 @@
+{
+  "files": [
+    {
+      "file": "eth/2026-03-02-eth-in.rpc.json",
+      "projector": "eth.rpc@1",
+      "source": "eth:0x51ab7c3e",
+      "with": {
+        "mapping": "eth/wallet.json",
+        "tokens": "eth/token-list.json"
+      },
+      "observed_at": "2026-04-01T08:00:00Z"
+    },
+    {
+      "file": "eth/2026-03-21-usdc-in.rpc.json",
+      "projector": "eth.rpc@1",
+      "source": "eth:0x51ab7c3e",
+      "with": {
+        "mapping": "eth/wallet.json",
+        "tokens": "eth/token-list.json"
+      },
+      "observed_at": "2026-04-01T08:00:00Z"
+    },
+    {
+      "file": "eth/2026-03-26-usdc-out.rpc.json",
+      "projector": "eth.rpc@1",
+      "source": "eth:0x51ab7c3e",
+      "with": {
+        "mapping": "eth/wallet.json",
+        "tokens": "eth/token-list.json"
+      },
+      "observed_at": "2026-04-01T08:00:00Z"
+    },
+    {
+      "file": "eth/prices-2026-03.csv",
+      "projector": "eth.rpc@1",
+      "source": "eth:0x51ab7c3e",
+      "with": {
+        "mapping": "eth/wallet.json",
+        "tokens": "eth/token-list.json"
+      },
+      "observed_at": "2026-04-01T08:00:00Z"
+    }
+  ]
+}
