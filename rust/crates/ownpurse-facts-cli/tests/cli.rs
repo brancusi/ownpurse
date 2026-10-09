@@ -1,75 +1,8 @@
 //! The binary end to end: create a log, load Xero's two pulls, correct something as a person, read it back.
 
-use serde_json::Value as Json;
-use std::path::{Path, PathBuf};
-use std::process::Command;
+mod common;
 
-fn samples() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../samples")
-}
-
-struct Log {
-    _dir: tempfile::TempDir,
-    path: PathBuf,
-}
-
-impl Log {
-    fn new() -> Log {
-        let dir = tempfile::tempdir().unwrap();
-        let path = dir.path().join("books.sqlite");
-        Log { _dir: dir, path }
-    }
-
-    fn run(&self, args: &[&str]) -> (bool, String, String) {
-        let out = Command::new(env!("CARGO_BIN_EXE_ownpurse-facts"))
-            .arg("--log")
-            .arg(&self.path)
-            .args(["--at", "2026-04-02T10:00:00Z"])
-            .args(args)
-            .output()
-            .unwrap();
-        (
-            out.status.success(),
-            String::from_utf8_lossy(&out.stdout).into_owned(),
-            String::from_utf8_lossy(&out.stderr).into_owned(),
-        )
-    }
-
-    fn ok(&self, args: &[&str]) -> String {
-        let (ok, out, err) = self.run(args);
-        assert!(ok, "{args:?} failed: {err}");
-        out
-    }
-
-    fn json(&self, args: &[&str]) -> Json {
-        let mut a = vec!["--json"];
-        a.extend_from_slice(args);
-        serde_json::from_str(&self.ok(&a)).unwrap()
-    }
-
-    /// A manifest with just the Xero files, written next to the samples so its paths resolve.
-    fn load_xero(&self) {
-        let full: Json =
-            serde_json::from_str(&std::fs::read_to_string(samples().join("ingest.json")).unwrap())
-                .unwrap();
-        let files: Vec<Json> = full["files"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .filter(|f| f["source"] == "xero:tallowmere")
-            .map(|f| {
-                let mut f = f.clone();
-                let p = samples().join(f["file"].as_str().unwrap());
-                f["file"] = Json::String(p.display().to_string());
-                f
-            })
-            .collect();
-        let m = serde_json::json!({"sources": full["sources"], "files": files});
-        let path = self.path.with_extension("manifest.json");
-        std::fs::write(&path, m.to_string()).unwrap();
-        self.ok(&["load", path.to_str().unwrap()]);
-    }
-}
+use common::*;
 
 #[test]
 fn init_load_verify() {

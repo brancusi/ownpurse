@@ -106,6 +106,31 @@ pub fn sql(as_json: bool, conn: &Connection, q: &str) -> Result<(), String> {
     Ok(())
 }
 
+/// One line for a file as it lands: `[12/50] bank/activity-2026-03-20.csv  bank.csv@1  tx 265  +214 −0`.
+pub fn progress(n: usize, of: usize, l: &Loaded) -> String {
+    let what = l.tx.map_or_else(
+        || "no change".to_string(),
+        |t| format!("tx {t}  +{} -{}", l.asserted, l.retracted),
+    );
+    let width = of.to_string().len();
+    format!(
+        "[{n:>width$}/{of}] {:<48} {:<16} {what}",
+        short(&l.file),
+        l.projector
+    )
+}
+
+/// The last two parts of a path: `bank/activity-2026-03-20.csv`.
+fn short(file: &str) -> String {
+    file.rsplit('/')
+        .take(2)
+        .collect::<Vec<_>>()
+        .into_iter()
+        .rev()
+        .collect::<Vec<_>>()
+        .join("/")
+}
+
 pub fn loaded(as_json: bool, done: &[Loaded]) {
     let cols: Vec<String> = ["file", "projector", "tx", "+", "-", "attrs", "pressure"]
         .iter()
@@ -114,15 +139,7 @@ pub fn loaded(as_json: bool, done: &[Loaded]) {
     let rows: Vec<Vec<Json>> = done
         .iter()
         .map(|l| {
-            let f = l
-                .file
-                .rsplit('/')
-                .take(2)
-                .collect::<Vec<_>>()
-                .into_iter()
-                .rev()
-                .collect::<Vec<_>>()
-                .join("/");
+            let f = short(&l.file);
             vec![
                 json!(f),
                 json!(l.projector),

@@ -5,7 +5,11 @@ before changing behaviour, and [brand/README.md](brand/README.md) before changin
 
 ## Current work
 
-Next up is the TUI redesign: [docs/plans/TUI-REDESIGN.md](docs/plans/TUI-REDESIGN.md). Start a session there.
+The fact model, on branch `facts`: [docs/plans/FACTS-ROLLOUT.md](docs/plans/FACTS-ROLLOUT.md). Phase 1 (the core,
+the log, ten projectors and one synthetic month from every kind of source) is done; its findings and the decisions
+phase 2 needs are in [docs/plans/FACTS-EDGES.md](docs/plans/FACTS-EDGES.md). `bash samples/demo.sh` plays the
+month. The TUI redesign ([docs/plans/TUI-REDESIGN.md](docs/plans/TUI-REDESIGN.md)) waits; the new crates do not
+touch the TUI.
 
 ## What this is
 
@@ -21,6 +25,10 @@ add Xero assumptions to code that is not the Xero connector.
   (the Xero connector, auth, sync, the record), `ownpurse-cli` (the `ownpurse` binary), `ownpurse-tui` (the
   `ownpurse-tui` binary; never links `ownpurse-xero`, it runs the CLI for anything that calls a provider), `xtask`
   (hygiene, docs grep, demo fixtures, agent-drive tests).
+- The fact model (branch `facts`, not yet in the `ownpurse` binary): `ownpurse-facts` (the datom, schema, the
+  database as a value; pure), `ownpurse-store` (the log in SQLite and the drawer), `ownpurse-ingest` (projectors,
+  link rules; pure), `ownpurse-facts-cli` (the `ownpurse-facts` binary).
+- `samples/`: one synthetic month from every kind of source, the queries over it and `demo.sh`.
 - `docs/`: engineering docs. `brand/`: the identity and tokens. `site/`: ownpurse.com (Astro + Starlight).
 - `vendor/caretline/`: an ignored export of the caretline commit pinned in `caretline.rev`. Never commit it.
 

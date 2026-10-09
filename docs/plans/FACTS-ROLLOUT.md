@@ -1,7 +1,7 @@
 # Rolling out the fact model
 
-Status: plan, 2026-10-09. How [FACTS.md](FACTS.md) gets built: the milestones, the crate boundaries, the
-practices we hold the code to, and the tests that say each milestone is done. The first target is Xero: by the end
+Status: plan, 2026-10-09; phase 1 progress below. How [FACTS.md](FACTS.md) gets built: the milestones, the crate
+boundaries, the practices we hold the code to, and the tests that say each milestone is done. The first target is Xero: by the end
 of milestone 5, every Xero book ownpurse mirrors lives in the log as facts, and we can prove that representation is
 sound.
 
@@ -16,6 +16,27 @@ sound.
   derivations; they cannot open a file, a socket or a clock. I/O lives in two thin shells.
 - **Soundness is a set of laws, each a test.** Round-trip, idempotence, minimal diff, replay determinism, ledger
   parity, as-of and the chain. A milestone is done when its laws pass on the fixtures and on the Demo Company.
+
+## Progress
+
+Phase 1, on branch `facts` (2026-10-09): before building Xero to the end, we built the core and pushed one synthetic
+month through every kind of source to find where the model breaks. Findings: [FACTS-EDGES.md](FACTS-EDGES.md). The
+new crates are `ownpurse-facts`, `ownpurse-store`, `ownpurse-ingest` and `ownpurse-facts-cli`; nothing in the
+shipped `ownpurse` binary uses them yet. One command plays the month: `bash samples/demo.sh`.
+
+| Milestone | Where it stands |
+|---|---|
+| M1 | Built: the datom, schema as facts, transactions, `with`, `as_of`, `history`, `pull`, the encoding and chain. Model-based tests against a naive oracle |
+| M2 | Built: the log (append-only by trigger), the drawer, `verify`, views, exact `dsum()`. `redact` is not built |
+| M3 | Spike: the Xero projector on synthetic pulls in Xero's shape. Not yet on today's `versions` or the Demo Company |
+| M4 | Spike: mirror entries and postings as facts; per-book trial balance and the L7 check as queries. No parity with `ledger.rs` yet |
+| M8, M9 | Spikes: bank CSV, OFX, a statement PDF, a check and a receipt, with the evidences and same-event rules |
+
+Laws with tests today: L1 (every Xero document rebuilds from its facts), L2 (a second load is no change), L3 (an
+edited invoice changes only what changed), L4 (two replays give the same chain head), L7 (query 12, and a test that
+it catches an entry off by a cent), L8 (a changed byte is caught), L9 (the core's validation tests). The two open
+gaps that phase 2 must close are written as ignored tests in `ownpurse-facts-cli/tests/month.rs`: a re-read keeps
+a person's correction, and load order does not change the facts.
 
 ## Milestones
 

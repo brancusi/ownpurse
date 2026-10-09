@@ -18,10 +18,10 @@ The month: 50 files from 8 sources (Xero ×2 pulls, two overlapping bank CSV dow
 image, a receipt photo, QuickBooks, FreshBooks, a Google Sheet read twice, an Excel workbook, an Ethereum wallet,
 prices). They load into 84 transactions and 12,933 datoms, and the log verifies (every cited file re-hashed). Loading
 everything again changes nothing. The link rules then join 93 pairs: every witness of each bank movement, the receipt
-and the check to the lines they back, and two supplier invoices to the bills they became. 132 tests; 343 pressure
+and the check to the lines they back, and two supplier invoices to the bills they became. 142 tests, plus two ignored ones that state the open gaps; 343 pressure
 reports in 49 kinds.
 
-Try it:
+Watch it: `bash samples/demo.sh` builds the CLI and plays the month with progress. By hand:
 
 ```sh
 cd rust
@@ -111,6 +111,8 @@ fixed in place.
 | Schema growth | All mirrors | 799 attributes after one month; each source's fields are its own namespace | Accept; it is what lossless costs. Watch it in the benchmark |
 | Pressure is noisy | All | 343 reports; notes and problems weigh the same | **Give pressure a level (note, problem)** |
 | SQL sums float | The log by hand | `dsum()` | Settled |
+| Two companies' books in one log | Quillfeather's QuickBooks beside the roastery's Xero | `postings` carries `book`; a trial balance is per book | Settled |
+| A source's own number scale | QuickBooks writes `2400.0` where Xero writes `2400.00` | Mirrored as stated; `dsum` keeps the widest scale | Decide: scale is the commodity's, applied when shown |
 
 ## Proposed changes to the core
 

@@ -4,7 +4,20 @@ Synthetic evidence for the fact model. Every name, number, address and id here i
 month (March 2026), seen through every kind of source ownpurse has to read, so the same events show up more than
 once and the model has to say how the witnesses relate.
 
-`ingest.json` lists every file in the order a person would bring them in. Load it all with:
+Watch it load, file by file, then see what the log can answer (needs git and Rust; writes only under
+`rust/target/demo/`):
+
+```sh
+bash samples/demo.sh
+```
+
+The same thing pinned to a commit, from anywhere, shows that version forever:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/brancusi/ownpurse/<commit>/samples/demo.sh | bash -s <commit>
+```
+
+`ingest.json` lists every file in the order a person would bring them in. Load it all by hand with:
 
 ```sh
 cd rust
@@ -16,7 +29,10 @@ cargo run -p ownpurse-facts-cli -- --log /tmp/march.sqlite sql -f ../samples/que
 
 The files load in the order they were read (`observed_at`), across sources. Loading them again changes nothing.
 
-`queries/` holds SQL you can run against the result; `docs/plans/FACTS-EDGES.md` is what loading all of this
+`queries/` holds SQL you can run against the result: 01 to 10 ask questions (what backs the dinner, both sides of
+an invoice, the log as of an earlier transaction); 11 and 12 are checks (every stream of bank lines carries the
+statement's opening balance to its closing one; every entry balances). The tests in
+`rust/crates/ownpurse-facts-cli/tests/month.rs` run every one of them; `docs/plans/FACTS-EDGES.md` is what loading all of this
 taught us about the model, with one write-up per source family in `docs/plans/edges/`.
 
 ## The world

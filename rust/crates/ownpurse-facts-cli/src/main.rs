@@ -64,7 +64,12 @@ enum Cmd {
         observed_at: Option<String>,
     },
     /// Ingest every file a manifest lists, in order
-    Load { manifest: PathBuf },
+    Load {
+        manifest: PathBuf,
+        /// Print a line to stderr as each file lands
+        #[arg(long)]
+        progress: bool,
+    },
     /// Append a transaction written as JSON (a file, or - for stdin)
     Transact {
         file: PathBuf,
@@ -220,12 +225,16 @@ fn run(cli: &Cli) -> Result<(), String> {
             let r = load::run(&mut store, &job, &now(cli)?)?;
             out::loaded(cli.json, &[r]);
         }
-        Cmd::Load { manifest } => {
+        Cmd::Load { manifest, progress } => {
             let mut store = open(cli)?;
             let jobs = load::manifest(manifest)?;
             let mut done = Vec::new();
-            for j in &jobs {
-                done.push(load::run(&mut store, j, &now(cli)?)?);
+            for (i, j) in jobs.iter().enumerate() {
+                let l = load::run(&mut store, j, &now(cli)?)?;
+                if *progress {
+                    eprintln!("{}", out::progress(i + 1, jobs.len(), &l));
+                }
+                done.push(l);
             }
             out::loaded(cli.json, &done);
         }

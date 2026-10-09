@@ -128,6 +128,8 @@ CREATE VIEW links AS
 -- postings with their entry, account and commodity
 CREATE VIEW postings AS
   SELECT en.value AS entry,
+    (SELECT b.value FROM facts r JOIN facts b ON b.e = r.value AND b.attr = 'book/id'
+      WHERE r.e = en.e AND r.attr = 'entry/book') AS book,
     (SELECT value FROM facts WHERE e = en.e AND attr = 'entry/date') AS date,
     (SELECT value FROM facts WHERE e = en.e AND attr = 'entry/status') AS status,
     (SELECT n.value FROM facts r JOIN facts n ON n.e = r.value AND n.attr = 'account/name'

@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+Added (the fact model, phase 1; the `ownpurse` binary does not use it yet):
+
+- New crates `ownpurse-facts` (the datom, schema as facts, the database as a value, the hash chain),
+  `ownpurse-store` (the log in SQLite, append-only by trigger, the drawer of evidence files, `verify`, readable
+  views, exact `dsum()`), `ownpurse-ingest` (ten projectors and three link rules) and `ownpurse-facts-cli` (the
+  `ownpurse-facts` binary: `init`, `ingest`, `load`, `transact`, `entity`, `pull`, `history`, `log`, `sql`,
+  `schema`, `pressure`, `link`, `verify`). `load --progress` prints each file as it lands.
+- `samples/`: one synthetic month from every kind of source, twelve queries over it and `demo.sh`, which plays the
+  month in one command, pinned to a commit. Findings: `docs/plans/FACTS-EDGES.md`.
+
 Changed (breaking: the project is now **ownpurse**):
 
 - The project, the binaries and every name in it are now `ownpurse`: `xero-axi` → `ownpurse`, `xero-axi-tui` →
