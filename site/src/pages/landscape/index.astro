@@ -1,0 +1,44 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { FAMILIES, SEGMENTS, type Family } from '../../components/landscape/data';
+import '../../components/landscape/dossier.css';
+
+const all = (await getCollection('landscape')).map((e) => e.data).sort((a, b) => a.name.localeCompare(b.name));
+const POST = '/blog/the-landscape/';
+---
+<Base title="The landscape · ownpurse" description={`Dossiers on ${all.length} accounting tools, middleware and agent products, scored on the same nine axes.`} current="blog">
+<article class="wrap" style="padding-block: 56px 96px;">
+	<header class="ds-head">
+		<a class="eyebrow" href={POST} style="text-decoration: none;">Blog</a>
+		<h1 class="h1 sm" style="font-size: clamp(36px, 4.6vw, 56px);">The landscape</h1>
+		<p class="lead">{all.length} dossiers on the accounting tools, middleware and agent products around getting a business's money into one record. The map, the matrix and what it means for ownpurse are in <a href={POST}>the post</a>.</p>
+	</header>
+	<div class="ls-index">
+		{(Object.keys(FAMILIES) as Family[]).map((f) => {
+			const segs = Object.entries(SEGMENTS).filter(([, s]) => s.family === f).map(([k, s]) => ({ k, label: s.label, ps: all.filter((d) => d.segment === k) })).filter((s) => s.ps.length);
+			return segs.length > 0 && (
+				<section>
+					<h2><i style={`background: ${FAMILIES[f].color}`}></i>{FAMILIES[f].label}</h2>
+					{segs.map((s) => (
+						<div class="ls-index-seg">
+							<p class="fm-k">{s.label}</p>
+							<ul>{s.ps.map((d) => <li><a href={`/landscape/${d.slug}/`}>{d.name}</a>{d.status !== 'active' && <span class="ls-index-st"> {d.status}</span>}<span class="muted"> · {d.tagline}</span></li>)}</ul>
+						</div>
+					))}
+				</section>
+			);
+		})}
+	</div>
+	<p class="fm-fine" style="max-width: 42rem;">ownpurse is not affiliated with any company named here. Names are their owners' trademarks.</p>
+</article>
+</Base>
+<style>
+	.ls-index { display: grid; gap: 40px; max-width: 60rem }
+	.ls-index h2 { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; display: flex; gap: 10px; align-items: center; margin: 0 0 8px }
+	.ls-index h2 i { width: 11px; height: 11px; border-radius: 50%; display: inline-block }
+	.ls-index-seg { border-top: 1px solid var(--line-1); padding-top: 10px; margin-top: 14px }
+	.ls-index-seg ul { list-style: none; padding: 0; margin: 6px 0 0; display: grid; gap: 6px; font-size: 16px }
+	.ls-index-seg a { font-weight: 600 }
+	.ls-index-st { font: 500 10.5px var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--coin-text) }
+</style>

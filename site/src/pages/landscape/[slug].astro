@@ -1,0 +1,139 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { AXES, FAMILIES, OWNPURSE, RELATIONS, familyOf, segmentLabel } from '../../components/landscape/data';
+import '../../components/facts/facts.css';
+import '../../components/landscape/dossier.css';
+
+export async function getStaticPaths() {
+	const all = await getCollection('landscape');
+	return all.map((entry) => ({ params: { slug: entry.data.slug }, props: { entry, all } }));
+}
+const { entry, all } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const color = FAMILIES[familyOf(d.segment)].color;
+const peers = all.filter((e) => e.data.segment === d.segment && e.data.slug !== d.slug).map((e) => e.data);
+const gone = d.status !== 'active';
+const POST = '/blog/the-landscape/';
+---
+<Base title={`${d.name} · the landscape · ownpurse`} description={d.tagline} current="blog">
+<article class="wrap ds" style="padding-block: 56px 96px;">
+	<header class="ds-head">
+		<a class="eyebrow" href={`${POST}#player=${d.slug}`} style="text-decoration: none;">The landscape</a>
+		<p class="fm-k" style={`color: ${color}`}>{segmentLabel(d.segment)}{gone ? ` · ${d.status}` : ''}</p>
+		<h1 class="h1 sm" style="font-size: clamp(36px, 4.6vw, 56px);">{d.name}</h1>
+		<p class="lead">{d.tagline}</p>
+		<p class="small muted"><a href={d.url} rel="noopener">{d.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a> · founded {d.founded} · {d.hq} · researched {d.researched}</p>
+	</header>
+
+	<div class="ds-grid">
+		<div class="ds-main">
+			<section class="ds-at">
+				<dl>
+					<div><dt>Scope</dt><dd>{d.scope}</dd></div>
+					<div><dt>Backing</dt><dd>{d.backing}</dd></div>
+					<div><dt>Serves</dt><dd>{d.customers_served.join(', ')}</dd></div>
+					<div><dt>Covers</dt><dd>{d.domains.join(', ')}</dd></div>
+					<div><dt>To ownpurse</dt><dd><b>{RELATIONS[d.relation] ?? d.relation}.</b> {d.relation_note}</dd></div>
+				</dl>
+			</section>
+
+			<div class="prose ds-prose"><Content /></div>
+
+			<section class="ds-sec">
+				<h2>Data and access</h2>
+				<dl class="ds-kv">
+					<div><dt>Public API</dt><dd>{d.api.public ? 'Yes' : 'No'}. {d.api.style}</dd></div>
+					<div><dt>Auth</dt><dd>{d.api.auth}</dd></div>
+					<div><dt>Limits</dt><dd>{d.api.limits}</dd></div>
+					<div><dt>What access costs</dt><dd>{d.api.cost}</dd></div>
+					<div><dt>Export</dt><dd>{d.api.export}</dd></div>
+					{d.api.notes && <div><dt>Notes</dt><dd>{d.api.notes}</dd></div>}
+				</dl>
+			</section>
+			<section class="ds-sec">
+				<h2>Price</h2>
+				<dl class="ds-kv">
+					<div><dt>Model</dt><dd>{d.pricing.model}</dd></div>
+					<div><dt>Entry</dt><dd>{d.pricing.entry}</dd></div>
+					<div><dt>Top</dt><dd>{d.pricing.top}</dd></div>
+					{d.pricing.notes && <div><dt>Notes</dt><dd>{d.pricing.notes}</dd></div>}
+				</dl>
+			</section>
+			<section class="ds-sec">
+				<h2>Agents</h2>
+				<dl class="ds-kv">
+					<div><dt>MCP</dt><dd>{d.agents.mcp}</dd></div>
+					<div><dt>AI features</dt><dd>{d.agents.ai_features}</dd></div>
+					<div><dt>Agent writes</dt><dd>{d.agents.agent_writes}</dd></div>
+					<div><dt>Approval</dt><dd>{d.agents.approval}</dd></div>
+					{d.agents.notes && <div><dt>Notes</dt><dd>{d.agents.notes}</dd></div>}
+				</dl>
+			</section>
+			<section class="ds-sec">
+				<h2>Integration and customers</h2>
+				<dl class="ds-kv">
+					<div><dt>Connects to</dt><dd>{d.integration.scope}</dd></div>
+					{d.integration.notes && <div><dt>Notes</dt><dd>{d.integration.notes}</dd></div>}
+					<div><dt>Scale</dt><dd>{d.preference.scale}</dd></div>
+					<div><dt>Ratings</dt><dd>{d.preference.ratings}</dd></div>
+					<div><dt>What customers say</dt><dd>{d.preference.sentiment}</dd></div>
+				</dl>
+			</section>
+			{d.timeline.length > 0 && (
+				<section class="ds-sec">
+					<h2>Timeline</h2>
+					<ol class="ds-time">{d.timeline.map((t) => <li><span>{t.date}</span><p>{t.event}</p></li>)}</ol>
+				</section>
+			)}
+			<section class="ds-sec">
+				<h2>Borrow and avoid</h2>
+				<dl class="ds-kv">
+					<div><dt>Borrow</dt><dd>{d.borrow}</dd></div>
+					<div><dt>Avoid</dt><dd>{d.avoid}</dd></div>
+				</dl>
+			</section>
+			<section class="ds-sec">
+				<h2>Sources</h2>
+				<ol class="ds-src">{d.sources.map((s) => <li><a href={s.url} rel="noopener">{s.title}</a></li>)}</ol>
+				{d.unverified.length > 0 && (
+					<>
+						<p class="fm-k" style="margin-top: 16px;">Not confirmed against a primary source</p>
+						<ul class="ds-unv">{d.unverified.map((u) => <li>{u}</li>)}</ul>
+					</>
+				)}
+			</section>
+		</div>
+
+		<aside class="ds-side">
+			<p class="fm-k">On the spectrum</p>
+			<p class="small muted">0 to 4. The grey tick is ownpurse.</p>
+			<dl class="ds-bars">
+				{AXES.map((a) => (
+					<div>
+						<dt>{a.label}</dt>
+						<dd>
+							<span class="ds-track">
+								<span class="ds-fill" style={`width: ${d.spectrum[a.key].score * 25}%; background: ${color}`}></span>
+								<span class="ds-tick" style={`left: calc(${OWNPURSE.scores[a.key] * 25}% - 1px)`}></span>
+							</span>
+							<span class="ds-n">{d.spectrum[a.key].score}</span>
+						</dd>
+						<p class="ds-why">{d.spectrum[a.key].note}</p>
+					</div>
+				))}
+			</dl>
+			<a class="fm-btn" href={`${POST}#player=${d.slug}`}>See it on the map</a>
+			{peers.length > 0 && (
+				<>
+					<p class="fm-k" style="margin-top: 20px;">Also in {segmentLabel(d.segment).toLowerCase()}</p>
+					<ul class="ds-peers">{peers.map((p) => <li><a href={`/landscape/${p.slug}/`}>{p.name}</a></li>)}</ul>
+				</>
+			)}
+		</aside>
+	</div>
+
+	<p class="fm-fine" style="max-width: 42rem;">ownpurse is not affiliated with {d.name} or any company named here. Names are their owners' trademarks. Figures come from the company's own pages and the press, as linked, as of {d.researched}; scores are our reading of them against the definitions in <a href={`${POST}#the-axes`}>the landscape</a>. This is not legal or financial advice.</p>
+</article>
+</Base>

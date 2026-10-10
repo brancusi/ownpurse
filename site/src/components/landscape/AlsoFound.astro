@@ -1,0 +1,22 @@
+---
+// The players the sweeps found and ranked lowest: named, linked, no dossier.
+import found from './also-found.json';
+import { SEGMENTS } from './data';
+const bySeg = Object.entries(SEGMENTS).map(([k, s]) => ({ label: s.label, ps: found.filter((p) => p.segment === k) })).filter((s) => s.ps.length);
+---
+<details class="ls-also">
+	<summary>{found.length} more players, named without a dossier</summary>
+	{bySeg.map((s) => (
+		<div>
+			<p class="fm-k">{s.label}</p>
+			<ul>{s.ps.map((p) => <li><a href={p.url} rel="noopener">{p.name}</a>{p.status !== 'active' && <span class="ls-also-st"> {p.status}</span>}: {p.why}</li>)}</ul>
+		</div>
+	))}
+</details>
+<style>
+	.ls-also { border-top: 1px solid var(--line-1); padding-top: 12px }
+	.ls-also summary { cursor: pointer; font-weight: 600 }
+	.ls-also > div { margin-top: 16px }
+	.ls-also ul { margin: 6px 0 0; padding-left: 1.2em; font-size: 15px; display: grid; gap: 4px }
+	.ls-also-st { font: 500 10.5px var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--coin-text) }
+</style>

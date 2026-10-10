@@ -1,0 +1,744 @@
+[
+ {
+  "name": "Sage Copilot",
+  "url": "https://www.sage.com/en-us/ai/",
+  "segment": "agent-beside-ledger",
+  "status": "active",
+  "why": "Sage's embedded agent layer, with marketplace agents behind a paid subscription (URL path unverified)."
+ },
+ {
+  "name": "Uplinq",
+  "url": "https://www.uplinq.com",
+  "segment": "agent-beside-ledger",
+  "status": "active",
+  "why": "AI support for bookkeepers on top of client ledgers; actively courting Bench/Botkeeper refugees"
+ },
+ {
+  "name": "Vic.ai",
+  "url": "https://www.vic.ai",
+  "segment": "agent-beside-ledger",
+  "status": "active",
+  "why": "Autonomous AP invoice processing posting into the customer's ERP"
+ },
+ {
+  "name": "Campfire MCP Store",
+  "url": "https://www.campfire.ai/blog/campfire-is-the-first-erp-with-an-mcp-store",
+  "segment": "agent-native",
+  "status": "active",
+  "why": "The ledger as the MCP client: its agent pulls from Ramp, HubSpot and Stripe. The reverse of ownpurse's direction."
+ },
+ {
+  "name": "Kick MCP",
+  "url": "https://docs.kick.co/ai/mcp",
+  "segment": "agent-native",
+  "status": "active",
+  "why": "Bookkeeping MCP that is read-only by default, with explicit confirmation for writes. Listed in Anthropic's connectors directory (per a third party)."
+ },
+ {
+  "name": "Lili MCP Server",
+  "url": "https://lili.co/blog/your-ai-assistant-can-now-talk-to-your-clients-bank-accounts",
+  "segment": "agent-native",
+  "status": "active",
+  "why": "Bank MCP for accountants under client-granted permission (Jun 2026). Bank data reaching agents through the accountant."
+ },
+ {
+  "name": "NetSuite AI Connector Service",
+  "url": "https://www.netsuite.co.uk/portal/collateral/public/ds-ns-ai-connector-service.pdf",
+  "segment": "agent-native",
+  "status": "active",
+  "why": "Oracle's official MCP with record CRUD and saved searches under the user's role. MCP Apps render inside Claude and ChatGPT."
+ },
+ {
+  "name": "Numeric MCP",
+  "url": "https://help.numeric.io/articles/5446387341-what-is-the-numeric-mcp",
+  "segment": "agent-native",
+  "status": "active",
+  "why": "Close-platform MCP that reads, acts and writes back within app permissions, paired with QBO MCP for the close."
+ },
+ {
+  "name": "PayPal Agent Toolkit",
+  "url": "https://developer.paypal.com/community/blog/paypal-agentic-ai-toolkit/",
+  "segment": "agent-native",
+  "status": "active",
+  "why": "Official payments MCP that can issue refunds and send invoices, with approval left to the developer. The risk case for direct writes."
+ },
+ {
+  "name": "Plaid MCP",
+  "url": "https://plaid.com/docs/resources/mcp/",
+  "segment": "agent-native",
+  "status": "active",
+  "why": "Plaid's MCP covers dashboard diagnostics and dev tooling, not end-user transactions. Aggregators are not giving agents the data."
+ },
+ {
+  "name": "Ramp MCP",
+  "url": "https://agents.ramp.com/docs/mcp/overview",
+  "segment": "agent-native",
+  "status": "active",
+  "why": "Official remote MCP with admin access controls and a demo server, plus cards issued to agents."
+ },
+ {
+  "name": "Zapier MCP",
+  "url": "https://docs.zapier.com/mcp/home",
+  "segment": "agent-native",
+  "status": "active",
+  "why": "Agents act in any connected accounting app through Zapier: write access with no ledger awareness."
+ },
+ {
+  "name": "Zoho MCP",
+  "url": "https://www.zoho.com/mcp/",
+  "segment": "agent-native",
+  "status": "active",
+  "why": "Central MCP hub across Zoho apps including Books, with write tools (URL unverified)."
+ },
+ {
+  "name": "SoftLedger",
+  "url": "https://softledger.com",
+  "segment": "ai-ledger",
+  "status": "active",
+  "why": "Cloud GL with a read-only MCP. Access is off by default behind a per-tenant flag, and writes need an admin grant."
+ },
+ {
+  "name": "Basiq",
+  "url": "https://basiq.io",
+  "segment": "bank-aggregator",
+  "status": "active",
+  "why": "Australian open banking aggregator under the Consumer Data Right"
+ },
+ {
+  "name": "Belvo",
+  "url": "https://belvo.com",
+  "segment": "bank-aggregator",
+  "status": "active",
+  "why": "Latin American open finance aggregator"
+ },
+ {
+  "name": "Nordigen",
+  "url": "https://nordigen.com",
+  "segment": "bank-aggregator",
+  "status": "acquired",
+  "why": "Free open-banking data API acquired by GoCardless (2022); free access then withdrawn"
+ },
+ {
+  "name": "Open Banking Limited",
+  "url": "https://www.openbanking.org.uk",
+  "segment": "bank-aggregator",
+  "status": "active",
+  "why": "Entity running the UK's mandated open banking standard since 2018"
+ },
+ {
+  "name": "Quovo",
+  "url": "https://www.quovo.com",
+  "segment": "bank-aggregator",
+  "status": "acquired",
+  "why": "Investment-account aggregator acquired by Plaid (2019)"
+ },
+ {
+  "name": "Salt Edge",
+  "url": "https://www.saltedge.com",
+  "segment": "bank-aggregator",
+  "status": "active",
+  "why": "Global aggregator and PSD2 compliance provider"
+ },
+ {
+  "name": "Stripe Financial Connections",
+  "url": "https://stripe.com/financial-connections",
+  "segment": "bank-aggregator",
+  "status": "active",
+  "why": "Payments processor running its own bank-link aggregation"
+ },
+ {
+  "name": "Bookkeeper360",
+  "url": "https://www.bookkeeper360.com",
+  "segment": "bookkeeping-service",
+  "status": "active",
+  "why": "Typical tech-enabled SMB bookkeeping service on top of QBO/Xero"
+ },
+ {
+  "name": "Fondo",
+  "url": "https://www.tryfondo.com",
+  "segment": "bookkeeping-service",
+  "status": "active",
+  "why": "Startup tax and bookkeeping service; the bundled tax-plus-books model"
+ },
+ {
+  "name": "Xendoo",
+  "url": "https://www.xendoo.com",
+  "segment": "bookkeeping-service",
+  "status": "active",
+  "why": "Online bookkeeping firm that acquired the Botkeeper Infinite platform (Feb 2026); consolidation signal"
+ },
+ {
+  "name": "AutoEntry",
+  "url": "https://www.autoentry.com",
+  "segment": "capture",
+  "status": "acquired",
+  "why": "Sage-owned capture; incumbents own the document pipe"
+ },
+ {
+  "name": "Mindee",
+  "url": "https://www.mindee.com",
+  "segment": "capture",
+  "status": "active",
+  "why": "Document parsing API for invoices and receipts"
+ },
+ {
+  "name": "Shoeboxed",
+  "url": "https://www.shoeboxed.com",
+  "segment": "capture",
+  "status": "active",
+  "why": "Early receipt scanning service including mailed paper; long-running capture model"
+ },
+ {
+  "name": "Veryfi",
+  "url": "https://www.veryfi.com",
+  "segment": "capture",
+  "status": "active",
+  "why": "OCR API for receipts and invoices; a developer-facing extraction option for local capture"
+ },
+ {
+  "name": "Causal",
+  "url": "https://causal.app",
+  "segment": "close-analytics",
+  "status": "acquired",
+  "why": "Modeling over synced accounting data, acquired by Lucanet (2024)"
+ },
+ {
+  "name": "Datarails",
+  "url": "https://www.datarails.com",
+  "segment": "close-analytics",
+  "status": "active",
+  "why": "Excel-native FP&A that consolidates ledgers and spreadsheets; the spreadsheet-as-record answer"
+ },
+ {
+  "name": "Dext Precision",
+  "url": "https://dext.com/en/precision",
+  "segment": "close-analytics",
+  "status": "active",
+  "why": "Formerly Xavier; data-quality checks over client ledgers for bookkeepers"
+ },
+ {
+  "name": "Futrli",
+  "url": "https://www.futrli.com",
+  "segment": "close-analytics",
+  "status": "acquired",
+  "why": "Forecasting over synced ledgers, acquired by Sage (2021); current status unverified"
+ },
+ {
+  "name": "Inflo",
+  "url": "https://inflosoftware.com",
+  "segment": "close-analytics",
+  "status": "active",
+  "why": "Audit data ingestion and analytics; ledger extraction for auditors"
+ },
+ {
+  "name": "MindBridge",
+  "url": "https://www.mindbridge.ai",
+  "segment": "close-analytics",
+  "status": "active",
+  "why": "AI anomaly detection across full GL extracts for audit and finance"
+ },
+ {
+  "name": "Runway",
+  "url": "https://runway.com",
+  "segment": "close-analytics",
+  "status": "active",
+  "why": "FP&A over synced ledgers and HRIS for startups"
+ },
+ {
+  "name": "Silverfin",
+  "url": "https://www.silverfin.com",
+  "segment": "close-analytics",
+  "status": "acquired",
+  "why": "Accountant workpaper platform syncing many ledgers; acquired by Visma (2022)"
+ },
+ {
+  "name": "Spotlight Reporting",
+  "url": "https://www.spotlightreporting.com",
+  "segment": "close-analytics",
+  "status": "active",
+  "why": "Adviser reporting and forecasting on Xero and QBO data."
+ },
+ {
+  "name": "Trintech",
+  "url": "https://www.trintech.com",
+  "segment": "close-analytics",
+  "status": "active",
+  "why": "Enterprise close and reconciliation (Cadency, Adra). The large-company counterpart to SMB tooling."
+ },
+ {
+  "name": "Census",
+  "url": "https://www.getcensus.com",
+  "segment": "connector-framework",
+  "status": "acquired",
+  "why": "Reverse-ETL leader bought by Fivetran (signed May 2025). Data activation moving back into source systems."
+ },
+ {
+  "name": "Estuary",
+  "url": "https://estuary.dev",
+  "segment": "connector-framework",
+  "status": "active",
+  "why": "Change-data-capture plus ELT with an open connector protocol"
+ },
+ {
+  "name": "Hightouch",
+  "url": "https://hightouch.com",
+  "segment": "connector-framework",
+  "status": "active",
+  "why": "Reverse ETL from warehouse to apps. The write-back half of the modern data stack."
+ },
+ {
+  "name": "Stitch",
+  "url": "https://www.stitchdata.com",
+  "segment": "connector-framework",
+  "status": "acquired",
+  "why": "Originated Singer; acquired by Talend (2018), now under Qlik"
+ },
+ {
+  "name": "Cryptoworth",
+  "url": "https://www.cryptoworth.com",
+  "segment": "crypto-accounting",
+  "status": "active",
+  "why": "Crypto accounting syncing to Xero/QBO"
+ },
+ {
+  "name": "Koinly",
+  "url": "https://koinly.io",
+  "segment": "crypto-accounting",
+  "status": "active",
+  "why": "Crypto tax aggregator across exchanges and wallets"
+ },
+ {
+  "name": "Ledgible",
+  "url": "https://ledgible.io",
+  "segment": "crypto-accounting",
+  "status": "active",
+  "why": "Crypto accounting and tax for firms"
+ },
+ {
+  "name": "Lukka",
+  "url": "https://lukka.tech",
+  "segment": "crypto-accounting",
+  "status": "active",
+  "why": "Institutional crypto data and accounting"
+ },
+ {
+  "name": "NODE40",
+  "url": "https://node40.com",
+  "segment": "crypto-accounting",
+  "status": "active",
+  "why": "Crypto accounting with a read-only MCP (per Bitwave's market map)."
+ },
+ {
+  "name": "TaxBit",
+  "url": "https://www.taxbit.com",
+  "segment": "crypto-accounting",
+  "status": "active",
+  "why": "Enterprise crypto tax and accounting"
+ },
+ {
+  "name": "TRES Finance",
+  "url": "https://tres.finance",
+  "segment": "crypto-accounting",
+  "status": "active",
+  "why": "Digital-asset subledger and reconciliation for finance teams"
+ },
+ {
+  "name": "Apache Iceberg",
+  "url": "https://iceberg.apache.org",
+  "segment": "data-platform",
+  "status": "active",
+  "why": "Open table format with snapshots and time travel; the lake's version of history"
+ },
+ {
+  "name": "BigQuery",
+  "url": "https://cloud.google.com/bigquery",
+  "segment": "data-platform",
+  "status": "active",
+  "why": "Common warehouse target for ELT of accounting data in mid-sized firms"
+ },
+ {
+  "name": "Microsoft Fabric",
+  "url": "https://www.microsoft.com/en-us/microsoft-fabric",
+  "segment": "data-platform",
+  "status": "active",
+  "why": "Microsoft's analytics platform beside Dynamics and Excel"
+ },
+ {
+  "name": "MotherDuck",
+  "url": "https://motherduck.com",
+  "segment": "data-platform",
+  "status": "active",
+  "why": "Hosted DuckDB with hybrid local/cloud execution"
+ },
+ {
+  "name": "Dolt",
+  "url": "https://www.dolthub.com",
+  "segment": "fact-ledger",
+  "status": "active",
+  "why": "Git-versioned SQL database; branch and diff for tabular records"
+ },
+ {
+  "name": "FRAGMENT",
+  "url": "https://fragment.dev",
+  "segment": "fact-ledger",
+  "status": "active",
+  "why": "Ledger API with a schema-defined chart of accounts."
+ },
+ {
+  "name": "immudb",
+  "url": "https://immudb.io",
+  "segment": "fact-ledger",
+  "status": "active",
+  "why": "Open-source tamper-evident database pitched as the QLDB replacement"
+ },
+ {
+  "name": "KurrentDB",
+  "url": "https://www.kurrent.io",
+  "segment": "fact-ledger",
+  "status": "active",
+  "why": "Formerly EventStoreDB; the event-sourcing database lineage"
+ },
+ {
+  "name": "Medici",
+  "url": "https://github.com/flash-oss/medici",
+  "segment": "fact-ledger",
+  "status": "active",
+  "why": "Small open-source double-entry library for MongoDB; minimal append-only ledger"
+ },
+ {
+  "name": "Modern Treasury Ledgers",
+  "url": "https://www.moderntreasury.com/products/ledgers",
+  "segment": "fact-ledger",
+  "status": "active",
+  "why": "Hosted immutable ledger API for fintechs; the commercial version of the fact ledger"
+ },
+ {
+  "name": "Twisp",
+  "url": "https://www.twisp.com",
+  "segment": "fact-ledger",
+  "status": "active",
+  "why": "Immutable, versioned ledger database for fintechs."
+ },
+ {
+  "name": "Acumatica",
+  "url": "https://www.acumatica.com",
+  "segment": "incumbent-ledger",
+  "status": "active",
+  "why": "Mid-market cloud ERP alternative to NetSuite"
+ },
+ {
+  "name": "DATEV",
+  "url": "https://www.datev.de",
+  "segment": "incumbent-ledger",
+  "status": "active",
+  "why": "German accountants' cooperative system; shows the accountant-held record model"
+ },
+ {
+  "name": "Exact Online",
+  "url": "https://www.exact.com",
+  "segment": "incumbent-ledger",
+  "status": "active",
+  "why": "Leading Benelux SMB ledger; a regional incumbent European unified APIs cover"
+ },
+ {
+  "name": "KashFlow",
+  "url": "https://www.kashflow.com",
+  "segment": "incumbent-ledger",
+  "status": "acquired",
+  "why": "Early UK cloud ledger, later owned by IRIS; long-tail UK books"
+ },
+ {
+  "name": "Kashoo",
+  "url": "https://kashoo.com",
+  "segment": "incumbent-ledger",
+  "status": "active",
+  "why": "Small-business cloud ledger at the low end of the market"
+ },
+ {
+  "name": "QuickBooks Desktop",
+  "url": "https://quickbooks.intuit.com/desktop/",
+  "segment": "incumbent-ledger",
+  "status": "active",
+  "why": "The original local company file Intuit is steering users off; shows what owners lose when the file moves to the cloud"
+ },
+ {
+  "name": "QuickFile",
+  "url": "https://www.quickfile.co.uk",
+  "segment": "incumbent-ledger",
+  "status": "active",
+  "why": "UK low-cost ledger with an open API; a cheap long-tail connector"
+ },
+ {
+  "name": "Reckon",
+  "url": "https://www.reckon.com",
+  "segment": "incumbent-ledger",
+  "status": "active",
+  "why": "Australian ledger that began as the local QuickBooks licensee"
+ },
+ {
+  "name": "Sage 50",
+  "url": "https://www.sage.com/en-us/products/sage-50/",
+  "segment": "incumbent-ledger",
+  "status": "active",
+  "why": "Desktop lineage of Peachtree; a local-file ledger still widely used"
+ },
+ {
+  "name": "sevDesk",
+  "url": "https://sevdesk.de",
+  "segment": "incumbent-ledger",
+  "status": "active",
+  "why": "German SMB cloud ledger; part of the fragmented European long tail"
+ },
+ {
+  "name": "TallyPrime",
+  "url": "https://tallysolutions.com",
+  "segment": "incumbent-ledger",
+  "status": "active",
+  "why": "Dominant desktop ledger in India; a large local-file accounting base"
+ },
+ {
+  "name": "Celigo",
+  "url": "https://www.celigo.com",
+  "segment": "ipaas-middleware",
+  "status": "active",
+  "why": "iPaaS centred on NetSuite. Mid-market finance integration."
+ },
+ {
+  "name": "Composio",
+  "url": "https://composio.dev",
+  "segment": "ipaas-middleware",
+  "status": "active",
+  "why": "Hosted MCP and auth layer that exposes accounting apps (Wave, FreshBooks and more) as tools for agents."
+ },
+ {
+  "name": "Informatica",
+  "url": "https://www.informatica.com",
+  "segment": "ipaas-middleware",
+  "status": "acquired",
+  "why": "Enterprise data integration and MDM; acquired by Salesforce Nov 2025 (~$8B) for agentic AI data"
+ },
+ {
+  "name": "SPS Commerce",
+  "url": "https://www.spscommerce.com",
+  "segment": "ipaas-middleware",
+  "status": "active",
+  "why": "EDI network for retail supply chains; the decades-old business document exchange model"
+ },
+ {
+  "name": "Synder",
+  "url": "https://synder.com",
+  "segment": "ipaas-middleware",
+  "status": "active",
+  "why": "Syncs payment processors and marketplaces into ledgers"
+ },
+ {
+  "name": "Tray.ai",
+  "url": "https://tray.ai",
+  "segment": "ipaas-middleware",
+  "status": "active",
+  "why": "Enterprise iPaaS rebranded around AI agents"
+ },
+ {
+  "name": "TrueCommerce",
+  "url": "https://www.truecommerce.com",
+  "segment": "ipaas-middleware",
+  "status": "active",
+  "why": "EDI and trading-partner integration into SMB ledgers"
+ },
+ {
+  "name": "Clarity Money",
+  "url": "https://claritymoney.com",
+  "segment": "personal-finance",
+  "status": "shut",
+  "why": "Acquired by Goldman Sachs Marcus (2018) then shut; a bank-acquired aggregator that vanished"
+ },
+ {
+  "name": "Copilot Money",
+  "url": "https://copilot.money",
+  "segment": "personal-finance",
+  "status": "active",
+  "why": "Fast-rising Apple-first finance app with AI categorization"
+ },
+ {
+  "name": "Empower",
+  "url": "https://www.empower.com",
+  "segment": "personal-finance",
+  "status": "active",
+  "why": "Formerly Personal Capital; aggregation as a wealth-management funnel"
+ },
+ {
+  "name": "Lunch Money",
+  "url": "https://lunchmoney.app",
+  "segment": "personal-finance",
+  "status": "active",
+  "why": "Developer-friendly budgeting with an open API, popular with technical users"
+ },
+ {
+  "name": "PocketSmith",
+  "url": "https://www.pocketsmith.com",
+  "segment": "personal-finance",
+  "status": "active",
+  "why": "NZ personal finance with multi-region feeds and forecasting"
+ },
+ {
+  "name": "Rocket Money",
+  "url": "https://www.rocketmoney.com",
+  "segment": "personal-finance",
+  "status": "acquired",
+  "why": "Formerly Truebill, acquired by Rocket Companies (2021); aggregation as subscription-cancel funnel"
+ },
+ {
+  "name": "Akaunting",
+  "url": "https://akaunting.com",
+  "segment": "plain-text-local",
+  "status": "active",
+  "why": "Open-source self-hostable SMB accounting"
+ },
+ {
+  "name": "KMyMoney",
+  "url": "https://kmymoney.org",
+  "segment": "plain-text-local",
+  "status": "active",
+  "why": "KDE desktop finance manager with local file storage"
+ },
+ {
+  "name": "LedgerSMB",
+  "url": "https://ledgersmb.org",
+  "segment": "plain-text-local",
+  "status": "active",
+  "why": "Open-source self-hosted SMB accounting/ERP on PostgreSQL"
+ },
+ {
+  "name": "SlowBooks Pro 2026",
+  "url": "https://github.com/VonHoltenCodes/SlowBooks-Pro-2026",
+  "segment": "plain-text-local",
+  "status": "active",
+  "why": "Source-available local SMB bookkeeping in SQLite, with SimpleFIN bank feeds and 'tamper-evident' payroll forms."
+ },
+ {
+  "name": "Airbase",
+  "url": "https://www.airbase.com",
+  "segment": "spend-management",
+  "status": "acquired",
+  "why": "Spend management acquired by Paylocity (2024); spend folding into payroll/HR"
+ },
+ {
+  "name": "Divvy",
+  "url": "https://getdivvy.com",
+  "segment": "spend-management",
+  "status": "acquired",
+  "why": "Spend cards acquired by Bill.com (2021); consolidation of spend into AP"
+ },
+ {
+  "name": "Lili",
+  "url": "https://lili.co",
+  "segment": "spend-management",
+  "status": "active",
+  "why": "SMB bank whose MCP server (25 Jun 2026) is built for accountants under client-granted permission."
+ },
+ {
+  "name": "Navan",
+  "url": "https://navan.com",
+  "segment": "spend-management",
+  "status": "active",
+  "why": "Travel and expense platform syncing to ledgers; another place a business's spend lives"
+ },
+ {
+  "name": "PayPal",
+  "url": "https://www.paypal.com",
+  "segment": "spend-management",
+  "status": "active",
+  "why": "Payments source. Official agent toolkit and MCP can refund and send invoices with no mandatory confirmation gate."
+ },
+ {
+  "name": "Pleo",
+  "url": "https://www.pleo.io",
+  "segment": "spend-management",
+  "status": "active",
+  "why": "European SMB spend cards with ledger sync"
+ },
+ {
+  "name": "Spendesk",
+  "url": "https://www.spendesk.com",
+  "segment": "spend-management",
+  "status": "active",
+  "why": "European spend management with ledger exports"
+ },
+ {
+  "name": "Square",
+  "url": "https://squareup.com",
+  "segment": "spend-management",
+  "status": "active",
+  "why": "POS payments source. Official MCP (beta) with write calls."
+ },
+ {
+  "name": "Tipalti",
+  "url": "https://tipalti.com",
+  "segment": "spend-management",
+  "status": "active",
+  "why": "Global payables automation syncing to ERPs"
+ },
+ {
+  "name": "Cloud Elements",
+  "url": "https://cloud-elements.com",
+  "segment": "unified-api",
+  "status": "acquired",
+  "why": "Early unified API acquired by UiPath (2022); same lesson as Kloudless"
+ },
+ {
+  "name": "Finch",
+  "url": "https://www.tryfinch.com",
+  "segment": "unified-api",
+  "status": "active",
+  "why": "Unified API for payroll and HRIS; payroll is the adjacent source domain"
+ },
+ {
+  "name": "hotglue",
+  "url": "https://hotglue.com",
+  "segment": "unified-api",
+  "status": "active",
+  "why": "Embedded integrations built on Singer taps, including accounting"
+ },
+ {
+  "name": "Kloudless",
+  "url": "https://kloudless.com",
+  "segment": "unified-api",
+  "status": "acquired",
+  "why": "Early unified API (2012-) acquired by Netskope (2021); unified APIs as a feature, not a company"
+ },
+ {
+  "name": "Maesn",
+  "url": "https://www.maesn.com",
+  "segment": "unified-api",
+  "status": "active",
+  "why": "Unified API for German and EU accounting systems (DATEV and others)."
+ },
+ {
+  "name": "Paragon",
+  "url": "https://www.useparagon.com",
+  "segment": "unified-api",
+  "status": "active",
+  "why": "Embedded integration platform repositioned around agent tool access"
+ },
+ {
+  "name": "Prismatic",
+  "url": "https://prismatic.io",
+  "segment": "unified-api",
+  "status": "active",
+  "why": "Embedded iPaaS for B2B SaaS integrations"
+ },
+ {
+  "name": "Truto",
+  "url": "https://truto.one",
+  "segment": "unified-api",
+  "status": "active",
+  "why": "Unified API with configurable schemas that auto-generates MCP tools per connected account."
+ },
+ {
+  "name": "Validis",
+  "url": "https://validis.com",
+  "segment": "unified-api",
+  "status": "active",
+  "why": "Standardised ledger extracts for lenders and auditors; fidelity of full extracts vs APIs"
+ }
+]

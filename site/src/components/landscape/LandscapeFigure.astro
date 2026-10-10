@@ -1,0 +1,35 @@
+---
+// Reads every dossier at build time and hands the figure only the compact form; the full dossier is its own page.
+import { getCollection } from 'astro:content';
+import Landscape from './Landscape.tsx';
+import type { AxisKey, Player } from './data';
+
+interface Props { x?: AxisKey; y?: AxisKey }
+const { x, y } = Astro.props;
+const entries = await getCollection('landscape');
+const players: Player[] = entries
+	.map(({ data: d }) => ({
+		slug: d.slug,
+		name: d.name,
+		url: d.url,
+		segment: d.segment,
+		status: d.status,
+		tagline: d.tagline,
+		domains: d.domains,
+		customers: d.customers_served,
+		scores: Object.fromEntries(Object.entries(d.spectrum).map(([k, v]) => [k, v.score])) as Player['scores'],
+		notes: Object.fromEntries(Object.entries(d.spectrum).map(([k, v]) => [k, v.note])) as Player['notes'],
+		mcp: d.agents.mcp,
+		approval: d.agents.approval,
+		apiCost: d.api.cost,
+		export: d.api.export,
+		pricing: d.pricing.entry,
+		relation: d.relation,
+		relationNote: d.relation_note,
+		href: `/landscape/${d.slug}/`,
+	}))
+	.sort((a, b) => a.name.localeCompare(b.name));
+---
+<div class="fm-wide not-content" id="ls">
+	<Landscape client:load players={players} initial={x && y ? { x, y } : undefined} />
+</div>

@@ -5,7 +5,9 @@ ownpurse's connectors. Four research passes on 2026-10-10: unified accounting AP
 connector frameworks; AI bookkeeping, close and capture; Xero's API and the hard problems of sync. Vendor figures
 are the vendors' own. Anything marked **[unverified]** was not confirmed against a primary source. This is the
 summary and the shortlist for the dossiers. The main claims are linked in the post
-[A run on your data](https://ownpurse.com/blog/a-run-on-your-data/); each dossier will carry its own sources.
+[A run on your data](https://ownpurse.com/blog/a-run-on-your-data/). The full map, 135 dossiers with their own
+sources, the history and the synthesis are in [The landscape](https://ownpurse.com/blog/the-landscape/); the dossiers are
+`site/src/content/landscape/`.
 
 ## The short version
 

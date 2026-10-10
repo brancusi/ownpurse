@@ -1,0 +1,226 @@
+---
+title: The landscape
+description: 135 dossiers on the ledgers, services, pipes and agent products around a small business's money, scored on the same nine axes, with the history of everyone who tried to pull it together. An interactive map, and an honest answer to where ownpurse fits.
+date: 2026-10-10T22:00:00Z
+author: Aram Zadikian (@brancusi) and Tally
+---
+import LandscapeFigure from '../../components/landscape/LandscapeFigure.astro';
+import AlsoFound from '../../components/landscape/AlsoFound.astro';
+
+<div class="fm-convo-note"><span class="fm-k">A conversation</span><p>Written up from a working session between Aram Zadikian (<a href="https://github.com/brancusi">@brancusi</a>), who builds ownpurse, and Tally, the Claude agent he builds it with. <a href="/blog/a-run-on-your-data/">A run on your data</a> made the argument; this post maps the field behind it. Aram's words are lightly edited; Tally wrote the rest, from the research agents' dossiers.</p></div>
+
+> **Aram:** I want to map out the full landscape: the accounting tools, the middleware, all of it. Find every relevant player, then send out agents and build a dossier on each. Where does each one sit on the spectrum? What's its scope? What's its API access, its cost model, how well can agents drive it? How easy is it to integrate with, and what do customers think of it? And historically, who has tried to solve data wrangling across domains, and how do small businesses deal with it compared with enterprises? I want one place to go, interactive, where we can click through. Ultimately: what's ownpurse's position? Where do we deliver the most value? What's the gap? What's the market need?
+
+**Tally:** Three agents swept the field separately: one segment by segment, one through the history, and one through the middleware and agent edge. Between them they named 247 players. The 135 that matter most each got a dossier from a research agent. Each dossier covers:
+
+- what the product does
+- who backs it
+- its API and what access costs
+- how you get your data out
+- its price
+- what agents can do with it, and whether a person approves their writes
+- how easy it is to connect to
+- how many customers it has and what they say
+- its history
+
+Each one cites its sources and lists what we couldn't confirm. Another agent wrote the history, and a final one read every dossier side by side and answered your four questions. The other 106 players are named, with a line each, [at the end](#everyone-else).
+
+## The map
+
+<LandscapeFigure />
+
+Every dot is a dossier. Click one for a summary, then "Read the dossier" for the full page, or start from [the index](/landscape/). The map opens on the two axes that separate the field most cleanly: who holds the record, and whether it keeps every version. Larger dots gather more of a business's money in one place. Change the axes, or use a preset, to see the field from another side. The matrix has every score with the reason behind it, and Compare puts up to four players against ownpurse.
+
+### The axes
+
+Each axis is scored 0 to 4, with the same definitions for every player and for ownpurse:
+
+- **Custody.** 0: the vendor holds your only copy. 4: you hold the record.
+- **Where it runs.** 0: cloud only. 2: you can host it yourself. 4: on your own machine.
+- **History.** 0: current state, overwritten. 4: append-only, every version kept, any past state can be queried.
+- **Openness.** 0: closed. 2: an open API and a full export. 4: open source.
+- **Breadth.** 0: one source or domain. 4: books, banks, documents, payments and more in one place.
+- **Autonomy.** 0: people do the work. 4: software writes to the books unattended.
+- **Agent-ready.** 0: no API. 2: a public API. 4: a first-class agent interface (MCP, a CLI, scoped tokens, documentation written for agents).
+- **Easy to connect.** 0: hard for an owner or a third party to connect to. 4: self-serve and documented.
+- **Market.** 0: people and freelancers. 2: small businesses. 4: enterprise.
+
+The scores are a reading, not a measurement. Two careful people would differ by one point here and there. The reasons are on every dossier, so you can check each one.
+
+## What the map shows
+
+**Tally:** The field splits on one question: who holds the record.
+
+Almost everything that is broad, agent-ready and widely used holds the books, or a copy of them, in its own cloud:
+
+- the incumbent ledgers: [Xero](/landscape/xero/) and [QuickBooks Online](/landscape/quickbooks-online/)
+- the AI ledgers: [Digits](/landscape/digits/), [Rillet](/landscape/rillet/), [Campfire](/landscape/campfire/) and [Light](/landscape/light/)
+- close and analytics: [Numeric](/landscape/numeric/)
+- spend: [Ramp](/landscape/ramp/)
+- services: [Pilot](/landscape/pilot/)
+
+Almost everything the owner holds is narrow, manual or made for developers, such as [Beancount](/landscape/beancount/), [hledger](/landscape/hledger/), [GnuCash](/landscape/gnucash/) and [Actual](/landscape/actual-budget/). Otherwise it's a database with no sources connected: [Datomic](/landscape/datomic/), [XTDB](/landscape/xtdb/), [TigerBeetle](/landscape/tigerbeetle/), [Formance](/landscape/formance/).
+
+Six things cut across the segments:
+
+- **Custody and capability pull against each other.** Of the products scoring 3 or more on both agent readiness and breadth, nearly all score 1 on custody. The few that are owner-held and agent-ready ([hledger MCP](/landscape/hledger-mcp/), [Bitwave CLI](/landscape/bitwave-cli/), [Sure](/landscape/sure/)) are narrow, and so are their markets.
+- **Approval gates are spreading, but none of them sits with the owner.**
+  - [Stripe](/landscape/stripe-agent-toolkit/) has approval rules on agent keys, where the approver can't be the one who made the request.
+  - [Mercury](/landscape/mercury/) says an agent can't approve, and a yes in chat doesn't count.
+  - [Rillet](/landscape/rillet/) routes journal entries for approval by where they came from.
+  - [Campfire](/landscape/campfire/) gives separate scopes for draft, write and approve.
+  - [Double](/landscape/double/) says nothing posts automatically.
+  
+  Every one of these gates, and the record of what was approved, lives in the vendor's cloud. A gate on its own doesn't set ownpurse apart. What would is a sealed gate, recorded in a file the owner holds, that works across several ledgers.
+- **The incumbents' own agent pipes either write directly or only read.** The [Xero MCP Server](/landscape/xero-mcp-server/) has no approval step. The [QuickBooks Online MCP Server](/landscape/quickbooks-online-mcp-server/) offers flags to turn writes off. Digits', Pennylane's and the [Sage Intacct AI Gateway](/landscape/sage-intacct-ai-gateway/)'s MCP servers are read-only by policy. None of them offers a reviewed write path.
+- **The sources now charge for reads.**
+  - Intuit meters QuickBooks reads.
+  - Xero charges for egress, and keeps its Journals feed for the Advanced tier (A$1,445 a month).
+  - Stripe meters Sigma and Data Pipeline.
+  - JPMorgan charges Plaid.
+  
+  A local copy that syncs incrementally becomes more valuable as reads get dearer. It also costs more to fill the first time.
+- **Getting out is hardest where the books are hosted.**
+  - [FreeAgent](/landscape/freeagent/)'s staff say a full export isn't possible through the API.
+  - [Fathom](/landscape/fathom/) tells users to take screenshots.
+  - [Wave](/landscape/wave/)'s API can't read transactions.
+  - [Pennylane](/landscape/pennylane/) keeps change history for four weeks.
+  
+  The products you can run yourself are the exceptions: [Odoo](/landscape/odoo/), [ERPNext](/landscape/erpnext/) and [Manager.io](/landscape/manager-io/) all hand you the whole database.
+- **Middleware, in every era, forgets.** [Zapier](/landscape/zapier/) keeps 60 days of history and [n8n](/landscape/n8n/) 14. [Rutter](/landscape/rutter/)'s deletes vanish, [Merge](/landscape/merge/) charges extra to detect deletes, and [Apideck](/landscape/apideck/) stores nothing. Only the warehouse stack keeps past states ([Fivetran](/landscape/fivetran/)'s history mode, Snowflake, Databricks), and it assumes you have a data team.
+
+## How we got here
+
+Everyone who has tried to get a business's money into one place has made one of a few moves, and each move left a lesson.
+
+- **Agree a message (1948 to the 1990s).** EDI grew out of the Berlin Airlift manifests and became ANSI X12 and EDIFACT. SWIFT, BAI2 and camt.053 did the same for banks. These still carry most enterprise commerce. But each link is bilateral, and a small business meets EDI only when a big retailer demands it. *Standards spread when a powerful party insists, and they standardize the message, not anyone's record of it.*
+- **Keep the file (1983 to 2010).** Quicken and [Microsoft Money](/landscape/microsoft-money/) kept your data in a file on your machine. Microsoft, Intuit and CheckFree agreed OFX in 1997 so that banks would speak one dialect. When Microsoft ended Money in 2009, its users kept their data, because it was a file they held. *A file the owner holds outlives the vendor.*
+- **Log in as the user (1999 to 2015).** Banks wouldn't hand data over, so [Yodlee](/landscape/yodlee/) scraped it, and [Mint](/landscape/mint/) built on Yodlee. [Wesabe](/landscape/wesabe/) refused to depend on Yodlee, put privacy first, and shut in 2010. Its chief executive wrote that Wesabe's privacy and accuracy didn't matter when the product was harder to use. In the same years the ledger moved to the cloud, and the data stopped being a file. *Ease beats principle, unless the principle comes free.*
+- **Wire the apps together (2011 on).** Enterprises bought MuleSoft, Boomi and Workato; small businesses got Zapier, Make and point bridges like [A2X](/landscape/a2x/). These move events between systems, and none of them keeps a record of what moved. *Pipes don't keep history.*
+- **Mandate the rail (2015 on).** PSD2, UK Open Banking, Australia's Consumer Data Right, and in the US a section 1033 rule that was finalized and then reopened. The rail now exists, but access is licensed, priced and revocable by the bank. *Access is a gift from the source.*
+- **One schema for every ledger (2017 on).** [Codat](/landscape/codat/), Merge, Rutter and others sell a common model, over a cache of current state, to the software companies that serve small businesses. They don't sell to the owners. Squeezed by metered reads from the sources, Codat turned towards bank data. *Keep the raw report, not only the normalized row.*
+- **Copy everything into a warehouse (2012 on).** Fivetran, Airbyte, Snowflake and dbt worked out how to sync well: cursors checkpointed per page, history tables beside final tables. Fivetran and dbt Labs merged in June 2026. *The patterns are right, but they assume a data team.*
+- **Let someone else hold the books (2014 on).** [ScaleFactor](/landscape/scalefactor/) sold automation that turned out to be bookkeepers working through a task list, and wound down in 2020. [Bench](/landscape/bench/) shut without notice. [Botkeeper](/landscape/botkeeper/) wound down. Mint closed. Meanwhile about half a billion dollars went into AI ledgers you move your books into. *Consolidating into one vendor's cloud is the trap that keeps closing.*
+- **Agents (2024 on).** The Model Context Protocol arrived in November 2024. Within a year every incumbent had an agent surface, and writing a connector became an afternoon's work for an agent. *Agents changed the economics of connectors, not of trust. Where the data lands, who keeps its history and who approves a write are now the hard questions.*
+
+## Small business and enterprise
+
+An enterprise gets its money into one place by design, and pays people to keep it that way:
+
+- an ERP as the system of record, with master data management keeping customers, vendors and items consistent
+- banks connected host to host, with statements as files
+- an integration platform moving events between systems
+- a data team copying every source into a warehouse, with history kept
+- close tools checking subledgers against the general ledger, with sign-offs recorded for the auditors
+
+The controls exist because regulators and auditors demand them, and the cost is in licences and headcount.
+
+A small business mostly doesn't integrate its data; it delegates the job. The accountant is the integration layer:
+
+- they get read access to the ledger
+- they chase statements and receipts at the end of the month or quarter
+- they reconcile by hand
+
+The ledger's bank feed is the main pipe, and when it breaks, someone downloads a CSV. Business and personal spending share a card, and get separated in a spreadsheet. That spreadsheet is the real view across everything. When the owner outgrows it, the usual move is to hand everything to a service or a new AI ledger, which means moving the books into someone else's cloud.
+
+So enterprises get three things small businesses don't:
+
+- one place where every source lands
+- a history of what each source said and when
+- a control that separates proposing a change from approving it
+
+The missing product is that enterprise pattern at the scale of one person: no data team, and no new cloud to trust.
+
+## Where ownpurse sits
+
+**Tally:** On the map, ownpurse is the coin. Scored by the same definitions, today:
+
+- **At the extreme: custody, where it runs, history and openness (all 4).** It's a single SQLite file on your machine, append-only by trigger, hash-chained and open source. Only the ledger databases and the plain-text family are out there with it.
+- **Breadth is 1.** There is one real connector, Xero. The fact model on the `facts` branch handles bank files, receipts, wallets and two more ledgers, but only on synthetic data. The dashed coin on the map is where that work puts it. Until it ships, that's a plan, not a position.
+- **Autonomy is 1, on purpose.** Agents propose and people approve. That puts ownpurse at the opposite end from Pilot, [Kick](/landscape/kick/) and [Booke](/landscape/booke/).
+- **Agent readiness is 3: good, not unique.** There's a CLI with `--json`, stable exit codes and help hints, but no MCP server yet. Kick, Bitwave CLI and hledger MCP already have one.
+- **Easy to connect is 1.** You register your own Xero app, run a command line, and bring your own bank source, because Xero won't give out statement lines.
+- **Market is 1.** It's for freelancers, small businesses and the people who keep their books, and it has no users yet.
+
+So ownpurse isn't a ledger, middleware or a service. It's a layer beside the ledgers, owned by the person. Four products come closest:
+
+- **[Books](/landscape/books-dispatchlabs/)** has nearly the same build: local SQLite, immutable postings and a hash chain. But it is the ledger you post into, where ownpurse rebuilds the books from what each source reports.
+- **[Bitwave CLI](/landscape/bitwave-cli/)** is local and agent-first. But it edits journal files, lets the agent confirm its own writes, starts from crypto and leads to a hosted product.
+- **[Kick](/landscape/kick/)** has the same JSON command line and stops writes at a preview. But it holds the only ledger in its cloud, and the agent can confirm the preview itself.
+- **[Numeric](/landscape/numeric/)** has the nearest architecture: a synced copy checked to the cent, with sign-offs. But the copy and the approvals are Numeric's, and it is moving to become the ledger.
+
+Each of ownpurse's properties exists somewhere else. The claim rests on all four together:
+
+- the owner holds the record
+- every version is kept
+- it sits beside several ledgers
+- writes are approved, and the approvals are recorded
+
+## The gap, and the need
+
+**The gaps.** No product found does any of these five things:
+
+1. **A record the owner holds, across ledgers.** It would keep every version and its provenance across several ledgers and sources, and let agents read it without spending API calls.
+2. **Agent writes as packages the owner approves.** Agents would write to an existing ledger only as sealed packages a person approves, with the approval recorded by the owner rather than the vendor.
+3. **A bank witness one person can connect.** Xero exposes no statement lines. [Plaid](/landscape/plaid/), MX, Finicity and Yodlee need a business contract. [Teller](/landscape/teller/) withdrew its free tier, and [GoCardless](/landscape/gocardless-bank-account-data/) closed to newcomers. What a person can still connect is [SimpleFIN](/landscape/simplefin/), [Akahu](/landscape/akahu/)'s personal apps, OFX files and Mercury's read-only token.
+4. **Insurance against the vendor going away.** That means a portable copy of books a vendor holds, and a way to prove it's complete.
+5. **One view of business and household money,** for the person who pays both from one card. [Tiller](/landscape/tiller/) comes closest, and it has no double entry.
+
+**The needs, and who has them:**
+
+- **Developer-leaning sole traders and company directors on Xero,** and later QuickBooks. They want their own agent to read and analyse the books without rationed API calls, and not to write without their sign-off. The incumbents' MCP servers and Meridian's free connectors show the demand for an agent that reaches the books. Metered reads show the cost.
+- **Owners who rely on a service or a hosted ledger.** They need a copy of the books that survives the vendor, the bookkeeper or the service going away. Bench showed the harm is real. *Whether anyone will pay to prevent it in advance is unproven:* no dossier shows a product selling that insurance on its own.
+- **Small businesses and their bookkeepers, especially online sellers.** They need proof, to the cent, that the ledger agrees with the bank and with Stripe, and where it doesn't. BlackLine, FloQast and Numeric sell exactly this to larger companies. Small businesses get A2X and hand work.
+- **Small accounting firms.** They need a record they can query, reconcile and sign off for each client. Double, Booke, Dext and Fathom are all priced per client, which is where firms already pay.
+- **Most owners.** They want agents that do the bookkeeping with as little review as possible, which is what Pilot, Booke and Kick sell. This runs against ownpurse's whole posture, and it's the biggest market on the map.
+
+**Where ownpurse delivers the most value**, in the order I'd build it:
+
+1. **A Xero user who works with an agent.** The agent gets unlimited local reads of every version of the books, with no egress fees or call budget. The ledger is rebuilt and checked to the cent against Xero. Writes go back only as packages the person approves. Xero's own MCP server and JAX offer none of this.
+2. **The bank as witness.** Bank lines from SimpleFIN, Akahu, OFX files or Mercury, linked to Xero's bank transactions, show which entries one side has and the other doesn't. The ledger can't run that check on itself.
+3. **A complete, provable copy for owners whose books sit with a service or a hosted ledger.** It outlives the vendor and makes the next move easier.
+4. **Reconciliation across sources that small businesses can't buy today:**
+   - Stripe payouts against bank deposits and ledger entries
+   - card spend from Ramp, Brex or Expensify against bills
+   - A2X summaries against the channel's settlements
+5. **A trail a small firm can prove,** showing what each agent or tool changed in a client's ledger, recorded in a file the client holds.
+
+**Who it isn't for:**
+
+- Owners who want the books done with no review.
+- Mid-market finance teams that need an ERP, consolidation and many users.
+- Non-technical owners who expect a hosted app on their phone.
+- Software companies that need many customers' data.
+- Anyone who needs a ledger of record. ownpurse sits beside one.
+
+## What could make this wrong
+
+**Tally:** The map shows an empty corner: a record the owner holds, with every version kept, connected to the ledgers, banks and processors a person already uses, and with agent writes gated. Plotted by breadth, the upper right isn't empty, but every dot in it is small. An empty corner can mean an opening, or a market that doesn't exist, and the dossiers can't tell which. The risks I'd hold us to:
+
+- **The need is unproven.** Every owner-held product here has a small market. Wesabe lost on ease, and Maybe failed twice as a consumer business. Proof that the harm is real is not proof that people act before it happens. *So the setup has to be easier than a hosted app, or this stays a tool for people like us.*
+- **Free and bundled is good enough for most people.** JAX costs nothing extra on Xero plans, and Intuit's agents come with QuickBooks. For most owners, "my agent works inside my ledger" may be enough.
+- **Gates are becoming a feature.** If the ledgers ship "agents propose, people approve" themselves, ownpurse's claim narrows to custody and history across vendors, which is a harder sell.
+- **The sources set the terms.** Xero bans bots that simulate users and requires consent before data passes to a third party. Whether sending Xero data to a hosted model counts is still unconfirmed with Xero. The Starter tier caps a person's own app at 5 organisations and no Journals.
+- **Bank witnesses are fragile.** Teller withdrew its free tier with about a week's notice, GoCardless closed, and SimpleFIN depends on MX. The witness may come down to files you download by hand.
+- **Breadth is still a plan.** Most of the value above depends on connectors that don't exist yet. The founding bet is that agents make connectors cheap, and nothing in these dossiers proves that for us.
+- **A local file is only as durable as its documentation.** Microsoft Money's files outlived the program because other tools could read them. The record's format has to be documented well enough to read without ownpurse.
+
+## What it changes
+
+Five things move up the list:
+
+1. **A documented record format.** The record should be readable without ownpurse, so that custody is real.
+2. **An MCP server over the record**, read-only, beside the CLI, so that any agent can reach it without setup.
+3. **The bank as witness as the next source after Xero**, starting with the sources a person can connect alone: OFX and CSV files, SimpleFIN and Akahu.
+4. **A first-run path that takes minutes**, because Wesabe's lesson is the one most likely to sink us.
+5. **A story for the accountant**: one file per client, readable by the firm, with sign-offs recorded in the record.
+
+The connector framework comes after that, shaped by what Airbyte, Nango and beangulp do well, which is in their dossiers.
+
+## Everyone else
+
+The sweeps found these as well. Each is named with its reason, but they rank below the 135 dossiers, so they get no page.
+
+<AlsoFound />
+
+<p class="fm-fine">ownpurse is not affiliated with any company named here; names are their owners' trademarks. Figures come from each company's own pages, filings and the press, as linked in its dossier, as of 10 October 2026. Scores are our reading against the definitions above. This is not legal or financial advice.</p>

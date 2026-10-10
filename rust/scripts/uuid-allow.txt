@@ -125,3 +125,6 @@ c0ffee09-0000-4000-8000-000000000019
 c0ffee09-0000-4000-8000-000000000020
 c0ffee09-0000-4000-8000-000000000021
 c0ffee09-0000-4000-8000-000000000022
+# Public URLs cited in the landscape dossiers (a Microsoft support article, Sage FY25 results on the FCA register)
+43ceac07-794e-4015-af04-21bb4795a14a
+3331551a-5060-4fad-88d1-730e3d45176b
