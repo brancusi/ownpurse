@@ -5,6 +5,7 @@ sidebar:
   order: 2.5
 ---
 import ModelCanvas from '../../../../components/facts/ModelCanvas.tsx';
+import StoredGraph from '../../../../components/facts/StoredGraph.tsx';
 import QueryConsole from '../../../../components/facts/QueryConsole.tsx';
 
 :::note[Status]
@@ -34,6 +35,12 @@ A fact is a datom: `[entity, attribute, value, transaction, added]`. Nothing is 
 | `added` | 1 for an assertion, 0 for a retraction |
 
 A transaction is an entity with facts of its own: `tx/actor`, `tx/projector`, `tx/source`, `tx/evidence` (the drawer files it was read from), `tx/observed-at`, `tx/instant`, `tx/reason` and `tx/pressure` (where the source did not fit the model). Each transaction carries the hash of the one before; `ownpurse-facts verify` re-hashes the chain and every cited file. The `datom` and `tx` tables are append-only by trigger.
+
+The log never gains a column. An attribute is an entity whose `db/ident`, `db/valueType`, `db/cardinality` and `db/doc` are datoms, so a new attribute is a few new rows; the month's log has 799 of them in the same six columns. The kinds on the canvas above are conventions about which attributes appear together, not tables. The views below are queries that lay datoms out as rows: a null in a view is a datom that does not exist, and a view shows only the attributes it was written for, while `facts` shows them all.
+
+<div id="fm-store" class="not-content">
+<StoredGraph client:only="react" />
+</div>
 
 ## Kinds of thing
 

@@ -5,11 +5,12 @@ date: 2026-10-10T12:00:00Z
 author: Aram Zadikian (@brancusi) and Tally
 ---
 import ModelCanvas from '../../components/facts/ModelCanvas.tsx';
+import StoredGraph from '../../components/facts/StoredGraph.tsx';
 import ReceiptFlow from '../../components/facts/ReceiptFlow.tsx';
 import QueryConsole from '../../components/facts/QueryConsole.tsx';
 import AgentTrace from '../../components/facts/AgentTrace.tsx';
 
-<div class="fm-convo-note"><span class="fm-k">A conversation</span><p>Written up from a working session between Aram Zadikian (<a href="https://github.com/brancusi">@brancusi</a>), who builds ownpurse, and Tally, the Claude agent he builds it with. The <a href="/blog/the-fact-model/">first post</a> drew the model and the <a href="/blog/the-fact-model-at-its-edges/">second</a> tested it. This one lets you take it apart. Aram's words are lightly edited; Tally wrote the rest.</p></div>
+<div class="fm-convo-note"><span class="fm-k">A conversation</span><p>Written up from a working session between Aram Zadikian (<a href="https://github.com/brancusi">@brancusi</a>), who builds ownpurse, and Tally, the Claude agent he builds it with. The <a href="/blog/the-fact-model/">first post</a> drew the model and the <a href="/blog/the-fact-model-at-its-edges/">second</a> tested it. This one lets you take it apart. Aram's words are lightly edited; Tally wrote the rest. Updated after publishing with <a href="#how-its-stored">How it's stored</a>, after Aram read the canvas as a set of tables.</p></div>
 
 ## Run this version
 
@@ -37,6 +38,22 @@ You need git and [Rust](https://rustup.rs). It writes only under `~/.cache/ownpu
 Read it left to right, as before: the drawer of files, the documents and places inside them, what each document says, how those things relate, and your books. The band along the bottom is the log itself. Every datom is `[entity, attribute, value, transaction, added]`, and the transaction is a thing with facts of its own: who wrote it, from which files, with which projector, and the hash of the one before.
 
 The figure on each box is how many of that kind the month holds. Click one and you get what it is, why it's there, what makes two of them the same thing, every attribute with its count and its documentation (the schema is facts too, so the documentation comes from the log), and one example from the month, chosen along the dinner's path where there is one.
+
+## How it's stored
+
+> **Aram:** Are we going to get column explosion as the model grows? Datomic treats the attribute as a value in one flat index: the entity, the attribute, the value, and a link to something else. Is that how this is modeled, or does the table grow with every new attribute? Because at first glance, all those empty columns look like column hell.
+
+**Tally:** It's the Datomic way, and the canvas above doesn't show it, so here it is. The log has one table of facts, six columns wide: `e, a, v, vt, tx, added`. The attribute `a` is an entity of its own, with its name, type and documentation stored as datoms, so a new attribute is a few new rows and never a new column. The month already carries 799 attributes this way, most of them the raw fields the sources report, in those same six columns. The transaction table holds only the hash chain; who wrote a transaction, why and from which files are datoms too.
+
+So each box on the canvas is a kind of entity, not a table. Below, each box is one entity: every datom with the same `e`, in the order the `(e, a, tx)` index keeps them. A reference is a datom whose value is another entity's `e`, and its row is wired to that entity. Click a reference to open it, or "pointed at by" to walk one backwards. Click a row to see the datom whole, and the attribute and transaction it names, both of which are entities too.
+
+<div class="fm-wide" id="fm-store">
+<StoredGraph client:only="react" src="/data/month-d8a7d14.json">
+<p slot="fallback" class="fm-mono">This figure needs JavaScript. In the terminal, <code>ownpurse-facts sql "SELECT * FROM datom WHERE e = 174"</code> shows the same rows.</p>
+</StoredGraph>
+</div>
+
+The columns you saw are views, and the second tab takes one apart. `observations`, `postings` and the rest lay datoms out as rows so they're easy to read and join. They store nothing. A null in a view is an attribute the entity has no datom for, and the view leaves out whatever it wasn't written to show (on the receipt, 19 of its 28 datoms). Where the model can still grow too wide is in the views, and the fix there is more small views and querying `facts` directly, never more columns on disk.
 
 ## A receipt, all the way in
 

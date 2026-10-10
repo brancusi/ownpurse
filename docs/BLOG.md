@@ -67,6 +67,13 @@ it from the post. Docs follow the code as it changes; a post stays at its commit
 9. **Publish.** Commit the post (a second commit, after the pinned one), push the branch and the tag, then
    `cd site && npm run deploy`. Open the live page and run the post's command from an empty folder.
 
+## Corrections
+
+A post stays at its commit, but it should not mislead. When a reader's question shows a post gives the wrong
+picture, add the answer to the post as a section in the same conversation voice, say so in the conversation note
+("Updated after publishing with …"), and put the lasting version in the docs. Figures may be improved in place; the
+data they read stays pinned.
+
 ## Checklist
 
 - [ ] Opens with the conversation note and, for a change, the pinned command and tag
