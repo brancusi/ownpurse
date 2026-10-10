@@ -1,0 +1,231 @@
+/* The interactive fact-model figures: the canvas, the receipt flow, the console, the agent. Tokens only, so they
+   follow the docs' Night theme as well as the blog's Paper. */
+
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) {
+	--fm-rule: 1.5px solid var(--ink-1);
+	font-size: 15px;
+	line-height: 1.5;
+	color: var(--ink-1);
+	margin-top: 1.4em;
+}
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) { max-width: 100%; min-width: 0 }
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) * { box-sizing: border-box }
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) :is(p, ul, ol, dl, h3) { margin: 0 }
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) * + * { margin-top: 0 }
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) ul { list-style: none; padding: 0 }
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) ul li::before { content: none }
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) table { display: table; width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.4 }
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) th {
+	text-align: left; font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+	color: var(--ink-3); padding: 6px 10px; border-bottom: 1px solid var(--line-2); background: var(--surface-1); white-space: nowrap;
+}
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) td {
+	font-family: var(--font-mono); padding: 5px 10px; border-bottom: 1px solid var(--line-1); vertical-align: top; color: var(--ink-1);
+	font-weight: 400; white-space: nowrap;
+}
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) h3 { font-size: 21px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em }
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) code { font-size: 0.86em; background: var(--surface-1); padding: 0.1em 0.35em }
+.fm-k { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lapis) }
+.fm-k-coin { color: var(--coin-text) }
+.fm-muted { color: var(--ink-3) }
+.fm-num { text-align: right; font-variant-numeric: tabular-nums }
+td.fm-null { color: var(--ink-3) }
+.fm-ref { color: var(--lapis) !important }
+
+/* controls */
+.fm-btn {
+	font: 600 14px/1 var(--font-display); color: var(--ink-inverse); background: var(--ink-1); border: 1px solid var(--ink-1);
+	border-radius: var(--radius-1); padding: 9px 14px; cursor: pointer; transition: opacity 150ms, background-color 150ms; text-align: left;
+}
+.fm-btn:hover { opacity: 0.88 }
+.fm-btn:disabled { opacity: 0.45; cursor: default }
+.fm-btn-quiet { color: var(--ink-1); background: transparent; border-color: var(--line-2) }
+.fm-linkbtn { font: 600 14px/1.3 var(--font-display); color: var(--lapis); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-align: left }
+:is(.fm-model, .fm-flow, .fm-console, .fm-agent) :is(button, select, textarea, [tabindex]):focus-visible { outline: 2px solid var(--focus); outline-offset: 2px }
+
+.fm-loading { display: inline-flex; align-items: center; gap: 10px; color: var(--ink-2); font-size: 14px }
+.fm-blink { width: 12px; height: 12px; border-radius: 50%; background: var(--coin); animation: fm-blink 6s infinite }
+@keyframes fm-blink { 0%, 96%, 100% { transform: scaleY(1) } 98% { transform: scaleY(0.1) } }
+@media (prefers-reduced-motion: reduce) { .fm-blink { animation: none } }
+.fm-problem { display: grid; gap: 4px; border: 1px solid var(--line-1); border-top: 2px solid var(--coin-text); padding: 10px 14px; background: var(--coin-tint); font-size: 14px }
+
+.fm-result { display: grid; gap: 6px; min-width: 0 }
+.fm-result-meta { display: flex; gap: 14px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.04em }
+.fm-result-scroll { overflow: auto; max-height: 420px; border: 1px solid var(--line-1); background: var(--surface-0) }
+.fm-result-scroll th { position: sticky; top: 0 }
+
+.fm-term {
+	background: var(--term-ground); color: var(--term-ink); font: 12.5px/1.55 var(--font-mono); padding: 12px 14px; margin: 0; overflow-x: auto;
+	white-space: pre-wrap; word-break: break-word; border-radius: var(--radius-2);
+}
+.fm-term-prompt { color: var(--term-dim) }
+.fm-term-cmd { color: var(--term-coin) }
+.fm-term-str { color: var(--term-ink) }
+
+/* the canvas */
+.fm-model { border: var(--fm-rule); background: var(--surface-0) }
+.fm-layers { display: flex; flex-wrap: wrap; gap: 0; border-bottom: 1px solid var(--line-1); background: var(--surface-1) }
+.fm-layers button, .fm-kindlist button {
+	font: 500 13px/1 var(--font-display); color: var(--ink-2); background: transparent; border: 0; border-right: 1px solid var(--line-1);
+	padding: 11px 14px; cursor: pointer; transition: background-color 150ms;
+}
+.fm-layers button:hover, .fm-kindlist button:hover { background: var(--surface-2) }
+.fm-layers button.is-on, .fm-kindlist button.is-on { background: var(--lapis-tint); color: var(--ink-1); box-shadow: inset 0 -3px 0 var(--lapis) }
+.fm-n { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; color: var(--lapis) }
+.fm-model-body { display: grid; grid-template-columns: minmax(0, 1fr) 360px; min-height: 720px }
+.fm-canvas { height: 720px; min-width: 0; overflow: hidden; border-right: 1px solid var(--line-1); position: relative }
+.fm-details { padding: 18px 20px; display: grid; gap: 12px; align-content: start; overflow-y: auto; max-height: 720px; min-width: 0 }
+.fm-details > p { color: var(--ink-2); font-size: 15px }
+.fm-details dl { display: grid; gap: 2px }
+.fm-details dt { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-top: 8px }
+.fm-details dd { margin: 0; font-size: 14.5px; color: var(--ink-1) }
+.fm-details .fm-btn { justify-self: start }
+.fm-fine-inline { font-size: 13px !important; color: var(--ink-3) !important; border-top: 1px solid var(--line-1); padding-top: 10px }
+.fm-mono-h { font-family: var(--font-mono) !important; font-size: 17px !important; font-weight: 500 !important; color: var(--lapis) }
+.fm-attrs td { white-space: normal; font-family: var(--font-display); font-size: 13px }
+.fm-attrs td:first-child { font-family: var(--font-mono); font-size: 12px; white-space: nowrap }
+.fm-attrs td:last-child { font-family: var(--font-mono); font-size: 12px; color: var(--ink-3) }
+.fm-pills { display: flex; flex-wrap: wrap; gap: 8px }
+.fm-pills button { font: 500 13px/1 var(--font-display); border: 1px solid var(--line-2); border-radius: var(--radius-1); background: var(--surface-0); color: var(--ink-1); padding: 7px 10px; cursor: pointer }
+.fm-kindlist { display: flex; flex-wrap: wrap; border-top: 1px solid var(--line-1) }
+.fm-kindlist button { font-size: 12.5px; padding: 9px 12px }
+@media (max-width: 900px) {
+	.fm-model-body { grid-template-columns: minmax(0, 1fr); min-height: 0 }
+	.fm-canvas { height: 460px; border-right: 0; border-bottom: 1px solid var(--line-1) }
+	.fm-details { max-height: none }
+}
+
+.fm-kn {
+	background: var(--surface-0); border: 1.5px solid var(--ink-1); font-family: var(--font-mono); cursor: pointer;
+	transition: opacity 150ms, background-color 150ms;
+}
+.fm-kn-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 6px 10px; background: var(--surface-1); border-bottom: 1px solid var(--ink-1) }
+.fm-kn-name { font: 700 15px/1.2 var(--font-display); color: var(--ink-1) }
+.fm-kn-count { font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums }
+.fm-kn-attrs { padding: 6px 10px 8px !important; font-size: 11.5px; line-height: 17px; color: var(--ink-2) }
+.fm-kn-wide .fm-kn-attrs { display: flex; flex-wrap: wrap; gap: 0 22px }
+.fm-kn-empty { border-style: dashed; border-color: var(--line-2) }
+.fm-kn-empty .fm-kn-head { border-bottom-style: dashed; border-color: var(--line-2) }
+.fm-kn-on { background: var(--lapis-tint); border-color: var(--lapis); box-shadow: 0 0 0 2px var(--lapis) }
+.fm-kn-on .fm-kn-head { background: var(--lapis-tint); border-color: var(--lapis) }
+.fm-kn-near { border-color: var(--lapis) }
+.fm-kn-dim { opacity: 0.32 }
+/* site.css caps every svg at 100% of its parent; React Flow's edge layers sit in zero-width boxes */
+.fm-model .react-flow svg { max-width: none }
+.fm-model .react-flow__handle { opacity: 0; width: 1px; height: 1px; min-width: 0; min-height: 0; border: 0; background: transparent; pointer-events: none }
+.fm-model .react-flow__edge-path { stroke: var(--ink-3); stroke-width: 1.25 }
+.fm-model .react-flow__edge.fm-edge-lit .react-flow__edge-path { stroke: var(--lapis); stroke-width: 2 }
+.fm-model .react-flow__edge.fm-edge-dim { opacity: 0.18 }
+.fm-model .react-flow__edge:hover .react-flow__edge-path { stroke: var(--lapis) }
+.fm-model .react-flow__background { --xy-background-pattern-color: var(--grid-minor); background: var(--surface-0) }
+.fm-model .react-flow__controls { box-shadow: none; border: 1px solid var(--line-2) }
+.fm-model .react-flow__controls-button { background: var(--surface-0); border-bottom: 1px solid var(--line-1); color: var(--ink-1); fill: var(--ink-1); width: 28px; height: 28px }
+.fm-model .react-flow__controls-button svg { fill: var(--ink-1) }
+.fm-model .react-flow__controls-button:hover { background: var(--surface-2) }
+.fm-edge-label {
+	position: absolute; pointer-events: none; font: 10.5px/1 var(--font-mono); color: var(--ink-3); background: var(--surface-0); padding: 2px 4px;
+	white-space: nowrap;
+}
+.react-flow__edge.fm-edge-lit ~ * .fm-edge-label { color: var(--lapis) }
+
+/* the receipt flow */
+.fm-flow { border: var(--fm-rule); background: var(--surface-0) }
+.fm-flow-steps { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); list-style: none; padding: 0 !important; margin: 0; border-bottom: 1px solid var(--line-1); background: var(--surface-1) }
+.fm-flow-steps li::before { content: none !important }
+.fm-flow-steps button {
+	width: 100%; height: 100%; display: grid; gap: 4px; align-content: start; text-align: left; font: 500 12.5px/1.3 var(--font-display); color: var(--ink-2);
+	background: transparent; border: 0; border-right: 1px solid var(--line-1); padding: 10px 10px 12px; cursor: pointer; transition: background-color 150ms;
+}
+.fm-flow-steps li:last-child button { border-right: 0 }
+.fm-flow-steps button:hover { background: var(--surface-2) }
+.fm-flow-steps button.is-on { background: var(--lapis-tint); color: var(--ink-1); box-shadow: inset 0 -3px 0 var(--lapis) }
+.fm-flow-steps button.is-done { color: var(--ink-1) }
+.fm-flow-body { display: grid; grid-template-columns: minmax(220px, 340px) minmax(0, 1fr); gap: 0 }
+.fm-photo { margin: 0; padding: 18px; border-right: 1px solid var(--line-1); background: var(--surface-1); display: grid; gap: 8px; align-content: start }
+.fm-photo-frame { position: relative; border: 1px solid var(--line-2); background: var(--surface-0) }
+.fm-photo-frame img { display: block; width: 100%; height: auto }
+.fm-photo-frame svg { position: absolute; inset: 0; width: 100%; height: 100% }
+.fm-photo figcaption { font: 11px/1.4 var(--font-mono); color: var(--ink-3) }
+.fm-box rect { fill: none; stroke: var(--lapis); stroke-width: 4 }
+.fm-box-low rect { fill: none; stroke: var(--gilt); stroke-width: 6; stroke-dasharray: 14 8 }
+.fm-box text, .fm-box-low text { font: 500 30px var(--font-mono); paint-order: stroke; stroke: var(--surface-0); stroke-width: 8px }
+.fm-box text { fill: var(--lapis) }
+.fm-box-low text { fill: var(--gilt-text) }
+.fm-box-on rect { stroke-width: 8 }
+.fm-flow-text { padding: 20px 22px; display: grid; gap: 14px; align-content: start; min-width: 0 }
+.fm-flow-text > p { color: var(--ink-2); font-size: 15.5px }
+.fm-flow-nav { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 6px; border-top: 1px solid var(--line-1) }
+.fm-flow-nav { padding-top: 14px }
+.fm-flow-more { display: flex; flex-wrap: wrap; gap: 18px }
+.fm-kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; font-size: 13px }
+.fm-kv dt { font-family: var(--font-mono); color: var(--lapis) }
+.fm-kv dd { margin: 0; font-family: var(--font-mono); color: var(--ink-1); overflow-wrap: anywhere }
+.fm-hash { font-size: 12px }
+.fm-readings tr { cursor: default }
+.fm-readings tr:hover td, .fm-readings tr:focus td { background: var(--lapis-tint) }
+.fm-readings tr.fm-low td { background: var(--gilt-tint) }
+.fm-tag-held { margin-left: 8px; font: 500 10px/1 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--gilt-text); border: 1px dashed var(--gilt); padding: 2px 5px }
+@media (max-width: 1000px) { .fm-flow-steps { grid-template-columns: repeat(4, minmax(0, 1fr)) } .fm-flow-steps button { border-bottom: 1px solid var(--line-1) } }
+@media (max-width: 760px) {
+	.fm-flow-steps { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+	.fm-flow-body { grid-template-columns: minmax(0, 1fr) }
+	.fm-photo { border-right: 0; border-bottom: 1px solid var(--line-1) }
+	.fm-photo-frame { max-width: 260px }
+}
+
+/* the console */
+.fm-console { border: var(--fm-rule); background: var(--surface-0); padding: 16px 18px; display: grid; gap: 12px }
+.fm-console-bar { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: end; justify-content: space-between }
+.fm-console-bar label { display: grid; gap: 6px; width: min(100%, 440px); min-width: 0 }
+.fm-console-bar select {
+	font: 500 14px/1.2 var(--font-display); color: var(--ink-1); background: var(--surface-0); border: 1px solid var(--line-2);
+	border-radius: var(--radius-1); padding: 8px 10px; width: 100%; max-width: 100%;
+}
+.fm-console-meta { font: 11.5px/1.4 var(--font-mono); color: var(--ink-3) }
+.fm-console-title { font-weight: 700; font-size: 16px }
+.fm-sql {
+	width: 100%; font: 13px/1.55 var(--font-mono); color: var(--term-ink); background: var(--term-ground); border: 0; border-radius: var(--radius-2);
+	padding: 12px 14px; resize: vertical; tab-size: 2;
+}
+.fm-console-actions { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: 13px }
+
+/* the agent */
+.fm-agent { border: var(--fm-rule); background: var(--surface-0) }
+.fm-agent-qs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--line-1); background: var(--surface-1) }
+.fm-agent-qs button {
+	font: 600 14px/1.3 var(--font-display); color: var(--ink-2); text-align: left; background: transparent; border: 0; border-right: 1px solid var(--line-1);
+	padding: 12px 14px; cursor: pointer; transition: background-color 150ms;
+}
+.fm-agent-qs button:last-child { border-right: 0 }
+.fm-agent-qs button:hover { background: var(--surface-2) }
+.fm-agent-qs button.is-on { background: var(--lapis-tint); color: var(--ink-1); box-shadow: inset 0 -3px 0 var(--lapis) }
+@media (max-width: 860px) { .fm-agent-qs { grid-template-columns: 1fr 1fr } .fm-agent-qs button { border-bottom: 1px solid var(--line-1) } }
+@media (max-width: 480px) { .fm-agent-qs { grid-template-columns: 1fr } }
+.fm-agent-body { padding: 18px 20px; display: grid; gap: 18px }
+.fm-agent-ask { display: grid; gap: 4px; border-left: 2px solid var(--ink-1); padding-left: 14px }
+.fm-agent-ask p { font-size: 18px; font-weight: 600 }
+.fm-agent-step { display: grid; gap: 10px; padding-left: 14px; border-left: 2px solid var(--lapis); min-width: 0 }
+.fm-agent-who { display: flex; gap: 8px; align-items: center }
+.fm-avatar { width: 14px; height: 14px; border-radius: 50%; background: var(--coin); display: inline-block }
+.fm-agent-think { font-size: 15.5px; color: var(--ink-1) }
+.fm-agent-read { font-size: 15px; color: var(--ink-2); border-top: 1px dashed var(--line-2); padding-top: 8px }
+.fm-agent-nav { display: flex; flex-wrap: wrap; gap: 10px }
+.fm-agent-answer { display: grid; gap: 8px; border: 1px solid var(--line-1); border-top: 2px solid var(--verdigris); padding: 14px 16px }
+.fm-agent-answer > .fm-k:first-child { color: var(--verdigris) }
+.fm-agent-answer > p { font-size: 16px }
+.fm-cites { display: grid; gap: 2px; font: 12.5px/1.5 var(--font-mono); color: var(--ink-2) }
+.fm-proposal { border: 1px dashed var(--gilt); background: var(--surface-0); padding: 12px 14px; display: grid; gap: 10px; margin-top: 6px }
+.fm-proposal-head { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-weight: 600; font-size: 14.5px }
+.fm-status-held { display: inline-flex; align-items: center; gap: 6px; color: var(--gilt-text); font-size: 13px }
+.fm-status-held i { width: 8px; height: 8px; border-radius: 50%; border: 2px dashed var(--gilt); display: inline-block }
+.fm-proposal td { border-bottom: 0; padding: 3px 10px 3px 0 }
+.fm-proposal td.fm-op { color: var(--verdigris) }
+.fm-proposal td.fm-a { color: var(--lapis) }
+.fm-proposal p { font-size: 13.5px }
+
+/* grid children shrink to their column, so wide tables scroll inside it instead of widening the panel */
+:is(.fm-details, .fm-flow-text, .fm-agent-body, .fm-agent-step, .fm-agent-answer, .fm-console) { grid-template-columns: minmax(0, 1fr) }
+:is(.fm-details, .fm-flow-text, .fm-agent-body, .fm-agent-step, .fm-agent-answer, .fm-console) > * { min-width: 0 }
+.fm-attrs { table-layout: fixed }
+.fm-attrs td:first-child { width: 40%; overflow-wrap: anywhere; white-space: normal }
+.fm-attrs td:last-child { width: 3.6em }

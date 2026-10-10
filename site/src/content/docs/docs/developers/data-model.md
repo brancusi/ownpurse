@@ -128,4 +128,5 @@ It also gives a natural home to entries that are not yet classified. They can be
 visible, without being posted to an account, until someone decides what they are.
 
 Versions already behave this way at the document level: append-only, timed, sourced and chained. The fact model is
-being designed; it is not a shipped schema.
+being built on the `facts` branch and is not yet in the `ownpurse` binary; [Fact model](/docs/developers/fact-model/)
+describes it, with an explorer you can query.

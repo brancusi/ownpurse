@@ -86,4 +86,5 @@ npm run deploy    # astro build, then wrangler deploy to ownpurse.com (Workers s
 ```
 
 User docs live in `site/src/content/docs/docs/`, blog posts in `site/src/content/blog/`. When a command, flag or
-behaviour changes, update the matching docs page in the same change.
+behaviour changes, update the matching docs page in the same change. How a session becomes a post (the voice, the
+pinned demo, interactive figures over the synthetic log, the checklist) is in [docs/BLOG.md](docs/BLOG.md).

@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
+import react from '@astrojs/react';
 
 export default defineConfig({
 	site: 'https://ownpurse.com',
@@ -40,5 +41,6 @@ export default defineConfig({
 			disable404Route: true,
 		}),
 		sitemap(),
+		react(),
 	],
 });

@@ -1,0 +1,89 @@
+---
+title: Fact model
+description: The datom, the transaction, the kinds of thing in the log and how they refer to each other, identity, links, the SQL views, and an explorer over a synthetic month you can query in your browser.
+sidebar:
+  order: 2.5
+---
+import ModelCanvas from '../../../../components/facts/ModelCanvas.tsx';
+import QueryConsole from '../../../../components/facts/QueryConsole.tsx';
+
+:::note[Status]
+The fact model is being built on the `facts` branch, in the crates `ownpurse-facts`, `ownpurse-store`, `ownpurse-ingest` and the `ownpurse-facts` binary. It is not yet in the `ownpurse` binary. Today's record is described in [Data model](/docs/developers/data-model/).
+:::
+
+Everything that arrives is a file in a drawer. Everything ownpurse knows is a fact about something, stamped with who said it and from what. Everything you see is a query over those facts.
+
+## Explore it
+
+The canvas and console below run against the synthetic month in `samples/` (one invented business, eight sources, fifty files), rebuilt in your browser from the log's own `schema.sql` and every datom. Click a box for what it is, why it exists, its attributes and an example.
+
+<div id="fm-model" class="not-content">
+<ModelCanvas client:only="react" />
+</div>
+
+## The datom and the transaction
+
+A fact is a datom: `[entity, attribute, value, transaction, added]`. Nothing is updated. A change is a new transaction that retracts the old value and asserts the new one, so any earlier state can be read back.
+
+| Column | What |
+|---|---|
+| `e` | The entity the fact is about |
+| `a` | The attribute, itself an entity; its name, type, cardinality and documentation are facts (`db/ident`, `db/valueType`, `db/cardinality`, `db/doc`) |
+| `v` | The value: a reference, text, an exact decimal, a date, an instant, a keyword or a hash |
+| `tx` | The transaction that wrote it |
+| `added` | 1 for an assertion, 0 for a retraction |
+
+A transaction is an entity with facts of its own: `tx/actor`, `tx/projector`, `tx/source`, `tx/evidence` (the drawer files it was read from), `tx/observed-at`, `tx/instant`, `tx/reason` and `tx/pressure` (where the source did not fit the model). Each transaction carries the hash of the one before; `ownpurse-facts verify` re-hashes the chain and every cited file. The `datom` and `tx` tables are append-only by trigger.
+
+## Kinds of thing
+
+| Layer | Kind | Identity |
+|---|---|---|
+| Drawer | Source | An id chosen when connected, such as `bank:ridgeway-4821` |
+| Drawer | File | The SHA-256 of its bytes |
+| Documents | Document | The source's own id; else the first file's hash |
+| Documents | Region | The file and a locator: a row, a JSON pointer, a page, a page and a box |
+| Observations | Observation | The source's id; else a natural key; else a fingerprint and occurrence; else a position (`@n`) |
+| Observations | Reading | The entity, the attribute and the extractor's field |
+| Links | Link | Kind, from and to |
+| Links | Label, note | Minted when written |
+| Books | Book, account, entry, posting | Minted by ownpurse, or the document mirrored; external ids are ordinary facts |
+| Books | Commodity, price, party | A code; a commodity, quote and time; a contact id or name |
+
+An observation is one item a source states, at a place in a file, about an account, in a commodity, at a time. An event with more than one side has legs: child observations (`obs/parent`), each with its own account, amount and commodity. Readings carry per-field provenance for anything read by an extractor; the observation keeps the plain value.
+
+## Links
+
+Sources are never merged. Rules write links, each with a rule and a confidence, and a wrong link is retracted like any other fact.
+
+| Kind | Means |
+|---|---|
+| `same-event` | Two witnesses of one movement of money (a CSV line and an OFX line) |
+| `evidences` | A receipt or check backs a line |
+| `settles` | A payment pays an invoice or bill, for `link/amount` |
+| `counterpart` | One invoice as it appears in two companies' books |
+| `mirrors` | An entry mirrors the document it was built from |
+
+## Querying
+
+```sh
+ownpurse-facts --log march.sqlite sql "SELECT * FROM observations WHERE kind = 'obs.kind/receipt'"
+ownpurse-facts --log march.sqlite --as-of 491 entity doc/id=xero:tallowmere/Invoice/c0ffee03-0000-4000-8000-000000000002
+ownpurse-facts --log march.sqlite history doc/id=xero:tallowmere/BankTransaction/c0ffee05-0000-4000-8000-000000000003
+```
+
+The views are `facts` (what is true now), `history` (every assertion and retraction), `facts_shown` (references shown by name), `transactions`, `files`, `observations`, `links`, `postings`, `attr` and `label`. Sum money with `dsum()`, which is exact; SQLite's own `sum()` converts decimal text to floating point. The questions in `samples/queries/` are run by the tests on every change.
+
+<div id="fm-console" class="not-content">
+<QueryConsole client:only="react" />
+</div>
+
+## Keeping the explorer current
+
+The explorer loads `site/public/data/month.json`. After the fact model or the samples change, regenerate it from a clean checkout and commit the result:
+
+```sh
+bash site/scripts/month-log.sh
+```
+
+It builds `ownpurse-facts`, loads `samples/ingest.json`, runs the link rules, verifies the log and writes `month.json` and `month-<commit>.json`. Blog posts load their own pinned copy, so they keep showing the version they were written at. The design notes are in [`docs/plans/FACTS.md`](https://github.com/brancusi/ownpurse/blob/facts/docs/plans/FACTS.md) and the findings from phase 1 in [`docs/plans/FACTS-EDGES.md`](https://github.com/brancusi/ownpurse/blob/facts/docs/plans/FACTS-EDGES.md). For a walk through the model, see [The fact model, up close](/blog/the-fact-model-up-close/).
