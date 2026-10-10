@@ -1,0 +1,94 @@
+---
+title: The fact model, up close
+description: The data model as a canvas you can click, a receipt followed into the log one step at a time, a SQL console over the real month, and an agent answering questions from it. All of it runs in your browser against the same log the tests use.
+date: 2026-10-10T12:00:00Z
+author: Aram Zadikian (@brancusi) and Tally
+---
+import ModelCanvas from '../../components/facts/ModelCanvas.tsx';
+import ReceiptFlow from '../../components/facts/ReceiptFlow.tsx';
+import QueryConsole from '../../components/facts/QueryConsole.tsx';
+import AgentTrace from '../../components/facts/AgentTrace.tsx';
+
+<div class="fm-convo-note"><span class="fm-k">A conversation</span><p>Written up from a working session between Aram Zadikian (<a href="https://github.com/brancusi">@brancusi</a>), who builds ownpurse, and Tally, the Claude agent he builds it with. The <a href="/blog/the-fact-model/">first post</a> drew the model and the <a href="/blog/the-fact-model-at-its-edges/">second</a> tested it. This one lets you take it apart. Aram's words are lightly edited; Tally wrote the rest.</p></div>
+
+## Run this version
+
+Everything below runs in this page, but the same month also plays in your terminal, pinned to the commit this post was written at:
+
+```sh
+C=9db859284eb272d4c2a1705a77b8a761d022de81
+curl -fsSL https://raw.githubusercontent.com/brancusi/ownpurse/$C/samples/demo.sh | bash -s $C
+```
+
+You need git and [Rust](https://rustup.rs). It writes only under `~/.cache/ownpurse/demo/`, never talks to any provider, and every name, number and id in it is invented. The commit is tagged [`demo/2026-10-10-fact-model-up-close`](https://github.com/brancusi/ownpurse/tree/demo/2026-10-10-fact-model-up-close).
+
+> **Aram:** I want a clear diagram of the data model, on a canvas with nodes and edges. I want to see the model interactively, and how this month fits it. You click a node and you get the how and the why. We see how a receipt flows into the database. We can test a query and get data out. We can see how an agent would query the log to answer a question the reader asks. It's a learning tool. It helps sharpen our thinking about the system.
+
+**Tally:** So nothing on this page is a mock-up. When it loads, your browser fetches the month's log as the fact model at commit [`d8a7d14`](https://github.com/brancusi/ownpurse/tree/d8a7d141a5a8) builds it, the same code the command above runs: the log's own `schema.sql`, with its views and the triggers that keep it append-only, and every datom the projectors and link rules wrote. It replays them into SQLite compiled to WebAssembly, and registers `dsum()`, the exact decimal sum the command line uses. Every count, example and result you see below is a query against that copy.
+
+## The model
+
+<div class="fm-wide" id="fm-model">
+<ModelCanvas client:only="react" src="/data/month-d8a7d14.json">
+<p slot="fallback" class="fm-mono">The canvas needs JavaScript. The same model is drawn as a static sheet in <a href="/blog/the-fact-model/">the first post</a>.</p>
+</ModelCanvas>
+</div>
+
+Read it left to right, as before: the drawer of files, the documents and places inside them, what each document says, how those things relate, and your books. The band along the bottom is the log itself. Every datom is `[entity, attribute, value, transaction, added]`, and the transaction is a thing with facts of its own: who wrote it, from which files, with which projector, and the hash of the one before.
+
+The figure on each box is how many of that kind the month holds. Click one and you get what it is, why it's there, what makes two of them the same thing, every attribute with its count and its documentation (the schema is facts too, so the documentation comes from the log), and one example from the month, chosen along the dinner's path where there is one.
+
+## A receipt, all the way in
+
+A client dinner on 12 March: one photo, read by an extractor, turned into facts, linked to everything else that saw the same 186.40, and backing an entry in the books. Step through it. The boxes on the photo are the extractor's own.
+
+<div class="fm-wide" id="fm-receipt">
+<ReceiptFlow client:only="react" src="/data/month-d8a7d14.json">
+<p slot="fallback" class="fm-mono">The receipt flow needs JavaScript.</p>
+</ReceiptFlow>
+</div>
+
+The step that matters most is the fourth. A CSV row is the provenance of every field in it, but a photo isn't: the tip and the total were written by hand, and the extractor was much less sure of them (0.62 and 0.81) than of the printed lines (0.97). So each field keeps its own reading, with its box and confidence, while the observation holds plain values that rules can match without knowing anything about pixels.
+
+## Ask the log
+
+> **Aram:** I want to look at the database, query it, and see what comes out.
+
+**Tally:** This is the same SQL the command line runs (`ownpurse-facts sql`), against the same views. The questions include every query in [`samples/queries/`](https://github.com/brancusi/ownpurse/tree/9db859284eb272d4c2a1705a77b8a761d022de81/samples/queries), which the tests run on every change: what backs the dinner, both sides of an invoice, the log as of an earlier transaction, and the two checks (the statement reconciles to 0.00; every entry balances). The buttons on the canvas, the receipt and the agent all open their queries here. Try to change history, too.
+
+<div class="fm-wide" id="fm-console">
+<QueryConsole client:only="react" src="/data/month-d8a7d14.json">
+<p slot="fallback" class="fm-mono">The console needs JavaScript. The same queries run from the terminal with the command at the top of this post.</p>
+</QueryConsole>
+</div>
+
+## How an agent answers
+
+> **Aram:** And I want to see how an agent would query this to answer a question the reader asks.
+
+**Tally:** I worked each of these against this log the way I would for you: look at what's there, query, read the rows, query again, and answer only from what came back, saying where it came from. The reasoning is mine, written down as I went. The SQL isn't replayed output: every step runs live in your browser when you open it, so you can check each answer against its rows.
+
+<div class="fm-wide" id="fm-agent">
+<AgentTrace client:only="react" src="/data/month-d8a7d14.json">
+<p slot="fallback" class="fm-mono">The agent traces need JavaScript.</p>
+</AgentTrace>
+</div>
+
+There's no model behind this page, so you can't type your own question here. To ask one, run the command at the top of this post and point your agent at the log it prints. Agents use the same command line as you do, with `--json` on every command.
+
+The Fernhill question is the one to look at. Xero says the invoice is unpaid, and Xero is right about what Xero knows. The payment is in the log anyway, as 1,250.000000 USDC from Fernhill's address to the roastery's wallet, because the wallet is a source too. The agent doesn't fix the books. It proposes a link, held until you approve it.
+
+## What drawing it sharpened
+
+Drawing the model from the log rather than from the plan showed us where the two had drifted apart, and a few things the log is still missing:
+
+- **The model grew boxes the first sheet didn't have.** Readings, for per-field provenance, came out of phase 1. Sources became things of their own. Legs are a reference from an observation to its parent. Entries reach the documents they mirror through a `mirrors` link. And a balance is no longer its own box: it's an observation of kind `balance`, checked by a query.
+- **Labels and notes have no facts yet.** They're in the schema, but nothing in the month exercises a person's own knowledge. That's the same gap as the open test where a re-read undoes a person's correction, so phase 2's month should include a person's note and a correction.
+- **Parties are islands.** There are twelve, and nothing points at them. Observations name their counterparty as text, so the agent's Fernhill search is a `LIKE`, not a join. Counterparties should be references to parties, linked across sources the way accounts are.
+- **No rule settles across commodities.** INV-0418 is paid in USDC and invoiced in USD. A settles rule needs the payment, the invoice and a price on the day, all of which the log has. It's a rule we haven't written yet.
+- **Agents want a readings view.** Three of the four traces pivot `reading/*` facts with the same `max(CASE …)` clause. A `readings` view beside `observations` would make that one line, for agents and for people.
+- **It's small enough to carry.** The whole month is about 600 KB of JSON, and it rebuilds into a queryable log in well under a second. The slowest sample query, the statement reconciliation, takes about 40 ms.
+
+These go on the phase 2 list in [`docs/plans/FACTS-EDGES.md`](https://github.com/brancusi/ownpurse/blob/facts/docs/plans/FACTS-EDGES.md). The canvas and console also live in the [developer docs](/docs/developers/fact-model/), where they'll follow the model as it changes. This post stays pinned to this version.
+
+<p class="fm-fine">ownpurse is not affiliated with Xero Limited, Intuit (QuickBooks) or FreshBooks. Every name, amount, address and id on this page is invented.</p>
