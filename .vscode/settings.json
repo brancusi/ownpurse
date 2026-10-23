@@ -1,0 +1,34 @@
+{
+  // Opening the folder jacks in and starts the system: (dev), then (go).
+  // If a REPL is already running (.nrepl-port exists), Calva connects to it instead.
+  "calva.autoStartRepl": true,
+  "calva.autoConnectRepl": true,
+  "calva.replConnectSequences": [
+    {
+      "name": "ownpurse (jack in and start)",
+      "projectType": "deps.edn",
+      "projectRootPath": ["."],
+      "autoSelectForJackIn": true,
+      "cljsType": "none",
+      "menuSelections": {
+        "cljAliases": ["dev", "test"]
+      },
+      "afterPrimaryReplConnectedCode": ["(dev)", "(go)"]
+    },
+    {
+      "name": "ownpurse (connect)",
+      "projectType": "deps.edn",
+      "projectRootPath": ["."],
+      "autoSelectForConnect": true,
+      "cljsType": "none",
+      "afterPrimaryReplConnectedCode": ["(dev)"]
+    }
+  ],
+  // ctrl+alt+space, then the key: g starts, r reloads and restarts, h halts, t runs the tests.
+  "calva.customREPLCommandSnippets": [
+    { "name": "ownpurse: go", "key": "g", "repl": "clj", "ns": "dev", "snippet": "(go)" },
+    { "name": "ownpurse: reset", "key": "r", "repl": "clj", "ns": "dev", "snippet": "(reset)" },
+    { "name": "ownpurse: halt", "key": "h", "repl": "clj", "ns": "dev", "snippet": "(halt)" },
+    { "name": "ownpurse: run the tests", "key": "t", "repl": "clj", "ns": "dev", "snippet": "(tests)" }
+  ]
+}

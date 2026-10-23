@@ -38,7 +38,10 @@ Work through one long-lived REPL, shared by people and agents.
 4. Never leave a definition only in the REPL: it must be in a file.
 5. The test run from the shell is the truth, not the REPL's state. Run it before every commit.
 
-A person can attach Calva, CIDER or Cursive to the same port (cider-nrepl is in the middleware).
+In VS Code with Calva, opening the folder does all of this: `.vscode/settings.json` jacks in with `:dev:test`, runs
+`(dev)` and `(go)`, and connects instead if `.nrepl-port` already exists. Calva's jack-in writes `.nrepl-port` at
+the root, so agents share that REPL. `ctrl+alt+space` then `g`, `r`, `h` or `t` runs `(go)`, `(reset)`, `(halt)` or
+`(tests)`. CIDER and Cursive can attach to the same port (cider-nrepl is in the middleware).
 
 ## Clojure practice
 
