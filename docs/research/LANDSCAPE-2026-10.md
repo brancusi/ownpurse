@@ -108,8 +108,10 @@ sources, the history and the synthesis are in [The landscape](https://ownpurse.c
 - Borrow: beangulp's importer shape (identify, extract, archive the original); "mark, don't drop" for fuzzy
   duplicates; Airbyte's history table and final table (our log and its projections); Nango's rule that only a
   completed sweep may infer a delete; Plaid's added, modified and removed patches (assert and retract);
-  TigerBeetle's content-derived ids; XTDB's two times (when it happened, when we learned it); Blnk's
-  reconciliation rules as first-class objects; ownpurse as an MCP server over the record.
+  TigerBeetle's ids as idempotency keys (client-generated and time-ordered, not content-derived; see
+  [BEANCOUNT-TIGERBEETLE-2026-10.md](BEANCOUNT-TIGERBEETLE-2026-10.md)); XTDB's two times (when it happened,
+  when we learned it); Blnk's reconciliation rules as first-class objects; ownpurse as an MCP server over the
+  record.
 - Avoid: hashing after mapping (Firefly III), dates as identity (hledger), deleted rows that vanish (Rutter),
   trusting source ids alone (banks reissue FITIDs; Plaid churns ids when a pending item posts).
 
