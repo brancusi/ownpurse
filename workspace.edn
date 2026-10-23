@@ -7,4 +7,5 @@
  :tag-patterns {:stable "^stable-.*"
                 :release "^v[0-9].*"}
  :template-data {:clojure-ver "1.12.6"}
- :projects {"development" {:alias "dev"}}}
+ :projects {"development" {:alias "dev"}
+            "server" {:alias "s"}}}

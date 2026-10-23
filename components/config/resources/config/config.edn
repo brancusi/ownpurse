@@ -1,0 +1,13 @@
+;; The configuration of a running ownpurse, read with Aero. The profile is :dev at the REPL, :test in tests and
+;; :prod in the server. Environment variables (OWNPURSE_*) override the defaults.
+{:store {:mode #profile {:test :in-memory
+                         :default :disk}
+         ;; Where the record lives on disk. Never commit it.
+         :dir #or [#env OWNPURSE_DATA_DIR "data"]
+         ;; The read-only SQL port (Postgres wire protocol) for DataGrip, psql and other clients. Off in tests.
+         :sql #profile {:test nil
+                        :default {:host "127.0.0.1"
+                                  :read-only-port #long #or [#env OWNPURSE_SQL_PORT 5433]}}}
+ :http {:host "127.0.0.1"
+        :port #profile {:test 0
+                        :default #long #or [#env OWNPURSE_PORT 7070]}}}

@@ -1,0 +1,15 @@
+{:paths ["src" "resources"]
+ ;; Versions match what XTDB 2.2.0 already brings in.
+ :deps {ch.qos.logback/logback-classic {:mvn/version "1.5.38"}
+        fi.metosin/reitit-openapi {:mvn/version "0.10.1"}
+        info.sunng/ring-jetty9-adapter {:mvn/version "0.39.2"}
+        metosin/jsonista {:mvn/version "0.3.13"}
+        metosin/malli {:mvn/version "0.20.3"}
+        metosin/muuntaja {:mvn/version "0.6.11"}
+        metosin/reitit-malli {:mvn/version "0.10.1"}
+        metosin/reitit-middleware {:mvn/version "0.10.1"}
+        metosin/reitit-ring {:mvn/version "0.10.1"}
+        org.slf4j/slf4j-jdk-platform-logging {:mvn/version "2.0.17"}
+        party.donut/system {:mvn/version "1.0.259"}}
+ :aliases {:test {:extra-paths ["test"]
+                  :extra-deps {}}}}

@@ -21,8 +21,8 @@ There is one long-lived nREPL for the workspace, shared with the person you work
 - The REPL is shared: never `(dev/halt)` or `(dev/reset)` while the person is in the middle of something without
   saying so, and never redefine a var only in the REPL. Every definition lives in a file.
 - Before saying something works, show it: evaluate it, or run its test.
-- The test run from the shell is the truth: `clojure -M:dev:test:kaocha` (or `clojure -M:poly test`) before every
-  commit.
+- The test run from the shell is the truth: `clojure -M:dev:test:kaocha` before every commit. (`poly test` does not
+  run XTDB yet.)
 - Edit files with Edit and Write, not sed: a hook repairs delimiters and runs cljfmt on those. If you must change a
   file another way, run `clj-paren-repair <file>` after.
 
@@ -36,8 +36,8 @@ There is one long-lived nREPL for the workspace, shared with the person you work
   belongs in a component, not copied.
 - Bases are thin: they translate HTTP to interface calls and back. No ledger logic in a base.
 - `clojure -M:poly check` must pass. `clojure -M:poly info` shows what changed.
-- New bricks: `clojure -M:poly create component name:<name>`, then add it to the `:dev` alias in the root
-  `deps.edn`.
+- New bricks: `clojure -M:poly create component name:<name>`, then add it to the `:dev` alias and the `:test` paths
+  in the root `deps.edn`, to `tests.edn`, and to `projects/server/deps.edn`.
 
 ## donut.system
 

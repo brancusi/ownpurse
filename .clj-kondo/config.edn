@@ -1,1 +1,6 @@
-{:linters {}}
+{:linters {;; Money is BigDecimal. A double or a float is never the right tool here.
+           :discouraged-var {clojure.core/double {:message "Money is BigDecimal: use bigdec, never a double."}
+                             clojure.core/float {:message "Money is BigDecimal: use bigdec, never a float."}
+                             clojure.core/doubles {:message "Money is BigDecimal: never doubles."}
+                             clojure.core/floats {:message "Money is BigDecimal: never floats."}}}
+ :output {:exclude-files ["vendor/"]}}

@@ -1,0 +1,14 @@
+<configuration>
+  <appender name="stderr" class="ch.qos.logback.core.ConsoleAppender">
+    <target>System.err</target>
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %-5level %logger{24} %msg%n</pattern>
+    </encoder>
+  </appender>
+  <logger name="ownpurse" level="INFO"/>
+  <logger name="xtdb" level="WARN"/>
+  <logger name="org.eclipse.jetty" level="WARN"/>
+  <root level="WARN">
+    <appender-ref ref="stderr"/>
+  </root>
+</configuration>

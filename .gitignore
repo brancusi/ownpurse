@@ -20,3 +20,4 @@ config.local.edn
 # Third-party docs fetched by the house-style skill
 .claude/skills/clojure-house-style/references/xtdb-*.txt
 .clj-kondo/imports/
+.clj-kondo/inline-configs/

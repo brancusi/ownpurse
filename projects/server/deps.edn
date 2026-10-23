@@ -1,0 +1,9 @@
+{:deps {org.clojure/clojure {:mvn/version "1.12.6"}
+
+        poly/config {:local/root "../../components/config"}
+        poly/store {:local/root "../../components/store"}
+
+        poly/api {:local/root "../../bases/api"}}
+
+ :aliases {:test {:extra-paths []
+                  :extra-deps {}}}}

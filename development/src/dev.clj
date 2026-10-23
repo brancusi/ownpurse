@@ -1,18 +1,22 @@
 (ns dev
   "The REPL system: (go) starts it, (halt) stops it, (reset) stops it, reloads changed namespaces and starts
-  it again."
+  it again. The running system is in donut.system.repl.state/system."
   (:require
    [donut.system :as ds]
-   [donut.system.repl :as dsr]))
-
-(def system
-  "Empty until the store and the API exist (step 1)."
-  {::ds/defs {}})
+   [donut.system.repl :as dsr]
+   [donut.system.repl.state :as state]
+   [ownpurse.api.system :as system]
+   [ownpurse.config.interface :as config]))
 
 (defmethod ds/named-system ::ds/repl
   [_]
-  system)
+  (system/system (config/read-config :dev)))
 
-(defn go [] (dsr/start))
+(defn go [] (dsr/start) {:http (system/http-port state/system) :sql (system/sql-port state/system)})
 (defn halt [] (dsr/stop))
 (defn reset [] (dsr/restart))
+
+(defn node
+  "The XTDB node of the running system, for queries at the REPL: (xt/q (node) \"SELECT ...\")."
+  []
+  (system/node state/system))

@@ -32,8 +32,8 @@ A Polylith workspace (top namespace `ownpurse`):
 Work through one long-lived REPL, shared by people and agents.
 
 1. Start it once from the workspace root: `clojure -M:dev:test:nrepl`. It writes `.nrepl-port`.
-2. In the REPL: `(dev)`, then `(go)` starts the system, `(halt)` stops it, `(reset)` stops it, reloads changed
-   namespaces and starts it again.
+2. In the REPL: `(dev)`, then `(go)` starts the system and returns its ports, `(halt)` stops it, `(reset)` stops
+   it, reloads changed namespaces and starts it again. `(node)` is the XTDB node, for `xt/q` at the REPL.
 3. After a rename or a deleted var, `(reset)`. If anything seems off, restart the JVM.
 4. Never leave a definition only in the REPL: it must be in a file.
 5. The test run from the shell is the truth, not the REPL's state. Run it before every commit.
@@ -101,6 +101,13 @@ in [SECURITY.md](SECURITY.md#what-never-goes-in-this-repository).
 mise install                    # JDK 21, the Clojure CLI, Babashka (pinned in mise.toml)
 clojure -M:poly info            # the workspace
 clojure -M:poly check           # the workspace's rules
+clojure -M:dev:test:kaocha      # the tests (tests.edn)
+clj-kondo --lint components bases development projects
+cljfmt check components bases development
 ```
 
-Tests, lint and the release gate arrive with step 1 of the spike.
+All four pass before every commit. `poly test` does not run XTDB yet (see the plan); use Kaocha.
+
+Run the server outside the REPL with `clojure -M:dev -m ownpurse.api.main`: the API on 127.0.0.1:7070 and
+read-only SQL on 127.0.0.1:5433 (`OWNPURSE_PORT`, `OWNPURSE_SQL_PORT`, `OWNPURSE_DATA_DIR` change them). The record
+is in `data/`, which is ignored; never commit it.

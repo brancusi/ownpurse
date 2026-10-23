@@ -108,6 +108,20 @@ Xero's own report.
 | 7 | Durability: our hash chain over transactions, an export of every transaction to plain files, a restore | Restoring the export into an empty node gives the same trial balances |
 | 8 | DataGrip | Connects to the read-only Postgres port and runs the trial balance query |
 
+Done: 0, 1.
+
+What step 1 found:
+
+- XTDB opens listeners by default: the Postgres wire server and Flight SQL, each on a random port. `:flight-sql nil`
+  in the config map does not turn Flight SQL off; `(.setFlightSql config nil)` does. The store turns both off unless
+  the config asks for the SQL server.
+- The SQL server is read-only: `:port -1` turns the read-write port off. An `INSERT` over the read-only port is
+  refused (`xtdb/dml-in-read-only-server`), so every write goes through ownpurse. Checked with pgjdbc: `1.10` comes
+  back as `1.10`.
+- A `DECIMAL(32,4)` keeps its scale through `xt/q`; transaction metadata lands in `xt.txs.user_metadata`.
+- `poly test` runs tests in its own classloaders, where XTDB does not start. Kaocha in a plain JVM is the test run
+  for now; Polylith's external test runner is the way back to `poly test`.
+
 ## The decision at the end
 
 The spike passes if steps 4, 5 and 7 hold, and if querying the real books feels right to you in DataGrip and the
