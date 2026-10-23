@@ -1,4 +1,0 @@
-$ ownpurse classify undo --batch --events 62 --expect-store-rev 82 --client claude
-exit 2
-error: usage
-message: "Undo one thing: --batch (the latest agent batch), an anchor (your last write on it) or --events 3,4."

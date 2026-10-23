@@ -21,11 +21,11 @@ books. Before every commit, people and agents check their diff against this list
 - **Credentials.** Tokens, refresh tokens, API keys, client secrets, passwords, private keys, session cookies,
   `.env` files. The token store lives in `~/.config/ownpurse/tokens/`, outside any project, and `tokens*.json`
   is ignored.
-- **Records and configs from real books.** Any `*.sqlite` record (only the synthetic fixtures under
-  `rust/tests/fixtures/` are tracked), a real `ownpurse.json`, exports, reports, attachments, statements or
-  screenshots of real organisations.
+- **Records and configs from real books.** Any `*.sqlite` record (only synthetic fixtures are tracked), the
+  ledger's `data/` folder, a real local config, exports, reports, attachments, statements or screenshots of real
+  organisations.
 - **Identifiers from real accounts.** Real tenant ids, client ids, contact or invoice ids, bank account numbers.
-  New UUIDs must be added to `rust/scripts/uuid-allow.txt` deliberately, and only synthetic ones.
+  Any id in a fixture, test or doc is synthetic.
 - **Personal details.** Real names of people or businesses (other than Xero itself and public open-source
   projects), personal email addresses, phone numbers, home addresses, and absolute paths from a developer's machine
   (`/Users/<name>/…`). Use `~/…` and the demo names (`roast`, `hold`, Brackenridge, Tallowmere).

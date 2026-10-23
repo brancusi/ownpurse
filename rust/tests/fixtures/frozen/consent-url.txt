@@ -1,1 +1,0 @@
-https://login.xero.com/identity/connect/authorize?response_type=code&client_id=CLIENT+ID&redirect_uri=http%3A%2F%2Flocalhost%3A8765%2Fcallback&scope=openid+offline_access+accounting.settings.read+accounting.manualjournals&state=st%2Fate%2B%3D&code_challenge=chal_lenge-&code_challenge_method=S256

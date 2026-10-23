@@ -1,16 +1,18 @@
 .DS_Store
-build/
-# Local committed-tree export, prepared from the exact pin in caretline.rev
-/vendor/caretline/
-/vendor/.caretline-export.*/
-# never commit credentials or local records
+
+# Clojure tooling
+.cpcache/
+.nrepl-port
+.clj-kondo/.cache/
+.lsp/.cache/
+target/
+
+# Local data: never commit records, tokens, configs or the ledger's data folder
+data/
 tokens*.json
-# the brand's design tokens are not credentials
 !brand/tokens.json
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
-/ownpurse.json
-
-# test fixtures are generic, committed test data (see rust/tests/fixtures/*/README.md)
-!rust/tests/fixtures/**/*.sqlite
+.env
+config.local.edn

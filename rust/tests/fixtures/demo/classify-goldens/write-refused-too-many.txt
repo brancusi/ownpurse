@@ -1,6 +1,0 @@
-$ ownpurse classify set org:lab project=cupping --expect-store-rev 82 --client claude
-exit 2
-error: too_many
-message: this send would write 64 lines; the limit is 50 without allow_bulk
-help[1]:
-  Narrow the filter, or pass --allow-bulk.

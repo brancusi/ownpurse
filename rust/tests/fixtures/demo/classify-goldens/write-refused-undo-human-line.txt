@@ -1,6 +1,0 @@
-$ ownpurse classify undo design:bt:bt-303:L1 --expect-store-rev 82 --client claude
-exit 2
-error: not_found
-message: no agent write to undo on design:bt:bt-303:L1 (an agent can undo only agent writes)
-help[1]:
-  Read `ownpurse ui state --all-rows`; clear the filter or change the scope if the row should be there.

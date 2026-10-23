@@ -1,9 +1,0 @@
-$ ownpurse classify set roast:bt:bt-104:L1 project=harvest --expect-store-rev 80 --client claude --json
-exit 4
-{
- "error": "view_changed",
- "message": "the classify store moved from store rev 80 to 82 (expect_store_rev is stale; re-read `classify queue --json` store_rev)",
- "help": [
-  "Run `ownpurse ui state` again and resend if it still makes sense."
- ]
-}

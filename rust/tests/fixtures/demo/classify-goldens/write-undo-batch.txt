@@ -1,8 +1,0 @@
-$ ownpurse classify undo --batch --expect-store-rev 82 --client claude
-exit 0
-op: undo
-summary: agent write undone · 1 line
-batch: claude-2026-10-05T09:46:00.000000Z-82
-lines: 1
-store_rev: 83
-events: 83

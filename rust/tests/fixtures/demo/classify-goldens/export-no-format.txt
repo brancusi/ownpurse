@@ -1,6 +1,0 @@
-$ ownpurse classify export
-exit 2
-error: usage
-message: Pass --csv (the only export format).
-help[1]:
-  e.g. `ownpurse classify export --csv status:all > labels.csv`

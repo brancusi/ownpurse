@@ -1,8 +1,0 @@
-$ ownpurse classify undo lab:bt:bt-401:L1 --expect-store-rev 82 --client claude
-exit 0
-op: undo
-summary: undid the last write on 大阪焙煎研究所 361.72
-batch: claude-2026-10-05T09:46:00.000000Z-82
-lines: 1
-store_rev: 83
-events: 83

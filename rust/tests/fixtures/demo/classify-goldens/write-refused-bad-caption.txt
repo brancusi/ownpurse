@@ -1,6 +1,0 @@
-$ ownpurse classify note lab:bt:bt-402:L1 ok --expect-store-rev 82 --client claude --caption two[31m
-exit 2
-error: bad_caption
-message: A caption is one line of text: control character U+001B (escape sequences included) is not allowed.
-help[1]:
-  Send one line of plain text, at most 120 characters.

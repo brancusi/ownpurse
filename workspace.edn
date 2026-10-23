@@ -1,0 +1,10 @@
+{:top-namespace "ownpurse"
+ :interface-ns "interface"
+ :default-profile-name "default"
+ :compact-views #{}
+ :vcs {:name "git"
+       :auto-add false}
+ :tag-patterns {:stable "^stable-.*"
+                :release "^v[0-9].*"}
+ :template-data {:clojure-ver "1.12.6"}
+ :projects {"development" {:alias "dev"}}}

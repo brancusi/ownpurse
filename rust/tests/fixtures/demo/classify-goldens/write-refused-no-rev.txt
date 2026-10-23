@@ -1,6 +1,0 @@
-$ ownpurse classify set roast:bt:bt-104:L1 project=harvest --client claude
-exit 2
-error: usage
-message: --expect-store-rev is required for a write (the store_rev you last read).
-help[1]:
-  Read it with `ownpurse classify queue --json` (store_rev).

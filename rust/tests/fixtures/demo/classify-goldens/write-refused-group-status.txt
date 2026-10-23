@@ -1,6 +1,0 @@
-$ ownpurse classify group status g70 finished --expect-store-rev 82 --client claude
-exit 2
-error: usage
-message: "unknown status ""finished"" (statuses: open, complete, gap, accountant)"
-help[1]:
-  Check the syntax with the command's --help; values (verbs, rows, choices, groups) must exist in the current view or classify.toml.

@@ -1,7 +1,0 @@
-# Seeds for failure cases proptest has generated in the past. It is
-# automatically read and these particular cases re-run before any
-# novel cases are generated.
-#
-# It is recommended to check this file in to source control so that
-# everyone who runs the test benefits from these saved cases.
-cc b9ac4490a5424c9ad575bba3982a532594123f02d6b797e8cb4919e453822c82 # shrinks to steps = [Upsert { id: 0, attr: 0, v: 2 }, Add { target: Some(0), attr: 0, v: 0 }]

@@ -1,6 +1,0 @@
-$ ownpurse classify rules check
-exit 1
-error: config
-message: <DEMO>/classify.toml has 1 problem.
-help[1]:
-  classify.toml:152: groups.pair_rules.hold-roast-loan.a.org = "holding": unknown org (did you mean "hold"?) (the orgs are the aliases in ownpurse.json)

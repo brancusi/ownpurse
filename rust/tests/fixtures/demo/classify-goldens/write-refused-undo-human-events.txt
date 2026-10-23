@@ -1,6 +1,0 @@
-$ ownpurse classify undo --events 70 --expect-store-rev 82 --client claude
-exit 2
-error: not_found
-message: event 70 was written by human: an agent can undo only agent writes
-help[1]:
-  Read `ownpurse ui state --all-rows`; clear the filter or change the scope if the row should be there.

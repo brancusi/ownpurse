@@ -1,6 +1,0 @@
-$ ownpurse classify group remove g70 lab:bt:bt-401:L1 --expect-store-rev 82 --client claude
-exit 2
-error: not_found
-message: lab:bt:bt-401:L1 is not in group g70
-help[1]:
-  Read `ownpurse ui state --all-rows`; clear the filter or change the scope if the row should be there.

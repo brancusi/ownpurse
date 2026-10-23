@@ -1,9 +1,0 @@
----
-source: crates/ownpurse-tui/tests/snapshots.rs
-expression: styled(&shown)
----
-  [all] v    2025-12-31    62/1,000 left         read-only
---- styles
-r0 7-12 +D
-r0 23-26 +D
-r0 40-57 +D

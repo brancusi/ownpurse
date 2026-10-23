@@ -1,4 +1,0 @@
-$ ownpurse classify config add-project market Holiday market stall --expect-store-rev 82 --client claude
-exit 2
-error: usage
-message: A config write needs --confirm (run with --dry-run first to see the diff).

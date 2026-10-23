@@ -1,6 +1,0 @@
-$ ownpurse classify set roast:bt:bt-999:L1 project=harvest --expect-store-rev 82 --client claude
-exit 2
-error: not_found
-message: no classifiable line roast:bt:bt-999:L1
-help[1]:
-  Read `ownpurse ui state --all-rows`; clear the filter or change the scope if the row should be there.

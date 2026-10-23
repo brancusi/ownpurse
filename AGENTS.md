@@ -5,37 +5,55 @@ before changing behaviour, and [brand/README.md](brand/README.md) before changin
 
 ## Current work
 
-The fact model, on branch `facts`: [docs/plans/FACTS-ROLLOUT.md](docs/plans/FACTS-ROLLOUT.md). Phase 1 (the core,
-the log, ten projectors and one synthetic month from every kind of source) is done; its findings and the decisions
-phase 2 needs are in [docs/plans/FACTS-EDGES.md](docs/plans/FACTS-EDGES.md). `bash samples/demo.sh` plays the
-month. The TUI redesign ([docs/plans/TUI-REDESIGN.md](docs/plans/TUI-REDESIGN.md)) waits; the new crates do not
-touch the TUI.
+The spike, on branch `next`: a local ledger in Clojure on XTDB, from zero. The plan and its steps are in
+[docs/plans/SPIKE.md](docs/plans/SPIKE.md). The Rust code is archived at the tags `archive/rust-main` and
+`archive/rust-facts`, and its docs are in `docs/archive/`; read them for ideas, never build on them.
 
 ## What this is
 
-ownpurse is a local accounting tool for people and their agents: connectors append what each source reports to one
-append-only, hash-chained SQLite record; the ledger is rebuilt locally to the cent and checked against the source;
-the CLI (agent-first) and the TUI (built on caretline, Elm architecture) read the record; writes go out only as
-sealed packages a person approves. Xero is the first connector. The project is accounting-system agnostic: never
-add Xero assumptions to code that is not the Xero connector.
+ownpurse is a local ledger with a clean API. Each source has its own tool (xero-axi for Xero, mercury-axi for
+Mercury); ownpurse reads what those tools hold and keeps one model of books, accounts, entries and postings over
+all of them, in XTDB. Clients (a CLI, a TUI, a web interface, agents) are separate and use the API. Never add
+knowledge of a source to code outside that source's component.
 
 ## Layout
 
-- `rust/`: the Cargo workspace. `ownpurse-core` (ledger, config, views; no I/O to providers), `ownpurse-xero`
-  (the Xero connector, auth, sync, the record), `ownpurse-cli` (the `ownpurse` binary), `ownpurse-tui` (the
-  `ownpurse-tui` binary; never links `ownpurse-xero`, it runs the CLI for anything that calls a provider), `xtask`
-  (hygiene, docs grep, demo fixtures, agent-drive tests).
-- The fact model (branch `facts`, not yet in the `ownpurse` binary): `ownpurse-facts` (the datom, schema, the
-  database as a value; pure), `ownpurse-store` (the log in SQLite and the drawer), `ownpurse-ingest` (projectors,
-  link rules; pure), `ownpurse-facts-cli` (the `ownpurse-facts` binary).
-- `samples/`: one synthetic month from every kind of source, the queries over it and `demo.sh`.
-- `docs/`: engineering docs. `brand/`: the identity and tokens. `site/`: ownpurse.com (Astro + Starlight).
-- `vendor/caretline/`: an ignored export of the caretline commit pinned in `caretline.rev`. Never commit it.
+A Polylith workspace (top namespace `ownpurse`):
+
+- `components/`: the bricks with the logic, each with an `interface` namespace. Other bricks call the interface,
+  never the implementation.
+- `bases/`: the entry points (the HTTP API).
+- `projects/`: what gets built (the server uberjar).
+- `development/`: the REPL project. `user.clj` stays tiny; `dev.clj` holds the REPL system.
+- `samples/`: synthetic source files, used as test input. `docs/`, `brand/`, `site/` as before.
+
+## The REPL
+
+Work through one long-lived REPL, shared by people and agents.
+
+1. Start it once from the workspace root: `clojure -M:dev:test:nrepl`. It writes `.nrepl-port`.
+2. In the REPL: `(dev)`, then `(go)` starts the system, `(halt)` stops it, `(reset)` stops it, reloads changed
+   namespaces and starts it again.
+3. After a rename or a deleted var, `(reset)`. If anything seems off, restart the JVM.
+4. Never leave a definition only in the REPL: it must be in a file.
+5. The test run from the shell is the truth, not the REPL's state. Run it before every commit.
+
+A person can attach Calva, CIDER or Cursive to the same port (cider-nrepl is in the middleware).
+
+## Clojure practice
+
+- Pure functions in components; side effects (the XTDB node, HTTP, files) at the edges, owned by donut.system.
+  No global state outside the system.
+- Data in, data out. Namespaced keywords. Malli schemas at every boundary (API, sources, the store).
+- Errors are `ex-info` with a `:type` and the data needed to act on them.
+- Follow the [Clojure style guide](https://github.com/bbatsov/clojure-style-guide). Format with cljfmt, lint
+  with clj-kondo.
+- Small namespaces, docstrings on public vars, no `:refer :all`.
 
 ## Names and words
 
-- The product is always **ownpurse**: lowercase, one word, even at the start of a sentence. Binaries `ownpurse` and
-  `ownpurse-tui`; config `ownpurse.json`; config folder `~/.config/ownpurse/`; environment variables `OWNPURSE_*`.
+- The product is always **ownpurse**: lowercase, one word, even at the start of a sentence. Environment variables
+  are `OWNPURSE_*`.
 - Say books, accounts, entries, sources, facts. Not tenants, entities or rows in user-facing text.
 - Copy is plain and exact: second person, sentence case, numbers to the cent, no emoji, no hype ("seamless",
   "magic", "AI-powered"). Errors say what went wrong and how to fix it.
@@ -43,48 +61,28 @@ add Xero assumptions to code that is not the Xero connector.
 
 ## Private data
 
-The repository is public. Work only with synthetic fixtures and the Xero Demo Company, never real books. Before
-every commit, read your diff for credentials, real records or configs, real ids, personal names, emails, paths and
-real amounts. The full list is in [SECURITY.md](SECURITY.md#what-never-goes-in-this-repository). Never commit a
-`*.sqlite` record, a real `ownpurse.json`, a token file or an `.env` file.
+The repository is public. Work only with synthetic fixtures, never real books. A real record is read from a path
+in a local, uncommitted config, and its data never enters the repository. Before every commit, read your diff for
+credentials, real records or configs, real ids, personal names, emails, paths and real amounts. The full list is
+in [SECURITY.md](SECURITY.md#what-never-goes-in-this-repository).
 
 ## Rules that do not bend
 
-- History tables are append-only (triggers enforce it). Never add an UPDATE or DELETE path to history.
-- Money is `rust_decimal`. Float arithmetic is denied by clippy.
-- Nothing reaches a provider except `sync`, `login` and the other commands marked ⇅, and writes only through a
-  sealed, approved package recorded in the operations log.
-- Tests never call a provider: use the loopback fakes and the synthetic demo fixture. Fixtures are generic; real
-  names, amounts and ids never enter the repository.
-- Output follows AXI: compact text, `--json`, counts on lists, `help[]` hints, structured errors, stable exit codes.
-- Everything built from the mark is symmetric. The coin (`#D4402B`) is spent sparingly.
+- Money is `BigDecimal` (`1.10M`), stored as XTDB `DECIMAL`. Never a float or a double: not in code, not in JSON
+  (read numbers as `BigDecimal`), not in a test.
+- History is never rewritten. Corrections are new facts; nothing in the ledger is updated in place or erased.
+- ownpurse never calls a provider or holds a provider's token. Writes to a source go through that source's tool,
+  as a sealed package a person approves.
+- Tests never call a provider. They use the synthetic fixtures.
+- The API is the contract: every endpoint has Malli schemas and appears in the OpenAPI document; errors are
+  structured.
 
 ## Checks
 
 ```sh
-cd rust
-cargo test --workspace --locked
-scripts/check.sh                 # the release gate: hygiene, docs grep, fmt, clippy, tests, laws, benches
+mise install                    # JDK 21, the Clojure CLI, Babashka (pinned in mise.toml)
+clojure -M:poly info            # the workspace
+clojure -M:poly check           # the workspace's rules
 ```
 
-Install the pre-push hook once per clone: `git config core.hooksPath .githooks`. It runs fmt and `cargo check`
-only; `OWNPURSE_FULL_GATE=1 git push` runs the whole gate. Nothing waits on CI.
-
-Releases: add notes under `## [Unreleased]` in `CHANGELOG.md` as you go, then `rust/scripts/release.sh X.Y.Z`
-(bump, freeze view states, commit, tag, push; the tag publishes a GitHub Release).
-
-TUI snapshots: `INSTA_UPDATE=always cargo test -p ownpurse-tui --test snapshots`, then review every changed
-`.snap` before committing.
-
-## The website
-
-```sh
-cd site
-npm ci
-npm run dev       # http://localhost:4321
-npm run deploy    # astro build, then wrangler deploy to ownpurse.com (Workers static assets)
-```
-
-User docs live in `site/src/content/docs/docs/`, blog posts in `site/src/content/blog/`. When a command, flag or
-behaviour changes, update the matching docs page in the same change. How a session becomes a post (the voice, the
-pinned demo, interactive figures over the synthetic log, the checklist) is in [docs/BLOG.md](docs/BLOG.md).
+Tests, lint and the release gate arrive with step 1 of the spike.
