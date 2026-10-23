@@ -77,6 +77,24 @@ in [SECURITY.md](SECURITY.md#what-never-goes-in-this-repository).
 - The API is the contract: every endpoint has Malli schemas and appears in the OpenAPI document; errors are
   structured.
 
+## Tooling for agents
+
+- `.claude/skills/clojure-house-style`: how to write Clojure here and work through the REPL. Run
+  `.claude/skills/clojure-house-style/references/fetch.sh` once per clone to fetch XTDB's docs for language models.
+- `.claude/skills/clojure-eval` and the hooks in `.claude/settings.json` come from
+  [clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light) v0.2.2. Install its binaries once per machine
+  with bbin, pinned to the tag's commit (bbin 0.2.5 ignores `--tag`):
+
+  ```sh
+  U=https://github.com/bhauman/clojure-mcp-light.git S=cf48cc6ab1d79809a97a74355492d44ee3bbc4ba
+  bbin install $U --git/sha $S
+  bbin install $U --git/sha $S --as clj-nrepl-eval --main-opts '["-m" "clojure-mcp-light.nrepl-eval"]'
+  bbin install $U --git/sha $S --as clj-paren-repair --main-opts '["-m" "clojure-mcp-light.paren-repair"]'
+  ```
+
+- clojure-lsp, clj-kondo and cljfmt come from `mise install`. In Claude Code, `/plugin marketplace add
+  juxt/claude-plugins` then `/plugin install clojure-lsp` connects clojure-lsp to the agent.
+
 ## Checks
 
 ```sh

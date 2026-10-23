@@ -1,0 +1,2 @@
+{:source-aliases #{:dev :test}
+ :linters {:clojure-lsp/unused-public-var {:exclude #{dev}}}}
