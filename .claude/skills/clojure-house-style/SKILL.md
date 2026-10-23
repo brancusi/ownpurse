@@ -37,7 +37,7 @@ There is one long-lived nREPL for the workspace, shared with the person you work
 - Bases are thin: they translate HTTP to interface calls and back. No ledger logic in a base.
 - `clojure -M:poly check` must pass. `clojure -M:poly info` shows what changed.
 - New bricks: `clojure -M:poly create component name:<name>`, then add it to the `:dev` alias and the `:test` paths
-  in the root `deps.edn`, to `tests.edn`, and to `projects/server/deps.edn`.
+  in the root `deps.edn` and to `tests.edn`; add it to `projects/server/deps.edn` once the server uses it.
 
 ## donut.system
 
@@ -71,7 +71,10 @@ There is one long-lived nREPL for the workspace, shared with the person you work
 - JSON in and out with jsonista, configured to read every number as `BigDecimal`. Never let a JSON library decide.
 - In XTDB, money columns are `DECIMAL` with an explicit precision and scale. Sum in SQL with `SUM` over `DECIMAL`
   columns only.
-- Tests for money use `test.check` with generators of BigDecimal amounts, and assert exact equality.
+- Tests for money use `test.check` with the generators in `ownpurse.money.interface.gen` (`amount`, `money`,
+  `balanced`), and assert exact equality. `=` ignores scale (`1.10M` equals `1.1M`): compare `.scale` when it matters.
+- Write to the store only with `store/put!`: it refuses floats anywhere in the documents and requires
+  `{:source :why}` metadata.
 
 ## XTDB 2
 

@@ -1,9 +1,13 @@
 #kaocha/v1
 {:tests [{:id :unit
           :test-paths ["components/config/test"
+                       "components/money/test"
+                       "components/schema/test"
                        "components/store/test"
                        "bases/api/test"]
           :source-paths ["components/config/src"
+                         "components/money/src"
+                         "components/schema/src"
                          "components/store/src"
                          "bases/api/src"]}]
  :fail-fast? false

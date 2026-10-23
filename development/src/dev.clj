@@ -3,6 +3,7 @@
   it again. The running system is in donut.system.repl.state/system."
   (:require
    [clojure.java.io :as io]
+   [clojure.string :as str]
    [clojure.test :as test]
    [clojure.tools.namespace.find :as find]
    [donut.system :as ds]
@@ -24,13 +25,13 @@
   []
   (system/node state/system))
 
-(def ^:private test-dirs
-  ["components/config/test" "components/store/test" "bases/api/test"])
-
 (defn tests
-  "Loads every test namespace and runs them in this REPL. The shell run (clojure -M:dev:test:kaocha) is still the
-  truth before a commit."
+  "Loads every test namespace in the bricks and runs them in this REPL. The shell run (clojure -M:dev:test:kaocha)
+  is still the truth before a commit."
   []
-  (let [namespaces (mapcat #(find/find-namespaces-in-dir (io/file %)) test-dirs)]
+  (let [namespaces (->> ["components" "bases"]
+                        (mapcat #(find/find-namespaces-in-dir (io/file %)))
+                        (filter #(str/ends-with? (name %) "-test"))
+                        sort)]
     (apply require namespaces)
     (apply test/run-tests namespaces)))

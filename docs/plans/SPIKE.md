@@ -108,7 +108,7 @@ Xero's own report.
 | 7 | Durability: our hash chain over transactions, an export of every transaction to plain files, a restore | Restoring the export into an empty node gives the same trial balances |
 | 8 | DataGrip | Connects to the read-only Postgres port and runs the trial balance query |
 
-Done: 0, 1.
+Done: 0, 1, 2.
 
 What step 1 found:
 
@@ -121,6 +121,17 @@ What step 1 found:
 - A `DECIMAL(32,4)` keeps its scale through `xt/q`; transaction metadata lands in `xt.txs.user_metadata`.
 - `poly test` runs tests in its own classloaders, where XTDB does not start. Kaocha in a plain JVM is the test run
   for now; Polylith's external test runner is the way back to `poly test`.
+
+What step 2 found:
+
+- XTDB keeps BigDecimals of any scale in one `numeric` column and sums them exactly (`1.10 + 2.5 + 100 + 0.001` is
+  `103.601`). It also takes a Clojure double without complaint and hands it back as a double, so the guard is ours:
+  `store/put!` walks every document and refuses the whole transaction if a float is anywhere in it, with the paths.
+- `store/put!` is the only write: it needs `{:source :why}` metadata, and it has no delete or erase.
+- An entry is valid only if its postings sum to zero in every commodity. The balance is judged only when every
+  amount is exact, so a float gets one clear error, not a second one with a double in it.
+- Amounts keep the source's scale. Nothing rounds them to a commodity's minor unit; Clojure's `=` ignores scale, so
+  tests that care compare `.scale` too.
 
 ## The decision at the end
 

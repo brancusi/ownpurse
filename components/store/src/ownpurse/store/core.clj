@@ -1,6 +1,7 @@
 (ns ownpurse.store.core
   (:require
    [clojure.java.io :as io]
+   [ownpurse.money.interface :as money]
    [xtdb.api :as xt]
    [xtdb.node :as xtn])
   (:import
@@ -46,3 +47,27 @@
   [^Xtdb node]
   (let [port (.getServerReadOnlyPort node)]
     (when (pos? port) port)))
+
+(defn- check-metadata! [{:keys [source why] :as metadata}]
+  (when-not (and (string? source) (seq source) (string? why) (seq why))
+    (throw (ex-info "Every write says where it comes from and why: pass {:source \"...\" :why \"...\"}."
+                    {:type :ownpurse/no-metadata :metadata metadata}))))
+
+(defn- check-floats! [tables metadata]
+  (let [paths (money/float-paths {:tables tables :metadata metadata})]
+    (when (seq paths)
+      (throw (ex-info (str "Nothing was written: " (count paths) " value(s) are floats. Amounts are exact decimals "
+                           "(BigDecimal); convert them where they enter, never with a double. First at "
+                           (pr-str (first paths)) ".")
+                      {:type :ownpurse/float-money :paths paths})))))
+
+(defn put! [node tables metadata]
+  (check-metadata! metadata)
+  (check-floats! tables metadata)
+  (xt/execute-tx node
+                 (for [[table docs] tables :when (seq docs)]
+                   (into [:put-docs table] docs))
+                 {:metadata metadata}))
+
+(defn q [node query opts]
+  (xt/q node query opts))

@@ -21,3 +21,4 @@ config.local.edn
 .claude/skills/clojure-house-style/references/xtdb-*.txt
 .clj-kondo/imports/
 .clj-kondo/inline-configs/
+.calva/

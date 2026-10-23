@@ -23,3 +23,16 @@
   "Returns the port the read-only SQL server listens on, or nil when it is off."
   [node]
   (core/sql-port node))
+
+(defn put!
+  "Writes documents in one transaction and returns its key. `tables` maps a table (a keyword) to documents, each
+  with an :xt/id. `metadata` says where the documents come from and why: {:source string, :why string}, and lands
+  in xt.txs. Refuses, writing nothing, when any document holds a float (:ownpurse/float-money, with the paths) or
+  the metadata is missing (:ownpurse/no-metadata). There is no delete: a correction is a new version."
+  [node tables metadata]
+  (core/put! node tables metadata))
+
+(defn q
+  "Runs a query (SQL or XTQL) and returns the rows."
+  ([node query] (core/q node query {}))
+  ([node query opts] (core/q node query opts)))

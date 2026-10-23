@@ -5,6 +5,8 @@
                      org.clojure/tools.namespace {:mvn/version "1.5.1"}
 
                      poly/config {:local/root "components/config"}
+                     poly/money {:local/root "components/money"}
+                     poly/schema {:local/root "components/schema"}
                      poly/store {:local/root "components/store"}
 
                      poly/api {:local/root "bases/api"}}
@@ -15,6 +17,8 @@
                    "-XX:-OmitStackTraceInFastThrow"]}
 
   :test {:extra-paths ["components/config/test"
+                       "components/money/test"
+                       "components/schema/test"
                        "components/store/test"
                        "bases/api/test"]
          :extra-deps {org.clojure/test.check {:mvn/version "1.1.3"}}}
