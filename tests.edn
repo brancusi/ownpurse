@@ -1,14 +1,20 @@
 #kaocha/v1
 {:tests [{:id :unit
           :test-paths ["components/config/test"
+                       "components/json/test"
+                       "components/ledger/test"
                        "components/money/test"
                        "components/schema/test"
                        "components/store/test"
+                       "components/xero/test"
                        "bases/api/test"]
           :source-paths ["components/config/src"
+                         "components/json/src"
+                         "components/ledger/src"
                          "components/money/src"
                          "components/schema/src"
                          "components/store/src"
+                         "components/xero/src"
                          "bases/api/src"]}]
  :fail-fast? false
  :color? true}

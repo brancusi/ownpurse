@@ -32,6 +32,12 @@
   [node tables metadata]
   (core/put! node tables metadata))
 
+(defn put-changed!
+  "Like `put!`, but writes only the documents that differ from what the store holds now (by :xt/id). Returns
+  {:written {table count}, :tx key-or-nil}: when nothing differs, nothing is written and there is no transaction."
+  [node tables metadata]
+  (core/put-changed! node tables metadata))
+
 (defn q
   "Runs a query (SQL or XTQL) and returns the rows."
   ([node query] (core/q node query {}))

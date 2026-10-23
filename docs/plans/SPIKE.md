@@ -90,8 +90,9 @@ world) and system time (when we recorded it).
 
 Budgets, projects, closes and reports come after the spike. They are new tables, not migrations.
 
-The postings come from xero-axi's own ledger (its `gl` table), so the rules that turn Xero documents into
-postings stay in the Xero tool. The ledger checks them: every entry balances, and the trial balance matches
+The postings come from xero-axi's own ledger (`xero-axi --json --full gl all`, which derives them from the
+documents; the record's `gl` table stays empty), so the rules that turn Xero documents into postings stay in the
+Xero tool. The ledger checks them: every entry balances, and the trial balance matches
 Xero's own report.
 
 ## The steps
@@ -108,7 +109,7 @@ Xero's own report.
 | 7 | Durability: our hash chain over transactions, an export of every transaction to plain files, a restore | Restoring the export into an empty node gives the same trial balances |
 | 8 | DataGrip | Connects to the read-only Postgres port and runs the trial balance query |
 
-Done: 0, 1, 2.
+Done: 0, 1, 2, 3.
 
 What step 1 found:
 
@@ -132,6 +133,22 @@ What step 2 found:
   amount is exact, so a float gets one clear error, not a second one with a double in it.
 - Amounts keep the source's scale. Nothing rounds them to a commodity's minor unit; Clojure's `=` ignores scale, so
   tests that care compare `.scale` too.
+
+What step 3 found:
+
+- xero-axi's `gl` table is empty: `gl` derives postings when asked. Its JSON named accounts only as `Name (code)`
+  and cut descriptions at 60 characters, so xero-axi's `gl --json --full` now also carries `tenant_id`,
+  `account_id`, `account_code`, `line`, the signed `amount`, `kind` and the whole description (xero-axi branch
+  `gl-full-contract`).
+- The sample is xero-axi's invented Brackenridge group: 4 books, 49 accounts, 23 parties, 39 documents, 39 entries,
+  78 postings. Every book nets to 0.00 in SQL.
+- XTDB folds the case of nested keys and drops nils, so a Xero payload is stored with kebab-case keys and no nils
+  (`BankAccount.AccountID` is `payload #> ARRAY['bank_account', 'account_id']`); xero-axi's content hash still
+  names the exact original. Top-level columns are plain (`name`, not `book$name`), for SQL.
+- A second load writes nothing and opens no transaction: `store/put-changed!` compares each row with what the store
+  holds (timestamps as instants) and writes only the difference. A changed document rewrites only its rows.
+- Open: when a document loses a line, or leaves the gl (deleted in Xero), its old postings stay current. Ending them
+  needs XTDB's `DELETE` (the row's validity ends; history keeps it) or a void flag. Decide in step 5.
 
 ## The decision at the end
 

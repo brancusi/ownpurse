@@ -41,7 +41,8 @@ Work through one long-lived REPL, shared by people and agents.
 In VS Code with Calva, opening the folder does all of this: `.vscode/settings.json` jacks in with `:dev:test`, runs
 `(dev)` and `(go)`, and connects instead if `.nrepl-port` already exists. Calva's jack-in writes `.nrepl-port` at
 the root, so agents share that REPL. `ctrl+alt+space` then `g`, `r`, `h` or `t` runs `(go)`, `(reset)`, `(halt)` or
-`(tests)`. CIDER and Cursive can attach to the same port (cider-nrepl is in the middleware).
+`(tests)`. `(load-sample)` loads the synthetic Brackenridge group into the running system; `(load-xero {:record
+path :gl path})` loads any xero-axi record. CIDER and Cursive can attach to the same port (cider-nrepl is in the middleware).
 
 ## Clojure practice
 

@@ -75,6 +75,9 @@ There is one long-lived nREPL for the workspace, shared with the person you work
   `balanced`), and assert exact equality. `=` ignores scale (`1.10M` equals `1.1M`): compare `.scale` when it matters.
 - Write to the store only with `store/put!`: it refuses floats anywhere in the documents and requires
   `{:source :why}` metadata.
+- Load facts with `ledger/load!`: it checks them against the schemas and writes only what changed
+  (`store/put-changed!`). Stored rows have plain keys (`name`, not `book$name`); nested data is kebab-case with no
+  nils, read in SQL with `->` and `#>` (`payload #> ARRAY['bank_account', 'account_id']`).
 
 ## XTDB 2
 

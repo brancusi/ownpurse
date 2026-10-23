@@ -1,10 +1,13 @@
 (ns ownpurse.store.core
   (:require
    [clojure.java.io :as io]
+   [clojure.string :as str]
+   [clojure.walk :as walk]
    [ownpurse.money.interface :as money]
    [xtdb.api :as xt]
    [xtdb.node :as xtn])
   (:import
+   (java.time OffsetDateTime ZonedDateTime)
    (xtdb.api Xtdb Xtdb$Config)))
 
 (defn- sql-server
@@ -71,3 +74,46 @@
 
 (defn q [node query opts]
   (xt/q node query opts))
+
+(defn- comparable
+  "A document as values: XTDB hands timestamps back zoned, so every instant compares as an Instant."
+  [doc]
+  (walk/postwalk (fn [x]
+                   (cond
+                     (instance? ZonedDateTime x) (.toInstant ^ZonedDateTime x)
+                     (instance? OffsetDateTime x) (.toInstant ^OffsetDateTime x)
+                     :else x))
+                 doc))
+
+(defn- table-name [table]
+  (let [n (name table)]
+    (when-not (re-matches #"[a-z][a-z0-9_-]*" n)
+      (throw (ex-info (str "The table name " (pr-str n) " is not one ownpurse writes.") {:type :ownpurse/bad-table})))
+    (str/replace n "-" "_")))
+
+(defn- table-exists? [node table-name]
+  (seq (q node ["SELECT table_name FROM information_schema.tables WHERE table_name = ?" table-name] {})))
+
+(defn- current
+  "The documents of `table` the store holds now, by id."
+  [node table ids]
+  (let [table (table-name table)]
+    (if-not (table-exists? node table)
+      {}
+      (into {}
+            (for [chunk (partition-all 500 ids)
+                  doc (q node (into [(str "SELECT * FROM " table " WHERE _id IN ("
+                                          (str/join ", " (repeat (count chunk) "?")) ")")]
+                                    chunk)
+                         {})]
+              [(:xt/id doc) (comparable doc)])))))
+
+(defn put-changed! [node tables metadata]
+  (let [changed (into {}
+                      (for [[table docs] tables
+                            :let [now (current node table (map :xt/id docs))
+                                  fresh (filterv #(not= (comparable %) (now (:xt/id %))) docs)]
+                            :when (seq fresh)]
+                        [table fresh]))]
+    {:written (update-vals changed count)
+     :tx (when (seq changed) (put! node changed metadata))}))

@@ -10,7 +10,9 @@
    [donut.system.repl :as dsr]
    [donut.system.repl.state :as state]
    [ownpurse.api.system :as system]
-   [ownpurse.config.interface :as config]))
+   [ownpurse.config.interface :as config]
+   [ownpurse.ledger.interface :as ledger]
+   [ownpurse.xero.interface :as xero]))
 
 (defmethod ds/named-system ::ds/repl
   [_]
@@ -24,6 +26,19 @@
   "The XTDB node of the running system, for queries at the REPL: (xt/q (node) \"SELECT ...\")."
   []
   (system/node state/system))
+
+(defn load-xero
+  "Loads a xero-axi record and its gl into the running system: {:record path, :gl path}. Returns what was
+  written; a second load of the same files writes nothing."
+  [paths]
+  (let [source (xero/read-source paths)]
+    (ledger/load! (node) (xero/facts source) (xero/metadata source))))
+
+(defn load-sample
+  "Loads the synthetic Brackenridge group (samples/xero-axi/brackenridge)."
+  []
+  (load-xero {:record "samples/xero-axi/brackenridge/record.sqlite"
+              :gl "samples/xero-axi/brackenridge/gl.json"}))
 
 (defn tests
   "Loads every test namespace in the bricks and runs them in this REPL. The shell run (clojure -M:dev:test:kaocha)

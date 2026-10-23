@@ -44,11 +44,20 @@
                          :json-schema {:type "string" :format "date"}}
                     #(instance? LocalDate %)]
 
+    :ownpurse/source [:map {:closed true}
+                      [:source/id :ownpurse/id]
+                      [:source/tool [:string {:min 1}]]
+                      [:source/org :ownpurse/id]
+                      [:source/record [:string {:min 1}]]
+                      [:source/chain-head {:optional true} :string]]
+
     :ownpurse/book [:map {:closed true}
                     [:book/id :ownpurse/id]
                     [:book/name [:string {:min 1}]]
                     [:book/currency :ownpurse/commodity]
-                    [:book/source :ownpurse/id]]
+                    [:book/source :ownpurse/id]
+                    [:book/fiscal-year-end {:optional true}
+                     [:map {:closed true} [:month [:int {:min 1 :max 12}]] [:day [:int {:min 1 :max 31}]]]]]
 
     :account/class [:enum :asset :liability :equity :income :expense]
     :ownpurse/account [:map {:closed true}
@@ -57,18 +66,40 @@
                        [:account/code {:optional true} :string]
                        [:account/name [:string {:min 1}]]
                        [:account/class :account/class]
+                       [:account/status {:optional true} :string]
                        [:account/source-type {:optional true} :string]]
 
+    :ownpurse/party [:map {:closed true}
+                     [:party/id :ownpurse/id]
+                     [:party/book :ownpurse/id]
+                     [:party/name [:string {:min 1}]]
+                     [:party/source-id {:optional true} :string]]
+
+    :ownpurse/document [:map {:closed true}
+                        [:document/id :ownpurse/id]
+                        [:document/book :ownpurse/id]
+                        [:document/kind [:string {:min 1}]]
+                        [:document/source-id [:string {:min 1}]]
+                        [:document/version pos-int?]
+                        [:document/content-hash [:string {:min 1}]]
+                        [:document/status {:optional true} :string]
+                        [:document/date {:optional true} :ownpurse/date]
+                        [:document/observed-at inst?]
+                        [:document/payload map?]]
+
     :ownpurse/posting [:map {:closed true}
+                       [:posting/line nat-int?]
                        [:posting/account :ownpurse/id]
                        [:posting/amount :ownpurse/amount]
                        [:posting/commodity :ownpurse/commodity]
+                       [:posting/party {:optional true} :ownpurse/id]
                        [:posting/description {:optional true} :string]]
     :ownpurse/entry [:and
                      [:map {:closed true}
                       [:entry/id :ownpurse/id]
                       [:entry/book :ownpurse/id]
                       [:entry/date :ownpurse/date]
+                      [:entry/kind {:optional true} :string]
                       [:entry/narration {:optional true} :string]
                       [:entry/document {:optional true} :ownpurse/id]
                       [:entry/postings [:vector {:min 2} :ownpurse/posting]]]

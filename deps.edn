@@ -5,9 +5,12 @@
                      org.clojure/tools.namespace {:mvn/version "1.5.1"}
 
                      poly/config {:local/root "components/config"}
+                     poly/json {:local/root "components/json"}
+                     poly/ledger {:local/root "components/ledger"}
                      poly/money {:local/root "components/money"}
                      poly/schema {:local/root "components/schema"}
                      poly/store {:local/root "components/store"}
+                     poly/xero {:local/root "components/xero"}
 
                      poly/api {:local/root "bases/api"}}
         ;; What XTDB needs to run in-process (Arrow's off-heap memory and native access).
@@ -17,9 +20,12 @@
                    "-XX:-OmitStackTraceInFastThrow"]}
 
   :test {:extra-paths ["components/config/test"
+                       "components/json/test"
+                       "components/ledger/test"
                        "components/money/test"
                        "components/schema/test"
                        "components/store/test"
+                       "components/xero/test"
                        "bases/api/test"]
          :extra-deps {org.clojure/test.check {:mvn/version "1.1.3"}}}
 

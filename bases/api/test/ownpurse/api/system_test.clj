@@ -2,7 +2,7 @@
   (:require
    [clojure.test :refer [deftest is]]
    [donut.system :as ds]
-   [ownpurse.api.json :as json]
+   [ownpurse.json.interface :as json]
    [ownpurse.api.system :as system]
    [ownpurse.config.interface :as config])
   (:import
@@ -13,7 +13,7 @@
   (let [response (.send (HttpClient/newHttpClient)
                         (.build (HttpRequest/newBuilder (URI. (str "http://127.0.0.1:" port path))))
                         (HttpResponse$BodyHandlers/ofString))]
-    {:status (.statusCode response) :body (json/read-str (.body response))}))
+    {:status (.statusCode response) :body (json/parse (.body response))}))
 
 (deftest system-test
   (let [running (ds/start (system/system (config/read-config :test)))]

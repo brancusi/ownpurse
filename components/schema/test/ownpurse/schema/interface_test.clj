@@ -12,7 +12,7 @@
    :entry/book "book-1"
    :entry/date (java.time.LocalDate/of 2026 1 31)
    :entry/postings (mapv (fn [i {:keys [amount commodity]}]
-                           {:posting/account (str "account-" i) :posting/amount amount :posting/commodity commodity})
+                           {:posting/line i :posting/account (str "account-" i) :posting/amount amount :posting/commodity commodity})
                          (range) moneys)})
 
 (defn- error [f]
@@ -46,9 +46,9 @@
   (testing "JSON-shaped data becomes the entry: decimal strings, integers, ISO dates"
     (let [e (schema/coerce! :ownpurse/entry
                             {:entry/id "e-1" :entry/book "b" :entry/date "2026-01-31"
-                             :entry/postings [{:posting/account "a" :posting/amount "12.50" :posting/commodity "USD"}
-                                              {:posting/account "b" :posting/amount -12 :posting/commodity "USD"}
-                                              {:posting/account "c" :posting/amount "-0.50" :posting/commodity "USD"}]})]
+                             :entry/postings [{:posting/line 0 :posting/account "a" :posting/amount "12.50" :posting/commodity "USD"}
+                                              {:posting/line 1 :posting/account "b" :posting/amount -12 :posting/commodity "USD"}
+                                              {:posting/line 2 :posting/account "c" :posting/amount "-0.50" :posting/commodity "USD"}]})]
       (is (= (java.time.LocalDate/of 2026 1 31) (:entry/date e)))
       (is (= [12.50M -12M -0.50M] (map :posting/amount (:entry/postings e))))))
   (testing "an account's class decodes from a string"

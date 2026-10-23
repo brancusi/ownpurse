@@ -2,12 +2,12 @@
   (:require
    [clojure.test :refer [deftest is testing]]
    [ownpurse.api.handler :as handler]
-   [ownpurse.api.json :as json]
+   [ownpurse.json.interface :as json]
    [ownpurse.store.interface :as store]))
 
 (defn- request [app method uri]
   (let [{:keys [status body]} (app {:request-method method :uri uri :headers {"accept" "application/json"}})]
-    {:status status :body (json/read-str (if (string? body) body (slurp body)))}))
+    {:status status :body (json/parse (if (string? body) body (slurp body)))}))
 
 (deftest health-test
   (let [node (store/start {:mode :in-memory})]
@@ -30,9 +30,3 @@
   (let [{:keys [status body]} (request (handler/handler {:node nil}) :get "/openapi.json")]
     (is (= 200 status))
     (is (contains? (:paths body) (keyword "/health")))))
-
-(deftest json-test
-  (testing "fractions are BigDecimals both ways, never doubles"
-    (is (= 12.50M (:amount (json/read-str "{\"amount\": 12.50}"))))
-    (is (instance? BigDecimal (:amount (json/read-str "{\"amount\": 0.1}"))))
-    (is (= "{\"amount\":1000}" (json/write-str {:amount 1E+3M})))))

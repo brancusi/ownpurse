@@ -1,6 +1,7 @@
 {:deps {org.clojure/clojure {:mvn/version "1.12.6"}
 
         poly/config {:local/root "../../components/config"}
+        poly/json {:local/root "../../components/json"}
         poly/money {:local/root "../../components/money"}
         poly/store {:local/root "../../components/store"}
 

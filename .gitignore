@@ -22,3 +22,5 @@ config.local.edn
 .clj-kondo/imports/
 .clj-kondo/inline-configs/
 .calva/
+# The one tracked record: xero-axi's invented Brackenridge group (synthetic, published in xero-axi too).
+!samples/xero-axi/*/record.sqlite

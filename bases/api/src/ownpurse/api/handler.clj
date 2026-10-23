@@ -2,7 +2,8 @@
   "The HTTP API: routes, schemas and the Ring handler. Thin: it turns requests into interface calls and back."
   (:require
    [malli.error :as me]
-   [ownpurse.api.json :as json]
+   [ownpurse.api.json :as api.json]
+   [ownpurse.json.interface :as json]
    [ownpurse.store.interface :as store]
    [reitit.coercion.malli :as rcm]
    [reitit.openapi :as openapi]
@@ -61,7 +62,7 @@
     (routes {:node node})
     {:data {:coercion rcm/coercion
             :responses {500 {:body ApiError}}
-            :muuntaja json/muuntaja
+            :muuntaja api.json/muuntaja
             :middleware [openapi/openapi-feature
                          muuntaja/format-negotiate-middleware
                          muuntaja/format-response-middleware

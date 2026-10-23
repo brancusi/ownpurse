@@ -1,0 +1,5 @@
+{:paths ["src" "resources"]
+ ;; The version XTDB 2.2.0 brings in.
+ :deps {metosin/jsonista {:mvn/version "0.3.13"}}
+ :aliases {:test {:extra-paths ["test"]
+                  :extra-deps {}}}}
