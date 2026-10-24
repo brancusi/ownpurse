@@ -11,3 +11,6 @@
 - Reading xero-axi: books, accounts, parties, documents, entries and postings from a xero-axi record and its gl,
   with where each load came from. A second load of the same record writes nothing. The sample is the invented
   Brackenridge group (`samples/xero-axi/brackenridge`); `(load-sample)` at the REPL loads it.
+- Xero is now read through xero-cli, a thin command line over the Xero API that stores nothing; xero-axi is
+  archived. ownpurse will keep Xero's JSON and derive the postings itself (`docs/plans/NEXT.md`, step 3b). The
+  xero-axi reader stays until that step replaces it.

@@ -1,6 +1,7 @@
 # The spike: a ledger in Clojure on XTDB
 
-Status: plan for review, 2026-10-23. Nothing is built until this is agreed.
+Status: agreed 2026-10-23; steps 0–3 done. Updated 2026-10-24: Xero is now read through xero-cli, and xero-axi is
+archived. The working state and the next steps are in [NEXT.md](NEXT.md).
 
 ownpurse starts again from zero: a local ledger with a clean API, in Clojure, on XTDB. Clients (the TUI, a web
 interface, agents) are separate projects that use the API. The Rust code is archived for reference. The spike
@@ -13,10 +14,11 @@ base we build on.
 |---|---|
 | [PHILOSOPHY.md](../PHILOSOPHY.md), [SECURITY.md](../../SECURITY.md), `brand/`, `site/` (as is, for now) | `rust/`, `vendor/`, `caretline.rev`, `install.sh`, `.githooks/`, the Rust CI |
 | The ideas: books, sources, evidence, links, laws, sealed writes, money never a float | The fact-model crates, the datom log, the TUI |
-| The synthetic data as test input (xero-axi's demo record, `samples/`) | `docs/plans/*` (moved to `docs/archive/`) |
+| The synthetic data as test input (`samples/`) | `docs/plans/*` (moved to `docs/archive/`) |
 
-xero-axi stays the Xero tool, in Rust, in its own repository. The new ledger reads its record. Each source keeps
-its own tool; only the ledger is rewritten.
+Each source keeps its own tool, in its own repository. For Xero that is xero-cli (Babashka, `brancusi/xero-cli`): it
+wraps the API and stores nothing, and ownpurse keeps and interprets what it returns. xero-axi, the Rust tool with
+its own record and ledger, is archived (2026-10-24); its posting rules are read for ideas only.
 
 ## The archive
 
@@ -39,7 +41,7 @@ Nothing is deleted from history: `git checkout archive/rust-facts` brings everyt
 | HTTP | Reitit, Ring on Jetty, Malli for coercion and contracts, OpenAPI generated from the Malli schemas |
 | JSON | jsonista, reading every number as `BigDecimal` |
 | Config | Aero (`config.edn`, profiles, environment variables) |
-| Reading xero-axi | next.jdbc and the SQLite driver, read-only |
+| Reading Xero | xero-cli, run as a subprocess; its JSON read with every number a `BigDecimal` |
 | Tests | Kaocha, `test.check` for the laws, the synthetic records as fixtures |
 | Quality | clj-kondo (with a rule against float literals and `double` in money code), cljfmt, `poly check` |
 | CLI (after the spike) | Babashka, as a thin client of the API |
@@ -59,7 +61,7 @@ ownpurse/
     store/          the XTDB node, transactions with provenance, queries
     book/           books, accounts, parties
     ledger/         entries and postings; trial balance, general ledger, as-of
-    source-xero/    reads a xero-axi record (read-only) and states what it holds as ledger data
+    xero/           runs xero-cli, keeps Xero's JSON as documents, derives entries and postings
     evidence/       the drawer (raw files by hash) and the hash chain over our transactions
   bases/
     api/            Reitit routes, Malli contracts, OpenAPI, errors as data
@@ -68,7 +70,7 @@ ownpurse/
   development/      user.clj, the REPL system, scratch
 ```
 
-One rule from the old project stays: Xero knowledge lives only in `source-xero`. Everything else speaks books,
+One rule from the old project stays: Xero knowledge lives only in the `xero` component. Everything else speaks books,
 accounts, entries and postings.
 
 ## The model in XTDB
@@ -78,7 +80,7 @@ world) and system time (when we recorded it).
 
 | Table | Holds | Notes |
 |---|---|---|
-| `sources` | One row per source (a xero-axi record and the organisation in it) | Tool, version, record path, chain head when read |
+| `sources` | One row per source (an org read through xero-cli) | Tool, version, org, time of each fetch |
 | `books` | One per organisation | Currency, fiscal year end, the source it comes from |
 | `accounts` | Per book | Code, name, type, class. Renames are new versions |
 | `parties` | Contacts | Per book; linking the same person across books is a `links` row, never a merge |
@@ -90,9 +92,9 @@ world) and system time (when we recorded it).
 
 Budgets, projects, closes and reports come after the spike. They are new tables, not migrations.
 
-The postings come from xero-axi's own ledger (`xero-axi --json --full gl all`, which derives them from the
-documents; the record's `gl` table stays empty), so the rules that turn Xero documents into postings stay in the
-Xero tool. The ledger checks them: every entry balances, and the trial balance matches
+The postings are ownpurse's: from Xero's own journals if the app may read them, otherwise derived in the `xero`
+component from Xero's documents (NEXT.md, step 3b.1). Step 3 first read them from xero-axi's gl; that changed when
+xero-axi was archived. The ledger checks them either way: every entry balances, and the trial balance matches
 Xero's own report.
 
 ## The steps
@@ -103,13 +105,14 @@ Xero's own report.
 | 1 | The workspace: Polylith, donut.system, XTDB in-process, `/health`, Kaocha, clj-kondo, cljfmt | The system starts and stops from the REPL; tests and lint pass |
 | 2 | Money and the schemas: the `money` and `schema` components; properties for "an entry balances" and "no float reaches the store" | Property tests pass; a float is refused at the boundary with a clear error |
 | 3 | Reading xero-axi: books, accounts, parties, documents and postings from a record, with provenance | The synthetic record loads; a second load changes nothing |
+| 3b | Reading Xero through xero-cli: fetch, keep Xero's JSON, derive postings; retire step 3's reader | NEXT.md, step 3b |
 | 4 | The checks: trial balance per book at a date, in SQL and in XTQL | Matches the synthetic goldens to the cent; then, locally, our four organisations at 2025-12-31 and 2026-09-30 |
 | 5 | Time: what the books said on a date, against what we knew at a moment in the past | One query for each, and a test where a changed document shows both |
 | 6 | The API: books, accounts, trial balance, general ledger, read-only SQL; OpenAPI | `curl` and a generated client both work; errors are structured |
 | 7 | Durability: our hash chain over transactions, an export of every transaction to plain files, a restore | Restoring the export into an empty node gives the same trial balances |
 | 8 | DataGrip | Connects to the read-only Postgres port and runs the trial balance query |
 
-Done: 0, 1, 2, 3.
+Done: 0, 1, 2, 3. Next: 3b ([NEXT.md](NEXT.md)).
 
 What step 1 found:
 
@@ -148,7 +151,7 @@ What step 3 found:
 - A second load writes nothing and opens no transaction: `store/put-changed!` compares each row with what the store
   holds (timestamps as instants) and writes only the difference. A changed document rewrites only its rows.
 - Open: when a document loses a line, or leaves the gl (deleted in Xero), its old postings stay current. Ending them
-  needs XTDB's `DELETE` (the row's validity ends; history keeps it) or a void flag. Decide in step 5.
+  needs XTDB's `DELETE` (the row's validity ends; history keeps it) or a void flag. Decide in step 3b.
 
 ## The decision at the end
 
@@ -175,7 +178,7 @@ built with tools.build.
 
 ## What the spike must answer
 
-- Can we load history in the order it happened? Each xero-axi version has the time we observed it. If XTDB lets a
+- Can we load history in the order it happened? Each fetch through xero-cli has the time it was made. If XTDB lets a
   transaction carry an earlier system time, history keeps its real times; if not, the observed time becomes a
   field.
 - Valid time for a document: the document's own date, or always open? The test in step 5 decides.

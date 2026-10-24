@@ -6,14 +6,17 @@ before changing behaviour, and [brand/README.md](brand/README.md) before changin
 ## Current work
 
 The spike, on branch `next`: a local ledger in Clojure on XTDB, from zero. The plan and its steps are in
-[docs/plans/SPIKE.md](docs/plans/SPIKE.md). The Rust code is archived at the tags `archive/rust-main` and
+[docs/plans/SPIKE.md](docs/plans/SPIKE.md); where it stands, the decisions since and the next step in detail are in
+[docs/plans/NEXT.md](docs/plans/NEXT.md). Read NEXT.md first, and update it when a step lands. The Rust code is archived at the tags `archive/rust-main` and
 `archive/rust-facts`, and its docs are in `docs/archive/`; read them for ideas, never build on them.
 
 ## What this is
 
-ownpurse is a local ledger with a clean API. Each source has its own tool (xero-axi for Xero, mercury-axi for
-Mercury); ownpurse reads what those tools hold and keeps one model of books, accounts, entries and postings over
-all of them, in XTDB. Clients (a CLI, a TUI, a web interface, agents) are separate and use the API. Never add
+ownpurse is a local ledger with a clean API. Each source has its own tool (xero-cli for Xero, mercury-axi for
+Mercury). The tool talks to the provider and stores nothing; ownpurse runs it, keeps what it returns as facts, and
+keeps one model of books, accounts, entries and postings over all of them, in XTDB. xero-cli lives in its own
+repository (`brancusi/xero-cli`), checked out beside this one. xero-axi, the Xero tool before it, is archived:
+read its posting rules for ideas, never build on it. Clients (a CLI, a TUI, a web interface, agents) are separate and use the API. Never add
 knowledge of a source to code outside that source's component.
 
 ## Layout
@@ -42,7 +45,8 @@ In VS Code with Calva, opening the folder does all of this: `.vscode/settings.js
 `(dev)` and `(go)`, and connects instead if `.nrepl-port` already exists. Calva's jack-in writes `.nrepl-port` at
 the root, so agents share that REPL. `ctrl+alt+space` then `g`, `r`, `h` or `t` runs `(go)`, `(reset)`, `(halt)` or
 `(tests)`. `(load-sample)` loads the synthetic Brackenridge group into the running system; `(load-xero {:record
-path :gl path})` loads any xero-axi record. CIDER and Cursive can attach to the same port (cider-nrepl is in the middleware).
+path :gl path})` loads any xero-axi record. Both are step 3's xero-axi reader, which step 3b replaces with reading
+through xero-cli. CIDER and Cursive can attach to the same port (cider-nrepl is in the middleware).
 
 ## Clojure practice
 
@@ -75,9 +79,9 @@ in [SECURITY.md](SECURITY.md#what-never-goes-in-this-repository).
 - Money is `BigDecimal` (`1.10M`), stored as XTDB `DECIMAL`. Never a float or a double: not in code, not in JSON
   (read numbers as `BigDecimal`), not in a test.
 - History is never rewritten. Corrections are new facts; nothing in the ledger is updated in place or erased.
-- ownpurse never calls a provider or holds a provider's token. Writes to a source go through that source's tool,
+- ownpurse never calls a provider or holds a provider's token: it runs the source's tool, which does. Writes to a source go through that source's tool,
   as a sealed package a person approves.
-- Tests never call a provider. They use the synthetic fixtures.
+- Tests never call a provider, and never run a source's tool against one. They use the synthetic fixtures.
 - The API is the contract: every endpoint has Malli schemas and appears in the OpenAPI document; errors are
   structured.
 

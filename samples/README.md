@@ -4,36 +4,13 @@ Synthetic evidence for the fact model. Every name, number, address and id here i
 month (March 2026), seen through every kind of source ownpurse has to read, so the same events show up more than
 once and the model has to say how the witnesses relate.
 
-Watch it load, file by file, then see what the log can answer (needs git and Rust; writes only under
-`rust/target/demo/`):
+The Rust loader these were written for is archived (`git checkout archive/rust-facts` brings back `demo.sh`, the
+facts CLI, its tests and `docs/plans/FACTS-EDGES.md`). The files stay current as test input for the Clojure
+ledger. `xero/pull-1` and `xero/pull-2` are Xero API answers in exactly the shape xero-cli prints, and are the
+fixtures for reading Xero through xero-cli (`docs/plans/NEXT.md`, step 3b).
 
-```sh
-bash samples/demo.sh
-```
-
-The same thing pinned to a commit, from anywhere, shows that version forever:
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/brancusi/ownpurse/<commit>/samples/demo.sh | bash -s <commit>
-```
-
-`ingest.json` lists every file in the order a person would bring them in. Load it all by hand with:
-
-```sh
-cd rust
-cargo run -p ownpurse-facts-cli -- --log /tmp/march.sqlite init
-cargo run -p ownpurse-facts-cli -- --log /tmp/march.sqlite load ../samples/ingest.json
-cargo run -p ownpurse-facts-cli -- --log /tmp/march.sqlite link
-cargo run -p ownpurse-facts-cli -- --log /tmp/march.sqlite sql -f ../samples/queries/09-what-backs-the-dinner.sql
-```
-
-The files load in the order they were read (`observed_at`), across sources. Loading them again changes nothing.
-
-`queries/` holds SQL you can run against the result: 01 to 10 ask questions (what backs the dinner, both sides of
-an invoice, the log as of an earlier transaction); 11 and 12 are checks (every stream of bank lines carries the
-statement's opening balance to its closing one; every entry balances). The tests in
-`rust/crates/ownpurse-facts-cli/tests/month.rs` run every one of them; `docs/plans/FACTS-EDGES.md` is what loading all of this
-taught us about the model, with one write-up per source family in `docs/plans/edges/`.
+`ingest.json` lists every file in the order a person would bring them in. `queries/` holds the SQL the archived
+loader answered (01 to 10 ask questions, 11 and 12 are checks); they are written for its schema, not XTDB's.
 
 ## The world
 
