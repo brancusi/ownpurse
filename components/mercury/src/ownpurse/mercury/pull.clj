@@ -5,6 +5,7 @@
    [clojure.java.io :as io]
    [ownpurse.mercury.cli :as cli]
    [ownpurse.mercury.source :as source]
+   [ownpurse.schema.interface :as schema]
    [ownpurse.store.interface :as store])
   (:import
    (java.time Instant LocalDate ZoneOffset)))
@@ -16,10 +17,14 @@
 
 (defn keep!
   "Keeps Mercury's answer to `resource` for Mercury org `org`, writing only the rows that changed, in one
-  transaction that names the tool, the org, the resource and when it was fetched. Returns {:items n :written n}."
+  transaction that names the tool, the org, the resource and when it was fetched. The org and its accounts are
+  also kept as source_accounts rows, in the same transaction. Returns {:items n :written n}, counting the
+  resource's own rows."
   [node org resource answer {:keys [tool-version alias account start now]}]
   (let [fetched-at (or now (Instant/now))
-        tables (source/rows org resource answer fetched-at account)
+        [[table rows]] (seq (source/rows org resource answer fetched-at account))
+        accounts (mapv #(schema/check! :ownpurse/source-account %) (source/source-accounts resource rows))
+        tables (cond-> {table rows} (seq accounts) (assoc :source-accounts accounts))
         metadata (cond-> {:source "mercury-cli" :why "fetch" :org org :resource resource
                           :fetched-at (str fetched-at)}
                    alias (assoc :alias alias)
@@ -27,7 +32,7 @@
                    tool-version (assoc :tool-version tool-version)
                    start (assoc :start (str start)))
         {:keys [written]} (store/put-changed! node tables metadata)]
-    {:items (count (val (first tables))) :written (reduce + 0 (vals written))}))
+    {:items (count rows) :written (get written table 0)}))
 
 (defn- holds-transactions?
   "Whether the store holds any transaction of Mercury org `org`: after the first pull, later ones ask for less."

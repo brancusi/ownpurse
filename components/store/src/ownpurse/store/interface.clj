@@ -30,7 +30,7 @@
   document may carry :xt/valid-from (when it became true in the world); without it, it is valid from now.
   `metadata` says where the documents come from and why: {:source string, :why string}, and lands
   in xt.txs. Refuses, writing nothing, when any document holds a float (:ownpurse/float-money, with the paths) or
-  the metadata is missing (:ownpurse/no-metadata). There is no delete: a correction is a new version."
+  the metadata is missing (:ownpurse/no-metadata). A correction is a new version."
   [node tables metadata]
   (core/put! node tables metadata))
 
@@ -45,3 +45,17 @@
   "Runs a query (SQL or XTQL) and returns the rows."
   ([node query] (core/q node query {}))
   ([node query opts] (core/q node query opts)))
+
+(defn delete!
+  "Ends the documents `ids` of `table` from `:valid-from` (default now), in one transaction carrying `metadata`.
+  Their history stays: a query `FOR ALL VALID_TIME` still sees them. Only for ownpurse's own tables (derived rows
+  and decisions such as links): refuses a source table (a namespaced one, :xero/invoices) with
+  :ownpurse/source-row-delete, since source rows are never deleted. Nothing is ever erased."
+  [node table ids opts metadata]
+  (core/delete! node table ids opts metadata))
+
+(defn table-exists?
+  "Whether the store holds `table` (a keyword, as `put!` names it). XTDB refuses a query on a table it has never
+  seen, so a read of a table that may not exist yet asks this first."
+  [node table]
+  (core/table-exists? node table))

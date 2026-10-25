@@ -3,8 +3,10 @@
   (:require
    [malli.error :as me]
    [ownpurse.api.json :as api.json]
+   [ownpurse.entity.interface :as entity]
    [ownpurse.json.interface :as json]
    [ownpurse.mercury.interface :as mercury]
+   [ownpurse.schema.interface :as schema]
    [ownpurse.store.interface :as store]
    [ownpurse.xero.interface :as xero]
    [reitit.coercion.malli :as rcm]
@@ -12,7 +14,8 @@
    [reitit.ring :as ring]
    [reitit.ring.coercion :as coercion]
    [reitit.ring.middleware.exception :as exception]
-   [reitit.ring.middleware.muuntaja :as muuntaja]))
+   [reitit.ring.middleware.muuntaja :as muuntaja]
+   [reitit.ring.middleware.parameters :as parameters]))
 
 (def ApiError
   "Every error the API returns."
@@ -29,6 +32,44 @@
 (def Pulled
   "What POST /pull returns: the counts for each source's orgs."
   [:map [:pulled [:map [:xero Counts] [:mercury Counts]]]])
+
+(def Entity
+  "An entity: one business or household."
+  [:map [:id :string] [:name :string] [:kind :string]])
+
+(def Link
+  "A link of a source account to an entity, from a day (and, once ended, until one)."
+  [:map
+   [:entity :string]
+   [:account {:optional true} :string]
+   [:role :string]
+   [:evidence-for {:optional true} :string]
+   [:from {:optional true} :string]
+   [:until {:optional true} :string]])
+
+(def Entities
+  "What GET /entities returns: every entity with the links it has now."
+  [:map [:entities [:vector (conj Entity [:links [:vector Link]])]]])
+
+(def SourceAccount
+  "Something a source holds that can belong to an entity, with its link when it has one."
+  [:map
+   [:id :string] [:source :string] [:source-table :string] [:org :string] [:kind :string] [:name :string]
+   [:code {:optional true} :string] [:currency {:optional true} :string] [:status {:optional true} :string]
+   [:link {:optional true} Link]])
+
+(def EntityBody
+  "PUT /entities/{id}: the entity's name and kind."
+  [:map {:closed true} [:name [:string {:min 1}]] [:kind [:enum "business" "household"]]])
+
+(def LinkBody
+  "PUT /links: which entity a source account belongs to, and how."
+  [:map {:closed true}
+   [:entity (schema/schema :ownpurse/slug)]
+   [:account [:string {:min 1}]]
+   [:role (schema/schema :link/role)]
+   [:evidence-for {:optional true} [:string {:min 1}]]
+   [:from {:optional true} (schema/schema :ownpurse/date)]])
 
 (defn- error [status type message]
   {:status status :body {:error {:type type :message message}}})
@@ -71,6 +112,20 @@
                 :else (throw e))))
           (finally (reset! running false)))))))
 
+(def ^:private entity-errors
+  {:ownpurse/invalid 400 :ownpurse/invalid-link 400 :ownpurse/not-found 404 :ownpurse/link-conflict 409})
+
+(defn- answer
+  "Calls `f` and answers 200 with what it returns, or the error the entity component threw, as structured JSON."
+  [f]
+  (try
+    {:status 200 :body (f)}
+    (catch clojure.lang.ExceptionInfo e
+      (let [t (:type (ex-data e))]
+        (if-let [status (entity-errors t)]
+          (error status (error-type t) (ex-message e))
+          (throw e))))))
+
 (defn- routes [{:keys [node] :as config}]
   [["/openapi.json"
     {:get {:no-doc true
@@ -85,7 +140,38 @@
     {:post {:summary (str "Fetches every org in the local config through its source's tool, and keeps what changed. "
                           "Costs the source's API calls; later pulls ask only for what changed.")
             :responses {200 {:body Pulled} 409 {:body ApiError} 502 {:body ApiError}}
-            :handler (pull node (select-keys config [:local :xero :mercury]))}}]])
+            :handler (pull node (select-keys config [:local :xero :mercury]))}}]
+   ["/entities"
+    {:get {:summary "Every entity, with the source accounts linked to it now."
+           :responses {200 {:body Entities}}
+           :handler (fn [_] (answer #(hash-map :entities (entity/entities node))))}}]
+   ["/entities/{id}"
+    {:put {:summary "Makes an entity, or renames it. The id is a slug: lowercase letters, digits and hyphens."
+           :parameters {:path [:map [:id (schema/schema :ownpurse/slug)]] :body EntityBody}
+           :responses {200 {:body [:map [:entity Entity]]} 400 {:body ApiError}}
+           :handler (fn [{{:keys [path body]} :parameters}]
+                      (answer #(hash-map :entity (entity/put-entity! node (assoc body :id (:id path))))))}}]
+   ["/source-accounts"
+    {:get {:summary (str "Every source account: what each source holds that can belong to an entity (an org, a bank "
+                         "account, a credit card), with its link. A source's accounts appear after its first pull.")
+           :parameters {:query [:map [:source {:optional true} :string] [:unlinked {:optional true} :boolean]]}
+           :responses {200 {:body [:map [:source-accounts [:vector SourceAccount]]]}}
+           :handler (fn [{{:keys [query]} :parameters}]
+                      (answer #(hash-map :source-accounts (entity/source-accounts node query))))}}]
+   ["/links"
+    {:put {:summary (str "Links a source account to an entity, from a day (default today): as its system of record "
+                         "(an org, one per entity), or as evidence, optionally for an account of that system of "
+                         "record. Linking it again to the same entity changes the link.")
+           :parameters {:body LinkBody}
+           :responses {200 {:body [:map [:link Link]]} 400 {:body ApiError} 404 {:body ApiError}
+                       409 {:body ApiError}}
+           :handler (fn [{{:keys [body]} :parameters}]
+                      (answer #(hash-map :link (entity/link! node body))))}
+     :delete {:summary "Ends a source account's link from a day (default now). Its history is kept."
+              :parameters {:query [:map [:account [:string {:min 1}]] [:on {:optional true} (schema/schema :ownpurse/date)]]}
+              :responses {200 {:body [:map [:ended Link]]} 400 {:body ApiError} 404 {:body ApiError}}
+              :handler (fn [{{:keys [query]} :parameters}]
+                         (answer #(hash-map :ended (entity/unlink! node query))))}}]])
 
 (def ^:private exception-middleware
   (exception/create-exception-middleware
@@ -112,6 +198,7 @@
             :responses {500 {:body ApiError}}
             :muuntaja api.json/muuntaja
             :middleware [openapi/openapi-feature
+                         parameters/parameters-middleware
                          muuntaja/format-negotiate-middleware
                          muuntaja/format-response-middleware
                          exception-middleware

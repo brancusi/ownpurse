@@ -121,3 +121,29 @@
   [tenant resource answer fetched-at]
   (let [{:keys [list-key table] :as described} (describe resource)]
     {table (mapv (partial row resource described tenant fetched-at) (get answer list-key []))}))
+
+(defn- source-account [{:keys [table]} kind row name]
+  (cond-> {:xt/id (:xt/id row)
+           :source "xero"
+           :source-table (str (namespace table) "." (str/replace (clojure.core/name table) "-" "_"))
+           :org (:org row)
+           :kind kind
+           :name name}
+    (:code row) (assoc :code (:code row))
+    (or (:currency-code row) (:base-currency row)) (assoc :currency (or (:currency-code row) (:base-currency row)))
+    (:status row) (assoc :status (str/lower-case (:status row)))))
+
+(defn source-accounts
+  "The source accounts in rows of `resource` (from `rows`), as source_accounts rows: the org (kind org) and each
+  account of type BANK (bank, or credit-card when Xero's BankAccountType is CREDITCARD), archived ones too. Other
+  resources hold none. Pure."
+  [resource rows]
+  (let [described (describe resource)]
+    (case resource
+      "Organisation" (for [r rows]
+                       (-> (source-account described "org" r (or (:name r) (:organisation-id r)))
+                           (assoc :status "active")))
+      "Accounts" (for [r rows :when (= "BANK" (:type r))]
+                   (source-account described (if (= "CREDITCARD" (:bank-account-type r)) "credit-card" "bank")
+                                   r (:name r)))
+      [])))

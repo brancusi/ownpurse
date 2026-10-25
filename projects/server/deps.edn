@@ -1,9 +1,11 @@
 {:deps {org.clojure/clojure {:mvn/version "1.12.6"}
 
         poly/config {:local/root "../../components/config"}
+        poly/entity {:local/root "../../components/entity"}
         poly/json {:local/root "../../components/json"}
         poly/mercury {:local/root "../../components/mercury"}
         poly/money {:local/root "../../components/money"}
+        poly/schema {:local/root "../../components/schema"}
         poly/store {:local/root "../../components/store"}
         poly/xero {:local/root "../../components/xero"}
 

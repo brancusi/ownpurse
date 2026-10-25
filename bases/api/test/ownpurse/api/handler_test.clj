@@ -1,5 +1,6 @@
 (ns ownpurse.api.handler-test
   (:require
+   [clojure.string :as str]
    [clojure.test :refer [deftest is testing]]
    [ownpurse.api.handler :as handler]
    [ownpurse.json.interface :as json]
@@ -7,9 +8,16 @@
   (:import
    (java.io File)))
 
-(defn- request [app method uri]
-  (let [{:keys [status body]} (app {:request-method method :uri uri :headers {"accept" "application/json"}})]
-    {:status status :body (json/parse (if (string? body) body (slurp body)))}))
+(defn- request
+  ([app method uri] (request app method uri nil))
+  ([app method uri body]
+   (let [[path query] (str/split uri #"\?" 2)
+         {:keys [status body]} (app (cond-> {:request-method method :uri path :query-string query
+                                             :headers {"accept" "application/json"
+                                                       "content-type" "application/json"}}
+                                      body (assoc :body (java.io.ByteArrayInputStream.
+                                                         (.getBytes ^String (json/write-str body) "UTF-8")))))]
+     {:status status :body (json/parse (if (string? body) body (slurp body)))})))
 
 (deftest health-test
   (let [node (store/start {:mode :in-memory})]
@@ -55,8 +63,60 @@
           (is (= {:items 8 :written 8} (get-in body [:pulled :mercury :Tallowmere :transactions])))))
       (finally (store/stop node)))))
 
+(deftest entities-test
+  (let [node (store/start {:mode :in-memory})
+        orgs (doto (File/createTempFile "orgs" ".edn") .deleteOnExit)
+        log (doto (File/createTempFile "fake-cli" ".log") .deleteOnExit)
+        tenant "c0ffee00-0000-4000-8000-000000000000"
+        app (handler/handler
+             {:node node
+              :local (str orgs)
+              :xero {:cli ["bash" "components/xero/test/ownpurse/xero/fake-xero-cli.sh" "samples/xero/pull-1"
+                           "0" (str log)]}
+              :mercury {:cli ["bash" "components/mercury/test/ownpurse/mercury/fake-mercury-cli.sh"
+                              "samples/mercury/pull-1" "0" (str log)]}})
+        xero-org (str "xero:" tenant ":organisation:c0ffee00-0000-4000-8000-0000000000a1")
+        xero-1010 (str "xero:" tenant ":account:c0ffee01-0000-4000-8000-000000000001")
+        operating "mercury:4d0c5e11-0000-4000-8000-000000000001:account:4d0c5e11-0000-4000-8000-0000000000a1"]
+    (try
+      (spit orgs (pr-str {:xero {:orgs [{:tenant tenant :name "Tallowmere"}]}
+                          :mercury {:orgs [{:alias "tallowmere" :name "Tallowmere"}]}}))
+      (is (= 200 (:status (request app :post "/pull"))))
+      (testing "after a pull, every source's accounts are listed, none linked yet"
+        (let [{:keys [status body]} (request app :get "/source-accounts?unlinked=true")]
+          (is (= 200 status))
+          (is (= {"mercury" 4 "xero" 3} (frequencies (map :source (:source-accounts body)))))
+          (is (some #(= xero-org (:id %)) (:source-accounts body)))))
+      (testing "an entity is made by its slug"
+        (is (= {:status 200 :body {:entity {:id "tallowmere" :name "Tallowmere" :kind "business"}}}
+               (request app :put "/entities/tallowmere" {:name "Tallowmere" :kind "business"})))
+        (is (= 400 (:status (request app :put "/entities/Not%20a%20slug" {:name "x" :kind "business"})))))
+      (testing "its Xero org is its system of record, and a Mercury account is evidence for Xero's 1010"
+        (is (= {:status 200 :body {:link {:entity "tallowmere" :account xero-org :role "system-of-record"
+                                          :from "2025-01-01"}}}
+               (request app :put "/links" {:entity "tallowmere" :account xero-org :role "system-of-record"
+                                           :from "2025-01-01"})))
+        (is (= 200 (:status (request app :put "/links" {:entity "tallowmere" :account operating :role "evidence"
+                                                        :evidence-for xero-1010 :from "2025-01-01"}))))
+        (is (= [[xero-org nil] [operating xero-1010]]
+               (->> (request app :get "/entities") :body :entities first :links
+                    (map (juxt :account :evidence-for)) (sort-by first) reverse))))
+      (testing "a broken rule is a structured error that says how to fix it"
+        (let [{:keys [status body]} (request app :put "/links" {:entity "tallowmere" :account xero-1010
+                                                                :role "system-of-record"})]
+          (is (= 400 status))
+          (is (= "ownpurse/invalid-link" (get-in body [:error :type]))))
+        (is (= 404 (:status (request app :put "/links" {:entity "nobody" :account operating :role "evidence"})))))
+      (testing "a link ends from a day"
+        (is (= {:status 200 :body {:ended {:entity "tallowmere" :account operating :role "evidence"
+                                           :evidence-for xero-1010 :from "2025-01-01" :until "2025-07-01"}}}
+               (request app :delete (str "/links?account=" operating "&on=2025-07-01"))))
+        (is (= 404 (:status (request app :delete (str "/links?account=" operating))))))
+      (finally (store/stop node)))))
+
 (deftest openapi-test
   (let [{:keys [status body]} (request (handler/handler {:node nil}) :get "/openapi.json")]
     (is (= 200 status))
     (is (contains? (:paths body) (keyword "/health")))
-    (is (contains? (:paths body) (keyword "/pull")))))
+    (is (contains? (:paths body) (keyword "/pull")))
+    (is (contains? (:paths body) (keyword "/links")))))

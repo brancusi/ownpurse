@@ -88,3 +88,22 @@
     (store/put! *node* {:t [{:xt/id 1 :n 1M}]} {:source "test" :why "kept"})
     (is (= {:source "test" :why "kept"}
            (:user-metadata (last (store/q *node* "SELECT user_metadata FROM xt.txs ORDER BY _id")))))))
+
+(deftest delete-test
+  (let [from #inst "2025-01-01T00:00:00Z"
+        until #inst "2025-06-01T00:00:00Z"]
+    (is (not (store/table-exists? *node* :decisions)))
+    (store/put! *node* {:decisions [{:xt/id "d1" :note "kept" :xt/valid-from from}]} metadata)
+    (is (store/table-exists? *node* :decisions))
+    (testing "a delete ends a row from a day and keeps its history"
+      (store/delete! *node* :decisions ["d1"] {:valid-from until} metadata)
+      (is (= [] (store/q *node* "SELECT * FROM decisions")))
+      (is (= [{:xt/id "d1" :note "kept"}]
+             (store/q *node* ["SELECT * FROM decisions FOR VALID_TIME AS OF ?" #inst "2025-03-01T00:00:00Z"]))))
+    (testing "a source row is never deleted"
+      (store/put! *node* {:xero/things [{:xt/id "s1"}]} metadata)
+      (is (= :ownpurse/source-row-delete
+             (:type (error #(store/delete! *node* :xero/things ["s1"] {} metadata)))))
+      (is (= 1 (count (store/q *node* "SELECT * FROM xero.things")))))
+    (testing "a delete says where it comes from and why"
+      (is (= :ownpurse/no-metadata (:type (error #(store/delete! *node* :decisions ["d1"] {} {}))))))))

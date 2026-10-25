@@ -55,11 +55,24 @@ is done, and the next steps in order with what "done" means. Update it when a st
   not. 3b.4 follows.
 - Cleanup for later: `xero` and `mercury` each have their own kebab-case and payload normalising. When a third
   source comes, move the shared part into a component.
+- **2026-10-25: entities are linked to source accounts, not to sources.** Aram's instruction: an entity (one
+  business or household) has many sources, and adding a source must not change the model. Each source maps its
+  own accounts into one shape (`source_accounts`); a link names one of them. A book no accounting system keeps has
+  no system-of-record link until ownpurse's bank rules exist; its accounts are linked as evidence meanwhile.
 - **2026-10-25: the source tools print TOON by default** (Aram), JSON or EDN on request. ownpurse always asks for
   JSON: it runs xero-cli with `XERO_CLI_FORMAT=json` (which older xero-cli ignores) and mercury-cli with
   `--format json`.
 
 ## Done
+
+- **Entities and their sources (2026-10-25).** Aram's design, written into [MODEL.md](../MODEL.md#entities-and-their-sources):
+  `entities` (one business or household), `source_accounts` (what each source holds that can belong to one: a
+  Xero org and its bank accounts, a Mercury org, its accounts and credit cards, written by each source's component
+  when it pulls) and `entity_links` (an account's entity and role: `system-of-record`, an org, one per entity; or
+  `evidence`, optionally `evidence_for` an account of that system of record). The `entity` component knows no
+  source. Links end by `DELETE` from a day, so their history stays; the store refuses a `DELETE` on a source table.
+  API: `GET /entities`, `PUT /entities/{id}`, `GET /source-accounts?source=&unlinked=`, `PUT /links`,
+  `DELETE /links?account=&on=`. Next on it: the compare, for each evidence link with an `evidence_for`.
 
 - **Mercury as a source (2026-10-25).** The `mercury` component runs `mercury-cli get <resource> --org <alias>
   --all --format json` and keeps each item as one row: `mercury.organizations`, `accounts` (archived ones too),

@@ -95,16 +95,29 @@
   [table]
   [(sql-part (or (namespace table) "public")) (sql-part (name table))])
 
-(defn- table-exists? [node [schema table]]
+(defn- sql-table-exists? [node [schema table]]
   (seq (q node ["SELECT table_name FROM information_schema.tables WHERE table_schema = ? AND table_name = ?"
                 schema table]
           {})))
+
+(defn table-exists? [node table]
+  (boolean (sql-table-exists? node (table-name table))))
+
+(defn delete! [node table ids {:keys [valid-from]} metadata]
+  (check-metadata! metadata)
+  (when (namespace table)
+    (throw (ex-info (str "Nothing was deleted: " table " is a source table, and source rows are never deleted. "
+                         "A source's correction is a new version of its row.")
+                    {:type :ownpurse/source-row-delete :table table})))
+  (xt/execute-tx node
+                 [(into [:delete-docs (cond-> {:from table} valid-from (assoc :valid-from valid-from))] ids)]
+                 {:metadata metadata}))
 
 (defn- current
   "The documents of `table` the store holds now, by id."
   [node table ids]
   (let [[schema t :as sql-name] (table-name table)]
-    (if-not (table-exists? node sql-name)
+    (if-not (sql-table-exists? node sql-name)
       {}
       (into {}
             (for [chunk (partition-all 500 ids)

@@ -71,6 +71,13 @@
                   "ManualJournals" 0 "Organisation" 1 "Payments" 3 "TaxRates" 2 "TrackingCategories" 1}
                  (update-vals first-load :items)))
           (is (= (update-vals first-load :items) (update-vals first-load :written))))
+        (testing "the org and its bank accounts are source accounts"
+          (is (= [["org" "Tallowmere Coffee Roasting Co." nil] ["bank" "Operating account" "1010"]
+                  ["bank" "Reserve savings" "1020"]]
+                 (map (juxt :kind :name :code)
+                      (store/q node "SELECT kind, name, code FROM source_accounts ORDER BY kind DESC, code"))))
+          (is (= (str "xero:" tenant ":account:c0ffee01-0000-4000-8000-000000000001")
+                 (:xt/id (first (store/q node "SELECT _id FROM source_accounts WHERE code = '1010'"))))))
         (testing "a second load of pull-1 writes nothing"
           (let [before (tx-count node)]
             (is (every? zero? (map :written (vals (keep-all! node pull-1)))))

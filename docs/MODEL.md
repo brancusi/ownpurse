@@ -13,6 +13,8 @@ the working state is in [plans/NEXT.md](plans/NEXT.md).
 | Source | Where data comes from: Xero, Mercury, QuickBooks, Quicken, a folder of receipts. |
 | System of record | The one source a book's entries come from. Each book has exactly one. |
 | Evidence | Every other source for a book: used to reconcile and to match, never posted. |
+| Source account | Something a source holds that can belong to an entity: a Xero organisation, a Mercury account, a credit card. Every source lists its own in one shape. |
+| Link | Says which entity a source account belongs to, and how: as the entity's system of record, or as evidence. |
 | Group system of record | ownpurse itself, for what no single entity's system holds: intercompany, eliminations, group reports, matches across sources, and history. |
 | Intercompany | A transaction between two of your entities. It appears in both books, on opposite sides (due to and due from), and is eliminated in the group book. |
 
@@ -35,6 +37,53 @@ An entity's books stay official in Xero: that is what the accountant and the tax
 must equal Xero's trial balance to the cent. ownpurse never edits that copy. When ownpurse finds something an
 entity's books should change, such as a missing intercompany entry, the fix goes to Xero as a sealed package a
 person approves, and comes back on the next fetch.
+
+## Entities and their sources
+
+ownpurse keeps the entities you own, and links each source account to the entity it belongs to. Three tables, none
+of which knows any one source:
+
+```
+entities                 source_accounts                         entity_links
+  _id   entity:<slug>      _id           the source row's id       _id           link:<source account id>
+  name                     source        mercury | xero | ...      entity        entity:<slug>
+  kind  business |         source_table  mercury.accounts          account       a source account
+        household          org           the provider's org id     role          system-of-record | evidence
+                           kind          org | bank | credit-card  evidence_for  an account in the entity's
+                           name, code, currency, status                          system of record (optional)
+```
+
+- **Entities** are made through the API. Their names live only in the record, never in this repository.
+- **Source accounts** are written by each source's component when it pulls, from its own rows: a Xero organisation
+  and its bank accounts (`xero.organisations`, `xero.accounts` of type BANK), a Mercury organization, its deposit
+  accounts and credit card accounts. A source account's `_id` is the id of the source row it comes from, and
+  `source_table` says where that row is, so its every field is one join away. Adding a source means mapping its own
+  accounts into this shape; nothing else changes.
+- **Links** are made and ended through the API. A link's id comes from its account, so an account belongs to at
+  most one entity at a time. Ending a link is a `DELETE` from the day it ends, which keeps its history: what was
+  linked to what, and when, is a query (`FOR VALID_TIME AS OF`).
+
+The rules, checked on every write:
+
+1. A `system-of-record` link is an organisation (kind `org`), and an entity has at most one at a time.
+2. An `evidence` link is an account (any kind but `org`). Its `evidence_for`, when given, is an account of the
+   organisation the entity's system of record is: the Mercury account is evidence for Xero's `1010 Operating
+   account`.
+3. An account linked to one entity is not linked to another until its link ends.
+
+| You say | Link |
+|---|---|
+| This Xero organisation is Tallowmere's books | Xero org, `system-of-record` |
+| This Mercury account is Tallowmere's operating account | Mercury account, `evidence`, `evidence_for` Xero's 1010 |
+| This Mercury card is Tallowmere's | Mercury credit card account, `evidence`, `evidence_for` Xero's card account |
+| This Mercury account is the household's | Mercury account, `evidence` (no system of record yet) |
+
+A book no accounting system keeps, such as a household, has no `system-of-record` link: ownpurse will be its system
+of record, posting its accounts' lines with shared bank rules, when those rules exist. Until then its accounts are
+linked as evidence.
+
+The compare of a bank account reads the links: for each evidence link with an `evidence_for`, the lines of the
+source account against the lines of the account it backs up.
 
 ## Three layers
 
@@ -85,5 +134,6 @@ INV-0418, and is paid by ACH into Mercury. Xero is the book's system of record; 
 
 - Source tables: `<provider>.<resource>` in kebab case as SQL folds it (`xero.bank_transactions`). Row ids:
   `<provider>:<org>:<kind>:<the provider's id>`.
-- Documents and ledger tables: the `public` schema, plain names (`invoices`, `postings`).
+- Documents and ledger tables: the `public` schema, plain names (`invoices`, `postings`), as are `entities`,
+  `source_accounts` and `entity_links`.
 - Columns: plain, snake case in SQL, no namespace (`invoice_number`, `org`).

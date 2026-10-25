@@ -5,6 +5,7 @@
    [clojure.java.io :as io]
    [clojure.string :as str]
    [ownpurse.json.interface :as json]
+   [ownpurse.schema.interface :as schema]
    [ownpurse.store.interface :as store]
    [ownpurse.xero.cli :as cli]
    [ownpurse.xero.source :as source])
@@ -13,16 +14,19 @@
 
 (defn keep!
   "Keeps Xero's answer to `resource` for org `tenant`, writing only the rows that changed, in one transaction that
-  names the tool, the org, the resource and when Xero answered. Returns {:items n :written n}."
+  names the tool, the org, the resource and when Xero answered. The org and its bank accounts are also kept as
+  source_accounts rows, in the same transaction. Returns {:items n :written n}, counting the resource's own rows."
   [node tenant resource answer {:keys [tool-version modified-since now]}]
   (let [fetched-at (source/fetched-at answer (or now (Instant/now)))
-        tables (source/rows tenant resource answer fetched-at)
+        [[table rows]] (seq (source/rows tenant resource answer fetched-at))
+        accounts (mapv #(schema/check! :ownpurse/source-account %) (source/source-accounts resource rows))
+        tables (cond-> {table rows} (seq accounts) (assoc :source-accounts accounts))
         metadata (cond-> {:source "xero-cli" :why "fetch" :org tenant :resource resource
                           :fetched-at (str fetched-at)}
                    tool-version (assoc :tool-version tool-version)
                    modified-since (assoc :modified-since (str modified-since)))
         {:keys [written]} (store/put-changed! node tables metadata)]
-    {:items (count (val (first tables))) :written (reduce + 0 (vals written))}))
+    {:items (count rows) :written (get written table 0)}))
 
 (defn- last-update
   "The latest UpdatedDateUTC the store holds for `resource` in org `tenant`, or nil (no rows yet, or a resource

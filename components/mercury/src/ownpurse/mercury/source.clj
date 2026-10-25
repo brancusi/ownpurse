@@ -134,3 +134,31 @@
   ([org resource answer fetched-at account]
    (let [{:keys [table] :as described} (describe resource)]
      {table (mapv (partial row resource described org account fetched-at) (items resource answer))})))
+
+(defn- source-account [{:keys [table]} kind row name]
+  {:xt/id (:xt/id row)
+   :source "mercury"
+   :source-table (str (namespace table) "." (str/replace (clojure.core/name table) "-" "_"))
+   :org (:org row)
+   :kind kind
+   :name name
+   :status (or (:status row) "active")})
+
+(defn- account-name
+  "An account's nickname, with Mercury's own name for it (which ends in the last digits), or that name alone."
+  [{:keys [nickname name]} default]
+  (cond
+    (and nickname name) (str nickname " (" name ")")
+    :else (or nickname name default)))
+
+(defn source-accounts
+  "The source accounts in rows of `resource` (from `rows`), as source_accounts rows: the org (kind org), each
+  deposit account (bank) and each credit card account (credit-card), archived ones too. Other resources hold none.
+  Pure."
+  [resource rows]
+  (let [described (describe resource)]
+    (case resource
+      "organization" (for [r rows] (source-account described "org" r (or (:legal-business-name r) (:id r))))
+      "accounts" (for [r rows] (source-account described "bank" r (account-name r (:id r))))
+      "credit" (for [r rows] (source-account described "credit-card" r (account-name r "Credit card")))
+      [])))

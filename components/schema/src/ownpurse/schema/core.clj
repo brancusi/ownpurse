@@ -41,6 +41,7 @@
     :ownpurse/commodity [:re {:error/message "must be a three-letter code such as USD"} #"^[A-Z]{3}$"]
     :ownpurse/date [:fn {:error/message "must be a date, YYYY-MM-DD"
                          :decode/json decode-date
+                         :decode/string decode-date
                          :json-schema {:type "string" :format "date"}}
                     #(instance? LocalDate %)]
 
@@ -86,6 +87,31 @@
                         [:document/date {:optional true} :ownpurse/date]
                         [:document/observed-at inst?]
                         [:document/payload map?]]
+
+    :ownpurse/source-account [:map {:closed true}
+                              [:xt/id :ownpurse/id]
+                              [:source [:re #"^[a-z][a-z0-9-]*$"]]
+                              [:source-table [:re #"^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$"]]
+                              [:org :ownpurse/id]
+                              [:kind [:enum "org" "bank" "credit-card"]]
+                              [:name [:string {:min 1}]]
+                              [:code {:optional true} :string]
+                              [:currency {:optional true} :ownpurse/commodity]
+                              [:status {:optional true} :string]]
+
+    :ownpurse/slug [:re {:error/message "must be lowercase letters, digits and hyphens, such as tallowmere"}
+                    #"^[a-z0-9][a-z0-9-]*$"]
+    :ownpurse/entity [:map {:closed true}
+                      [:id :ownpurse/slug]
+                      [:name [:string {:min 1}]]
+                      [:kind [:enum "business" "household"]]]
+    :link/role [:enum "system-of-record" "evidence"]
+    :ownpurse/link [:map {:closed true}
+                    [:entity :ownpurse/slug]
+                    [:account :ownpurse/id]
+                    [:role :link/role]
+                    [:evidence-for {:optional true} :ownpurse/id]
+                    [:from {:optional true} :ownpurse/date]]
 
     :ownpurse/posting [:map {:closed true}
                        [:posting/line nat-int?]

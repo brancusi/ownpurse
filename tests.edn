@@ -1,6 +1,7 @@
 #kaocha/v1
 {:tests [{:id :unit
           :test-paths ["components/config/test"
+                       "components/entity/test"
                        "components/json/test"
                        "components/ledger/test"
                        "components/mercury/test"
@@ -10,6 +11,7 @@
                        "components/xero/test"
                        "bases/api/test"]
           :source-paths ["components/config/src"
+                         "components/entity/src"
                          "components/json/src"
                          "components/ledger/src"
                          "components/mercury/src"

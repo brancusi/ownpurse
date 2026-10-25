@@ -27,3 +27,7 @@
   transaction with each status change as a new version, and statements, in `mercury.*` tables. The local config
   names the orgs by alias (`{:mercury {:orgs [{:alias "..." :name "..."}] :window-days 60}}`);
   `OWNPURSE_MERCURY_CLI` names the program. `POST /pull` now answers `{"pulled": {"xero": ..., "mercury": ...}}`.
+- Entities and their sources: make the entities you own (`PUT /entities/{id}`), see every source's accounts
+  (`GET /source-accounts`) and link each to its entity, as its system of record or as evidence for one of its
+  accounts (`PUT /links`). A link ends from a day (`DELETE /links`) and its history stays. The model is in
+  `docs/MODEL.md`.

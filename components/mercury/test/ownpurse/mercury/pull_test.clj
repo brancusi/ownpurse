@@ -84,6 +84,14 @@
           (is (= #{["Operating" "active"] [nil "archived"]}
                  (set (map (juxt :nickname :status) (store/q node "SELECT nickname, status FROM mercury.accounts")))))
           (is (= [-2349.80M] (map :current-balance (store/q node "SELECT current_balance FROM mercury.credit_accounts")))))
+        (testing "the org, its deposit accounts and its credit card accounts are source accounts"
+          (is (= [["org" "Tallowmere Coffee Roasting Co." "active"]
+                  ["bank" "Mercury Savings ••3304" "archived"]
+                  ["bank" "Operating (Mercury Checking ••2210)" "active"]
+                  ["credit-card" "Credit card" "active"]]
+                 (map (juxt :kind :name :status)
+                      (store/q node "SELECT kind, name, status FROM source_accounts
+                                     ORDER BY CASE kind WHEN 'org' THEN 0 WHEN 'bank' THEN 1 ELSE 2 END, name")))))
         (testing "statements name their account"
           (is (= ["4d0c5e11-0000-4000-8000-0000000000a1"]
                  (map :account (store/q node "SELECT account FROM mercury.statements"))))))
