@@ -71,7 +71,12 @@ is done, and the next steps in order with what "done" means. Update it when a st
   first pull asks for every transaction, later ones for those created in the last `:window-days` (60) plus every
   pending one. A second pull of the same answers writes nothing. `POST /pull` pulls both sources and now answers
   `{:pulled {:xero {...} :mercury {...}}}`. Fixtures: `samples/mercury/pull-1` and `pull-2`. Later: link a Mercury
-  account to the Xero bank account it is evidence for, and a compare that lists missing lines.
+  account to the Xero bank account it is evidence for, and a compare that lists missing lines. Checked on a real
+  record by the workspace (2026-10-25): a second pull wrote nothing, and statement balances tie to the cent.
+- **For the compare (from the workspace, 2026-10-25).** The lines of a Xero bank account are its BankTransactions
+  plus the Payments whose `Account` is that bank account (bill and invoice payments live only in Payments). Do not
+  add BankTransfers as well: BankTransactions already hold each transfer's legs (`SPEND-TRANSFER` and
+  `RECEIVE-TRANSFER`), so adding both counts every transfer twice.
 
 | Step | What | Commit |
 |---|---|---|
