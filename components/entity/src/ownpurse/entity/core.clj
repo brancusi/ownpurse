@@ -67,6 +67,9 @@
     (vec (for [e (rows node :entities "SELECT * FROM entities ORDER BY _id")]
            (assoc (entity-out e) :links (mapv link-out (links (:xt/id e))))))))
 
+(defn links [node]
+  (mapv link-out (rows node :entity-links "SELECT *, _valid_from FROM entity_links ORDER BY entity, account")))
+
 (def ^:private kind-order {"org" 0 "bank" 1 "credit-card" 2})
 
 (defn source-accounts [node {:keys [source unlinked]}]

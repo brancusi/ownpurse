@@ -16,6 +16,11 @@
   [node]
   (core/entities node))
 
+(defn links
+  "Every link there is now: [{:entity :account :role :evidence-for :from}], by entity and account."
+  [node]
+  (core/links node))
+
 (defn source-accounts
   "Every source account, each with its link when it has one. opts: :source (\"mercury\"), :unlinked (true: only
   those not linked)."

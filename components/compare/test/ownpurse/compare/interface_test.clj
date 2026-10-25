@@ -1,0 +1,100 @@
+(ns ownpurse.compare.interface-test
+  (:require
+   [clojure.test :refer [deftest is testing]]
+   [ownpurse.compare.interface :as cmp]
+   [ownpurse.entity.interface :as entity]
+   [ownpurse.store.interface :as store])
+  (:import
+   (java.time LocalDate)))
+
+(def ^:private xero-org "xero:t1:organisation:o1")
+(def ^:private xero-1010 "xero:t1:account:a1010")
+(def ^:private operating "mercury:m1:account:a1")
+
+(defn- d [s] (LocalDate/parse s))
+
+(defn- line [account n date amount & {:as more}]
+  (merge {:xt/id (str "line:" account ":" n) :account account :source "test" :source-table "test.lines"
+          :source-row (str account ":" n) :org "o" :date (d date) :amount amount :status "posted"}
+         more))
+
+(defn- with-node [f]
+  (let [node (store/start {:mode :in-memory})]
+    (try (f node) (finally (store/stop node)))))
+
+(defn- error [f]
+  (try (f) nil (catch clojure.lang.ExceptionInfo e (ex-data e))))
+
+(deftest match-test
+  (testing "the same amount a few days apart is the same money; further apart it is not"
+    (let [{:keys [matched evidence-only book-only]}
+          (cmp/match [(line "e" 1 "2026-03-09" -3215.47M) (line "e" 2 "2026-03-20" -80.00M)]
+            [(line "b" 1 "2026-03-07" -3215.47M) (line "b" 2 "2026-03-11" -80.00M)]
+            5)]
+      (is (= [["line:e:1" "line:b:1"]] (map #(mapv :xt/id %) matched)))
+      (is (= ["line:e:2"] (map :xt/id evidence-only)))
+      (is (= ["line:b:2"] (map :xt/id book-only)))))
+  (testing "two identical lines on one day match two, not one twice"
+    (let [{:keys [matched book-only]}
+          (cmp/match [(line "e" 1 "2026-03-06" -4.75M) (line "e" 2 "2026-03-06" -4.75M)]
+            [(line "b" 1 "2026-03-06" -4.75M) (line "b" 2 "2026-03-06" -4.75M)]
+            5)]
+      (is (= 2 (count matched)))
+      (is (= 2 (count (set (map (comp :xt/id second) matched)))))
+      (is (empty? book-only))))
+  (testing "the closest date wins, and 1.10 is 1.1"
+    (let [{:keys [matched]} (cmp/match [(line "e" 1 "2026-03-10" 1.10M)]
+                              [(line "b" 1 "2026-03-06" 1.1M) (line "b" 2 "2026-03-11" 1.100M)]
+                              5)]
+      (is (= "line:b:2" (:xt/id (second (first matched))))))))
+
+(deftest compare-test
+  (with-node
+    (fn [node]
+      (store/put! node {:source-accounts
+                        [{:xt/id xero-org :source "xero" :source-table "xero.organisations" :org "t1" :kind "org"
+                          :name "Tallowmere"}
+                         {:xt/id xero-1010 :source "xero" :source-table "xero.accounts" :org "t1" :kind "bank"
+                          :name "Operating account" :code "1010"}
+                         {:xt/id operating :source "mercury" :source-table "mercury.accounts" :org "m1"
+                          :kind "bank" :name "Operating (Mercury Checking ••2210)"}]
+                        :bank-lines
+                        [(line operating 1 "2026-03-02" 1846.13M :counterparty "Ostley Joinery")
+                         (line operating 2 "2026-03-06" -4.75M)
+                         (line operating 3 "2026-03-06" -4.75M)
+                         (line operating 4 "2026-03-09" -3215.47M)
+                         (line operating 5 "2026-03-20" -999.00M :counterparty "Ridgeway Freight")
+                         (line operating 6 "2026-03-21" -50.00M :status "pending")
+                         (line operating 7 "2026-04-01" -10.00M)
+                         (line xero-1010 1 "2026-03-02" 1846.13M)
+                         (line xero-1010 2 "2026-03-06" -4.75M)
+                         (line xero-1010 3 "2026-03-06" -4.75M)
+                         (line xero-1010 4 "2026-03-07" -3215.47M)
+                         (line xero-1010 5 "2026-03-18" -2400.00M :description "BO-7790")
+                         (line xero-1010 6 "2026-03-31" -10.00M)]}
+                  {:source "test" :why "fixtures"})
+      (testing "an account not linked as evidence for one has nothing to compare"
+        (is (= [] (cmp/compare-accounts node {})))
+        (is (= :ownpurse/not-found (:type (error #(cmp/compare-accounts node {:account operating}))))))
+      (entity/put-entity! node {:id "tallowmere" :name "Tallowmere" :kind "business"})
+      (entity/link! node {:entity "tallowmere" :account xero-org :role "system-of-record"})
+      (entity/link! node {:entity "tallowmere" :account operating :role "evidence" :evidence-for xero-1010})
+      (testing "March: what each side has that the other has not, pending apart, and each side's total"
+        (let [[c :as all] (cmp/compare-accounts node {:from (d "2026-03-01") :to (d "2026-03-31")})]
+          (is (= 1 (count all)))
+          (is (= {:entity "tallowmere" :account operating :account-name "Operating (Mercury Checking ••2210)"
+                  :evidence-for xero-1010 :evidence-for-name "Operating account" :days 5 :from "2026-03-01"
+                  :to "2026-03-31" :matched 4}
+                 (select-keys c [:entity :account :account-name :evidence-for :evidence-for-name :days :from :to
+                                 :matched])))
+          (is (= [{:id (str "line:" operating ":5") :date "2026-03-20" :amount "-999.00" :status "posted"
+                   :source-row (str operating ":5") :counterparty "Ridgeway Freight"}]
+                 (:missing-from-book c)))
+          (is (= [["2026-03-18" "-2400.00" "BO-7790"]]
+                 (map (juxt :date :amount :description) (:missing-from-evidence c))))
+          (is (= [["2026-03-21" "-50.00" "pending"]] (map (juxt :date :amount :status) (:pending c))))
+          (is (= {:evidence "-2377.84" :book "-3788.84"} (:totals c)))))
+      (testing "a line at the range's edge finds its match just outside it, so it is not missing"
+        (is (not-any? #(= "2026-03-31" (:date %))
+                      (:missing-from-evidence (first (cmp/compare-accounts node {:account operating
+                                                                                 :to (d "2026-03-31")})))))))))

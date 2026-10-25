@@ -99,6 +99,21 @@
                               [:currency {:optional true} :ownpurse/commodity]
                               [:status {:optional true} :string]]
 
+    :ownpurse/bank-line [:map {:closed true}
+                         [:xt/id :ownpurse/id]
+                         [:account :ownpurse/id]
+                         [:source [:re #"^[a-z][a-z0-9-]*$"]]
+                         [:source-table [:re #"^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$"]]
+                         [:source-row :ownpurse/id]
+                         [:org :ownpurse/id]
+                         [:date :ownpurse/date]
+                         [:amount :ownpurse/amount]
+                         [:status [:enum "pending" "posted"]]
+                         [:currency {:optional true} :ownpurse/commodity]
+                         [:description {:optional true} :string]
+                         [:counterparty {:optional true} :string]
+                         [:reference {:optional true} :string]]
+
     :ownpurse/slug [:re {:error/message "must be lowercase letters, digits and hyphens, such as tallowmere"}
                     #"^[a-z0-9][a-z0-9-]*$"]
     :ownpurse/entity [:map {:closed true}

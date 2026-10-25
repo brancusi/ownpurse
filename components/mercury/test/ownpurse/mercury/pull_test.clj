@@ -8,7 +8,7 @@
    [ownpurse.store.interface :as store])
   (:import
    (java.io File)
-   (java.time Instant)))
+   (java.time Instant LocalDate)))
 
 (def ^:private org "4d0c5e11-0000-4000-8000-000000000001")
 (def ^:private pull-1 "samples/mercury/pull-1")
@@ -92,6 +92,16 @@
                  (map (juxt :kind :name :status)
                       (store/q node "SELECT kind, name, status FROM source_accounts
                                      ORDER BY CASE kind WHEN 'org' THEN 0 WHEN 'bank' THEN 1 ELSE 2 END, name")))))
+        (testing "pending and sent transactions are lines, on their deposit or credit card account; a failed one is not"
+          (is (= [["account:4d0c5e11-0000-4000-8000-0000000000a1" "2026-03-02" 12500.0M "posted"]
+                  ["account:4d0c5e11-0000-4000-8000-0000000000a1" "2026-03-05" -2318.4M "posted"]
+                  ["account:4d0c5e11-0000-4000-8000-0000000000a1" "2026-03-15" -2000.0M "posted"]
+                  ["account:4d0c5e11-0000-4000-8000-0000000000a1" "2026-03-20" -1200.0M "pending"]
+                  ["credit-account:4d0c5e11-0000-4000-8000-0000000000c1" "2026-03-13" -86.4M "posted"]
+                  ["credit-account:4d0c5e11-0000-4000-8000-0000000000c1" "2026-03-15" 2000.0M "posted"]
+                  ["credit-account:4d0c5e11-0000-4000-8000-0000000000c1" "2026-03-19" -412M "pending"]]
+                 (map (juxt #(subs (:account %) (count (str "mercury:" org ":"))) (comp str :date) :amount :status)
+                      (store/q node "SELECT account, date, amount, status FROM bank_lines ORDER BY account, date")))))
         (testing "statements name their account"
           (is (= ["4d0c5e11-0000-4000-8000-0000000000a1"]
                  (map :account (store/q node "SELECT account FROM mercury.statements"))))))
@@ -112,6 +122,14 @@
                     (store/q node [(str "SELECT status, _valid_from FROM mercury.transactions FOR ALL VALID_TIME "
                                         "WHERE _id = ? ORDER BY _valid_from")
                                    (str "mercury:" org ":transaction:" (txn-id 104))])))))
+      (testing "after pull-2, the cancelled payment's line has ended, its history kept; the posted charge moved to
+                the day it posted; the new charge is a line"
+        (let [line #(str "line:mercury:" org ":transaction:" (txn-id %))]
+          (is (= [] (store/q node ["SELECT _id FROM bank_lines WHERE _id = ?" (line 105)])))
+          (is (= 1 (count (store/q node ["SELECT _id FROM bank_lines FOR ALL VALID_TIME WHERE _id = ?" (line 105)]))))
+          (is (= [{:date (LocalDate/parse "2026-03-22") :status "posted"}]
+                 (store/q node ["SELECT date, status FROM bank_lines WHERE _id = ?" (line 104)])))
+          (is (= 7 (count (store/q node "SELECT _id FROM bank_lines"))))))
       (testing "a cancelled payment is valid from the fetch that saw it"
         (is (= day-2 (some-> (store/q node ["SELECT _valid_from FROM mercury.transactions WHERE _id = ?"
                                             (str "mercury:" org ":transaction:" (txn-id 105))])

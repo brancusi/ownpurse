@@ -3,6 +3,7 @@
   (:require
    [malli.error :as me]
    [ownpurse.api.json :as api.json]
+   [ownpurse.compare.interface :as cmp]
    [ownpurse.entity.interface :as entity]
    [ownpurse.json.interface :as json]
    [ownpurse.mercury.interface :as mercury]
@@ -57,6 +58,25 @@
    [:id :string] [:source :string] [:source-table :string] [:org :string] [:kind :string] [:name :string]
    [:code {:optional true} :string] [:currency {:optional true} :string] [:status {:optional true} :string]
    [:link {:optional true} Link]])
+
+(def Line
+  "A line on an account, as the compare lists it. Amounts are decimal strings."
+  [:map
+   [:id :string] [:date :string] [:amount :string] [:status :string] [:source-row :string]
+   [:counterparty {:optional true} :string] [:description {:optional true} :string]
+   [:reference {:optional true} :string]])
+
+(def Compare
+  "The compare of one evidence account with the account it is evidence for."
+  [:map
+   [:entity :string] [:account :string] [:account-name {:optional true} [:maybe :string]]
+   [:evidence-for :string] [:evidence-for-name {:optional true} [:maybe :string]]
+   [:from {:optional true} :string] [:to {:optional true} :string] [:days :int]
+   [:matched :int]
+   [:missing-from-book [:vector Line]]
+   [:missing-from-evidence [:vector Line]]
+   [:pending [:vector Line]]
+   [:totals [:map [:evidence :string] [:book :string]]]])
 
 (def EntityBody
   "PUT /entities/{id}: the entity's name and kind."
@@ -158,6 +178,19 @@
            :responses {200 {:body [:map [:source-accounts [:vector SourceAccount]]]}}
            :handler (fn [{{:keys [query]} :parameters}]
                       (answer #(hash-map :source-accounts (entity/source-accounts node query))))}}]
+   ["/compare"
+    {:get {:summary (str "Compares each account linked as evidence for an account (or only `account`) with that "
+                         "account: the lines each has that the other has not, over the days from `from` to `to`. "
+                         "Lines of the same amount at most `days` apart (default 5) are the same money. Pending "
+                         "lines are listed apart. Reads what the last pull kept; it calls no source.")
+           :parameters {:query [:map
+                                [:account {:optional true} [:string {:min 1}]]
+                                [:from {:optional true} (schema/schema :ownpurse/date)]
+                                [:to {:optional true} (schema/schema :ownpurse/date)]
+                                [:days {:optional true} [:int {:min 0 :max 60}]]]}
+           :responses {200 {:body [:map [:compares [:vector Compare]]]} 404 {:body ApiError}}
+           :handler (fn [{{:keys [query]} :parameters}]
+                      (answer #(hash-map :compares (cmp/compare-accounts node query))))}}]
    ["/links"
     {:put {:summary (str "Links a source account to an entity, from a day (default today): as its system of record "
                          "(an org, one per entity), or as evidence, optionally for an account of that system of "

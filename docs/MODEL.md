@@ -82,8 +82,28 @@ A book no accounting system keeps, such as a household, has no `system-of-record
 of record, posting its accounts' lines with shared bank rules, when those rules exist. Until then its accounts are
 linked as evidence.
 
-The compare of a bank account reads the links: for each evidence link with an `evidence_for`, the lines of the
-source account against the lines of the account it backs up.
+## Bank lines and the compare
+
+`bank_lines` is the first documents table: every line on a bank or credit card account, from every source, in one
+shape (`account`, `date`, `amount`, `status`, `counterparty`, `description`, `reference`, and `source_row` back to
+the source row). Money in is positive, from the account's side. Each source derives its own on every pull, from
+every row it holds:
+
+- **Xero:** each authorised bank transaction (a transfer's two legs among them) and each authorised payment, on the
+  account it names. A bank transfer is no line of its own: its legs are bank transactions already, and counting
+  both would count every transfer twice.
+- **Mercury:** each pending or sent transaction, on its deposit account or its credit card account, dated by the
+  day it posted (UTC), or the day it was made while pending. A failed, cancelled, reversed or blocked one moved no
+  money.
+
+A line that no longer holds (a payment deleted in Xero, a transaction cancelled at Mercury) ends by `DELETE`; its
+history stays.
+
+The compare (`GET /compare`) reads the links: for each evidence link with an `evidence_for`, the lines of the
+account against the lines of the account it backs up. Two lines of the same amount at most a few days apart
+(default 5) are the same money; each line matches at most one. It lists what is missing from the book, what is
+missing from the evidence, and the evidence's pending lines apart, with each side's total. Lines just outside the
+range are read too, so a line near its edge still finds its match.
 
 ## Three layers
 

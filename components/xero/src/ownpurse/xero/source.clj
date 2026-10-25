@@ -151,3 +151,58 @@
                    (source-account described (if (= "CREDITCARD" (:bank-account-type r)) "credit-card" "bank")
                                    r (:name r)))
       [])))
+
+(def line-resources
+  "The resources whose rows are lines on a bank account. A bank account's lines are its bank transactions (the
+  legs of a transfer among them) and the payments made from or into it; a bank transfer is not a line of its own,
+  since its legs are bank transactions already."
+  #{"BankTransactions" "Payments"})
+
+(def ^:private money-in-payments
+  "The payment types that bring money into the bank account; every other type takes it out."
+  #{"ACCRECPAYMENT" "APCREDITPAYMENT" "APOVERPAYMENTPAYMENT" "APPREPAYMENTPAYMENT"})
+
+(defn- line [table row account amount fields]
+  (into {:xt/id (str "line:" (:xt/id row))
+         :account account
+         :source "xero"
+         :source-table (str (namespace table) "." (str/replace (clojure.core/name table) "-" "_"))
+         :source-row (:xt/id row)
+         :org (:org row)
+         :date (:date row)
+         :amount amount
+         :status "posted"}
+        (filter (comp some? val))
+        fields))
+
+(defn bank-lines
+  "The bank lines in rows of `resource` (from `rows`), as bank_lines rows: each authorised bank transaction and
+  payment, its amount signed from the bank account's side (money in is positive). A deleted or voided one is no
+  line. Other resources hold none. Pure."
+  [resource rows]
+  (let [{:keys [table]} (describe resource)
+        authorised (filter #(= "AUTHORISED" (:status %)) rows)
+        account (fn [r k] (row-id (:org r) "account" (get-in r [k :account-id])))]
+    (case resource
+      "BankTransactions"
+      (for [r authorised
+            :let [total (some-> (:total r) bigdec)]
+            :when (and total (get-in r [:bank-account :account-id]))]
+        (line table r (account r :bank-account)
+              (if (str/starts-with? (str (:type r)) "SPEND") (.negate ^BigDecimal total) total)
+              {:currency (:currency-code r)
+               :counterparty (get-in r [:contact :name])
+               :reference (:reference r)
+               :description (some :description (:line-items r))}))
+
+      "Payments"
+      (for [r authorised
+            :let [amount (some-> (or (:bank-amount r) (:amount r)) bigdec)]
+            :when (and amount (get-in r [:account :account-id]))]
+        (line table r (account r :account)
+              (if (money-in-payments (:payment-type r)) amount (.negate ^BigDecimal amount))
+              {:counterparty (or (get-in r [:invoice :contact :name]) (get-in r [:credit-note :contact :name]))
+               :reference (:reference r)
+               :description (get-in r [:invoice :invoice-number])}))
+
+      [])))

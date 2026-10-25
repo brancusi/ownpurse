@@ -1,5 +1,6 @@
 {:deps {org.clojure/clojure {:mvn/version "1.12.6"}
 
+        poly/compare {:local/root "../../components/compare"}
         poly/config {:local/root "../../components/config"}
         poly/entity {:local/root "../../components/entity"}
         poly/json {:local/root "../../components/json"}

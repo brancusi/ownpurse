@@ -27,11 +27,28 @@
         by-id #(into {} (map (juxt :xt/id identity)) %)]
     (vals (merge (by-id held) (by-id rows)))))
 
+(defn- credit-ids
+  "Mercury's ids of the credit card accounts the store holds for `org`."
+  [node org]
+  (if (store/table-exists? node :mercury/credit-accounts)
+    (map :id (store/q node ["SELECT id FROM mercury.credit_accounts WHERE org = ?" org]))
+    []))
+
+(defn- end-stale-lines!
+  "Ends, by DELETE, the bank lines of `source-table` for `org` that are no longer among `ids`: a line whose payment
+  was voided, or whose transaction failed, stops counting, and its history stays."
+  [node source-table org ids metadata]
+  (when (store/table-exists? node :bank-lines)
+    (let [stale (into [] (comp (map :xt/id) (remove (set ids)))
+                      (store/q node ["SELECT _id FROM bank_lines WHERE source_table = ? AND org = ?" source-table org]))]
+      (when (seq stale)
+        (store/delete! node :bank-lines stale {} (assoc metadata :why "fetch: lines that no longer hold"))))))
+
 (defn keep!
   "Keeps Mercury's answer to `resource` for Mercury org `org`, writing only the rows that changed, in one
-  transaction that names the tool, the org, the resource and when it was fetched. The org and its accounts,
-  every one the store holds and not only those fetched, are also kept as source_accounts rows, in the same
-  transaction. Returns {:items n :written n}, counting the
+  transaction that names the tool, the org, the resource and when it was fetched. Kept with them, from every row
+  the store holds for the org and not only those fetched: the org and its accounts as source_accounts rows, and its
+  transactions as bank_lines rows; a line that no longer holds ends. Returns {:items n :written n}, counting the
   resource's own rows."
   [node org resource answer {:keys [tool-version alias account start now]}]
   (let [fetched-at (or now (Instant/now))
@@ -39,7 +56,10 @@
         accounts (when (source/account-resources resource)
                    (mapv #(schema/check! :ownpurse/source-account %)
                          (source/source-accounts resource (with-held node table org rows))))
-        tables (cond-> {table rows} (seq accounts) (assoc :source-accounts accounts))
+        lines (when (source/line-resources resource)
+                (mapv #(schema/check! :ownpurse/bank-line %)
+                      (source/bank-lines resource (with-held node table org rows) (credit-ids node org))))
+        tables (cond-> {table rows} (seq accounts) (assoc :source-accounts accounts) lines (assoc :bank-lines lines))
         metadata (cond-> {:source "mercury-cli" :why "fetch" :org org :resource resource
                           :fetched-at (str fetched-at)}
                    alias (assoc :alias alias)
@@ -47,6 +67,9 @@
                    tool-version (assoc :tool-version tool-version)
                    start (assoc :start (str start)))
         {:keys [written]} (store/put-changed! node tables metadata)]
+    (when lines
+      (end-stale-lines! node (str (namespace table) "." (str/replace (name table) "-" "_")) org (map :xt/id lines)
+                        metadata))
     {:items (count rows) :written (get written table 0)}))
 
 (defn- holds-transactions?

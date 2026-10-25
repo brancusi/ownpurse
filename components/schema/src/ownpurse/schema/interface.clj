@@ -6,7 +6,8 @@
 
 (def registry
   "The registry: :ownpurse/amount, :ownpurse/commodity, :ownpurse/date, :ownpurse/book, :ownpurse/account,
-  :ownpurse/posting, :ownpurse/entry, :ownpurse/source-account (a row of source_accounts), :ownpurse/entity,
+  :ownpurse/posting, :ownpurse/entry, :ownpurse/source-account (a row of source_accounts),
+  :ownpurse/bank-line (a row of bank_lines), :ownpurse/entity,
   :ownpurse/link and the pieces they are made of."
   core/registry)
 

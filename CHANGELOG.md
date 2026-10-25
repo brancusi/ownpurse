@@ -31,3 +31,6 @@
   (`GET /source-accounts`) and link each to its entity, as its system of record or as evidence for one of its
   accounts (`PUT /links`). A link ends from a day (`DELETE /links`) and its history stays. The model is in
   `docs/MODEL.md`.
+- Bank lines and the compare: every bank and card line from Xero and Mercury in one table, `bank_lines`, and
+  `GET /compare`, which lists, for each account linked as evidence, the lines it has that the book's account has
+  not, the lines the book has that it has not, and its pending lines.

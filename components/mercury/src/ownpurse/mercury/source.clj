@@ -5,7 +5,7 @@
    [clojure.string :as str]
    [clojure.walk :as walk])
   (:import
-   (java.time Instant LocalDate)))
+   (java.time Instant LocalDate ZoneOffset ZonedDateTime)))
 
 (def resources
   "The resources ownpurse keeps, by mercury-cli's name: the key of the list in Mercury's answer (or of the one item),
@@ -166,3 +166,47 @@
       "accounts" (for [r rows] (source-account described "bank" r (account-name r (:id r))))
       "credit" (for [r rows] (source-account described "credit-card" r (account-name r "Credit card")))
       [])))
+
+(def line-resources
+  "The resources whose rows are lines on an account."
+  #{"transactions"})
+
+(defn- utc-date
+  "The day, in UTC, of an instant as `rows` makes it or as the store hands it back."
+  [t]
+  (cond
+    (instance? Instant t) (LocalDate/ofInstant t ZoneOffset/UTC)
+    (instance? ZonedDateTime t) (LocalDate/ofInstant (.toInstant ^ZonedDateTime t) ZoneOffset/UTC)
+    :else nil))
+
+(def ^:private line-status
+  "A transaction is a line while pending and once sent. A failed, cancelled, reversed or blocked one moved no money."
+  {"pending" "pending" "sent" "posted"})
+
+(defn bank-lines
+  "The lines in rows of `resource` (from `rows`), as bank_lines rows: each pending or sent transaction, on its
+  deposit account or, when its account is one of `credit-ids` (Mercury's ids of the org's credit card accounts),
+  on that credit card account. Dated by the day it posted, in UTC, or the day it was made while pending. Other
+  resources hold none. Pure."
+  [resource rows credit-ids]
+  (if-not (line-resources resource)
+    []
+    (let [{:keys [table]} (describe resource)
+          credit? (set credit-ids)]
+      (for [{:keys [account-id status] :as r} rows
+            :let [status (line-status status)
+                  date (utc-date (or (:posted-at r) (:created-at r)))]
+            :when (and status account-id date (:amount r))]
+        (into {:xt/id (str "line:" (:xt/id r))
+               :account (row-id (:org r) (if (credit? account-id) "credit-account" "account") account-id)
+               :source "mercury"
+               :source-table (str (namespace table) "." (str/replace (name table) "-" "_"))
+               :source-row (:xt/id r)
+               :org (:org r)
+               :date date
+               :amount (bigdec (:amount r))
+               :status status}
+              (filter (comp some? val))
+              {:counterparty (:counterparty-name r)
+               :description (or (:bank-description r) (:note r))
+               :reference (:external-memo r)})))))

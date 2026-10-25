@@ -115,6 +115,28 @@
           (xero/keep! node tenant "Accounts" {:Accounts []} {})
           (is (= [{:code "1010" :status "active"} {:code "1020" :status "archived"}] (banks))))))))
 
+(deftest bank-lines-test
+  (with-node
+    (fn [node]
+      (keep-all! node pull-1)
+      (let [account #(str "xero:" tenant ":account:c0ffee01-0000-4000-8000-00000000000" %)
+            lines #(store/q node ["SELECT amount FROM bank_lines WHERE account = ?" (account %)])
+            sum #(reduce + 0M (map :amount %))]
+        (testing "a bank account's lines are its bank transactions and payments, money in positive"
+          (is (= 8 (count (lines 1))))
+          (is (= -11715.24M (sum (lines 1))))
+          (is (= [5000.0M] (map :amount (lines 2)))))
+        (testing "a transfer is counted once a side: its legs are bank transactions, the transfer itself no line"
+          (is (= [] (store/q node "SELECT _id FROM bank_lines WHERE source_table = 'xero.bank_transfers'"))))
+        (testing "a deleted payment's line ends, and its history stays"
+          (let [payments (get (into {} (xero/read-answers pull-1)) "Payments")
+                deleted (assoc (last (:Payments payments)) :Status "DELETED")]
+            (xero/keep! node tenant "Payments" {:Payments [deleted]} {})
+            (is (= 7 (count (lines 1))))
+            (is (= -9315.24M (sum (lines 1))))
+            (is (= 8 (count (store/q node ["SELECT _id FROM bank_lines FOR ALL VALID_TIME WHERE account = ?"
+                                           (account 1)]))))))))))
+
 (deftest pull-test
   (with-node
     (fn [node]

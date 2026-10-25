@@ -53,7 +53,8 @@ is done, and the next steps in order with what "done" means. Update it when a st
   attachments, history). Aram chose Mercury first, through `brancusi/mercury-cli` (private): a thin Babashka tool
   like xero-cli, one read-only API token per Mercury org, reading credit card accounts too, which mercury-axi does
   not. 3b.4 follows.
-- Cleanup for later: `xero` and `mercury` each have their own kebab-case and payload normalising. When a third
+- Cleanup for later: `xero` and `mercury` each have their own kebab-case and payload normalising, `with-held`
+  and `end-stale-lines!`. When a third
   source comes, move the shared part into a component.
 - **2026-10-25: entities are linked to source accounts, not to sources.** Aram's instruction: an entity (one
   business or household) has many sources, and adding a source must not change the model. Each source maps its
@@ -65,6 +66,14 @@ is done, and the next steps in order with what "done" means. Update it when a st
 
 ## Done
 
+- **Bank lines and the compare (2026-10-25).** `bank_lines`, the first documents table: Xero's authorised bank
+  transactions and payments (never bank transfers, whose legs are bank transactions already) and Mercury's pending
+  and sent transactions, money in positive, derived on each pull from every row held; a line that no longer holds
+  ends by `DELETE`. The `compare` component matches each evidence link's lines against its `evidence_for`
+  account's (same amount, at most `days` apart, default 5) and lists what each side is missing, pending apart.
+  `GET /compare?account=&from=&to=&days=`. Not yet: a line in another currency, Xero's batch payments, and
+  lines the book splits or joins (one deposit for two invoices).
+
 - **Entities and their sources (2026-10-25).** Aram's design, written into [MODEL.md](../MODEL.md#entities-and-their-sources):
   `entities` (one business or household), `source_accounts` (what each source holds that can belong to one: a
   Xero org and its bank accounts, a Mercury org, its accounts and credit cards, written by each source's component
@@ -74,8 +83,7 @@ is done, and the next steps in order with what "done" means. Update it when a st
   API: `GET /entities`, `PUT /entities/{id}`, `GET /source-accounts?source=&unlinked=`, `PUT /links`,
   `DELETE /links?account=&on=`. Source accounts come from every account row the store holds for the org plus
   what was fetched, so Xero's modified-since pulls (and a record kept before this) list every account; the
-  workspace found that gap on its real record. Next on it: the compare, for each evidence link with an
-  `evidence_for`.
+  workspace found that gap on its real record.
 
 - **Mercury as a source (2026-10-25).** The `mercury` component runs `mercury-cli get <resource> --org <alias>
   --all --format json` and keeps each item as one row: `mercury.organizations`, `accounts` (archived ones too),

@@ -107,6 +107,14 @@
           (is (= 400 status))
           (is (= "ownpurse/invalid-link" (get-in body [:error :type]))))
         (is (= 404 (:status (request app :put "/links" {:entity "nobody" :account operating :role "evidence"})))))
+      (testing "the compare lists, for March, what each side has that the other has not"
+        (let [{:keys [status body]} (request app :get (str "/compare?account=" operating
+                                                           "&from=2026-03-01&to=2026-03-31"))
+              c (first (:compares body))]
+          (is (= 200 status))
+          (is (= [operating xero-1010 0] ((juxt :account :evidence-for :matched) c)))
+          (is (= [3 8 1] (map (comp count c) [:missing-from-book :missing-from-evidence :pending])))
+          (is (= {:evidence "8181.60" :book "-11715.24"} (:totals c)))))
       (testing "a link ends from a day"
         (is (= {:status 200 :body {:ended {:entity "tallowmere" :account operating :role "evidence"
                                            :evidence-for xero-1010 :from "2025-01-01" :until "2025-07-01"}}}
@@ -119,4 +127,5 @@
     (is (= 200 status))
     (is (contains? (:paths body) (keyword "/health")))
     (is (contains? (:paths body) (keyword "/pull")))
-    (is (contains? (:paths body) (keyword "/links")))))
+    (is (contains? (:paths body) (keyword "/links")))
+    (is (contains? (:paths body) (keyword "/compare")))))
