@@ -34,6 +34,13 @@ is done, and the next steps in order with what "done" means. Update it when a st
   archived on GitHub, with every branch pushed and tagged `archive/*`. Its posting rules, which 3b.4 ports, are in
   `rust/crates/xero-axi-core/src/ledger.rs` at the tag `archive/gl-full-contract`, with the goldens and property
   tests that pinned them.
+- **2026-10-25: a voided document's postings end by `DELETE`.** Aram's instruction. Derived rows (entries and
+  postings made from a source's documents) stop counting by XTDB `DELETE`, which ends their validity and keeps
+  their history, rather than a void flag every `SUM` must remember. Source rows are never deleted, and nothing is
+  ever `ERASE`d (AGENTS.md, "Rules that do not bend").
+- **2026-10-25: development is REPL-driven.** One long-lived REPL holds the running system; `(dev/watch)` reloads a
+  saved file and runs the tests that cover it, `(dev/last-run)` returns the result. Agents start the REPL when none
+  is running and start and stop the dev system as they need it. The shell run is still the check before a commit.
 - **2026-10-25: a group's books live in its own private workspace.** That workspace holds the record and the config
   naming its orgs, and runs ownpurse over them (the server with `OWNPURSE_DATA_DIR` and `OWNPURSE_LOCAL_CONFIG`);
   its own agent works there. When it needs something ownpurse does not do, it asks in a GitHub issue on this
@@ -114,8 +121,9 @@ apart from `public.invoices`, and DataGrip shows the schema.
 
 ### 3b.4 Derive and check (next)
 
-Where to start: the decision below first (ask Aram); the pure posting rules and their goldens can be written
-before it, since only the step that ends a voided document's postings depends on it.
+Where to start: the pure posting rules for one document kind (an invoice), with xero-axi's goldens as tests, at
+the REPL with `(dev/watch)` on; then the rest of the kinds, then the step that writes them and ends what no longer
+holds.
 
 
 - Entries and postings derived from the documents by xero-axi's rules (`ledger.rs`, above), ported as pure
@@ -127,10 +135,8 @@ before it, since only the step that ends a voided document's postings depends on
   TrialBalance report added for the check, and CreditNotes, Overpayments and Prepayments files if the rules cover
   them.
 
-- **To decide with Aram before writing it:** when a document is voided or loses a line, its postings must stop
-  counting. The proposal is XTDB `DELETE` of the derived postings (their validity ends; history keeps them), not a
-  void flag every `SUM` must remember. AGENTS.md and the house style forbid `DELETE` without a person's explicit
-  instruction, so this needs that instruction and a sentence in AGENTS.md saying derived rows may end this way.
+- **Decided (2026-10-25):** when a document is voided or loses a line, its derived postings end by XTDB `DELETE`
+  (their validity ends; history keeps them), not a void flag. AGENTS.md says so.
 
 Done when:
 

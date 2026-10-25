@@ -10,16 +10,27 @@ disagree, AGENTS.md wins.
 
 ## Work through the REPL
 
-There is one long-lived nREPL for the workspace, shared with the person you work with.
+Develop REPL-first: the running JVM is the fast loop, the shell is for the final check. Don't start a JVM per
+question (`clojure -M ...`, a Kaocha run) when the REPL can answer it in a second.
 
-- The port is in `.nrepl-port` at the workspace root. Use it; ask which port only if the file is missing. If no REPL
-  is running, ask the person before starting one (`clojure -M:dev:test:nrepl`, in the background).
+- The port is in `.nrepl-port` at the workspace root. If the file is missing or nothing answers on it, start the
+  REPL yourself in the background (`clojure -M:dev:test:nrepl` from the root), wait for `.nrepl-port`, then
+  `(dev)`, `(go)` and `(watch)`.
 - Evaluate with `clj-nrepl-eval -p "$(cat .nrepl-port)"` and a heredoc (`<<'EOF'`). The `clojure-eval` skill has
-  the details.
-- After editing a file, load it: `(require 'ownpurse.x.core :reload)`. After a rename, a deleted var or a change to
-  the system, run `(dev/reset)`, which stops the system, reloads changed namespaces and starts it again.
-- The REPL is shared: never `(dev/halt)` or `(dev/reset)` while the person is in the middle of something without
-  saying so, and never redefine a var only in the REPL. Every definition lives in a file.
+  the details. Call vars by their full namespace (`(dev/go)`, `(ownpurse.xero.source/rows ...)`): each eval starts
+  in `user`.
+- The dev system is yours to start and stop: `(dev/go)`, `(dev/halt)`, `(dev/reset)` as the work needs. It runs over
+  `data/`; tests use their own in-memory nodes. Leave it running when you finish, as you found it.
+- Tests on save: `(dev/watch)` reloads a saved brick file and runs the tests that cover it (the file itself if it
+  is a test, else its brick's tests). After each Edit, read `(dev/last-run)`: the namespace, the tests, the summary
+  and their output, or why the file did not load. `(dev/tests)` runs everything in the REPL.
+- The loop: write the function in its file, evaluate it, call it at the REPL with real arguments (a sample from
+  `samples/`, a query on `(dev/node)`), then write or update the test and read `(dev/last-run)`.
+- After a rename, a deleted var or a change to the system (routes, components, config), `(dev/reset)`. A new
+  dependency in `deps.edn` can be added live with `(clojure.repl.deps/add-lib 'group/artifact {:mvn/version
+  "x"})`; anything stranger, restart the JVM.
+- The REPL is shared: say so before a `(dev/reset)` that would interrupt the person, and never redefine a var only
+  in the REPL. Every definition lives in a file.
 - Before saying something works, show it: evaluate it, or run its test.
 - The test run from the shell is the truth: `clojure -M:dev:test:kaocha` before every commit. (`poly test` does not
   run XTDB yet.)
@@ -91,8 +102,10 @@ syntax.
 - Tables have no fixed schema. Every document has `_id`; keep ids stable and derived from the source's own id.
 - Valid time is when something was true in the world; system time is when we recorded it. Query the past with
   `FOR VALID_TIME AS OF …` and `FOR SYSTEM_TIME AS OF …`, or `SETTING DEFAULT SYSTEM_TIME TO AS OF …`.
-- Never `ERASE`, and never `DELETE` ledger history: corrections are new versions. The only exception is a person's
-  explicit instruction, written down in the commit.
+- Never `ERASE`. Source rows are never deleted: a correction is a new version. Derived rows (entries and postings
+  made from a source's documents) stop counting by `DELETE`, which ends their validity and keeps their history (so
+  a voided invoice's postings stop counting without a flag every `SUM` must remember). Any other `DELETE` needs a
+  person's explicit instruction, written down in the commit.
 - Prefer SQL for anything a person or a report might read; use XTQL from Clojure when composing queries as data
   helps.
 

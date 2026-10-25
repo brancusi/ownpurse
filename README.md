@@ -18,11 +18,26 @@ plan is in [docs/plans/SPIKE.md](docs/plans/SPIKE.md). The earlier Rust version 
 
 ## Development
 
+Development is REPL-driven: one long-lived REPL holds the running system, you change functions in place and try
+them on real data, and the tests run every time you save.
+
 ```sh
 mise install                    # JDK 21, the Clojure CLI, Babashka
-clojure -M:poly info            # the Polylith workspace
-clojure -M:dev:test:nrepl       # the REPL; then (dev) and (go)
+clojure -M:dev:test:nrepl       # the REPL (writes .nrepl-port)
 ```
+
+Then, in the REPL:
+
+```clojure
+(dev)         ; load the development namespace
+(go)          ; start the system: the API on 7070, read-only SQL on 5433 (DataGrip, psql)
+(watch)       ; tests on save: each saved file reloads and its tests run; (last-run) has the details
+(reset)       ; after a rename or a change to the system: stop, reload what changed, start again
+(tests)       ; every test, in the REPL
+```
+
+In VS Code with Calva, opening the folder jacks in and runs `(dev)`, `(go)` and `(watch)` for you. Before a commit,
+run the checks from the shell: `clojure -M:dev:test:kaocha`, `clojure -M:poly check`, clj-kondo and cljfmt.
 
 How we work, and the rules that do not bend, are in [AGENTS.md](AGENTS.md).
 

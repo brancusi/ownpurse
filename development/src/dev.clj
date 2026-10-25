@@ -9,6 +9,7 @@
    [donut.system :as ds]
    [donut.system.repl :as dsr]
    [donut.system.repl.state :as state]
+   [dev.watch :as watch]
    [ownpurse.api.system :as system]
    [ownpurse.config.interface :as config]
    [ownpurse.store.interface :as store]
@@ -61,3 +62,16 @@
                         sort)]
     (apply require namespaces)
     (apply test/run-tests namespaces)))
+
+(defn watch
+  "Tests on save: every save of a brick's .clj file reloads it and runs the tests that cover it. Results print to
+  the REPL's output and (last-run) keeps the latest. (unwatch) stops it."
+  []
+  (watch/start))
+
+(defn unwatch [] (watch/stop))
+
+(defn last-run
+  "What the last save reloaded and tested, with the test output, or why the file did not load."
+  []
+  (dissoc (watch/last-run) :exception))

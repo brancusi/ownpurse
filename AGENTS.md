@@ -43,21 +43,30 @@ A Polylith workspace (top namespace `ownpurse`):
 
 ## The REPL
 
-Work through one long-lived REPL, shared by people and agents.
+Development here is REPL-driven: change a function, evaluate it in the running JVM, try it on real data, and let
+the tests run on save. Restarting the JVM is the exception. One long-lived REPL is shared by people and agents.
 
-1. Start it once from the workspace root: `clojure -M:dev:test:nrepl`. It writes `.nrepl-port`.
+1. If `.nrepl-port` is missing or nothing answers on it, start the REPL from the workspace root:
+   `clojure -M:dev:test:nrepl` (agents: in the background). It writes `.nrepl-port`.
 2. In the REPL: `(dev)`, then `(go)` starts the system and returns its ports, `(halt)` stops it, `(reset)` stops
    it, reloads changed namespaces and starts it again. `(node)` is the XTDB node, for `xt/q` at the REPL.
-3. After a rename or a deleted var, `(reset)`. If anything seems off, restart the JVM.
-4. Never leave a definition only in the REPL: it must be in a file.
-5. The test run from the shell is the truth, not the REPL's state. Run it before every commit.
+   Agents start, stop and reset the dev system whenever they need to; it is a development system over `data/`.
+3. `(watch)` turns on tests on save: saving a brick's `.clj` file reloads that namespace and runs the tests that
+   cover it (the file itself if it is a test, else its brick's tests). One line goes to the REPL's output;
+   `(last-run)` returns the whole result, test output included. `(unwatch)` stops it. `(tests)` runs them all.
+4. The loop: edit the file, evaluate the changed form (or `(require 'ns :reload)`), call it at the REPL with real
+   arguments, read `(last-run)`. After a rename, a deleted var or a change to the system (routes, components,
+   config), `(reset)`. If anything seems off, restart the JVM.
+5. Never leave a definition only in the REPL: it must be in a file.
+6. The test run from the shell is the truth, not the REPL's state. Run it before every commit.
 
 In VS Code with Calva, opening the folder does all of this: `.vscode/settings.json` jacks in with `:dev:test`, runs
-`(dev)` and `(go)`, and connects instead if `.nrepl-port` already exists. Calva's jack-in writes `.nrepl-port` at
-the root, so agents share that REPL. `ctrl+alt+space` then `g`, `r`, `h` or `t` runs `(go)`, `(reset)`, `(halt)` or
-`(tests)`. `(keep-xero-answers tenant "samples/xero/pull-1")` keeps a folder of synthetic Xero answers in the
-running system; `(pull-xero)` fetches the orgs named in `config.local.edn` through xero-cli (real calls; never in a
-test). CIDER and Cursive can attach to the same port (cider-nrepl is in the middleware).
+`(dev)`, `(go)` and `(watch)`, and connects instead if `.nrepl-port` already exists. Calva's jack-in writes
+`.nrepl-port` at the root, so agents share that REPL. `ctrl+alt+space` then `g`, `r`, `h`, `t` or `w` runs `(go)`,
+`(reset)`, `(halt)`, `(tests)` or `(watch)`. `(keep-xero-answers tenant "samples/xero/pull-1")` keeps a folder of
+synthetic Xero answers in the running system; `(pull-xero)` fetches the orgs named in `config.local.edn` through
+xero-cli (real calls; never in a test). CIDER and Cursive can attach to the same port (cider-nrepl is in the
+middleware).
 
 ## Clojure practice
 
@@ -93,6 +102,8 @@ in [SECURITY.md](SECURITY.md#what-never-goes-in-this-repository).
 - Money is `BigDecimal` (`1.10M`), stored as XTDB `DECIMAL`. Never a float or a double: not in code, not in JSON
   (read numbers as `BigDecimal`), not in a test.
 - History is never rewritten. Corrections are new facts; nothing in the ledger is updated in place or erased.
+  Derived rows (entries and postings made from a source's documents) stop counting by an XTDB `DELETE`, which
+  ends their validity and keeps their history; never `ERASE`, and never `DELETE` a source row.
 - ownpurse never calls a provider or holds a provider's token: it runs the source's tool, which does. Writes to a source go through that source's tool,
   as a sealed package a person approves.
 - Tests never call a provider, and never run a source's tool against one. They use the synthetic fixtures.

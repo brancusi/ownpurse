@@ -3,6 +3,8 @@
   :dev {:extra-paths ["development/src"]
         :extra-deps {org.clojure/clojure {:mvn/version "1.12.6"}
                      org.clojure/tools.namespace {:mvn/version "1.5.1"}
+                     ;; Tests on save at the REPL: (dev/watch)
+                     com.nextjournal/beholder {:mvn/version "1.0.2"}
 
                      poly/config {:local/root "components/config"}
                      poly/json {:local/root "components/json"}

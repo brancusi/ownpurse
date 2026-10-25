@@ -21,3 +21,5 @@
 - `POST /pull` fetches every org in the local config (`OWNPURSE_LOCAL_CONFIG`) and keeps what changed, so a private
   workspace can run ownpurse over its own record (`OWNPURSE_DATA_DIR`).
 - Removed: the xero-axi reader, its sample, the SQLite driver and the archived loader's SQL samples.
+- Tests on save at the REPL: `(watch)` reloads a saved file and runs the tests that cover it; `(last-run)` has the
+  result. Calva turns it on when the folder opens.
