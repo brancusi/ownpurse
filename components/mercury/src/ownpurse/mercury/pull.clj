@@ -3,6 +3,7 @@
   (:require
    [clojure.edn :as edn]
    [clojure.java.io :as io]
+   [clojure.string :as str]
    [ownpurse.mercury.cli :as cli]
    [ownpurse.mercury.source :as source]
    [ownpurse.schema.interface :as schema]
@@ -15,15 +16,29 @@
   that changes after this many days, other than a pending one, is seen only by a full pull."
   60)
 
+(defn- with-held
+  "`rows` over every row of `table` the store already holds for `org`: a fetch that asks only for what changed
+  still yields every source account, and a record written before source_accounts existed fills it."
+  [node table org rows]
+  (let [held (when (store/table-exists? node table)
+               (store/q node [(str "SELECT * FROM " (namespace table) "." (str/replace (name table) "-" "_")
+                                   " WHERE org = ?")
+                              org]))
+        by-id #(into {} (map (juxt :xt/id identity)) %)]
+    (vals (merge (by-id held) (by-id rows)))))
+
 (defn keep!
   "Keeps Mercury's answer to `resource` for Mercury org `org`, writing only the rows that changed, in one
-  transaction that names the tool, the org, the resource and when it was fetched. The org and its accounts are
-  also kept as source_accounts rows, in the same transaction. Returns {:items n :written n}, counting the
+  transaction that names the tool, the org, the resource and when it was fetched. The org and its accounts,
+  every one the store holds and not only those fetched, are also kept as source_accounts rows, in the same
+  transaction. Returns {:items n :written n}, counting the
   resource's own rows."
   [node org resource answer {:keys [tool-version alias account start now]}]
   (let [fetched-at (or now (Instant/now))
         [[table rows]] (seq (source/rows org resource answer fetched-at account))
-        accounts (mapv #(schema/check! :ownpurse/source-account %) (source/source-accounts resource rows))
+        accounts (when (source/account-resources resource)
+                   (mapv #(schema/check! :ownpurse/source-account %)
+                         (source/source-accounts resource (with-held node table org rows))))
         tables (cond-> {table rows} (seq accounts) (assoc :source-accounts accounts))
         metadata (cond-> {:source "mercury-cli" :why "fetch" :org org :resource resource
                           :fetched-at (str fetched-at)}

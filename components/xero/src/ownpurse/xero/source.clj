@@ -122,6 +122,10 @@
   (let [{:keys [list-key table] :as described} (describe resource)]
     {table (mapv (partial row resource described tenant fetched-at) (get answer list-key []))}))
 
+(def account-resources
+  "The resources whose rows hold source accounts."
+  #{"Organisation" "Accounts"})
+
 (defn- source-account [{:keys [table]} kind row name]
   (cond-> {:xt/id (:xt/id row)
            :source "xero"

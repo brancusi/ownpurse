@@ -72,7 +72,10 @@ is done, and the next steps in order with what "done" means. Update it when a st
   `evidence`, optionally `evidence_for` an account of that system of record). The `entity` component knows no
   source. Links end by `DELETE` from a day, so their history stays; the store refuses a `DELETE` on a source table.
   API: `GET /entities`, `PUT /entities/{id}`, `GET /source-accounts?source=&unlinked=`, `PUT /links`,
-  `DELETE /links?account=&on=`. Next on it: the compare, for each evidence link with an `evidence_for`.
+  `DELETE /links?account=&on=`. Source accounts come from every account row the store holds for the org plus
+  what was fetched, so Xero's modified-since pulls (and a record kept before this) list every account; the
+  workspace found that gap on its real record. Next on it: the compare, for each evidence link with an
+  `evidence_for`.
 
 - **Mercury as a source (2026-10-25).** The `mercury` component runs `mercury-cli get <resource> --org <alias>
   --all --format json` and keeps each item as one row: `mercury.organizations`, `accounts` (archived ones too),

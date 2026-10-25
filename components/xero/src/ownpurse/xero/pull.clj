@@ -12,14 +12,27 @@
   (:import
    (java.time Instant ZonedDateTime)))
 
+(defn- with-held
+  "`rows` over every row of `table` the store already holds for `org`: a fetch that asks only for what changed
+  still yields every source account, and a record written before source_accounts existed fills it."
+  [node table org rows]
+  (let [held (when (store/table-exists? node table)
+               (store/q node [(str "SELECT * FROM " (namespace table) "." (str/replace (name table) "-" "_")
+                                   " WHERE org = ?")
+                              org]))
+        by-id #(into {} (map (juxt :xt/id identity)) %)]
+    (vals (merge (by-id held) (by-id rows)))))
+
 (defn keep!
   "Keeps Xero's answer to `resource` for org `tenant`, writing only the rows that changed, in one transaction that
-  names the tool, the org, the resource and when Xero answered. The org and its bank accounts are also kept as
-  source_accounts rows, in the same transaction. Returns {:items n :written n}, counting the resource's own rows."
+  names the tool, the org, the resource and when Xero answered. The org and its bank accounts, every one the store
+  holds and not only those fetched, are also kept as source_accounts rows, in the same transaction. Returns {:items n :written n}, counting the resource's own rows."
   [node tenant resource answer {:keys [tool-version modified-since now]}]
   (let [fetched-at (source/fetched-at answer (or now (Instant/now)))
         [[table rows]] (seq (source/rows tenant resource answer fetched-at))
-        accounts (mapv #(schema/check! :ownpurse/source-account %) (source/source-accounts resource rows))
+        accounts (when (source/account-resources resource)
+                   (mapv #(schema/check! :ownpurse/source-account %)
+                         (source/source-accounts resource (with-held node table tenant rows))))
         tables (cond-> {table rows} (seq accounts) (assoc :source-accounts accounts))
         metadata (cond-> {:source "xero-cli" :why "fetch" :org tenant :resource resource
                           :fetched-at (str fetched-at)}

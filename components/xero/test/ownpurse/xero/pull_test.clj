@@ -97,6 +97,24 @@
                         (select-keys % [:source :why :org :resource]))
                     (map :user-metadata (store/q node "SELECT user_metadata FROM xt.txs")))))))))
 
+(deftest source-accounts-test
+  (with-node
+    (fn [node]
+      (let [accounts (get (into {} (xero/read-answers pull-1)) "Accounts")
+            reserve (first (filter #(= "1020" (:Code %)) (:Accounts accounts)))
+            banks #(store/q node "SELECT code, status FROM source_accounts WHERE kind = 'bank' ORDER BY code")]
+        (testing "a record kept before source_accounts existed: its accounts are held, none are source accounts"
+          (store/put! node (xero/rows tenant "Accounts" accounts (Instant/parse "2026-03-20T17:00:00Z"))
+                      {:source "test" :why "a record from before"})
+          (is (not (store/table-exists? node :source-accounts))))
+        (testing "a later fetch of only what changed makes every held bank account a source account, and an
+                  archived account's status follows"
+          (xero/keep! node tenant "Accounts" {:Accounts [(assoc reserve :Status "ARCHIVED")]} {})
+          (is (= [{:code "1010" :status "active"} {:code "1020" :status "archived"}] (banks))))
+        (testing "a fetch with nothing changed changes nothing"
+          (xero/keep! node tenant "Accounts" {:Accounts []} {})
+          (is (= [{:code "1010" :status "active"} {:code "1020" :status "archived"}] (banks))))))))
+
 (deftest pull-test
   (with-node
     (fn [node]

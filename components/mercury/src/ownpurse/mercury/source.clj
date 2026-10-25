@@ -135,6 +135,10 @@
    (let [{:keys [table] :as described} (describe resource)]
      {table (mapv (partial row resource described org account fetched-at) (items resource answer))})))
 
+(def account-resources
+  "The resources whose rows hold source accounts."
+  #{"organization" "accounts" "credit"})
+
 (defn- source-account [{:keys [table]} kind row name]
   {:xt/id (:xt/id row)
    :source "mercury"
