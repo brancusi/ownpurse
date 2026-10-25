@@ -114,7 +114,15 @@
           (is (= 200 status))
           (is (= [operating xero-1010 0] ((juxt :account :evidence-for :matched) c)))
           (is (= [3 8 1] (map (comp count c) [:missing-from-book :missing-from-evidence :pending])))
-          (is (= {:evidence "8181.60" :book "-11715.24"} (:totals c)))))
+          (is (= {:evidence "8181.60" :book "-11715.24"} (:totals c)))
+          (is (= {:manual 0 :check 0 :amount 0} (:matched-by c)))))
+      (testing "a match of two lines of different amounts is refused, saying why"
+        (let [{:keys [status body]}
+              (request app :put "/matches"
+                       {:evidence "mercury:4d0c5e11-0000-4000-8000-000000000001:transaction:4d0c5e11-0000-4000-8000-000000000101"
+                        :book (str "xero:" tenant ":payment:c0ffee04-0000-4000-8000-000000000001")})]
+          (is (= 400 status))
+          (is (= "ownpurse/invalid-match" (get-in body [:error :type])))))
       (testing "a link ends from a day"
         (is (= {:status 200 :body {:ended {:entity "tallowmere" :account operating :role "evidence"
                                            :evidence-for xero-1010 :from "2025-01-01" :until "2025-07-01"}}}
@@ -128,4 +136,5 @@
     (is (contains? (:paths body) (keyword "/health")))
     (is (contains? (:paths body) (keyword "/pull")))
     (is (contains? (:paths body) (keyword "/links")))
-    (is (contains? (:paths body) (keyword "/compare")))))
+    (is (contains? (:paths body) (keyword "/compare")))
+    (is (contains? (:paths body) (keyword "/matches")))))

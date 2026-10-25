@@ -31,7 +31,7 @@
           (cmp/match [(line "e" 1 "2026-03-09" -3215.47M) (line "e" 2 "2026-03-20" -80.00M)]
             [(line "b" 1 "2026-03-07" -3215.47M) (line "b" 2 "2026-03-11" -80.00M)]
             5)]
-      (is (= [["line:e:1" "line:b:1"]] (map #(mapv :xt/id %) matched)))
+      (is (= [["line:e:1" "line:b:1"]] (map (juxt (comp :xt/id :evidence) (comp :xt/id :book)) matched)))
       (is (= ["line:e:2"] (map :xt/id evidence-only)))
       (is (= ["line:b:2"] (map :xt/id book-only)))))
   (testing "two identical lines on one day match two, not one twice"
@@ -40,13 +40,13 @@
             [(line "b" 1 "2026-03-06" -4.75M) (line "b" 2 "2026-03-06" -4.75M)]
             5)]
       (is (= 2 (count matched)))
-      (is (= 2 (count (set (map (comp :xt/id second) matched)))))
+      (is (= 2 (count (set (map (comp :xt/id :book) matched)))))
       (is (empty? book-only))))
   (testing "the closest date wins, and 1.10 is 1.1"
     (let [{:keys [matched]} (cmp/match [(line "e" 1 "2026-03-10" 1.10M)]
                               [(line "b" 1 "2026-03-06" 1.1M) (line "b" 2 "2026-03-11" 1.100M)]
                               5)]
-      (is (= "line:b:2" (:xt/id (second (first matched))))))))
+      (is (= "line:b:2" (:xt/id (:book (first matched))))))))
 
 (deftest checks-test
   (testing "a check pairs with the book line of its number and amount, weeks apart, and not with a same-amount
@@ -57,7 +57,7 @@
              (line "b" 2 "2026-03-02" -850.00M :check-number "1043")
              (line "b" 3 "2026-03-22" -850.00M)]
             5)]
-      (is (= [["line:e:1" "line:b:2"]] (map #(mapv :xt/id %) matched)))
+      (is (= [["line:e:1" "line:b:2"]] (map (juxt (comp :xt/id :evidence) (comp :xt/id :book)) matched)))
       (is (empty? evidence-only))
       (is (= ["line:b:1" "line:b:3"] (map :xt/id book-only)))))
   (testing "the same check number with another amount is no match: both sides show it"
@@ -116,3 +116,64 @@
         (is (not-any? #(= "2026-03-31" (:date %))
                       (:missing-from-evidence (first (cmp/compare-accounts node {:account operating
                                                                                  :to (d "2026-03-31")})))))))))
+
+(deftest manual-matches-test
+  (with-node
+    (fn [node]
+      (store/put! node {:source-accounts
+                        [{:xt/id xero-org :source "xero" :source-table "xero.organisations" :org "t1" :kind "org"
+                          :name "Tallowmere"}
+                         {:xt/id xero-1010 :source "xero" :source-table "xero.accounts" :org "t1" :kind "bank"
+                          :name "Operating account"}
+                         {:xt/id operating :source "mercury" :source-table "mercury.accounts" :org "m1"
+                          :kind "bank" :name "Operating"}]
+                        :bank-lines
+                        [(line operating 1 "2026-03-05" -460.00M :check-number "1042")
+                         (line operating 2 "2026-04-17" -460.00M :check-number "1043")
+                         (line operating 3 "2026-04-20" -12.00M)
+                         (line xero-1010 1 "2026-02-14" -460.00M :counterparty "Keel Street Storage")
+                         (line xero-1010 2 "2026-03-17" -460.00M :counterparty "Keel Street Storage")]}
+                  {:source "test" :why "fixtures"})
+      (entity/put-entity! node {:id "tallowmere" :name "Tallowmere" :kind "business"})
+      (entity/link! node {:entity "tallowmere" :account xero-org :role "system-of-record"})
+      (entity/link! node {:entity "tallowmere" :account operating :role "evidence" :evidence-for xero-1010})
+      (let [row #(str %1 ":" %2)
+            spring {:account operating :from (d "2026-02-01") :to (d "2026-04-30") :pairs true}]
+        (testing "checks the book recorded without their numbers, weeks before they cleared, match nothing"
+          (let [[c] (cmp/compare-accounts node spring)]
+            (is (= 0 (:matched c)))
+            (is (= 3 (count (:missing-from-book c))))
+            (is (= 2 (count (:missing-from-evidence c))))))
+        (testing "a match is refused when the amounts differ, when a line is unknown, or when the lines are not on
+                  an evidence account and the account it is evidence for"
+          (is (= :ownpurse/invalid-match
+                 (:type (error #(cmp/put-match! node {:evidence (row operating 3) :book (row xero-1010 1)})))))
+          (is (= :ownpurse/not-found
+                 (:type (error #(cmp/put-match! node {:evidence (row operating 9) :book (row xero-1010 1)})))))
+          (is (= :ownpurse/invalid-match
+                 (:type (error #(cmp/put-match! node {:evidence (row xero-1010 1) :book (row operating 1)}))))))
+        (testing "a person says which book payment each check is; the compare pairs them first and says so"
+          (is (= {:evidence (row operating 1) :book (row xero-1010 1) :note "check 1042, February storage"
+                  :from "2026-03-05"}
+                 (cmp/put-match! node {:evidence (row operating 1) :book (row xero-1010 1)
+                                       :note "check 1042, February storage" :from (d "2026-03-05")})))
+          (cmp/put-match! node {:evidence (row operating 2) :book (row xero-1010 2)})
+          (let [[c] (cmp/compare-accounts node spring)]
+            (is (= 2 (:matched c)))
+            (is (= {:manual 2 :check 0 :amount 0} (:matched-by c)))
+            (is (= [] (:missing-from-evidence c)))
+            (is (= ["-12.00"] (map :amount (:missing-from-book c))))
+            (is (= [["manual" "2026-03-05" "2026-02-14" "check 1042, February storage"]
+                    ["manual" "2026-04-17" "2026-03-17" nil]]
+                   (map (juxt :by (comp :date :evidence) (comp :date :book) :note) (:pairs c))))))
+        (testing "a line is in one match at a time"
+          (is (= :ownpurse/match-conflict
+                 (:type (error #(cmp/put-match! node {:evidence (row operating 1) :book (row xero-1010 2)}))))))
+        (testing "ending a match keeps its history, and the lines are missing again"
+          (is (= :ownpurse/invalid-match
+                 (:type (error #(cmp/end-match! node {:evidence (row operating 1) :on (d "2026-03-04")}))))
+              "not before it starts")
+          (is (some? (:until (cmp/end-match! node {:evidence (row operating 2)}))))
+          (is (= {:manual 1 :check 0 :amount 0} (:matched-by (first (cmp/compare-accounts node spring)))))
+          (is (= 2 (count (store/q node "SELECT _id FROM line_matches FOR ALL VALID_TIME"))))
+          (is (= :ownpurse/not-found (:type (error #(cmp/end-match! node {:evidence (row operating 2)}))))))))))

@@ -103,7 +103,11 @@ The compare (`GET /compare`) reads the links: for each evidence link with an `ev
 account against the lines of the account it backs up. Two lines of the same amount at most a few days apart
 (default 5) are the same money; each line matches at most one. Before that, a line with a check number (`check_number`:
 Mercury's `checkNumber`, or a Xero reference that is only a check number, such as `Check 1042`) pairs with the line
-of the same number and amount, however far apart: a check clears weeks after it is written. It lists what is missing from the book, what is
+of the same number and amount, however far apart: a check clears weeks after it is written. Before both, the pairs a
+person asserted: `line_matches` (`PUT /matches`) says an evidence line and a book line of the same amount are the
+same money, for a book that never recorded a check's number or a date the bank moved. Each line is in one match at a
+time, and a match ends by `DELETE`, keeping its history, like a link. The compare counts each pair's kind
+(`matched_by`: manual, check or amount), so a reviewer sees which a person asserted. It lists what is missing from the book, what is
 missing from the evidence, and the evidence's pending lines apart, with each side's total. Lines up to 120 days
 outside the range are read too, so a line near its edge still finds its match, a check included.
 

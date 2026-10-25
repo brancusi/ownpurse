@@ -35,3 +35,6 @@
   `GET /compare`, which lists, for each account linked as evidence, the lines it has that the book's account has
   not, the lines the book has that it has not, and its pending lines.
 - The compare pairs a check with its line by check number and amount first, however long it took to clear.
+- Matches by hand: `PUT /matches` says an evidence line and a book line are the same money, and the compare pairs
+  them first. The compare counts how each pair was made (by hand, by check number, by amount), and lists the pairs
+  with `pairs=true`.

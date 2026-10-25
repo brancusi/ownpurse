@@ -73,10 +73,25 @@
    [:evidence-for :string] [:evidence-for-name {:optional true} [:maybe :string]]
    [:from {:optional true} :string] [:to {:optional true} :string] [:days :int]
    [:matched :int]
+   [:matched-by [:map [:manual :int] [:check :int] [:amount :int]]]
+   [:pairs {:optional true} [:vector [:map [:by :string] [:evidence Line] [:book Line] [:note {:optional true} :string]]]]
    [:missing-from-book [:vector Line]]
    [:missing-from-evidence [:vector Line]]
    [:pending [:vector Line]]
    [:totals [:map [:evidence :string] [:book :string]]]])
+
+(def Match
+  "Two lines a person says are the same money, by their source rows."
+  [:map [:evidence :string] [:book :string] [:note {:optional true} :string] [:from {:optional true} :string]
+   [:until {:optional true} :string]])
+
+(def MatchBody
+  "PUT /matches: the source rows of an evidence line and a book line of the same amount."
+  [:map {:closed true}
+   [:evidence [:string {:min 1}]]
+   [:book [:string {:min 1}]]
+   [:note {:optional true} :string]
+   [:from {:optional true} (schema/schema :ownpurse/date)]])
 
 (def EntityBody
   "PUT /entities/{id}: the entity's name and kind."
@@ -133,7 +148,8 @@
           (finally (reset! running false)))))))
 
 (def ^:private entity-errors
-  {:ownpurse/invalid 400 :ownpurse/invalid-link 400 :ownpurse/not-found 404 :ownpurse/link-conflict 409})
+  {:ownpurse/invalid 400 :ownpurse/invalid-link 400 :ownpurse/invalid-match 400 :ownpurse/not-found 404
+   :ownpurse/link-conflict 409 :ownpurse/match-conflict 409})
 
 (defn- answer
   "Calls `f` and answers 200 with what it returns, or the error the entity component threw, as structured JSON."
@@ -181,16 +197,35 @@
    ["/compare"
     {:get {:summary (str "Compares each account linked as evidence for an account (or only `account`) with that "
                          "account: the lines each has that the other has not, over the days from `from` to `to`. "
-                         "Lines of the same amount at most `days` apart (default 5) are the same money. Pending "
-                         "lines are listed apart. Reads what the last pull kept; it calls no source.")
+                         "Lines a person matched (PUT /matches) pair first, then lines of the same check number and "
+                         "amount, then lines of the same amount at most `days` apart (default 5); `matched-by` "
+                         "counts each kind, and `pairs=true` lists the pairs. Pending lines are listed apart. Reads "
+                         "what the last pull kept; it calls no source.")
            :parameters {:query [:map
                                 [:account {:optional true} [:string {:min 1}]]
                                 [:from {:optional true} (schema/schema :ownpurse/date)]
                                 [:to {:optional true} (schema/schema :ownpurse/date)]
-                                [:days {:optional true} [:int {:min 0 :max 60}]]]}
+                                [:days {:optional true} [:int {:min 0 :max 60}]]
+                                [:pairs {:optional true} :boolean]]}
            :responses {200 {:body [:map [:compares [:vector Compare]]]} 404 {:body ApiError}}
            :handler (fn [{{:keys [query]} :parameters}]
                       (answer #(hash-map :compares (cmp/compare-accounts node query))))}}]
+   ["/matches"
+    {:put {:summary (str "Says two lines are the same money: an evidence line and a book line of the same amount, on "
+                         "an evidence account and the account it is evidence for, by their source rows (the compare "
+                         "lists each line's source-row). The compare pairs them first. Each line is in one match at "
+                         "a time.")
+           :parameters {:body MatchBody}
+           :responses {200 {:body [:map [:match Match]]} 400 {:body ApiError} 404 {:body ApiError}
+                       409 {:body ApiError}}
+           :handler (fn [{{:keys [body]} :parameters}]
+                      (answer #(hash-map :match (cmp/put-match! node body))))}
+     :delete {:summary "Ends the match of an evidence line, by its source row, from a day (default now). Its history is kept."
+              :parameters {:query [:map [:evidence [:string {:min 1}]]
+                                   [:on {:optional true} (schema/schema :ownpurse/date)]]}
+              :responses {200 {:body [:map [:ended Match]]} 400 {:body ApiError} 404 {:body ApiError}}
+              :handler (fn [{{:keys [query]} :parameters}]
+                         (answer #(hash-map :ended (cmp/end-match! node query))))}}]
    ["/links"
     {:put {:summary (str "Links a source account to an entity, from a day (default today): as its system of record "
                          "(an org, one per entity), or as evidence, optionally for an account of that system of "
