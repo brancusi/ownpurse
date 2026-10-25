@@ -162,6 +162,15 @@
   "The payment types that bring money into the bank account; every other type takes it out."
   #{"ACCRECPAYMENT" "APCREDITPAYMENT" "APOVERPAYMENTPAYMENT" "APPREPAYMENTPAYMENT"})
 
+(defn check-number
+  "The check number in a reference that is only that: \"Check 1042\", \"Chk #1042\", \"#1042\" or \"1042\" (three
+  digits or more). Leading zeros dropped. Any other reference, such as \"Loan 2207\", has none."
+  [reference]
+  (when (string? reference)
+    (some->> (re-matches #"(?i)\s*(?:(?:check|cheque|chk|ck)\.?\s*(?:no\.?|number)?\s*)?#?\s*0*([1-9]\d{2,})\s*"
+                         reference)
+             second)))
+
 (defn- line [table row account amount fields]
   (into {:xt/id (str "line:" (:xt/id row))
          :account account
@@ -193,6 +202,7 @@
               {:currency (:currency-code r)
                :counterparty (get-in r [:contact :name])
                :reference (:reference r)
+               :check-number (check-number (:reference r))
                :description (some :description (:line-items r))}))
 
       "Payments"
@@ -203,6 +213,7 @@
               (if (money-in-payments (:payment-type r)) amount (.negate ^BigDecimal amount))
               {:counterparty (or (get-in r [:invoice :contact :name]) (get-in r [:credit-note :contact :name]))
                :reference (:reference r)
+               :check-number (check-number (:reference r))
                :description (get-in r [:invoice :invoice-number])}))
 
       [])))

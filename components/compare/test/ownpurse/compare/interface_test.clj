@@ -48,6 +48,24 @@
                               5)]
       (is (= "line:b:2" (:xt/id (second (first matched))))))))
 
+(deftest checks-test
+  (testing "a check pairs with the book line of its number and amount, weeks apart, and not with a same-amount
+            line from the month before"
+    (let [{:keys [matched evidence-only book-only]}
+          (cmp/match [(line "e" 1 "2026-03-24" -850.00M :check-number "1043")]
+            [(line "b" 1 "2026-02-27" -850.00M :check-number "1031")
+             (line "b" 2 "2026-03-02" -850.00M :check-number "1043")
+             (line "b" 3 "2026-03-22" -850.00M)]
+            5)]
+      (is (= [["line:e:1" "line:b:2"]] (map #(mapv :xt/id %) matched)))
+      (is (empty? evidence-only))
+      (is (= ["line:b:1" "line:b:3"] (map :xt/id book-only)))))
+  (testing "the same check number with another amount is no match: both sides show it"
+    (let [{:keys [matched]} (cmp/match [(line "e" 1 "2026-03-24" -850.00M :check-number "1043")]
+                              [(line "b" 1 "2026-03-02" -805.00M :check-number "1043")]
+                              5)]
+      (is (empty? matched)))))
+
 (deftest compare-test
   (with-node
     (fn [node]

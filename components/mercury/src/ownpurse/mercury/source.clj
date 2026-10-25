@@ -209,4 +209,5 @@
               (filter (comp some? val))
               {:counterparty (:counterparty-name r)
                :description (or (:bank-description r) (:note r))
-               :reference (:external-memo r)})))))
+               :reference (:external-memo r)
+               :check-number (some->> (:check-number r) str (re-find #"[1-9]\d*"))})))))

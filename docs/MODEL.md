@@ -85,8 +85,8 @@ linked as evidence.
 ## Bank lines and the compare
 
 `bank_lines` is the first documents table: every line on a bank or credit card account, from every source, in one
-shape (`account`, `date`, `amount`, `status`, `counterparty`, `description`, `reference`, and `source_row` back to
-the source row). Money in is positive, from the account's side. Each source derives its own on every pull, from
+shape (`account`, `date`, `amount`, `status`, `counterparty`, `description`, `reference`, `check_number`, and
+`source_row` back to the source row). Money in is positive, from the account's side. Each source derives its own on every pull, from
 every row it holds:
 
 - **Xero:** each authorised bank transaction (a transfer's two legs among them) and each authorised payment, on the
@@ -101,9 +101,11 @@ history stays.
 
 The compare (`GET /compare`) reads the links: for each evidence link with an `evidence_for`, the lines of the
 account against the lines of the account it backs up. Two lines of the same amount at most a few days apart
-(default 5) are the same money; each line matches at most one. It lists what is missing from the book, what is
-missing from the evidence, and the evidence's pending lines apart, with each side's total. Lines just outside the
-range are read too, so a line near its edge still finds its match.
+(default 5) are the same money; each line matches at most one. Before that, a line with a check number (`check_number`:
+Mercury's `checkNumber`, or a Xero reference that is only a check number, such as `Check 1042`) pairs with the line
+of the same number and amount, however far apart: a check clears weeks after it is written. It lists what is missing from the book, what is
+missing from the evidence, and the evidence's pending lines apart, with each side's total. Lines up to 120 days
+outside the range are read too, so a line near its edge still finds its match, a check included.
 
 ## Three layers
 

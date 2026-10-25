@@ -71,7 +71,9 @@ is done, and the next steps in order with what "done" means. Update it when a st
   and sent transactions, money in positive, derived on each pull from every row held; a line that no longer holds
   ends by `DELETE`. The `compare` component matches each evidence link's lines against its `evidence_for`
   account's (same amount, at most `days` apart, default 5) and lists what each side is missing, pending apart.
-  `GET /compare?account=&from=&to=&days=`. Not yet: a line in another currency, Xero's batch payments, and
+  `GET /compare?account=&from=&to=&days=`. Checks pair first by `check_number` and amount, whatever the dates
+  (asked for by the workspace: with `days` wide enough for a check, recurring payments of one amount paired
+  wrongly). Not yet: a line in another currency, Xero's batch payments, and
   lines the book splits or joins (one deposit for two invoices).
 
 - **Entities and their sources (2026-10-25).** Aram's design, written into [MODEL.md](../MODEL.md#entities-and-their-sources):

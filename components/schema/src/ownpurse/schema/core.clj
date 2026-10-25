@@ -112,7 +112,8 @@
                          [:currency {:optional true} :ownpurse/commodity]
                          [:description {:optional true} :string]
                          [:counterparty {:optional true} :string]
-                         [:reference {:optional true} :string]]
+                         [:reference {:optional true} :string]
+                         [:check-number {:optional true} [:re #"^[1-9][0-9]*$"]]]
 
     :ownpurse/slug [:re {:error/message "must be lowercase letters, digits and hyphens, such as tallowmere"}
                     #"^[a-z0-9][a-z0-9-]*$"]

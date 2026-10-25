@@ -135,6 +135,19 @@
                                             (str "mercury:" org ":transaction:" (txn-id 105))])
                              first :xt/valid-from (#(.toInstant ^java.time.ZonedDateTime %)))))))))
 
+(deftest check-number-test
+  (with-node
+    (fn [node]
+      (testing "a check's number goes to its line"
+        (mercury/keep! node org "transactions"
+                       {:transactions [{:id (txn-id 120) :accountId "4d0c5e11-0000-4000-8000-0000000000a1"
+                                        :amount -850.00M :status "sent" :kind "checkDeposit"
+                                        :createdAt "2026-03-20T10:00:00Z" :postedAt "2026-03-24T10:00:00Z"
+                                        :counterpartyName "Brindle & Oake Supply" :checkNumber "001043"}]}
+                       {:now day-2})
+        (is (= [{:check-number "1043" :date (LocalDate/parse "2026-03-24")}]
+               (store/q node "SELECT check_number, date FROM bank_lines")))))))
+
 (deftest refusals-test
   (with-node
     (fn [node]

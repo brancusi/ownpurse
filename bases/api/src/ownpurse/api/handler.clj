@@ -64,7 +64,7 @@
   [:map
    [:id :string] [:date :string] [:amount :string] [:status :string] [:source-row :string]
    [:counterparty {:optional true} :string] [:description {:optional true} :string]
-   [:reference {:optional true} :string]])
+   [:reference {:optional true} :string] [:check-number {:optional true} :string]])
 
 (def Compare
   "The compare of one evidence account with the account it is evidence for."

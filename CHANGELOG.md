@@ -34,3 +34,4 @@
 - Bank lines and the compare: every bank and card line from Xero and Mercury in one table, `bank_lines`, and
   `GET /compare`, which lists, for each account linked as evidence, the lines it has that the book's account has
   not, the lines the book has that it has not, and its pending lines.
+- The compare pairs a check with its line by check number and amount first, however long it took to clear.

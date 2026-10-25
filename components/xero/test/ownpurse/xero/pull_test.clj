@@ -137,6 +137,18 @@
             (is (= 8 (count (store/q node ["SELECT _id FROM bank_lines FOR ALL VALID_TIME WHERE account = ?"
                                            (account 1)]))))))))))
 
+(deftest check-number-test
+  (testing "a reference that is only a check number gives it; any other reference gives none"
+    (is (= ["1042" "1042" "1042" "1042" "1042"]
+           (map source/check-number ["Check 1042" "chk #1042" "#1042" "1042" "Cheque no. 001042"])))
+    (is (every? nil? (map source/check-number ["Loan 2207" "Saltmarsh inv 57" "ACH Quillfeather" "42" nil]))))
+  (testing "the payment for check 1042 carries its number to its line"
+    (with-node
+      (fn [node]
+        (keep-all! node pull-1)
+        (is (= [{:check-number "1042" :amount -3215.47M}]
+               (store/q node "SELECT check_number, amount FROM bank_lines WHERE check_number IS NOT NULL")))))))
+
 (deftest pull-test
   (with-node
     (fn [node]

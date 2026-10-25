@@ -11,6 +11,10 @@
   the day it was sent, posted by the bank days later."
   5)
 
+(def ^:private check-days
+  "How far outside the range lines are read, so a check written near its edge finds the line where it cleared."
+  120)
+
 (defn- days-apart [^LocalDate a ^LocalDate b]
   (Math/abs (.between ChronoUnit/DAYS a b)))
 
@@ -22,7 +26,24 @@
 (defn- in-order [lines]
   (sort-by (juxt :date :xt/id) lines))
 
-(defn match [evidence book days]
+(defn- check-key [{:keys [check-number amount]}]
+  (when check-number [check-number (amount-key amount)]))
+
+(defn- match-checks
+  "Pairs each evidence line with a book line of the same check number and amount, however far apart their dates:
+  a check is written on one day and clears weeks later. Returns {:matched [[e b]] :evidence [left] :book [left]}."
+  [evidence book]
+  (let [{:keys [matched left]}
+        (reduce (fn [{:keys [open] :as acc} e]
+                  (if-let [b (some-> (check-key e) open first)]
+                    (-> acc (update :matched conj [e b]) (update-in [:open (check-key e)] (comp vec rest)))
+                    (update acc :left conj e)))
+                {:open (group-by check-key (filter check-key book)) :matched [] :left []}
+                (in-order evidence))
+        used (set (map (comp :xt/id second) matched))]
+    {:matched matched :evidence left :book (remove (comp used :xt/id) book)}))
+
+(defn- match-by-date [evidence book days]
   (let [step (fn [{:keys [open] :as acc} e]
                (let [k (amount-key (:amount e))
                      apart #(days-apart (:date e) (:date %))
@@ -43,6 +64,11 @@
      :evidence-only evidence-only
      :book-only (vec (in-order (mapcat val open)))}))
 
+(defn match [evidence book days]
+  (let [checks (match-checks evidence book)
+        by-date (match-by-date (:evidence checks) (:book checks) days)]
+    (update by-date :matched #(into (:matched checks) %))))
+
 (defn- lines
   "The lines of `account` dated from `from` to `to` (either may be nil: no bound)."
   [node account ^LocalDate from ^LocalDate to]
@@ -52,11 +78,12 @@
                     from (-> (update 0 str " AND date >= ?") (conj from))
                     to (-> (update 0 str " AND date <= ?") (conj to))))))
 
-(defn- line-out [{:keys [xt/id date amount status counterparty description reference source-row]}]
+(defn- line-out [{:keys [xt/id date amount status counterparty description reference check-number source-row]}]
   (cond-> {:id id :date (str date) :amount (.toPlainString ^BigDecimal amount) :status status :source-row source-row}
     counterparty (assoc :counterparty counterparty)
     description (assoc :description description)
-    reference (assoc :reference reference)))
+    reference (assoc :reference reference)
+    check-number (assoc :check-number check-number)))
 
 (defn- total [lines]
   (.toPlainString ^BigDecimal (reduce + 0M (map :amount lines))))
@@ -64,8 +91,10 @@
 (defn- compare-link
   [node {:keys [entity account evidence-for]} {:keys [^LocalDate from ^LocalDate to days]}]
   (let [days (or days default-days)
-        ;; Lines just outside the range are read too, so a line near its edge still finds its match.
-        padded #(lines node % (some-> from (.minusDays days)) (some-> to (.plusDays days)))
+        ;; Lines outside the range are read too, so a line near its edge still finds its match; far enough for a
+        ;; check that clears weeks after it was written. Matching by date still keeps to `days`.
+        pad (max days check-days)
+        padded #(lines node % (some-> from (.minusDays pad)) (some-> to (.plusDays pad)))
         in-range? (fn [{:keys [^LocalDate date]}]
                     (and (or (nil? from) (not (.isBefore date from)))
                          (or (nil? to) (not (.isAfter date to)))))
