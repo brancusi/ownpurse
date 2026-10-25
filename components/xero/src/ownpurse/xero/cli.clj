@@ -14,10 +14,11 @@
    5 :xero/failed})
 
 (defn- run
-  "Runs `command` (a vector: the program and its arguments). Returns {:exit :out :err}."
+  "Runs `command` (a vector: the program and its arguments), asking for JSON on stdout and stderr (xero-cli prints
+  TOON by default). Returns {:exit :out :err}."
   [command]
   (let [p (try
-            (apply process/start {:out :pipe :err :pipe} command)
+            (apply process/start {:out :pipe :err :pipe :env {"XERO_CLI_FORMAT" "json"}} command)
             (catch java.io.IOException e
               (throw (ex-info (str "Could not run " (pr-str (first command)) ": " (ex-message e)
                                    ". Install xero-cli, or set OWNPURSE_XERO_CLI to its path.")

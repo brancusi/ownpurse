@@ -25,10 +25,10 @@ the workspace holds the record, the config naming its orgs, and its own decision
 over them (the server, with `OWNPURSE_DATA_DIR` and `OWNPURSE_LOCAL_CONFIG` pointed at its files). Its agent works
 there; the agent working here changes ownpurse.
 
-When a workspace needs something ownpurse does not do, it asks for it as a GitHub issue on this repository, written
-in general terms: what is needed and why, with synthetic examples. No names, ids, amounts or paths from the
-workspace's books, ever. Build it here as a general feature, with synthetic fixtures, and say in the issue how to
-use it. Nothing in this repository knows about any one workspace.
+When a workspace needs something ownpurse does not do, its agent asks this repository's agent by direct message
+(a message between Claude Code sessions), written in general terms: what is needed and why, with synthetic
+examples. No names, ids, amounts or paths from the workspace's books, ever. Build it here as a general feature, with
+synthetic fixtures, and reply with how to use it. Nothing in this repository knows about any one workspace.
 
 ## Layout
 

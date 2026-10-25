@@ -43,9 +43,19 @@ is done, and the next steps in order with what "done" means. Update it when a st
   is running and start and stop the dev system as they need it. The shell run is still the check before a commit.
 - **2026-10-25: a group's books live in its own private workspace.** That workspace holds the record and the config
   naming its orgs, and runs ownpurse over them (the server with `OWNPURSE_DATA_DIR` and `OWNPURSE_LOCAL_CONFIG`);
-  its own agent works there. When it needs something ownpurse does not do, it asks in a GitHub issue on this
-  repository, in general terms with no private data, and the change is built here as a general feature (AGENTS.md,
-  "Private workspaces and requests").
+  its own agent works there. When it needs something ownpurse does not do, it asks this repository's agent, in
+  general terms with no private data, and the change is built here as a general feature (AGENTS.md, "Private
+  workspaces and requests").
+- **2026-10-25: requests come by direct message.** Aram's instruction: a workspace's agent asks this repository's
+  agent in a message between sessions, not in a GitHub issue. The rule on private data is unchanged.
+- **2026-10-25: Mercury before 3b.4, through a new mercury-cli.** The workspace asked for Mercury as a source first
+  (accounts, credit card accounts, transactions with every version, statements), then more of Xero (reports,
+  attachments, history). Aram chose Mercury first, through `brancusi/mercury-cli` (private): a thin Babashka tool
+  like xero-cli, one read-only API token per Mercury org, reading credit card accounts too, which mercury-axi does
+  not. 3b.4 follows.
+- **2026-10-25: the source tools print TOON by default** (Aram), JSON or EDN on request. ownpurse always asks for
+  JSON: it runs xero-cli with `XERO_CLI_FORMAT=json` (which older xero-cli ignores) and mercury-cli with
+  `--format json`.
 
 ## Done
 
@@ -156,9 +166,11 @@ it on 2026-03-20 and on 2026-04-02.
 ## Housekeeping
 
 - **Who works where.** The agent in this repository changes ownpurse's code. A private workspace's agent works on
-  its group's books and asks for changes as issues on `brancusi/ownpurse` (none open as of 2026-10-25). Answer each
-  with a general feature, synthetic fixtures and how to use it, then close it.
-- **Repositories (2026-10-25).** `brancusi/xero-cli` (private) is the Xero tool, with its own `docs/NEXT.md`.
+  its group's books and asks for changes by direct message. Answer each with a general feature, synthetic fixtures
+  and how to use it. Open as of 2026-10-25: Mercury as a source (in progress), then Xero's reports, attachments,
+  history and small lists.
+- **Repositories (2026-10-25).** `brancusi/xero-cli` (private) is the Xero tool and `brancusi/mercury-cli` (private)
+  the Mercury tool, each with its own `docs/NEXT.md`.
   `brancusi/xero-axi` is archived on GitHub (read-only); its branches and `archive/*` tags are there.
 
 - ownpurse's `next` branch is pushed (2026-10-25); `main` is still the Rust code as released, until the spike passes.

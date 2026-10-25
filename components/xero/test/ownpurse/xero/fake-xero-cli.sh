@@ -17,6 +17,12 @@ if [ "${1:-}" = "--help" ]; then
   exit 0
 fi
 
+# xero-cli prints TOON unless asked for JSON; ownpurse must always ask.
+if [ "${XERO_CLI_FORMAT:-}" != "json" ]; then
+  echo '{"error":{"type":"usage","message":"The stand-in was not asked for JSON (XERO_CLI_FORMAT=json)."}}' >&2
+  exit 1
+fi
+
 if [ "$code" != "0" ]; then
   echo "fetched 0 items in 1 call" >&2
   echo '{"error":{"type":"refused","message":"Xero refused the request.","hint":"Check the org id."}}' >&2
