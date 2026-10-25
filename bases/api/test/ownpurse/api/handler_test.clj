@@ -31,20 +31,28 @@
 (deftest pull-test
   (let [node (store/start {:mode :in-memory})
         orgs (doto (File/createTempFile "orgs" ".edn") .deleteOnExit)
-        log (doto (File/createTempFile "fake-xero-cli" ".log") .deleteOnExit)
-        fake ["bash" "components/xero/test/ownpurse/xero/fake-xero-cli.sh" "samples/xero/pull-1" "0" (str log)]]
+        log (doto (File/createTempFile "fake-cli" ".log") .deleteOnExit)
+        sources (fn [local]
+                  {:node node
+                   :local local
+                   :xero {:cli ["bash" "components/xero/test/ownpurse/xero/fake-xero-cli.sh" "samples/xero/pull-1"
+                                "0" (str log)]}
+                   :mercury {:cli ["bash" "components/mercury/test/ownpurse/mercury/fake-mercury-cli.sh"
+                                   "samples/mercury/pull-1" "0" (str log)]}})]
     (try
       (testing "without a config naming the orgs, the pull says how to write one"
-        (let [{:keys [status body]} (request (handler/handler {:node node :xero {:cli fake :local "/nowhere.edn"}})
-                                             :post "/pull")]
+        (let [{:keys [status body]} (request (handler/handler (sources "/nowhere.edn")) :post "/pull")]
           (is (= 409 status))
-          (is (= "ownpurse/no-local-config" (get-in body [:error :type])))))
-      (testing "with one, every org is pulled and the counts come back"
-        (spit orgs (pr-str {:xero {:orgs [{:tenant "c0ffee00-0000-4000-8000-000000000000" :name "Tallowmere"}]}}))
-        (let [{:keys [status body]} (request (handler/handler {:node node :xero {:cli fake :local (str orgs)}})
-                                             :post "/pull")]
+          (is (= "ownpurse/no-local-config" (get-in body [:error :type]))))
+        (spit orgs (pr-str {:xero {:orgs []}}))
+        (is (= 409 (:status (request (handler/handler (sources (str orgs))) :post "/pull")))))
+      (testing "with one, every org of every source is pulled and the counts come back"
+        (spit orgs (pr-str {:xero {:orgs [{:tenant "c0ffee00-0000-4000-8000-000000000000" :name "Tallowmere"}]}
+                            :mercury {:orgs [{:alias "tallowmere" :name "Tallowmere"}]}}))
+        (let [{:keys [status body]} (request (handler/handler (sources (str orgs))) :post "/pull")]
           (is (= 200 status))
-          (is (= {:items 7 :written 7} (get-in body [:pulled :Tallowmere :Invoices])))))
+          (is (= {:items 7 :written 7} (get-in body [:pulled :xero :Tallowmere :Invoices])))
+          (is (= {:items 8 :written 8} (get-in body [:pulled :mercury :Tallowmere :transactions])))))
       (finally (store/stop node)))))
 
 (deftest openapi-test

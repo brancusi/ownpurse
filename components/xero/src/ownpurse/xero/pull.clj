@@ -53,8 +53,8 @@
                [resource (keep! node tenant resource answer {:tool-version tool-version :modified-since since})]))))
 
 (defn read-orgs
-  "The orgs a local config file names: {:xero {:orgs [{:tenant \"<tenant id>\" :name \"...\"}]}}. Says how to make
-  the file when it is missing."
+  "The orgs a local config file names: {:xero {:orgs [{:tenant \"<tenant id>\" :name \"...\"}]}}, or [] when it
+  names none. Says how to make the file when it is missing."
   [path]
   (let [f (io/file path)]
     (when-not (.isFile f)
@@ -62,10 +62,10 @@
                            "{:xero {:orgs [{:tenant \"<tenant id>\" :name \"<a name>\"}]}} (xero-cli orgs lists them).")
                       {:type :ownpurse/no-local-config :path (str path)})))
     (let [orgs (get-in (edn/read-string (slurp f)) [:xero :orgs])]
-      (when-not (and (seq orgs) (every? (comp string? :tenant) orgs))
-        (throw (ex-info (str path " names no orgs. Add {:xero {:orgs [{:tenant \"<tenant id>\" :name \"<a name>\"}]}}.")
+      (when-not (every? (comp string? :tenant) orgs)
+        (throw (ex-info (str path " names a Xero org without a tenant. Write {:xero {:orgs [{:tenant \"<tenant id>\" :name \"<a name>\"}]}}.")
                         {:type :ownpurse/no-local-config :path (str path)})))
-      orgs)))
+      (vec orgs))))
 
 (defn pull-orgs!
   "Pulls every resource in `source/pull-order` for each of `orgs` ({:tenant :name}), one org after another.

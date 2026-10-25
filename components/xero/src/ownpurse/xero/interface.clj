@@ -46,8 +46,8 @@
   (pull/pull! node opts))
 
 (defn read-orgs
-  "The orgs named in a local config file, {:xero {:orgs [{:tenant :name}]}}. Throws :ownpurse/no-local-config,
-  saying how to make the file, when it is missing or names none."
+  "The orgs named in a local config file, {:xero {:orgs [{:tenant :name}]}}, or [] when it names none. Throws
+  :ownpurse/no-local-config, saying how to make the file, when it is missing."
   [path]
   (pull/read-orgs path))
 

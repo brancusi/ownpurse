@@ -114,9 +114,11 @@
 
 (deftest pull-orgs-test
   (let [config (doto (File/createTempFile "orgs" ".edn") .deleteOnExit)]
-    (testing "a missing or empty config says how to write it"
+    (testing "a missing config says how to write it; one with no Xero orgs names none"
       (is (= :ownpurse/no-local-config (:type (error #(xero/read-orgs "/nowhere/config.local.edn")))))
-      (spit config "{:xero {:orgs []}}")
+      (spit config "{:mercury {:orgs []}}")
+      (is (= [] (xero/read-orgs (str config))))
+      (spit config "{:xero {:orgs [{:name \"no tenant\"}]}}")
       (is (= :ownpurse/no-local-config (:type (error #(xero/read-orgs (str config)))))))
     (testing "every org in the config is pulled, every resource in order"
       (spit config (pr-str {:xero {:orgs [{:tenant tenant :name "Tallowmere"}]}}))

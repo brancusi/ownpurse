@@ -12,6 +12,7 @@
    [dev.watch :as watch]
    [ownpurse.api.system :as system]
    [ownpurse.config.interface :as config]
+   [ownpurse.mercury.interface :as mercury]
    [ownpurse.store.interface :as store]
    [ownpurse.xero.interface :as xero]))
 
@@ -42,8 +43,30 @@
   of an org is about one call per resource per 1000 items; later pulls ask only for what changed."
   ([] (pull-xero {}))
   ([{:keys [local] :as opts}]
-   (let [{:keys [cli] default-local :local} (:xero (config/read-config :dev))]
-     (xero/pull-orgs! (or (:node opts) (node)) {:cli cli :orgs (xero/read-orgs (or local default-local))}))))
+   (let [{:keys [xero] default-local :local} (config/read-config :dev)]
+     (xero/pull-orgs! (or (:node opts) (node))
+                      {:cli (:cli xero) :orgs (xero/read-orgs (or local default-local))}))))
+
+(defn keep-mercury-answers
+  "Pulls a folder of saved Mercury answers (samples/mercury/pull-1) into the running system, through the stand-in
+  mercury-cli the tests use, as of the instant `now` (default: now)."
+  ([dir] (keep-mercury-answers dir (java.time.Instant/now)))
+  ([dir now]
+   (mercury/pull! (node) {:cli ["bash" "components/mercury/test/ownpurse/mercury/fake-mercury-cli.sh" dir "0"
+                                "/dev/null"]
+                          :alias "tallowmere"
+                          :now now})))
+
+(defn pull-mercury
+  "Fetches each Mercury org in a local config through mercury-cli, and keeps what changed. Without arguments: the
+  running system's record and config.local.edn (never committed). `opts` may name another :node and another
+  :local config file. The first pull of an org asks for every transaction; later ones for the recent and the
+  pending ones."
+  ([] (pull-mercury {}))
+  ([{:keys [local] :as opts}]
+   (let [{:keys [mercury] default-local :local} (config/read-config :dev)]
+     (mercury/pull-orgs! (or (:node opts) (node))
+                         {:cli (:cli mercury) :orgs (mercury/read-orgs (or local default-local))}))))
 
 (defn open-record
   "Opens a record on disk at `dir` beside the running system, with its read-only SQL on `sql-port` (or none):

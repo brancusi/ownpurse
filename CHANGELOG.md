@@ -23,3 +23,7 @@
 - Removed: the xero-axi reader, its sample, the SQLite driver and the archived loader's SQL samples.
 - Tests on save at the REPL: `(watch)` reloads a saved file and runs the tests that cover it; `(last-run)` has the
   result. Calva turns it on when the folder opens.
+- Mercury as a source, through mercury-cli: organizations, deposit accounts (archived too), credit accounts, every
+  transaction with each status change as a new version, and statements, in `mercury.*` tables. The local config
+  names the orgs by alias (`{:mercury {:orgs [{:alias "..." :name "..."}] :window-days 60}}`);
+  `OWNPURSE_MERCURY_CLI` names the program. `POST /pull` now answers `{"pulled": {"xero": ..., "mercury": ...}}`.

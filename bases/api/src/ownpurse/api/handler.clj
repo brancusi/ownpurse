@@ -4,6 +4,7 @@
    [malli.error :as me]
    [ownpurse.api.json :as api.json]
    [ownpurse.json.interface :as json]
+   [ownpurse.mercury.interface :as mercury]
    [ownpurse.store.interface :as store]
    [ownpurse.xero.interface :as xero]
    [reitit.coercion.malli :as rcm]
@@ -21,9 +22,13 @@
   "What GET /health returns."
   [:map [:status [:enum "ok" "unavailable"]]])
 
+(def Counts
+  "For each org, for each resource: the items the source returned and the rows written."
+  [:map-of :string [:map-of :string [:map [:items :int] [:written :int]]]])
+
 (def Pulled
-  "What POST /pull returns: for each org, for each resource, the items the source returned and the rows written."
-  [:map [:pulled [:map-of :string [:map-of :string [:map [:items :int] [:written :int]]]]]])
+  "What POST /pull returns: the counts for each source's orgs."
+  [:map [:pulled [:map [:xero Counts] [:mercury Counts]]]])
 
 (defn- error [status type message]
   {:status status :body {:error {:type type :message message}}})
@@ -37,24 +42,36 @@
 (defn- error-type [t]
   (if (namespace t) (str (namespace t) "/" (name t)) (name t)))
 
+(defn- pull-all!
+  "Pulls every org the local config names, Xero's then Mercury's."
+  [node {:keys [local xero mercury]}]
+  (let [xero-orgs (xero/read-orgs local)
+        mercury-orgs (mercury/read-orgs local)]
+    (when (and (empty? xero-orgs) (empty? mercury-orgs))
+      (throw (ex-info (str local " names no orgs. Add {:xero {:orgs [{:tenant \"<tenant id>\" :name \"<a name>\"}]}} "
+                           "or {:mercury {:orgs [{:alias \"<mercury-cli alias>\" :name \"<a name>\"}]}}.")
+                      {:type :ownpurse/no-local-config :path (str local)})))
+    {:xero (if (seq xero-orgs) (xero/pull-orgs! node {:cli (:cli xero) :orgs xero-orgs}) {})
+     :mercury (if (seq mercury-orgs) (mercury/pull-orgs! node {:cli (:cli mercury) :orgs mercury-orgs}) {})}))
+
 (defn- pull
-  "Pulls every org in the local config through its tool, one pull at a time."
-  [node {:keys [cli local]}]
+  "Pulls every org in the local config through its source's tool, one pull at a time."
+  [node sources]
   (let [running (atom false)]
     (fn [_]
       (if-not (compare-and-set! running false true)
         (error 409 "pull-running" "A pull is already running. Wait for it to finish, then ask again.")
         (try
-          {:status 200 :body {:pulled (xero/pull-orgs! node {:cli cli :orgs (xero/read-orgs local)})}}
+          {:status 200 :body {:pulled (pull-all! node sources)}}
           (catch clojure.lang.ExceptionInfo e
             (let [t (:type (ex-data e))]
               (cond
                 (= :ownpurse/no-local-config t) (error 409 (error-type t) (ex-message e))
-                (= "xero" (some-> t namespace)) (error 502 (error-type t) (ex-message e))
+                (#{"xero" "mercury"} (some-> t namespace)) (error 502 (error-type t) (ex-message e))
                 :else (throw e))))
           (finally (reset! running false)))))))
 
-(defn- routes [{:keys [node xero]}]
+(defn- routes [{:keys [node] :as config}]
   [["/openapi.json"
     {:get {:no-doc true
            :openapi {:info {:title "ownpurse" :version "0.0.0"
@@ -68,7 +85,7 @@
     {:post {:summary (str "Fetches every org in the local config through its source's tool, and keeps what changed. "
                           "Costs the source's API calls; later pulls ask only for what changed.")
             :responses {200 {:body Pulled} 409 {:body ApiError} 502 {:body ApiError}}
-            :handler (pull node xero)}}]])
+            :handler (pull node (select-keys config [:local :xero :mercury]))}}]])
 
 (def ^:private exception-middleware
   (exception/create-exception-middleware
@@ -85,12 +102,12 @@
    :body (json/write-str body)})
 
 (defn handler
-  "The Ring handler over `node`. `xero` is {:cli :local}: the program that reads Xero and the config naming the
-  orgs to pull."
-  [{:keys [node xero]}]
+  "The Ring handler over `node`. `local` is the config file naming the orgs to pull; `xero` and `mercury` are {:cli}:
+  the program that reads each source."
+  [config]
   (ring/ring-handler
    (ring/router
-    (routes {:node node :xero xero})
+    (routes config)
     {:data {:coercion rcm/coercion
             :responses {500 {:body ApiError}}
             :muuntaja api.json/muuntaja

@@ -53,11 +53,25 @@ is done, and the next steps in order with what "done" means. Update it when a st
   attachments, history). Aram chose Mercury first, through `brancusi/mercury-cli` (private): a thin Babashka tool
   like xero-cli, one read-only API token per Mercury org, reading credit card accounts too, which mercury-axi does
   not. 3b.4 follows.
+- Cleanup for later: `xero` and `mercury` each have their own kebab-case and payload normalising. When a third
+  source comes, move the shared part into a component.
 - **2026-10-25: the source tools print TOON by default** (Aram), JSON or EDN on request. ownpurse always asks for
   JSON: it runs xero-cli with `XERO_CLI_FORMAT=json` (which older xero-cli ignores) and mercury-cli with
   `--format json`.
 
 ## Done
+
+- **Mercury as a source (2026-10-25).** The `mercury` component runs `mercury-cli get <resource> --org <alias>
+  --all --format json` and keeps each item as one row: `mercury.organizations`, `accounts` (archived ones too),
+  `credit_accounts`, `transactions` (every account, cards included, every status), `statements` and
+  `credit_statements` (each with its `account`). Row ids are `mercury:<org id>:<kind>:<id>`. Fields keep Mercury's
+  names in kebab case; amounts are decimals, times instants; signed download links are dropped, so an unchanged item
+  stays unchanged. A transaction is valid from the time its status says (created while pending, posted when sent,
+  failed when failed, else the fetch), so pending then sent is two versions. Mercury has no modified-since: the
+  first pull asks for every transaction, later ones for those created in the last `:window-days` (60) plus every
+  pending one. A second pull of the same answers writes nothing. `POST /pull` pulls both sources and now answers
+  `{:pulled {:xero {...} :mercury {...}}}`. Fixtures: `samples/mercury/pull-1` and `pull-2`. Later: link a Mercury
+  account to the Xero bank account it is evidence for, and a compare that lists missing lines.
 
 | Step | What | Commit |
 |---|---|---|
@@ -167,8 +181,8 @@ it on 2026-03-20 and on 2026-04-02.
 
 - **Who works where.** The agent in this repository changes ownpurse's code. A private workspace's agent works on
   its group's books and asks for changes by direct message. Answer each with a general feature, synthetic fixtures
-  and how to use it. Open as of 2026-10-25: Mercury as a source (in progress), then Xero's reports, attachments,
-  history and small lists.
+  and how to use it. Open as of 2026-10-25: Xero's reports, attachments, history and small lists (Mercury as a
+  source is done).
 - **Repositories (2026-10-25).** `brancusi/xero-cli` (private) is the Xero tool and `brancusi/mercury-cli` (private)
   the Mercury tool, each with its own `docs/NEXT.md`.
   `brancusi/xero-axi` is archived on GitHub (read-only); its branches and `archive/*` tags are there.

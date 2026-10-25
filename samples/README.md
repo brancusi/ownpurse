@@ -20,6 +20,7 @@ books in other systems and appear here too, because the same invoice exists on b
 | Source id | What | Files |
 |---|---|---|
 | `xero:tallowmere` | The roastery's Xero org | `xero/pull-1/*.json` (2026-03-20), `xero/pull-2/*.json` (2026-04-02) |
+| `mercury:tallowmere` | The roastery's Mercury org: an operating account, an archived one and a credit card | `mercury/pull-1/*.json` (2026-03-20), `mercury/pull-2/*.json` (2026-04-02), in the shape `mercury-cli get <resource> --all --format json` prints |
 | `bank:ridgeway-4821` | Operating checking | `bank/activity-2026-03-20.csv` and `bank/activity-2026-04-02.csv` (overlapping downloads) + mapping, `bank/2026-03.ofx`, `bank/statement-2026-03.pdf` + extraction, `bank/check-1042.png` + extraction |
 | `receipts:tallowmere` | Phone photos of receipts | `receipts/copper-pot-2026-03-12.jpg` + extraction |
 | `qbo:quillfeather` | Quillfeather Design Consultancy LLP's QuickBooks Online | `qbo/*.json` |
