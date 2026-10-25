@@ -79,7 +79,7 @@ sources, the history and the synthesis are in [The landscape](https://ownpurse.c
   APIs, and reconciling through the API is not supported. Only the Finance API returns statement lines, and it is
   open only to lending partners. Each transaction carries `IsReconciled`. The statement side must come from the
   bank directly (CSV, OFX, PDF, SimpleFIN), linked to Xero's bank transactions. Those sources are the independent
-  witness, so we pull them as well as Xero, not instead of it.
+  evidence, so we pull them as well as Xero, not instead of it.
 - **Journals** (`offset` by JournalNumber, the nearest thing to an append-only feed) need the Advanced tier
   (A$1,445 a month), a security assessment and use-case approval. A person with their own app is on Starter
   (5 organisations, 1,000 calls a day): no Journals.

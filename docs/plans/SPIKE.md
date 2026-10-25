@@ -1,7 +1,8 @@
 # The spike: a ledger in Clojure on XTDB
 
 Status: agreed 2026-10-23; steps 0–3 done. Updated 2026-10-24: Xero is now read through xero-cli, and xero-axi is
-archived. The working state and the next steps are in [NEXT.md](NEXT.md).
+archived. 2026-10-25: steps 3b.1–3b.3 done (Xero's answers kept as source rows); 3b.4 is next. The working state
+and the next steps are in [NEXT.md](NEXT.md).
 
 ownpurse starts again from zero: a local ledger with a clean API, in Clojure, on XTDB. Clients (the TUI, a web
 interface, agents) are separate projects that use the API. The Rust code is archived for reference. The spike
@@ -133,7 +134,7 @@ What step 2 found:
 - Amounts keep the source's scale. Nothing rounds them to a commodity's minor unit; Clojure's `=` ignores scale, so
   tests that care compare `.scale` too.
 
-What step 3 found:
+What step 3 found (history: step 3's xero-axi reader and its sample were removed in 3b, 2026-10-25):
 
 - xero-axi's `gl` table is empty: `gl` derives postings when asked. Its JSON named accounts only as `Name (code)`
   and cut descriptions at 60 characters, so xero-axi's `gl --json --full` now also carries `tenant_id`,

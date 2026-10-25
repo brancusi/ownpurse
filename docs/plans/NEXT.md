@@ -47,10 +47,10 @@ is done, and the next steps in order with what "done" means. Update it when a st
 | 0–2 | Archive and toolchain; the workspace; money and the schemas | see SPIKE.md |
 | 3 | Reading xero-axi's record and gl into the ledger; a second load writes nothing | `15e4eb8` |
 | xero-cli 1–5 | xero-cli built, tested against a fake Xero, and answering for our four orgs | xero-cli `78f64e1`…`9ee93fa` |
-| 3b.1–3b.3 | The model and its names; fetching through xero-cli; Xero's answers kept as source rows; `POST /pull`; step 3's xero-axi reader and SQLite removed | this commit |
+| 3b.1–3b.3 | The model and its names; fetching through xero-cli; Xero's answers kept as source rows; `POST /pull`; step 3's xero-axi reader and SQLite removed | `ac4d935` |
 
-Step 3's xero-axi reader, its Brackenridge sample, next.jdbc and the SQLite driver are gone (2026-10-25), with the
-archived Rust loader's SQL in `samples/queries`. The ledger's tests use a small inline fixture instead. The
+Step 3's xero-axi reader, its Brackenridge sample, next.jdbc, the SQLite driver and the archived Rust loader's SQL
+(`samples/queries`) are gone (2026-10-25). The ledger's tests use a small inline fixture instead. The
 `ledger` and `schema` components still have step 3's shapes (`documents`, `sources` with a record and chain head);
 3b.4 replaces them with the model's documents and ledger tables.
 
@@ -112,7 +112,11 @@ apart from `public.invoices`, and DataGrip shows the schema.
 - **Open:** an item Xero stops returning (a deleted bank transfer, a deleted draft) is not seen by
   `--modified-since`. A full fetch can find ids that are gone; what to record then is for 3b.4.
 
-### 3b.4 Derive and check
+### 3b.4 Derive and check (next)
+
+Where to start: the decision below first (ask Aram); the pure posting rules and their goldens can be written
+before it, since only the step that ends a voided document's postings depends on it.
+
 
 - Entries and postings derived from the documents by xero-axi's rules (`ledger.rs`, above), ported as pure
   functions over Xero's JSON with its goldens as tests (its known gaps: Overpayments and Prepayments post nothing,
@@ -144,6 +148,12 @@ Steps 4 to 8 as in SPIKE.md. Step 5 (time) can use pull-1 and pull-2: what the b
 it on 2026-03-20 and on 2026-04-02.
 
 ## Housekeeping
+
+- **Who works where.** The agent in this repository changes ownpurse's code. A private workspace's agent works on
+  its group's books and asks for changes as issues on `brancusi/ownpurse` (none open as of 2026-10-25). Answer each
+  with a general feature, synthetic fixtures and how to use it, then close it.
+- **Repositories (2026-10-25).** `brancusi/xero-cli` (private) is the Xero tool, with its own `docs/NEXT.md`.
+  `brancusi/xero-axi` is archived on GitHub (read-only); its branches and `archive/*` tags are there.
 
 - ownpurse's `next` branch is pushed (2026-10-25); `main` is still the Rust code as released, until the spike passes.
 - `site/` still describes the archived Rust tool (its docs, quickstart and CLI reference). It is rewritten when the

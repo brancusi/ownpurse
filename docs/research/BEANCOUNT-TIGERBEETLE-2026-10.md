@@ -40,7 +40,7 @@ this leads to are folded into [NEXT.md](../plans/NEXT.md).
    Fava becomes a free interface, and `bean-check` an independent second checker of our ledger. Map tax rates and
    tracking categories to tags or metadata, take care with exchange gains and losses, and set the tolerance to zero.
 2. A Beancount journal as a source, so people bring their history in.
-3. Balance assertions as facts ("the bank said X on date D"), the check the bank witness needs.
+3. Balance assertions as facts ("the bank said X on date D"), the check the bank's evidence needs.
 
 ## Beancount.io (the hosted service)
 
