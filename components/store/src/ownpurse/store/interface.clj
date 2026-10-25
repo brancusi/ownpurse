@@ -26,14 +26,17 @@
 
 (defn put!
   "Writes documents in one transaction and returns its key. `tables` maps a table (a keyword) to documents, each
-  with an :xt/id. `metadata` says where the documents come from and why: {:source string, :why string}, and lands
+  with an :xt/id. A namespaced table is in that schema: `:xero/invoices` is the SQL table xero.invoices. A
+  document may carry :xt/valid-from (when it became true in the world); without it, it is valid from now.
+  `metadata` says where the documents come from and why: {:source string, :why string}, and lands
   in xt.txs. Refuses, writing nothing, when any document holds a float (:ownpurse/float-money, with the paths) or
   the metadata is missing (:ownpurse/no-metadata). There is no delete: a correction is a new version."
   [node tables metadata]
   (core/put! node tables metadata))
 
 (defn put-changed!
-  "Like `put!`, but writes only the documents that differ from what the store holds now (by :xt/id). Returns
+  "Like `put!`, but writes only the documents that differ from what the store holds now (by :xt/id; a document's
+  :xt/valid-from is not compared, only its content). Returns
   {:written {table count}, :tx key-or-nil}: when nothing differs, nothing is written and there is no transaction."
   [node tables metadata]
   (core/put-changed! node tables metadata))

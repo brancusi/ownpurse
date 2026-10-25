@@ -60,6 +60,24 @@
                        (= (map :amount lines) (map :amount (:lines got))))))
               docs))))
 
+(deftest schema-and-valid-time-test
+  (let [doc {:xt/id "a" :total 1.10M :xt/valid-from #inst "2026-03-10T09:30:00Z"}]
+    (testing "a namespaced table is a table in that schema, apart from the public one"
+      (store/put! *node* {:demo/bills [doc] :bills [{:xt/id "b" :total 2.00M}]} metadata)
+      (is (= [{:xt/id "a" :total 1.10M}] (store/q *node* "SELECT _id, total FROM demo.bills")))
+      (is (= [{:xt/id "b" :total 2.00M}] (store/q *node* "SELECT _id, total FROM bills"))))
+    (testing "a document is valid from the time it carries"
+      (is (= #inst "2026-03-10T09:30:00Z"
+             (-> (store/q *node* "SELECT _valid_from FROM demo.bills") first :xt/valid-from .toInstant java.util.Date/from))))
+    (testing "the same document again writes nothing; changed content writes a version"
+      (is (= {:written {} :tx nil} (store/put-changed! *node* {:demo/bills [doc]} metadata)))
+      (is (= {:demo/bills 1}
+             (:written (store/put-changed! *node* {:demo/bills [(assoc doc :total 1.20M
+                                                                       :xt/valid-from #inst "2026-03-11T00:00:00Z")]}
+                                           metadata))))
+      (is (= [1.10M 1.20M]
+             (map :total (store/q *node* "SELECT total FROM demo.bills FOR ALL VALID_TIME ORDER BY _valid_from")))))))
+
 (deftest metadata-test
   (testing "a write without where and why is refused, and nothing is written"
     (let [before (tx-count)]

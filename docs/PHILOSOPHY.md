@@ -50,15 +50,36 @@ time and provenance attached. A posting, a bank line, a budget row and a share p
 - **Balance is the test.** Debits equal credits, and every book agrees with its source to the cent, or ownpurse
   shows exactly where it does not.
 
-Today the record holds versions of Xero documents (`docs/design.md`); the fact model above is the direction the
-data model is moving in. Changes should move toward it, not away.
+Today the record holds every version of each Xero document, in XTDB, with the time Xero changed it and the time
+ownpurse learned of it ([MODEL.md](MODEL.md)); the fact model above is the direction the data model is moving in.
+Changes should move toward it, not away.
+
+## The group system of record
+
+Each of your businesses keeps its books somewhere: one Xero organisation per entity, perhaps QuickBooks for another,
+nothing at all for the household. Each of those is the **system of record** for one entity, and it stays that way:
+it is what your accountant and the tax filings use.
+
+None of them sees the whole. A loan from one company to another is in both companies' books, on opposite sides,
+and only someone looking at both can check that the sides agree, or take them out of a group total. ownpurse is the
+**group system of record**: the one place that holds every entity's books together, the intercompany links and
+eliminations between them, the matches between a bank's record and the books, and every version of what each
+source said.
+
+So there are two kinds of system of record, and they do not compete. An entity's books are official in its own
+system, and ownpurse keeps an exact copy, checked to the cent. The group is official in ownpurse. When the group
+view shows that an entity's books should change, the change goes to that entity's system as a package a person
+approves; ownpurse never edits its copy behind the source's back. The words and the layers are in
+[MODEL.md](MODEL.md).
 
 ## The layers
 
 From the bottom up. Each layer reads the one below and never writes past it.
 
-1. **Connectors** turn a source into facts with provenance, respecting the source's limits. Xero today.
-2. **The record**: one SQLite file, append-only by trigger, SHA-256 chained, exact decimals.
+1. **Sources**: each source's own tool (xero-cli for Xero) talks to the provider and stores nothing; ownpurse runs
+   it and keeps what it returns as facts with provenance, respecting the source's limits.
+2. **The record**: an XTDB store on your disk, bitemporal (when it was true, and when ownpurse learned it), never
+   rewritten, exact decimals.
 3. **The daemon** (planned): a small local process that schedules syncs and serves facts and live updates to any
    tool or agent. It does nothing the CLI cannot.
 4. **The CLI**: the whole surface, agent-first (AXI): compact output, counts, structured errors, stable exit codes,

@@ -1,0 +1,89 @@
+# The model
+
+How ownpurse keeps what its sources say, and how that becomes books. The why is in [PHILOSOPHY.md](PHILOSOPHY.md);
+the working state is in [plans/NEXT.md](plans/NEXT.md).
+
+## The words
+
+| Word | Meaning |
+|---|---|
+| Entity | One business or household: a legal entity. One Xero organisation is one entity's books. |
+| Book | The record of one entity, or of the group. Accounts, entries and postings belong to a book. |
+| Group | The entities you own, taken together. The **group book** belongs to no single entity. |
+| Source | Where data comes from: Xero, Mercury, QuickBooks, Quicken, a folder of receipts. |
+| System of record | The one source a book's entries come from. Each book has exactly one. |
+| Evidence | Every other source for a book: used to reconcile and to match, never posted. |
+| Group system of record | ownpurse itself, for what no single entity's system holds: intercompany, eliminations, group reports, matches across sources, and history. |
+| Intercompany | A transaction between two of your entities. It appears in both books, on opposite sides (due to and due from), and is eliminated in the group book. |
+
+Mercury is not a book. Its statements are evidence for a bank account in an entity's book (`1010 Operating
+account`), or the system of record of a book no accounting system keeps, such as a household.
+
+## Two systems of record
+
+```
+ownpurse
+  group book ............. system of record: ownpurse
+    intercompany matches, eliminations, group reports
+       ▲              ▲              ▲
+  entity book    entity book    entity book ... system of record: Xero (ownpurse holds a copy)
+       ▲              ▲              ▲
+  Xero org       Xero org       Xero org
+```
+
+An entity's books stay official in Xero: that is what the accountant and the tax filings use, and ownpurse's copy
+must equal Xero's trial balance to the cent. ownpurse never edits that copy. When ownpurse finds something an
+entity's books should change, such as a missing intercompany entry, the fix goes to Xero as a sealed package a
+person approves, and comes back on the next fetch.
+
+## Three layers
+
+Each layer is derived from the one below and never writes past it.
+
+```
+1 Sources                 2 Documents                     3 Ledger
+  one schema per provider   one table per kind of thing     double entry
+  ─────────────────────     ───────────────────────────     ─────────────
+  xero.invoices     ─┐      parties                         books, sources
+  xero.contacts      │      invoices    (bills: payable)    entries
+  xero.payments      ├─map─►payments                  ─────►postings
+  mercury.transactions      bank_lines                      the check: trial balance
+  mercury.invoices  ─┘      accounts                          equals the source's
+  qbo.invoices …            links (same-as, settles)
+```
+
+1. **Sources** keep each item exactly as the provider sent it, one row per item, in a schema named for the provider
+   (`xero.invoices`). Only that provider's component reads them. A new version of an item is a new version of its
+   row, valid from when the provider says it changed; nothing is deleted.
+2. **Documents** hold the same kind of thing from every source in one table, with `book`, `source` and
+   `source_row`. A client asks here for every open invoice, whoever issued it. A bill is a payable invoice; a credit
+   note is an invoice of kind `credit_note`. The same invoice seen by two sources is two rows joined by a `same-as`
+   link, never merged.
+3. **Ledger** entries come only from a book's system of record. Where that is an accounting system, its own rules
+   post from its source rows, so the trial balance can match its report. Where there is none, shared bank rules post
+   from `bank_lines`. The group book's elimination entries are written by ownpurse.
+
+## Example (synthetic)
+
+Tallowmere invoices Fernhill Grocers 1,250.00 using Mercury's invoicing, records the same invoice in Xero as
+INV-0418, and is paid by ACH into Mercury. Xero is the book's system of record; Mercury is evidence.
+
+| Layer | Table | Row |
+|---|---|---|
+| source | `mercury.invoices` | Mercury's invoice, as sent: paid |
+| source | `xero.invoices` | Xero's INV-0418, as sent: AUTHORISED |
+| source | `mercury.transactions` | the ACH, 1,250.00 |
+| document | `invoices` | source mercury: receivable, paid |
+| document | `invoices` | source xero: receivable, INV-0418, open |
+| document | `bank_lines` | source mercury: Operating account, 1,250.00 |
+| link | `links` | same-as: the two invoices are one |
+| link | `links` | settles: the bank line pays INV-0418 |
+| ledger | `entries`, `postings` | from `xero.invoices` only: 1200 debit, 4000 credit, 1,250.00 |
+| difference | a query | paid in Mercury, open in Xero: record the payment in Xero |
+
+## Names in the store
+
+- Source tables: `<provider>.<resource>` in kebab case as SQL folds it (`xero.bank_transactions`). Row ids:
+  `<provider>:<org>:<kind>:<the provider's id>`.
+- Documents and ledger tables: the `public` schema, plain names (`invoices`, `postings`).
+- Columns: plain, snake case in SQL, no namespace (`invoice_number`, `org`).

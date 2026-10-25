@@ -4,6 +4,7 @@
         poly/json {:local/root "../../components/json"}
         poly/money {:local/root "../../components/money"}
         poly/store {:local/root "../../components/store"}
+        poly/xero {:local/root "../../components/xero"}
 
         poly/api {:local/root "../../bases/api"}}
 

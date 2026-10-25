@@ -78,22 +78,18 @@ accounts, entries and postings.
 XTDB stores documents in tables with no fixed schema, each with two times: valid time (when it was true in the
 world) and system time (when we recorded it).
 
-| Table | Holds | Notes |
+Three layers, decided in step 3b.1 ([MODEL.md](../MODEL.md) has the words, the diagram and an example):
+
+| Layer | Tables | Holds |
 |---|---|---|
-| `sources` | One row per source (an org read through xero-cli) | Tool, version, org, time of each fetch |
-| `books` | One per organisation | Currency, fiscal year end, the source it comes from |
-| `accounts` | Per book | Code, name, type, class. Renames are new versions |
-| `parties` | Contacts | Per book; linking the same person across books is a `links` row, never a merge |
-| `documents` | Every source document, with its payload as nested data | Source id, source version, content hash |
-| `entries` | Journal entries | Book, date, narration, the document it comes from |
-| `postings` | One per entry line | Entry, book, account, `DECIMAL` amount, commodity, date; separate rows so SQL can sum them |
-| `links` | Intercompany pairs, matches | Author, confidence, reason |
-| `provenance` | One row per transaction we submit | Who, why, from what source, our hash chain |
+| Sources | one schema per provider: `xero.invoices`, `xero.contacts`, … | each item exactly as the provider sent it; owned by that provider's component |
+| Documents | `parties`, `invoices`, `payments`, `bank_lines`, `accounts`, `links` | the same kind of thing from every source, with `book`, `source`, `source_row`; `links` holds intercompany pairs and matches, with author, confidence and reason |
+| Ledger | `books`, `sources`, `entries`, `postings`, `provenance` | one book per entity plus the group book; each book's one system of record; postings as separate `DECIMAL` rows so SQL can sum them |
 
 Budgets, projects, closes and reports come after the spike. They are new tables, not migrations.
 
-The postings are ownpurse's: from Xero's own journals if the app may read them, otherwise derived in the `xero`
-component from Xero's documents (NEXT.md, step 3b.1). Step 3 first read them from xero-axi's gl; that changed when
+The postings are ownpurse's, derived in the `xero` component from Xero's documents: Xero's own journals are open
+only to apps on its Advanced tier (NEXT.md, Decisions). Step 3 first read them from xero-axi's gl; that changed when
 xero-axi was archived. The ledger checks them either way: every entry balances, and the trial balance matches
 Xero's own report.
 

@@ -2,15 +2,14 @@
 
 Synthetic evidence for the fact model. Every name, number, address and id here is invented. One business, one
 month (March 2026), seen through every kind of source ownpurse has to read, so the same events show up more than
-once and the model has to say how the witnesses relate.
+once and the model has to say how the sources relate.
 
 The Rust loader these were written for is archived (`git checkout archive/rust-facts` brings back `demo.sh`, the
-facts CLI, its tests and `docs/plans/FACTS-EDGES.md`). The files stay current as test input for the Clojure
+facts CLI, its tests, the SQL it answered and `docs/plans/FACTS-EDGES.md`). The files stay current as test input for the Clojure
 ledger. `xero/pull-1` and `xero/pull-2` are Xero API answers in exactly the shape xero-cli prints, and are the
 fixtures for reading Xero through xero-cli (`docs/plans/NEXT.md`, step 3b).
 
-`ingest.json` lists every file in the order a person would bring them in. `queries/` holds the SQL the archived
-loader answered (01 to 10 ask questions, 11 and 12 are checks); they are written for its schema, not XTDB's.
+`ingest.json` lists every file in the order a person would bring them in.
 
 ## The world
 
@@ -33,7 +32,7 @@ books in other systems and appear here too, because the same invoice exists on b
 
 Operating account 4821. Opening balance on 2026-03-01: **24,310.55**. Closing on 2026-03-31: **13,413.22**.
 
-| # | Bank posting date | Bank text | Amount | In Xero | Other witnesses |
+| # | Bank posting date | Bank text | Amount | In Xero | Other evidence |
 |---|---|---|---|---|---|
 | 1 | 03-02 | DEPOSIT OSTLEY JOINERY | +1,846.13 | Payment of INV-0412 (dated 02-16) | CSV, OFX, statement |
 | 2 | 03-06 | HARBOR STREET COFFEE | −4.75 | Spend money, 6100 | CSV, OFX, statement (two identical lines the same day) |

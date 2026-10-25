@@ -14,8 +14,8 @@
     {:store #::ds{:start (fn [{::ds/keys [config]}] (store/start config))
                   :stop (fn [{::ds/keys [instance]}] (store/stop instance))
                   :config (:store config)}
-     :handler #::ds{:start (fn [{{:keys [node]} ::ds/config}] (handler/handler {:node node}))
-                    :config {:node (ds/local-ref [:store])}}
+     :handler #::ds{:start (fn [{::ds/keys [config]}] (handler/handler config))
+                    :config {:node (ds/local-ref [:store]) :xero (:xero config)}}
      :http #::ds{:start (fn [{::ds/keys [config]}] (http/start config))
                  :stop (fn [{::ds/keys [instance]}] (http/stop instance))
                  :config (assoc (:http config) :handler (ds/local-ref [:handler]))}}}})

@@ -85,34 +85,45 @@
                      :else x))
                  doc))
 
-(defn- table-name [table]
-  (let [n (name table)]
-    (when-not (re-matches #"[a-z][a-z0-9_-]*" n)
-      (throw (ex-info (str "The table name " (pr-str n) " is not one ownpurse writes.") {:type :ownpurse/bad-table})))
-    (str/replace n "-" "_")))
+(defn- sql-part [s]
+  (when-not (re-matches #"[a-z][a-z0-9_-]*" s)
+    (throw (ex-info (str "The table name " (pr-str s) " is not one ownpurse writes.") {:type :ownpurse/bad-table})))
+  (str/replace s "-" "_"))
 
-(defn- table-exists? [node table-name]
-  (seq (q node ["SELECT table_name FROM information_schema.tables WHERE table_name = ?" table-name] {})))
+(defn- table-name
+  "The table as SQL names it: [schema table]. `:invoices` is public.invoices, `:xero/invoices` xero.invoices."
+  [table]
+  [(sql-part (or (namespace table) "public")) (sql-part (name table))])
+
+(defn- table-exists? [node [schema table]]
+  (seq (q node ["SELECT table_name FROM information_schema.tables WHERE table_schema = ? AND table_name = ?"
+                schema table]
+          {})))
 
 (defn- current
   "The documents of `table` the store holds now, by id."
   [node table ids]
-  (let [table (table-name table)]
-    (if-not (table-exists? node table)
+  (let [[schema t :as sql-name] (table-name table)]
+    (if-not (table-exists? node sql-name)
       {}
       (into {}
             (for [chunk (partition-all 500 ids)
-                  doc (q node (into [(str "SELECT * FROM " table " WHERE _id IN ("
+                  doc (q node (into [(str "SELECT * FROM " schema "." t " WHERE _id IN ("
                                           (str/join ", " (repeat (count chunk) "?")) ")")]
                                     chunk)
                          {})]
               [(:xt/id doc) (comparable doc)])))))
 
+(defn- content
+  "A document as `current` sees it: without the valid time it was written with, which is not a column."
+  [doc]
+  (comparable (dissoc doc :xt/valid-from :xt/valid-to)))
+
 (defn put-changed! [node tables metadata]
   (let [changed (into {}
                       (for [[table docs] tables
                             :let [now (current node table (map :xt/id docs))
-                                  fresh (filterv #(not= (comparable %) (now (:xt/id %))) docs)]
+                                  fresh (filterv #(not= (content %) (now (:xt/id %))) docs)]
                             :when (seq fresh)]
                         [table fresh]))]
     {:written (update-vals changed count)

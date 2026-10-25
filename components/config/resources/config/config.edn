@@ -8,6 +8,10 @@
          :sql #profile {:test nil
                         :default {:host "127.0.0.1"
                                   :read-only-port #long #or [#env OWNPURSE_SQL_PORT 5433]}}}
+ ;; Xero is read through xero-cli. Which orgs to read is in a local file that is never committed (tenant ids are
+ ;; private): {:xero {:orgs [{:tenant "<tenant id>" :name "<a name for you>"}]}}.
+ :xero {:cli #or [#env OWNPURSE_XERO_CLI "xero-cli"]
+        :local #or [#env OWNPURSE_LOCAL_CONFIG "config.local.edn"]}
  :http {:host "127.0.0.1"
         :port #profile {:test 0
                         :default #long #or [#env OWNPURSE_PORT 7070]}}}

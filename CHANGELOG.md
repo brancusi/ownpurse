@@ -12,5 +12,12 @@
   with where each load came from. A second load of the same record writes nothing. The sample is the invented
   Brackenridge group (`samples/xero-axi/brackenridge`); `(load-sample)` at the REPL loads it.
 - Xero is now read through xero-cli, a thin command line over the Xero API that stores nothing; xero-axi is
-  archived. ownpurse will keep Xero's JSON and derive the postings itself (`docs/plans/NEXT.md`, step 3b). The
-  xero-axi reader stays until that step replaces it.
+  archived. ownpurse will keep Xero's JSON and derive the postings itself (`docs/plans/NEXT.md`, step 3b).
+- The model, in `docs/MODEL.md`: source tables in a schema per provider (`xero.invoices`), shared document tables,
+  and the ledger; each book has one system of record, and ownpurse is the group system of record.
+- Reading Xero through xero-cli: each item is kept as one row in its `xero.*` table, valid from Xero's
+  `UpdatedDateUTC`; a second pull asks only for what changed and writes nothing new. xero-cli's exit codes become
+  structured errors.
+- `POST /pull` fetches every org in the local config (`OWNPURSE_LOCAL_CONFIG`) and keeps what changed, so a private
+  workspace can run ownpurse over its own record (`OWNPURSE_DATA_DIR`).
+- Removed: the xero-axi reader, its sample, the SQLite driver and the archived loader's SQL samples.

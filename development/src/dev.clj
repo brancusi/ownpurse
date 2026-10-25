@@ -11,7 +11,7 @@
    [donut.system.repl.state :as state]
    [ownpurse.api.system :as system]
    [ownpurse.config.interface :as config]
-   [ownpurse.ledger.interface :as ledger]
+   [ownpurse.store.interface :as store]
    [ownpurse.xero.interface :as xero]))
 
 (defmethod ds/named-system ::ds/repl
@@ -27,18 +27,29 @@
   []
   (system/node state/system))
 
-(defn load-xero
-  "Loads a xero-axi record and its gl into the running system: {:record path, :gl path}. Returns what was
-  written; a second load of the same files writes nothing."
-  [paths]
-  (let [source (xero/read-source paths)]
-    (ledger/load! (node) (xero/facts source) (xero/metadata source))))
+(defn keep-xero-answers
+  "Keeps a folder of saved Xero answers (samples/xero/pull-1) as org `tenant` in the running system."
+  [tenant dir]
+  (into (sorted-map)
+        (for [[resource answer] (xero/read-answers dir)]
+          [resource (xero/keep! (node) tenant resource answer {})])))
 
-(defn load-sample
-  "Loads the synthetic Brackenridge group (samples/xero-axi/brackenridge)."
-  []
-  (load-xero {:record "samples/xero-axi/brackenridge/record.sqlite"
-              :gl "samples/xero-axi/brackenridge/gl.json"}))
+(defn pull-xero
+  "Fetches every resource for each org in a local config through xero-cli, and keeps what changed. Without
+  arguments: the running system's record and config.local.edn (never committed). `opts` may name another
+  :node (a record opened with `open-record`) and another :local config file. Costs Xero calls: the first pull
+  of an org is about one call per resource per 1000 items; later pulls ask only for what changed."
+  ([] (pull-xero {}))
+  ([{:keys [local] :as opts}]
+   (let [{:keys [cli] default-local :local} (:xero (config/read-config :dev))]
+     (xero/pull-orgs! (or (:node opts) (node)) {:cli cli :orgs (xero/read-orgs (or local default-local))}))))
+
+(defn open-record
+  "Opens a record on disk at `dir` beside the running system, with its read-only SQL on `sql-port` (or none):
+  for a private record that lives outside this repository. Close it with (store/stop node)."
+  ([dir] (open-record dir nil))
+  ([dir sql-port]
+   (store/start {:mode :disk :dir dir :sql (when sql-port {:host "127.0.0.1" :read-only-port sql-port})})))
 
 (defn tests
   "Loads every test namespace in the bricks and runs them in this REPL. The shell run (clojure -M:dev:test:kaocha)

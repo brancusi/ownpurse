@@ -15,9 +15,20 @@ The spike, on branch `next`: a local ledger in Clojure on XTDB, from zero. The p
 ownpurse is a local ledger with a clean API. Each source has its own tool (xero-cli for Xero, mercury-axi for
 Mercury). The tool talks to the provider and stores nothing; ownpurse runs it, keeps what it returns as facts, and
 keeps one model of books, accounts, entries and postings over all of them, in XTDB. xero-cli lives in its own
-repository (`brancusi/xero-cli`), checked out beside this one. xero-axi, the Xero tool before it, is archived:
-read its posting rules for ideas, never build on it. Clients (a CLI, a TUI, a web interface, agents) are separate and use the API. Never add
-knowledge of a source to code outside that source's component.
+repository (`brancusi/xero-cli`), checked out beside this one. Clients (a CLI, a TUI, a web interface, agents) are
+separate and use the API. Never add knowledge of a source to code outside that source's component.
+
+## Private workspaces and requests
+
+ownpurse is neutral and public. A group's real books live in its own private workspace, outside this repository:
+the workspace holds the record, the config naming its orgs, and its own decisions and mappings, and runs ownpurse
+over them (the server, with `OWNPURSE_DATA_DIR` and `OWNPURSE_LOCAL_CONFIG` pointed at its files). Its agent works
+there; the agent working here changes ownpurse.
+
+When a workspace needs something ownpurse does not do, it asks for it as a GitHub issue on this repository, written
+in general terms: what is needed and why, with synthetic examples. No names, ids, amounts or paths from the
+workspace's books, ever. Build it here as a general feature, with synthetic fixtures, and say in the issue how to
+use it. Nothing in this repository knows about any one workspace.
 
 ## Layout
 
@@ -25,7 +36,7 @@ A Polylith workspace (top namespace `ownpurse`):
 
 - `components/`: the bricks with the logic, each with an `interface` namespace. Other bricks call the interface,
   never the implementation.
-- `bases/`: the entry points (the HTTP API).
+- `bases/`: the entry points (the HTTP API: `GET /health`, `POST /pull`, `GET /openapi.json`).
 - `projects/`: what gets built (the server uberjar).
 - `development/`: the REPL project. `user.clj` stays tiny; `dev.clj` holds the REPL system.
 - `samples/`: synthetic source files, used as test input. `docs/`, `brand/`, `site/` as before.
@@ -44,9 +55,9 @@ Work through one long-lived REPL, shared by people and agents.
 In VS Code with Calva, opening the folder does all of this: `.vscode/settings.json` jacks in with `:dev:test`, runs
 `(dev)` and `(go)`, and connects instead if `.nrepl-port` already exists. Calva's jack-in writes `.nrepl-port` at
 the root, so agents share that REPL. `ctrl+alt+space` then `g`, `r`, `h` or `t` runs `(go)`, `(reset)`, `(halt)` or
-`(tests)`. `(load-sample)` loads the synthetic Brackenridge group into the running system; `(load-xero {:record
-path :gl path})` loads any xero-axi record. Both are step 3's xero-axi reader, which step 3b replaces with reading
-through xero-cli. CIDER and Cursive can attach to the same port (cider-nrepl is in the middleware).
+`(tests)`. `(keep-xero-answers tenant "samples/xero/pull-1")` keeps a folder of synthetic Xero answers in the
+running system; `(pull-xero)` fetches the orgs named in `config.local.edn` through xero-cli (real calls; never in a
+test). CIDER and Cursive can attach to the same port (cider-nrepl is in the middleware).
 
 ## Clojure practice
 
@@ -63,6 +74,9 @@ through xero-cli. CIDER and Cursive can attach to the same port (cider-nrepl is 
 - The product is always **ownpurse**: lowercase, one word, even at the start of a sentence. Environment variables
   are `OWNPURSE_*`.
 - Say books, accounts, entries, sources, facts. Not tenants, entities or rows in user-facing text.
+- Use the model's words exactly ([docs/MODEL.md](docs/MODEL.md)): a **book** is one entity's record (one Xero
+  organisation), or the **group book**; each book has one **system of record**, and every other source for it is
+  **evidence**. ownpurse is the **group system of record**. Never say "ledger source" or "witness".
 - Copy is plain and exact: second person, sentence case, numbers to the cent, no emoji, no hype ("seamless",
   "magic", "AI-powered"). Errors say what went wrong and how to fix it.
 - "Xero" is Xero Limited's trademark: keep the "not affiliated" line wherever the name is used prominently.
