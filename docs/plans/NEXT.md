@@ -372,7 +372,8 @@ figures beside the pro-forma, the balance sheet carrying the year's earnings so 
 exclusions (set-aside items and why), bank reconciliation and its unmatched lines, intercompany, and payees. The
 `export` component knows no source: the API gives it the trial balance check, the chart, the contacts, the
 document links and the payees. The workbook is written by hand (`ownpurse.export.xlsx`): amounts are number cells
-holding their exact decimal text, never a double and never a formula.
+holding their exact decimal text, never a double and never a formula. The response is `{export {dir workbook sheets
+tied}}`: `tied` says whether the book ties with the system's trial balance at `date`.
 
 Every item on the workspace's close list from ownpurse's side is built. What remains is theirs: the real runs, the
 owner's statement exports, the close register's decisions, and the owner's approval.
