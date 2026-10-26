@@ -51,7 +51,8 @@
   "For each org, for each resource: the items the source returned and the rows written. Under \"History\", also the
   calls left for later pulls, the documents Xero refused, and the documents looked at again."
   [:map-of :string [:map-of :string [:map [:items :int] [:written :int] [:waiting {:optional true} :int]
-                                     [:refused {:optional true} :int] [:rechecked {:optional true} :int]]]])
+                                     [:refused {:optional true} :int] [:rechecked {:optional true} :int]
+                                     [:ended {:optional true} :int] [:unbalanced {:optional true} :int]]]])
 
 (def Pulled
   "What POST /pull returns: the counts for each source's orgs."
@@ -102,6 +103,22 @@
    [:missing-from-evidence [:vector Line]]
    [:pending [:vector Line]]
    [:totals [:map [:evidence :string] [:book :string]]]])
+
+(def TrialBalance
+  "An org's book against Xero's trial balance at a date. Amounts are decimal strings, debits positive."
+  [:map
+   [:org :string] [:date :string] [:year-start :string] [:opening :string] [:tied :boolean]
+   [:accounts [:vector [:map [:account :string] [:code {:optional true} :string] [:name :string]
+                        [:xero :string] [:ownpurse :string] [:difference :string]]]]
+   [:other [:vector [:map [:name [:maybe :string]] [:amount :string]]]]])
+
+(defn- trial-balance-out
+  "A trial balance check as the API returns it: dates and amounts as strings."
+  [org {:keys [date year-start opening tied? accounts other]}]
+  (let [amount #(.toPlainString ^BigDecimal %)]
+    {:org org :date (str date) :year-start (str year-start) :opening opening :tied tied?
+     :accounts (mapv #(-> % (update :xero amount) (update :ownpurse amount) (update :difference amount)) accounts)
+     :other (mapv #(update % :amount amount) other)}))
 
 (def Match
   "Two lines a person says are the same money, by their source rows."
@@ -262,6 +279,23 @@
            :responses {200 {:body [:map [:compares [:vector Compare]]]} 404 {:body ApiError}}
            :handler (fn [{{:keys [query]} :parameters}]
                       (answer #(hash-map :compares (cmp/compare-accounts node query))))}}]
+   ["/trial-balance"
+    {:get {:summary (str "Checks a Xero org's book (its entries, posted from its documents on every pull) against "
+                         "Xero's trial balance at `date`, account by account, to the cent. `date` must be a month end "
+                         "a pull kept the report for. Balance sheet accounts start the financial year at Xero's "
+                         "balance sheet the day before (opening=balance-sheet, the default) or at the book's own "
+                         "postings (opening=ledger). `tied` is true when every account equals Xero's. Reads what the "
+                         "last pull kept; it calls no source.")
+           :parameters {:query [:map
+                                [:org [:string {:min 1}]]
+                                [:date (schema/schema :ownpurse/date)]
+                                [:opening {:optional true} [:enum "balance-sheet" "ledger"]]]}
+           :responses {200 {:body [:map [:trial-balance TrialBalance]]} 404 {:body ApiError}}
+           :handler (fn [{{{:keys [org date opening]} :query} :parameters}]
+                      (answer #(hash-map :trial-balance
+                                         (trial-balance-out org (xero/check-trial-balance
+                                                                 node org date
+                                                                 {:opening (keyword (or opening "balance-sheet"))})))))}}]
    ["/matches"
     {:put {:summary (str "Says two lines are the same money: an evidence line and a book line of the same amount, on "
                          "an evidence account and the account it is evidence for, by their source rows (the compare "

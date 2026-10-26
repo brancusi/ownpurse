@@ -3,8 +3,10 @@
   source rows in the xero schema (xero.invoices, xero.contacts, ...). It never calls Xero itself."
   (:require
    [ownpurse.xero.cli :as cli]
+   [ownpurse.xero.ledger :as ledger]
    [ownpurse.xero.pull :as pull]
-   [ownpurse.xero.source :as source]))
+   [ownpurse.xero.source :as source]
+   [ownpurse.xero.trial-balance :as trial-balance]))
 
 (def resources
   "The Xero resources ownpurse keeps, by Xero's name, each with its table (`:xero/invoices` is xero.invoices)."
@@ -100,3 +102,28 @@
   samples are. Returns {resource answer}."
   [dir]
   (pull/read-answers dir))
+
+(defn book-id
+  "The id of org `tenant`'s book, as its entries and postings name it."
+  [tenant]
+  (ledger/book-id tenant))
+
+(defn entries
+  "The entries of org `tenant`'s documents by Xero's own rules (see ownpurse.xero.ledger), from its rows by table
+  ({:accounts :bank-transactions :bank-transfers :manual-journals :invoices :credit-notes :payments}), in its
+  currency `base`. Returns {:entries :unbalanced :skipped}. Pure."
+  [tenant base docs]
+  (ledger/entries tenant base docs))
+
+(defn post!
+  "Makes org `tenant`'s entries those of the documents the store holds now. A pull does this after it keeps the
+  documents. Returns {:items :written :ended}, with :unbalanced when some documents did not balance."
+  [node tenant]
+  (pull/post! node tenant))
+
+(defn check-trial-balance
+  "Org `tenant`'s book against Xero's trial balance at `date`, account by account, to the cent. opts: :opening,
+  :balance-sheet (the default: the balance sheet accounts at the start of the year from Xero's balance sheet at the
+  day before) or :ledger (from the book's postings). Returns {:date :year-start :opening :tied? :accounts :other}."
+  [node tenant date opts]
+  (trial-balance/check node tenant date opts))

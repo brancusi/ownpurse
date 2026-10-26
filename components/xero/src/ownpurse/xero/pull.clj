@@ -7,7 +7,9 @@
    [ownpurse.json.interface :as json]
    [ownpurse.schema.interface :as schema]
    [ownpurse.store.interface :as store]
+   [ownpurse.ledger.interface :as ledger]
    [ownpurse.xero.cli :as cli]
+   [ownpurse.xero.ledger :as xero-ledger]
    [ownpurse.xero.source :as source])
   (:import
    (java.time Instant LocalDate ZoneOffset ZonedDateTime)))
@@ -258,13 +260,44 @@
                 now)
         (assoc :waiting (count later)))))
 
+(defn- current-rows
+  "Every row of the resource's table the store holds now for org `tenant`."
+  [node tenant resource]
+  (let [{:keys [table]} (source/describe resource)]
+    (if (store/table-exists? node table)
+      (store/q node [(str "SELECT * FROM " (sql-table table) " WHERE org = ?") tenant])
+      [])))
+
+(def ^:private posted-resources
+  "The tables `post!` reads, by the key `ownpurse.xero.ledger/entries` takes them under."
+  [[:accounts "Accounts"] [:bank-transactions "BankTransactions"] [:bank-transfers "BankTransfers"]
+   [:manual-journals "ManualJournals"] [:invoices "Invoices"] [:credit-notes "CreditNotes"] [:payments "Payments"]])
+
+(defn post!
+  "Derives org `tenant`'s entries from the documents the store holds now (`ownpurse.xero.ledger`) and makes them its
+  book's entries: what changed is written, what no longer holds ends. Returns {:items n :written n :ended n}, with
+  :unbalanced n when documents did not balance (they are not posted; `ownpurse.xero.ledger/entries` lists them)."
+  [node tenant]
+  (let [[org] (current-rows node tenant "Organisation")
+        base (or (:base-currency org)
+                 (throw (ex-info (str "ownpurse holds no Xero organisation for " tenant ", so it does not know its "
+                                      "currency. Pull the org first.")
+                                 {:type :ownpurse/not-found :tenant tenant})))
+        docs (into {} (for [[k resource] posted-resources] [k (current-rows node tenant resource)]))
+        {:keys [entries unbalanced]} (xero-ledger/entries tenant base docs)
+        {:keys [written ended]} (ledger/put-entries! node (xero-ledger/book-id tenant) entries
+                                                     {:source "ownpurse" :why "post" :org tenant})]
+    (cond-> {:items (count entries) :written written :ended ended}
+      (seq unbalanced) (assoc :unbalanced (count unbalanced)))))
+
 (defn pull!
   "Fetches each of `resources` for org `tenant` through xero-cli and keeps it. After the first fetch, a resource
   that has UpdatedDateUTC asks only for what changed since the latest one held. Then the reports (`pull-reports!`,
   with `:reports` over `default-reports`; {:months 0} fetches none), counted under \"Reports\", and the documents'
   history and attachments (`pull-history!`, with `:history` over `default-history`; {:calls 0} fetches none),
   counted under \"History\", and their files when `:history` asks for them (`pull-files!`, with `:keep-file`),
-  counted under \"Files\". Returns {resource {:items :written}}. Stops at the first error xero-cli reports (see
+  counted under \"Files\". Then the org's entries, from every document held (`post!`), counted under \"Ledger\".
+  Returns {resource {:items :written}}. Stops at the first error xero-cli reports (see
   ownpurse.xero.cli/exit-types); what was kept before it stays kept."
   [node {:keys [cli tenant resources reports history today now keep-file]}]
   (let [tool-version (cli/version cli)
@@ -283,7 +316,9 @@
                                                      :tool-version tool-version})])
                (pos? (:files history))
                (conj ["Files" (pull-files! node {:cli cli :tenant tenant :history history :keep-file keep-file
-                                                 :tool-version tool-version})])))))
+                                                 :tool-version tool-version})])
+               (some #{"Organisation"} resources)
+               (conj ["Ledger" (post! node tenant)])))))
 
 (defn read-orgs
   "The orgs a local config file names: {:xero {:orgs [{:tenant \"<tenant id>\" :name \"...\"}]}}, or [] when it

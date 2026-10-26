@@ -171,3 +171,18 @@
     (is (contains? (:paths body) (keyword "/links")))
     (is (contains? (:paths body) (keyword "/compare")))
     (is (contains? (:paths body) (keyword "/matches")))))
+
+(deftest trial-balance-test
+  (let [node (store/start {:mode :in-memory})
+        app (handler/handler {:node node})
+        tenant "c0ffee00-0000-4000-8000-000000000000"]
+    (try
+      (testing "an org ownpurse does not hold is not found, and the error says to pull it"
+        (let [{:keys [status body]} (request app :get (str "/trial-balance?org=" tenant "&date=2026-03-31"))]
+          (is (= 404 status))
+          (is (= "ownpurse/not-found" (get-in body [:error :type])))))
+      (testing "an opening that is neither is refused"
+        (is (= 400 (:status (request app :get (str "/trial-balance?org=" tenant "&date=2026-03-31&opening=x"))))))
+      (testing "the route is in the OpenAPI document"
+        (is (contains? (:paths (:body (request app :get "/openapi.json"))) (keyword "/trial-balance"))))
+      (finally (store/stop node)))))

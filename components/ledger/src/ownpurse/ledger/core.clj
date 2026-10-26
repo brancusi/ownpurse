@@ -48,3 +48,45 @@
 (defn load! [node facts metadata]
   (let [rows (rows (check! facts))]
     (store/put-changed! node (into (array-map) (for [t tables :when (seq (rows t))] [t (rows t)])) metadata)))
+
+(defn- held-ids
+  "The ids of `table`'s rows for `book` the store holds now."
+  [node table book]
+  (if (store/table-exists? node table)
+    (set (map :xt/id (store/q node [(str "SELECT _id FROM " (name table) " WHERE book = ?") book])))
+    #{}))
+
+(defn put-entries! [node book entries metadata]
+  (doseq [e entries]
+    (when (not= book (:entry/book e))
+      (throw (ex-info (str "The entry " (:entry/id e) " belongs to " (:entry/book e) ", not " book ".")
+                      {:type :ownpurse/invalid :entry (:entry/id e) :book book})))
+    (schema/check! :ownpurse/entry e))
+  (let [{entry-rows :entries posting-rows :postings} (rows {:entries entries})
+        stale (fn [table rows] (vec (remove (set (map :xt/id rows)) (held-ids node table book))))
+        stale-entries (stale :entries entry-rows)
+        stale-postings (stale :postings posting-rows)
+        {:keys [written]} (store/put-changed! node (cond-> {}
+                                                     (seq entry-rows) (assoc :entries entry-rows)
+                                                     (seq posting-rows) (assoc :postings posting-rows))
+                                              metadata)
+        ending (assoc metadata :why (str (:why metadata) ": entries that no longer hold"))]
+    (when (seq stale-entries) (store/delete! node :entries stale-entries {} ending))
+    (when (seq stale-postings) (store/delete! node :postings stale-postings {} ending))
+    {:entries (count entry-rows)
+     :written (get written :entries 0)
+     :postings (count posting-rows)
+     :ended (count stale-entries)}))
+
+(defn balances [node book {:keys [from to]}]
+  (if-not (store/table-exists? node :postings)
+    {}
+    (into {}
+          (map (juxt :account :amount))
+          (store/q node (cond-> [(str "SELECT account, SUM(amount) AS amount FROM postings WHERE book = ?"
+                                      (when from " AND date >= ?")
+                                      (when to " AND date <= ?")
+                                      " GROUP BY account")
+                                 book]
+                          from (conj from)
+                          to (conj to))))))

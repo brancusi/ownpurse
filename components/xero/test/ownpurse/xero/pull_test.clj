@@ -157,10 +157,14 @@
       (let [log (temp-log)
             opts {:cli ["bash" fake pull-1 "0" (str log)] :tenant tenant :resources ["Organisation" "Invoices"]
                   :reports {:months 0} :history {:calls 0}}]
-        (testing "pull! runs xero-cli for each resource and keeps what it prints"
-          (is (= {"Organisation" {:items 1 :written 1} "Invoices" {:items 7 :written 7}} (xero/pull! node opts))))
+        (testing "pull! runs xero-cli for each resource and keeps what it prints, then posts the org's entries"
+          (is (= {"Organisation" {:items 1 :written 1} "Invoices" {:items 7 :written 7}
+                  "Ledger" {:items 7 :written 7 :ended 0}}
+                 (xero/pull! node opts))))
         (testing "the next pull asks only for what changed since the latest update held"
-          (is (= {"Organisation" {:items 1 :written 0} "Invoices" {:items 7 :written 0}} (xero/pull! node opts)))
+          (is (= {"Organisation" {:items 1 :written 0} "Invoices" {:items 7 :written 0}
+                  "Ledger" {:items 7 :written 0 :ended 0}}
+                 (xero/pull! node opts)))
           (let [calls (str/split-lines (slurp log))]
             (is (= ["--help" (str "get Organisation --org " tenant " --all") (str "get Invoices --org " tenant " --all")]
                    (take 3 calls)))
@@ -193,7 +197,7 @@
                                               :history {:calls 5}
                                               :today (LocalDate/parse "2026-03-20")})]
             (is (= ["Tallowmere"] (keys result)))
-            (is (= (conj xero/pull-order "Reports" "History") (keys (result "Tallowmere"))))))))
+            (is (= (conj xero/pull-order "Reports" "History" "Ledger") (keys (result "Tallowmere"))))))))
     (testing "the config may say how many months of reports to keep"
       (is (= xero/default-reports (xero/read-reports "/nowhere/config.local.edn")))
       (spit config (pr-str {:xero {:orgs [] :reports {:months 24}}}))

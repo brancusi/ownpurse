@@ -26,3 +26,17 @@
   `metadata`. Returns {:written {table count} :tx key-or-nil}; a second load of the same facts writes nothing."
   [node facts metadata]
   (core/load! node facts metadata))
+
+(defn put-entries!
+  "Makes `entries` the whole of `book`'s entries: checks each (it must balance, in every commodity, and belong to
+  `book`), writes the entries and postings that differ from what the store holds, and ends, by DELETE, those of the
+  book no longer among them (their history stays). Returns {:entries n :written n :postings n :ended n}, :written
+  counting entries."
+  [node book entries metadata]
+  (core/put-entries! node book entries metadata))
+
+(defn balances
+  "The sum of `book`'s postings by account, {account amount}, over the dates `from` to `to` (LocalDates, both
+  included; either may be nil for no bound)."
+  [node book opts]
+  (core/balances node book opts))

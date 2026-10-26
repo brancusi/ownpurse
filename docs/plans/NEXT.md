@@ -240,7 +240,21 @@ apart from `public.invoices`, and DataGrip shows the schema.
 - **Open:** an item Xero stops returning (a deleted bank transfer, a deleted draft) is not seen by
   `--modified-since`. A full fetch can find ids that are gone; what to record then is for 3b.4.
 
-### 3b.4 Derive and check (next)
+### 3b.4 Derive and check (built 2026-10-26; the real tie-out is the workspace's to run)
+
+**Built.** `ownpurse.xero.ledger` ports xero-axi's rules (bank transactions, transfers, manual journals, invoices,
+credit notes, payments) as pure functions over the rows xero.<table> holds, with hand-worked tests per kind. A
+document in another currency is converted at its own CurrencyRate, the rounding on its bank or control posting.
+Every Xero pull ends by posting the org's book (`"Ledger"` in its counts): `ledger/put-entries!` writes the entries
+and postings that changed and ends by `DELETE` those that no longer hold; a document that does not balance is
+counted as `unbalanced` and not posted. Accounts are the Xero account rows (`xero:<org>:account:<id>`); a line to an
+account the chart lacks posts to `xero:<org>:account:(uncoded):<code>`. `GET /trial-balance?org=&date=` (or
+`xero/check-trial-balance`) compares the book with Xero's TrialBalance at a month end the pull kept, account by
+account: balance sheet accounts open the financial year at Xero's BalanceSheet the day before (its earnings rows
+that name no account join the retained earnings account), or with `opening=ledger` at the book's own postings;
+income and expense accounts are the year's postings. Not posted, because Xero's API does not show them: tracked
+inventory's cost of sales, currency gains, Xero's fixed asset depreciation, conversion balances. The check shows
+them as differences on their accounts.
 
 Where to start: the pure posting rules for one document kind (an invoice), with xero-axi's goldens as tests, at
 the REPL with `(dev/watch)` on; then the rest of the kinds, then the step that writes them and ends what no longer
@@ -265,7 +279,9 @@ Done when:
    the source rows in 3b.3; holds again for documents and postings.)
 2. Every entry balances, and the trial balance at a date equals the fixture's TrialBalance to the cent.
 3. Locally, against real Xero: each of our four orgs loads, and its trial balance at 2025-12-31 equals `xero-cli
-   report TrialBalance --org <tenant id> --param date=2025-12-31` to the cent.
+   report TrialBalance --org <tenant id> --param date=2025-12-31` to the cent. (The workspace runs
+   `GET /trial-balance?org=<tenant>&date=2025-12-31`; each difference it reports, in general terms, is a rule to add
+   here.)
 4. Step 3's xero-axi reader, its sample, next.jdbc and the SQLite driver are removed, and `.gitignore` loses the
    `samples/xero-axi` exception. (Done 2026-10-25.)
 

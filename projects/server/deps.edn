@@ -4,6 +4,7 @@
         poly/config {:local/root "../../components/config"}
         poly/entity {:local/root "../../components/entity"}
         poly/json {:local/root "../../components/json"}
+        poly/ledger {:local/root "../../components/ledger"}
         poly/mercury {:local/root "../../components/mercury"}
         poly/plaid {:local/root "../../components/plaid"}
         poly/money {:local/root "../../components/money"}
