@@ -240,7 +240,7 @@ apart from `public.invoices`, and DataGrip shows the schema.
 - **Open:** an item Xero stops returning (a deleted bank transfer, a deleted draft) is not seen by
   `--modified-since`. A full fetch can find ids that are gone; what to record then is for 3b.4.
 
-### 3b.4 Derive and check (built 2026-10-26; the real tie-out is the workspace's to run)
+### 3b.4 Derive and check (done 2026-10-26: all four real orgs tie at 2025-12-31)
 
 **Built.** `ownpurse.xero.ledger` ports xero-axi's rules (bank transactions, transfers, manual journals, invoices,
 credit notes, payments) as pure functions over the rows xero.<table> holds, with hand-worked tests per kind. A
@@ -279,11 +279,40 @@ Done when:
    the source rows in 3b.3; holds again for documents and postings.)
 2. Every entry balances, and the trial balance at a date equals the fixture's TrialBalance to the cent.
 3. Locally, against real Xero: each of our four orgs loads, and its trial balance at 2025-12-31 equals `xero-cli
-   report TrialBalance --org <tenant id> --param date=2025-12-31` to the cent. (The workspace runs
-   `GET /trial-balance?org=<tenant>&date=2025-12-31`; each difference it reports, in general terms, is a rule to add
-   here.)
+   report TrialBalance --org <tenant id> --param date=2025-12-31` to the cent. (Done 2026-10-26, by the workspace.
+   The two differences it found were in reading the opening balance sheet: a credit card is a BANK account of class
+   ASSET that the balance sheet shows among the liabilities, and the computed earnings row names Xero's placeholder
+   account id `abababab-...`. Both are fixed and tested.)
 4. Step 3's xero-axi reader, its sample, next.jdbc and the SQLite driver are removed, and `.gitignore` loses the
    `samples/xero-axi` exception. (Done 2026-10-25.)
+
+## The close register (built 2026-10-26)
+
+A private workspace closing a year needs to hold its open questions, the journals their answers propose, and the
+owner's approval, before anything is posted. The `close` component holds them; it posts nothing.
+
+- **Items** (`PUT /close/items/{ref}`, `GET /close/items?book=&status=&group=`): a question the close must decide,
+  with a title, an action, a category, an amount, its effect on the reports, preconditions, the items it depends
+  on, its evidence and links to older decisions. Its status is the workspace's own workflow label; ownpurse reads
+  only `rejected` and `excluded` (set aside, they count nowhere). An item carries zero or more journals, each in
+  one book (an intercompany item has one per side); every journal balances, its accounts named by the book's
+  account id or by code.
+- **Decision groups** (`PUT /close/groups/{ref}`, `GET /close/groups`): items put to one conversation, by each
+  item's `group`.
+- **Packages** (`POST /close/packages`, `GET /close/packages`): sealed, never changed. A package keeps each item's
+  content hash (everything but its status, group, note and posting references) and one hash over them. The owner
+  approves it whole (`POST /close/packages/{ref}/approval` with the hash as they saw it); an approval is refused if
+  an item changed since sealing. An item is approved when it is in an approved package and unchanged since; a
+  later change shows in the package's `changed` and takes it out of the pro-forma until a new package is approved.
+- **Posted** (`POST /close/items/{ref}/journals/{journal}/posted`): once a person posts an approved journal in the
+  book's system, its reference is kept and the journal leaves the pro-forma, since the book's own figures now hold
+  it. A posted journal cannot change.
+- **Pro-forma** (`GET /trial-balance?org=&date=&pro-forma=approved|proposed`): each account gains `adjustments` and
+  `pro-forma` (Xero's balance with them): balance sheet accounts take the journals dated up to the date, income and
+  expense accounts those within the year. `proposed` counts every item not set aside, for a draft.
+
+Next for the close: intercompany pairs (a config of which account in one org mirrors which in another, a per-pair
+report, then eliminations), a statement-file source, an accountant export per entity, a 1099 candidate list.
 
 ## After 3b
 

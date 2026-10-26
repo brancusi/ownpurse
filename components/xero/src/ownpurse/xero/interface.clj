@@ -124,6 +124,8 @@
 (defn check-trial-balance
   "Org `tenant`'s book against Xero's trial balance at `date`, account by account, to the cent. opts: :opening,
   :balance-sheet (the default: the balance sheet accounts at the start of the year from Xero's balance sheet at the
-  day before) or :ledger (from the book's postings). Returns {:date :year-start :opening :tied? :accounts :other}."
+  day before) or :ledger (from the book's postings); :adjustments, a function of {:from :to} that returns {account
+  amount}, adds each account's :adjustments and :pro-forma. Returns {:date :year-start :opening :tied? :accounts
+  :other}."
   [node tenant date opts]
   (trial-balance/check node tenant date opts))

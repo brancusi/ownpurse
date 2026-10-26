@@ -6,6 +6,7 @@
                      ;; Tests on save at the REPL: (dev/watch)
                      com.nextjournal/beholder {:mvn/version "1.0.2"}
 
+                     poly/close {:local/root "components/close"}
                      poly/compare {:local/root "components/compare"}
                      poly/config {:local/root "components/config"}
                      poly/entity {:local/root "components/entity"}
@@ -26,7 +27,8 @@
                    "-Dio.netty.tryReflectionSetAccessible=true"
                    "-XX:-OmitStackTraceInFastThrow"]}
 
-  :test {:extra-paths ["components/compare/test"
+  :test {:extra-paths ["components/close/test"
+                       "components/compare/test"
                        "components/config/test"
                        "components/entity/test"
                        "components/json/test"

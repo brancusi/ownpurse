@@ -198,6 +198,19 @@
           (testing "an account that differs is shown with its difference, and the book does not tie"
             (is (false? tied?))
             (is (= [["6200" -0.01M]] (keep #(when-not (zero? (:difference %)) [(:code %) (:difference %)]) accounts)))))
+        (testing "with adjustments, each account shows them and Xero's balance with them, the pro-forma"
+          (let [;; A balance sheet adjustment dated last year counts; an expense's counts only within the year.
+                adjustments (fn [{:keys [from]}]
+                              (cond-> {(acct 1) 50.00M (id 8) -50.00M}
+                                from (assoc "6200" -100.00M "4000" 100.00M)
+                                (not from) (assoc "6200" -175.00M "4000" 175.00M)))
+                {:keys [accounts]} (xero/check-trial-balance node tenant (day "2026-03-31") {:adjustments adjustments})
+                by-code (into {} (map (juxt :code identity)) accounts)]
+            (is (= 50.00M (:adjustments (by-code "1010"))))
+            (is (= (+ (:xero (by-code "1010")) 50.00M) (:pro-forma (by-code "1010"))))
+            (is (= -50.00M (:adjustments (by-code "2500"))))
+            (is (= [-100.00M 100.00M] (map (comp :adjustments by-code) ["6200" "4000"])))
+            (is (= 0M (:adjustments (by-code "3200"))))))
         (testing "opening from the book's own postings needs no balance sheet"
           (is (= "ledger" (:opening (xero/check-trial-balance node tenant (day "2026-03-31") {:opening :ledger})))))))))
 

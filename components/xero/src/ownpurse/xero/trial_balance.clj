@@ -91,10 +91,14 @@
   "ownpurse's book of org `tenant` against Xero's trial balance at `date` (which the store must hold: a pull keeps
   one at the end of each month). `opening`: :balance-sheet (the default) takes the balance sheet accounts at the
   start of the year from Xero's balance sheet at the day before, which the store must hold, with the earnings
-  rows that name no account added to the retained earnings account (so too the trial balance's); :ledger takes them from the book's postings
-  before the year. Returns {:date :year-start :opening :tied? :accounts [{:account :code :name :xero :ownpurse
-  :difference}] :other [...]}, every account either side has a balance in, by code."
-  [node tenant ^LocalDate date {:keys [opening] :or {opening :balance-sheet}}]
+  rows that name no account added to the retained earnings account (so too the trial balance's); :ledger takes
+  them from the book's postings before the year. `adjustments`, when given, is a function of {:from :to} that
+  returns {account amount} (an account by its row id, AccountID or code): each account then has :adjustments,
+  those dated up to `date` for a balance sheet account and within the year for an income or expense account, and
+  :pro-forma, Xero's balance with them. Returns {:date :year-start :opening :tied? :accounts [{:account :code :name
+  :xero :ownpurse :difference :adjustments :pro-forma}] :other [...]}, every account any column has a balance in,
+  by code."
+  [node tenant ^LocalDate date {:keys [opening adjustments] :or {opening :balance-sheet}}]
   (let [[org] (rows-of node tenant "Organisation")
         _ (when-not org
             (throw (ex-info (str "ownpurse holds no Xero organisation for " tenant ". Pull it first.")
@@ -133,18 +137,29 @@
               retained (update-in [:accounts retained] (fnil + 0M) (reduce + 0M (map :amount (:other figures)))))))
         opening-balances (into {} (remove (comp profit-or-loss? key)) (:accounts opening-figures))
         ours (merge-with + opening-balances year)
+        ;; Adjustments name an account by its row id, AccountID or code; one the chart lacks keeps its own key.
+        chart (xero-ledger/chart tenant (vals accounts))
+        resolve #(or (xero-id %) (let [r (xero-ledger/resolve-account chart % %)] (or (xero-id r) r)))
+        adjusted (when adjustments
+                   (let [by-id #(reduce (fn [acc [k v]] (update acc (resolve k) (fnil + 0M) v)) {} %)
+                         to-date (by-id (adjustments {:to date}))
+                         this-year (by-id (adjustments {:from start :to date}))]
+                     (into {} (for [id (into (set (keys to-date)) (keys this-year))]
+                                [id (get (if (profit-or-loss? id) this-year to-date) id 0M)]))))
         ids (sort-by #(vector (or (:code (accounts %)) "~") %)
-                     (into (set (keys (:accounts xero))) (keys ours)))
+                     (-> (set (keys (:accounts xero))) (into (keys ours)) (into (keys adjusted))))
         rows (for [id ids
                    :let [x (get-in xero [:accounts id] 0M)
-                         o (get ours id 0M)]
-                   :when (not (and (zero? x) (zero? o)))]
-               (cond-> {:account (row-id id)
+                         o (get ours id 0M)
+                         a (get adjusted id 0M)]
+                   :when (not (and (zero? x) (zero? o) (zero? a)))]
+               (cond-> {:account (if (accounts id) (row-id id) id)
                         :name (or (:name (accounts id)) id)
                         :xero x
                         :ownpurse o
                         :difference (- o x)}
-                 (:code (accounts id)) (assoc :code (:code (accounts id)))))]
+                 (:code (accounts id)) (assoc :code (:code (accounts id)))
+                 adjustments (assoc :adjustments a :pro-forma (+ x a))))]
     {:date date
      :year-start start
      :opening (name opening)

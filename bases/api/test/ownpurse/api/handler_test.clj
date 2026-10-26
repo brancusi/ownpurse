@@ -186,3 +186,37 @@
       (testing "the route is in the OpenAPI document"
         (is (contains? (:paths (:body (request app :get "/openapi.json"))) (keyword "/trial-balance"))))
       (finally (store/stop node)))))
+
+(deftest close-test
+  (let [node (store/start {:mode :in-memory})
+        app (handler/handler {:node node})
+        item {:title "January rent paid in December" :status "accountant decision" :book "book:test:tallowmere"
+              :amount "1200.00" :group "G-1"
+              :journals [{:ref "J1" :date "2025-12-31" :narration "January rent is prepaid"
+                          :postings [{:account "1400" :amount "1200.00" :commodity "USD"}
+                                     {:account "6200" :amount "-1200.00" :commodity "USD"}]}]}]
+    (try
+      (testing "an item is put with its journals, amounts as decimal strings"
+        (let [{:keys [status body]} (request app :put "/close/items/C-01" item)]
+          (is (= 200 status))
+          (is (= ["1200.00" "-1200.00"] (map :amount (get-in body [:item :journals 0 :postings]))))
+          (is (= ["2025-12-31" false] [(get-in body [:item :journals 0 :date]) (get-in body [:item :approved])]))))
+      (testing "a journal that does not balance is refused"
+        (is (= 400 (:status (request app :put "/close/items/C-02"
+                                     (assoc-in item [:journals 0 :postings 0 :amount] "1200.01"))))))
+      (testing "a group gathers the items that name it"
+        (is (= ["C-01"] (get-in (request app :put "/close/groups/G-1" {:title "Prepayments"}) [:body :group :items]))))
+      (testing "a sealed package is approved with its hash; its items are then approved"
+        (let [{:keys [hash]} (:package (:body (request app :post "/close/packages"
+                                                       {:ref "P-1" :items ["C-01"] :coverage {:mapped 1}})))]
+          (is (= 409 (:status (request app :post "/close/packages/P-1/approval" {:hash "x" :by "owner"}))))
+          (is (= "owner" (get-in (request app :post "/close/packages/P-1/approval" {:hash hash :by "owner"})
+                                 [:body :package :approval :by])))
+          (is (= [true] (map :approved (:items (:body (request app :get "/close/items?book=book:test:tallowmere"))))))))
+      (testing "posting records the reference"
+        (is (= "MJ-1" (get-in (request app :post "/close/items/C-01/journals/J1/posted" {:reference "MJ-1"})
+                              [:body :item :journals 0 :posted-reference]))))
+      (testing "the routes are in the OpenAPI document"
+        (is (every? (set (keys (:paths (:body (request app :get "/openapi.json")))))
+                    (map keyword ["/close/items" "/close/packages" "/close/groups"]))))
+      (finally (store/stop node)))))

@@ -5,6 +5,7 @@
    [malli.error :as me]
    [malli.util :as mu]
    [ownpurse.api.json :as api.json]
+   [ownpurse.close.interface :as close]
    [ownpurse.compare.interface :as cmp]
    [ownpurse.entity.interface :as entity]
    [ownpurse.json.interface :as json]
@@ -108,17 +109,103 @@
   "An org's book against Xero's trial balance at a date. Amounts are decimal strings, debits positive."
   [:map
    [:org :string] [:date :string] [:year-start :string] [:opening :string] [:tied :boolean]
+   [:pro-forma {:optional true} [:enum "approved" "proposed"]]
    [:accounts [:vector [:map [:account :string] [:code {:optional true} :string] [:name :string]
-                        [:xero :string] [:ownpurse :string] [:difference :string]]]]
+                        [:xero :string] [:ownpurse :string] [:difference :string]
+                        [:adjustments {:optional true} :string] [:pro-forma {:optional true} :string]]]]
    [:other [:vector [:map [:name [:maybe :string]] [:amount :string]]]]])
+
+(defn- amount-out [^BigDecimal a]
+  (.toPlainString a))
 
 (defn- trial-balance-out
   "A trial balance check as the API returns it: dates and amounts as strings."
-  [org {:keys [date year-start opening tied? accounts other]}]
-  (let [amount #(.toPlainString ^BigDecimal %)]
-    {:org org :date (str date) :year-start (str year-start) :opening opening :tied tied?
-     :accounts (mapv #(-> % (update :xero amount) (update :ownpurse amount) (update :difference amount)) accounts)
-     :other (mapv #(update % :amount amount) other)}))
+  [org pro-forma {:keys [date year-start opening tied? accounts other]}]
+  (let [amounts #(reduce (fn [m k] (cond-> m (contains? m k) (update k amount-out))) % [:xero :ownpurse :difference
+                                                                                        :adjustments :pro-forma])]
+    (cond-> {:org org :date (str date) :year-start (str year-start) :opening opening :tied tied?
+             :accounts (mapv amounts accounts)
+             :other (mapv #(update % :amount amount-out) other)}
+      pro-forma (assoc :pro-forma pro-forma))))
+
+(def Posting
+  "A journal's posting: an amount as a decimal string, debits positive."
+  [:map {:closed true}
+   [:account [:string {:min 1}]]
+   [:amount (schema/schema :ownpurse/amount)]
+   [:commodity (schema/schema :ownpurse/commodity)]
+   [:description {:optional true} :string]])
+
+(def Journal
+  "A journal a close item proposes, in one book. It must balance in every commodity."
+  [:map {:closed true}
+   [:ref [:string {:min 1}]]
+   [:book {:optional true} [:string {:min 1}]]
+   [:date (schema/schema :ownpurse/date)]
+   [:narration [:string {:min 1}]]
+   [:postings [:vector {:min 2} Posting]]
+   [:evidence {:optional true} [:vector :string]]])
+
+(def CloseItemBody
+  "PUT /close/items/{ref}: a close item, a question whose answer may become journals."
+  [:map {:closed true}
+   [:title [:string {:min 1}]]
+   [:status [:string {:min 1}]]
+   [:book {:optional true} [:string {:min 1}]]
+   [:category {:optional true} :string]
+   [:action {:optional true} :string]
+   [:amount {:optional true} (schema/schema :ownpurse/amount)]
+   [:effect {:optional true} :string]
+   [:preconditions {:optional true} [:vector :string]]
+   [:depends-on {:optional true} [:vector :string]]
+   [:evidence {:optional true} [:vector :string]]
+   [:links {:optional true} [:vector :string]]
+   [:reason {:optional true} :string]
+   [:group {:optional true} :string]
+   [:note {:optional true} :string]
+   [:journals {:optional true} [:vector Journal]]])
+
+(def CloseItem
+  "A close item as the API returns it: amounts and dates as strings, and whether it is approved as it stands."
+  [:map
+   [:ref :string] [:title :string] [:status :string] [:approved :boolean]
+   [:amount {:optional true} :string]
+   [:journals [:vector [:map [:ref :string] [:book :string] [:date :string] [:narration :string]
+                        [:postings [:vector [:map [:account :string] [:amount :string] [:commodity :string]]]]
+                        [:posted-reference {:optional true} :string]]]]])
+
+(def CloseGroup
+  "A decision group: items put to one conversation."
+  [:map [:ref :string] [:title :string] [:prompt {:optional true} :string] [:items [:vector :string]]])
+
+(def ClosePackageBody
+  "POST /close/packages: the items a package puts to the owner, sealed as they stand."
+  [:map {:closed true}
+   [:ref [:string {:min 1}]]
+   [:items [:vector {:min 1} :string]]
+   [:as-of {:optional true} :string]
+   [:scope {:optional true} :string]
+   [:coverage {:optional true} [:map-of :keyword :int]]
+   [:note {:optional true} :string]])
+
+(def ClosePackage
+  "A sealed package, its approval if any, and the items changed since it was sealed."
+  [:map
+   [:ref :string] [:items [:vector :string]] [:hashes [:vector :string]] [:hash :string] [:sealed-at :string]
+   [:changed [:vector :string]]
+   [:approval {:optional true} [:map [:by :string] [:at :string] [:hash :string] [:note {:optional true} :string]]]])
+
+(defn- close-item-out [node item]
+  (cond-> (-> item
+              (assoc :approved (close/approved? node item))
+              (update :journals (partial mapv (fn [j] (-> j
+                                                          (update :date str)
+                                                          (update :postings (partial mapv #(update % :amount amount-out))))))))
+    (:amount item) (update :amount amount-out)))
+
+(defn- close-package-out [package]
+  (cond-> (update package :sealed-at str)
+    (:approval package) (update :approval #(-> % (dissoc :package) (update :at str)))))
 
 (def Match
   "Two lines a person says are the same money, by their source rows."
@@ -209,7 +296,7 @@
 
 (def ^:private entity-errors
   {:ownpurse/invalid 400 :ownpurse/invalid-link 400 :ownpurse/invalid-match 400 :ownpurse/not-found 404
-   :ownpurse/link-conflict 409 :ownpurse/match-conflict 409 :ownpurse/no-disk 409 :ownpurse/backup-exists 409
+   :ownpurse/link-conflict 409 :ownpurse/match-conflict 409 :ownpurse/close-conflict 409 :ownpurse/no-disk 409 :ownpurse/backup-exists 409
    :ownpurse/backup-timeout 503 :ownpurse/backup-invalid 500})
 
 (defn- answer
@@ -289,13 +376,83 @@
            :parameters {:query [:map
                                 [:org [:string {:min 1}]]
                                 [:date (schema/schema :ownpurse/date)]
-                                [:opening {:optional true} [:enum "balance-sheet" "ledger"]]]}
+                                [:opening {:optional true} [:enum "balance-sheet" "ledger"]]
+                                [:pro-forma {:optional true} [:enum "approved" "proposed"]]]}
            :responses {200 {:body [:map [:trial-balance TrialBalance]]} 404 {:body ApiError}}
-           :handler (fn [{{{:keys [org date opening]} :query} :parameters}]
-                      (answer #(hash-map :trial-balance
-                                         (trial-balance-out org (xero/check-trial-balance
-                                                                 node org date
-                                                                 {:opening (keyword (or opening "balance-sheet"))})))))}}]
+           :handler (fn [{{{:keys [org date opening pro-forma]} :query} :parameters}]
+                      (let [book (xero/book-id org)
+                            adjustments (when pro-forma
+                                          #(close/balances node book (assoc % :basis (keyword pro-forma))))]
+                        (answer #(hash-map :trial-balance
+                                           (trial-balance-out org pro-forma
+                                                              (xero/check-trial-balance
+                                                               node org date
+                                                               (cond-> {:opening (keyword (or opening "balance-sheet"))}
+                                                                 adjustments (assoc :adjustments adjustments))))))))}}]
+   ["/close/items"
+    {:get {:summary (str "The close register's items: the questions a close must decide, each with its workflow "
+                         "status, evidence and the journals it proposes. `book` finds an item by its book or any of "
+                         "its journals'. `approved` is true when the item is in an approved package and unchanged since.")
+           :parameters {:query [:map [:book {:optional true} :string] [:status {:optional true} :string]
+                                [:group {:optional true} :string]]}
+           :responses {200 {:body [:map [:items [:vector CloseItem]]]}}
+           :handler (fn [{{:keys [query]} :parameters}]
+                      (answer #(hash-map :items (mapv (partial close-item-out node) (close/items node query)))))}}]
+   ["/close/items/{ref}"
+    {:put {:summary (str "Adds a close item or changes it. Its status is your close workflow's own label; ownpurse "
+                         "reads only rejected and excluded, which count nowhere. Each journal names its book (default "
+                         "the item's), and its postings name accounts by the book's account id or code, and must "
+                         "balance. A posted journal cannot change. Nothing posts anywhere.")
+           :parameters {:path [:map [:ref [:string {:min 1}]]] :body CloseItemBody}
+           :responses {200 {:body [:map [:item CloseItem]]} 400 {:body ApiError} 409 {:body ApiError}}
+           :handler (fn [{{:keys [path body]} :parameters}]
+                      (answer #(hash-map :item (close-item-out node (close/put-item! node (assoc body :ref (:ref path)))))))}}]
+   ["/close/items/{ref}/journals/{journal}/posted"
+    {:post {:summary (str "Records where an approved item's journal was posted in its book's system of record, once a "
+                          "person has posted it. From then on it leaves the pro-forma: the book's own figures hold it.")
+            :parameters {:path [:map [:ref [:string {:min 1}]] [:journal [:string {:min 1}]]]
+                         :body [:map {:closed true} [:reference [:string {:min 1}]]]}
+            :responses {200 {:body [:map [:item CloseItem]]} 400 {:body ApiError} 404 {:body ApiError}
+                        409 {:body ApiError}}
+            :handler (fn [{{:keys [path body]} :parameters}]
+                       (answer #(hash-map :item (close-item-out node (close/mark-posted!
+                                                                      node {:item (:ref path) :journal (:journal path)
+                                                                            :reference (:reference body)})))))}}]
+   ["/close/groups"
+    {:get {:summary "The decision groups, each with the items that name it as their group."
+           :responses {200 {:body [:map [:groups [:vector CloseGroup]]]}}
+           :handler (fn [_] (answer #(hash-map :groups (close/groups node))))}}]
+   ["/close/groups/{ref}"
+    {:put {:summary "Adds or changes a decision group: items put to the owner or the accountant in one conversation."
+           :parameters {:path [:map [:ref [:string {:min 1}]]]
+                        :body [:map {:closed true} [:title [:string {:min 1}]] [:prompt {:optional true} :string]
+                               [:note {:optional true} :string]]}
+           :responses {200 {:body [:map [:group CloseGroup]]} 400 {:body ApiError}}
+           :handler (fn [{{:keys [path body]} :parameters}]
+                      (answer #(hash-map :group (close/put-group! node (assoc body :ref (:ref path))))))}}]
+   ["/close/packages"
+    {:get {:summary (str "Every sealed package, with its approval and the items changed since it was sealed (an "
+                         "approval covers an item only as it was sealed).")
+           :responses {200 {:body [:map [:packages [:vector ClosePackage]]]}}
+           :handler (fn [_] (answer #(hash-map :packages (mapv close-package-out (close/packages node)))))}
+     :post {:summary (str "Seals a package for the owner: the items as they stand now, each item's content hash, and "
+                          "one hash over them all. A package is never changed; seal a new one.")
+            :parameters {:body ClosePackageBody}
+            :responses {200 {:body [:map [:package ClosePackage]]} 400 {:body ApiError} 404 {:body ApiError}
+                        409 {:body ApiError}}
+            :handler (fn [{{:keys [body]} :parameters}]
+                       (answer #(hash-map :package (close-package-out (close/seal! node body)))))}}]
+   ["/close/packages/{ref}/approval"
+    {:post {:summary (str "Records the owner's approval of a sealed package, with the package's hash as they saw it. "
+                          "Refused when the hash differs or an item changed since sealing. Its items' journals then "
+                          "count in the pro-forma trial balance (GET /trial-balance?pro-forma=approved).")
+            :parameters {:path [:map [:ref [:string {:min 1}]]]
+                         :body [:map {:closed true} [:hash [:string {:min 1}]] [:by [:string {:min 1}]]
+                                [:note {:optional true} :string]]}
+            :responses {200 {:body [:map [:package ClosePackage]]} 400 {:body ApiError} 404 {:body ApiError}
+                        409 {:body ApiError}}
+            :handler (fn [{{:keys [path body]} :parameters}]
+                       (answer #(hash-map :package (close-package-out (close/approve! node (assoc body :package (:ref path)))))))}}]
    ["/matches"
     {:put {:summary (str "Says two lines are the same money: an evidence line and a book line of the same amount, on "
                          "an evidence account and the account it is evidence for, by their source rows (the compare "
