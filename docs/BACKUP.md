@@ -1,7 +1,8 @@
 # Backing up and restoring a record
 
 A record is the XTDB node's files in the data directory (`OWNPURSE_DATA_DIR`, default `data`): `xtdb/log` and
-`xtdb/objects`. Copying that folder while ownpurse runs can catch a file half-written, so take a snapshot instead.
+`xtdb/objects`, and the files the record keeps beside them in `files/sha256` (such as attachments' files), each
+named for the SHA-256 of its bytes. Copying that folder while ownpurse runs can catch a file half-written, so take a snapshot instead.
 
 ## Taking a snapshot
 
@@ -12,17 +13,20 @@ curl -s -X POST localhost:7070/backup -H 'content-type: application/json' -d '{"
 ```
 
 or `(backup "/Volumes/backup/ownpurse")` at the REPL. `dir` is an absolute path; ownpurse creates it when it is
-missing. Each snapshot is a new folder in it, `ownpurse-<time>`, holding `xtdb/objects` and `snapshot.edn`.
+missing. Each snapshot is a new folder in it, `ownpurse-<time>`, holding `xtdb/objects`, `files/sha256` and
+`snapshot.edn`.
 
 What happens:
 
 1. ownpurse asks XTDB to finish its current block, which writes every transaction so far to storage files. XTDB
    writes each storage file once and never changes it.
 2. It copies every storage file up to that block into `.ownpurse-<time>.partial` in `dir`.
-3. It opens the copy on a separate node and reads every version of every table. It also checks that the copy holds
+3. It copies the record's kept files. Each is written once, to a scratch name first, and never changed, and the
+   record names a file only after it is in place, so every file the copied rows name is there.
+4. It opens the copy on a separate node and reads every version of every table. It also checks that the copy holds
    as many transactions as the record did. If anything is wrong, it deletes the partial folder and answers with
    an error.
-4. It renames the folder to `ownpurse-<time>`, so a folder with that name is always a complete snapshot. It
+5. It renames the folder to `ownpurse-<time>`, so a folder with that name is always a complete snapshot. It
    then notes the snapshot in the record's `backups` table.
 
 A transaction written while the snapshot runs is not in it; it is in the next one. Each snapshot holds the whole
@@ -50,6 +54,7 @@ What the restored record holds:
   queries give the same answers as on the original, up to the snapshot.
 - `xt.txs` as it was: every transaction's id, system time, whether it committed, and its metadata (`source`,
   `why`).
+- The kept files, in `files/sha256`.
 - A new log. XTDB requires a node whose storage is ahead of its log to start a new log generation (an **epoch**),
   so the restore writes the next epoch to `xtdb/epoch.edn`, and ownpurse starts the node with it. Transactions after
   the restore get ids in the new epoch, which sort after every earlier id. Keep `epoch.edn` with the record.

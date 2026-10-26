@@ -5,6 +5,7 @@
    [clojure.walk :as walk]
    [ownpurse.money.interface :as money]
    [ownpurse.store.backup :as backup]
+   [ownpurse.store.files :as files]
    [xtdb.api :as xt]
    [xtdb.node :as xtn])
   (:import
@@ -153,11 +154,17 @@
     (throw (ex-info "The record is in memory: there are no files to snapshot. Run ownpurse with a data directory."
                     {:type :ownpurse/no-disk})))
   (let [manifest (backup/snapshot! node {:dir dir :to to})]
-    (put! node {:backups [(-> (select-keys manifest [:dir :block :epoch :transactions :tables :files :bytes])
+    (put! node {:backups [(-> (select-keys manifest [:dir :block :epoch :transactions :tables :files :bytes :kept-files :kept-bytes])
                               (assoc :xt/id (str "snapshot:" (:taken-at manifest))
                                      :taken-at (ZonedDateTime/parse (:taken-at manifest))))]}
           {:source "ownpurse" :why "backup"})
     manifest))
+
+(defn keep-file! [{:keys [mode dir]} write!]
+  (when-not (= :disk mode)
+    (throw (ex-info "The record is in memory: it cannot keep files. Run ownpurse with a data directory."
+                    {:type :ownpurse/no-disk})))
+  (files/keep-file! dir write!))
 
 (defn last-snapshot [node]
   (when (table-exists? node :backups)

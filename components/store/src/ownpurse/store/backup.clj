@@ -7,6 +7,7 @@
   (:require
    [clojure.edn :as edn]
    [clojure.java.io :as io]
+   [ownpurse.store.files :as files]
    [xtdb.api :as xt]
    [xtdb.db-catalog :as db]
    [xtdb.log :as xt-log]
@@ -144,6 +145,12 @@
                           {:type :ownpurse/backup-invalid :expected expected-txs :held held}))))
       names)))
 
+(defn- kept-files
+  "The record's kept files under `root` (files/sha256 in a data directory), relative to it; none when it has none.
+  They are written once and never change, so any of them can be copied while ownpurse runs."
+  [^Path root]
+  (if (Files/isDirectory root (make-array LinkOption 0)) (regular-files root) []))
+
 (defn- delete-tree! [^java.io.File f]
   (when (.isDirectory f)
     (run! delete-tree! (.listFiles f)))
@@ -171,9 +178,12 @@
       (let [from (.resolve (path dir "xtdb" "objects") (storage-root))
             copied (copy-files! from (.resolve (path partial "xtdb" "objects") (storage-root))
                                 (snapshot-files from block))
+            kept-root (path dir files/root "sha256")
+            kept (copy-files! kept-root (path partial files/root "sha256") (kept-files kept-root))
             names (check-copy! partial log-epoch latest-tx-id expected-txs)
             manifest (merge {:format 1 :taken-at (str taken-at) :block block :epoch log-epoch :latest-tx-id latest-tx-id
-                             :transactions expected-txs :tables (count names)}
+                             :transactions expected-txs :tables (count names)
+                             :kept-files (:files kept) :kept-bytes (:bytes kept)}
                             copied)]
         (spit (io/file partial manifest-name) (pr-str manifest))
         (Files/move (.toPath partial) (.toPath final) (into-array CopyOption [StandardCopyOption/ATOMIC_MOVE]))
@@ -202,5 +212,7 @@
                       {:type :ownpurse/record-exists :dir (str target)})))
     (let [src (.resolve (path from "xtdb" "objects") (storage-root))]
       (copy-files! src (.resolve (path dir "xtdb" "objects") (storage-root)) (regular-files src)))
+    (let [kept-root (path from files/root "sha256")]
+      (copy-files! kept-root (path dir files/root "sha256") (kept-files kept-root)))
     (spit (epoch-file dir) (pr-str (inc storage-epoch)))
     {:dir (str dir) :epoch (inc storage-epoch) :block block :transactions transactions}))

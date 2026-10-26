@@ -332,3 +332,34 @@
           (is (= {"History" {:items 0 :written 0 :refused 1 :waiting 0}}
                  (xero/pull! node {:cli ["bash" fake (str dir) "0" (str (temp-log))] :tenant tenant :resources []
                                    :reports {:months 0} :history {:calls 100}}))))))))
+
+(deftest files-test
+  (with-node
+    (fn [node]
+      (let [tmp (.toFile (Files/createTempDirectory "ownpurse record" (make-array FileAttribute 0)))
+            empty-answers (.toFile (Files/createTempDirectory "fake-xero" (make-array FileAttribute 0)))
+            keep-file #(store/keep-file! {:mode :disk :dir (str tmp)} %)
+            opts (fn [dir history] {:cli ["bash" fake dir "0" (str (temp-log))] :tenant tenant :resources []
+                                    :reports {:months 0} :history history :keep-file keep-file})
+            attachment "c0ffee0a-0000-4000-8000-000000000001"]
+        (keep-all! node pull-1)
+        (is (= {"History" {:items 14 :written 14 :waiting 0}} (xero/pull! node (opts pull-1 {:files 0}))))
+        (testing "a file Xero refuses is skipped and counted"
+          (is (= {"Files" {:items 0 :written 0 :refused 1 :waiting 0}}
+                 (xero/pull! node (opts (str empty-answers) {:calls 0 :files 5})))))
+        (testing "each attachment's file is kept in the record, under its SHA-256, and named by a row of xero.files"
+          (is (= {"Files" {:items 1 :written 1 :waiting 0}} (xero/pull! node (opts pull-1 {:calls 0 :files 5}))))
+          (let [[row] (store/q node "SELECT * FROM xero.files")]
+            (is (= {:xt/id (str "xero:" tenant ":file:" attachment)
+                    :document (str "xero:" tenant ":bank-transaction:c0ffee05-0000-4000-8000-000000000003")
+                    :attachment-id attachment
+                    :file-name "receipt-sample-bags.pdf"
+                    :mime-type "application/pdf"}
+                   (select-keys row [:xt/id :document :attachment-id :file-name :mime-type])))
+            (is (= (slurp (io/file pull-1 "files" attachment)) (slurp (io/file tmp (:path row)))))
+            (is (= (.length (io/file pull-1 "files" attachment)) (:bytes row)))))
+        (testing "a file already kept is not downloaded again"
+          (is (= {"Files" {:items 0 :written 0 :waiting 0}} (xero/pull! node (opts pull-1 {:calls 0 :files 5})))))
+        (testing "a record in memory cannot keep files"
+          (is (= :ownpurse/no-disk
+                 (:type (error #(xero/pull! node (assoc (opts pull-1 {:calls 0 :files 5}) :keep-file nil)))))))))))

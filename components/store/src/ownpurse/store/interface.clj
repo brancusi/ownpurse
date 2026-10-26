@@ -60,11 +60,20 @@
   [node table]
   (core/table-exists? node table))
 
+(defn keep-file!
+  "Keeps the bytes `write!` writes (a function of an OutputStream) as a file of the record, in its data directory
+  under files/sha256, named for their SHA-256: written once, never changed, and in every snapshot. Returns {:sha256
+  :bytes :path}, the path relative to the data directory, for a row to name. `config` is the store's config. Throws
+  :ownpurse/no-disk for a record in memory; when `write!` throws, nothing is kept."
+  [config write!]
+  (core/keep-file! config write!))
+
 (defn snapshot!
   "Snapshots the running record into a new folder under `to` (ownpurse-<time>), while it runs: asks the node to
   write every transaction to storage files, copies them, and checks that a fresh node opens the copy and holds every
-  transaction. Keeps the snapshot in the table backups, and returns its manifest {:dir :taken-at :block :epoch
-  :latest-tx-id :transactions :tables :files :bytes}. `config` is the store's config, which says where the record
+  transaction, then copies the record's kept files (`keep-file!`). Keeps the snapshot in the table backups, and
+  returns its manifest {:dir :taken-at :block :epoch :latest-tx-id :transactions :tables :files :bytes :kept-files
+  :kept-bytes}. `config` is the store's config, which says where the record
   is. Throws :ownpurse/no-disk for a record in memory, :ownpurse/backup-timeout, :ownpurse/backup-exists or
   :ownpurse/backup-invalid; a failed snapshot leaves nothing under `to`."
   [node config to]
@@ -80,7 +89,7 @@
   "Restores the snapshot in `from` as the record in the data directory `dir`, which must not hold one yet (throws
   :ownpurse/record-exists, or :ownpurse/not-a-snapshot). Run it with ownpurse stopped, then start ownpurse on `dir`:
   every version keeps its valid and system times, and xt.txs keeps every transaction and its metadata. The record
-  continues on a new log, in the next epoch (written to xtdb/epoch.edn). Returns {:dir :epoch :block
-  :transactions}."
+  continues on a new log, in the next epoch (written to xtdb/epoch.edn), with the kept files. Returns {:dir :epoch
+  :block :transactions}."
   [opts]
   (core/restore! opts))

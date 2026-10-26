@@ -115,10 +115,12 @@
             wanted)))
 
 (def default-history
-  "How many calls a pull may spend, per org, on documents' history and attachment details, and on which documents
-  (see `source/history-resources`). A call fetches one document's history, or the list of its attachments. Kept
-  well under the org's daily 1000, so that an ordinary pull never runs out; what is left waits for the next pull."
-  {:calls 100 :resources source/history-resources})
+  "How many calls a pull may spend, per org, on documents' history and attachment details (`:calls`), and on
+  downloading attachments' files (`:files`, none unless asked for), and on which documents (see
+  `source/history-resources`). A call fetches one document's history, the list of its attachments, or one file.
+  Kept well under the org's daily 1000, so that an ordinary pull never runs out; what is left waits for the next
+  pull."
+  {:calls 100 :files 0 :resources source/history-resources})
 
 (defn- sql-table [table]
   (str (namespace table) "." (str/replace (name table) "-" "_")))
@@ -181,14 +183,48 @@
                 now)
         (assoc :waiting (count later)))))
 
+(defn pull-files!
+  "Downloads, through xero-cli, the file of each attachment in xero.attachments for org `tenant` that xero.files does
+  not hold yet, in the order of `:resources` and the latest documents first, at most `:files` of them. `keep-file`
+  keeps a file in the record (store/keep-file! over the store's config); each file is a row of xero.files naming
+  it. A file Xero refuses is skipped and tried again on the next pull. Returns {:items n :written n :waiting n}, with
+  :refused n when Xero refused any."
+  [node {:keys [cli tenant tool-version keep-file] {:keys [files resources]} :history}]
+  (when-not keep-file
+    (throw (ex-info "Downloading attachments needs a record on disk. Run ownpurse with a data directory, or set :files 0."
+                    {:type :ownpurse/no-disk})))
+  (let [rows (when (store/table-exists? node :xero/attachments)
+               (store/q node ["SELECT resource, document, document_updated, attachments FROM xero.attachments WHERE org = ?"
+                              tenant]))
+        held (if (store/table-exists? node :xero/files)
+               (set (map :attachment-id (store/q node ["SELECT attachment_id FROM xero.files WHERE org = ?" tenant])))
+               #{})
+        [now later] (split-at files (source/file-calls tenant resources rows held))
+        refused? #(= :xero/refused (:type (ex-data %)))]
+    (-> (reduce (fn [acc {:keys [resource mime-type] :as call}]
+                  (if-let [kept (try (keep-file #(cli/download! cli tenant (source/file-path call) mime-type %))
+                                     (catch clojure.lang.ExceptionInfo e (when-not (refused? e) (throw e))))]
+                    (let [fetched-at (Instant/now)
+                          {:keys [written]} (store/put-changed! node (source/file-row tenant call kept fetched-at)
+                                                                (cond-> {:source "xero-cli" :why "fetch" :org tenant
+                                                                         :resource (str resource "/Attachments/file")
+                                                                         :fetched-at (str fetched-at)}
+                                                                  tool-version (assoc :tool-version tool-version)))]
+                      (-> acc (update :items inc) (update :written + (get written :xero/files 0))))
+                    (update acc :refused (fnil inc 0))))
+                {:items 0 :written 0}
+                now)
+        (assoc :waiting (count later)))))
+
 (defn pull!
   "Fetches each of `resources` for org `tenant` through xero-cli and keeps it. After the first fetch, a resource
   that has UpdatedDateUTC asks only for what changed since the latest one held. Then the reports (`pull-reports!`,
   with `:reports` over `default-reports`; {:months 0} fetches none), counted under \"Reports\", and the documents'
   history and attachments (`pull-history!`, with `:history` over `default-history`; {:calls 0} fetches none),
-  counted under \"History\". Returns {resource {:items :written}}. Stops at the first error xero-cli reports (see
+  counted under \"History\", and their files when `:history` asks for them (`pull-files!`, with `:keep-file`),
+  counted under \"Files\". Returns {resource {:items :written}}. Stops at the first error xero-cli reports (see
   ownpurse.xero.cli/exit-types); what was kept before it stays kept."
-  [node {:keys [cli tenant resources reports history today]}]
+  [node {:keys [cli tenant resources reports history today keep-file]}]
   (let [tool-version (cli/version cli)
         reports (merge default-reports reports)
         history (merge default-history history)
@@ -202,7 +238,10 @@
                                                      :today (or today (LocalDate/now ZoneOffset/UTC))})])
                (pos? (:calls history))
                (conj ["History" (pull-history! node {:cli cli :tenant tenant :history history
-                                                     :tool-version tool-version})])))))
+                                                     :tool-version tool-version})])
+               (pos? (:files history))
+               (conj ["Files" (pull-files! node {:cli cli :tenant tenant :history history :keep-file keep-file
+                                                 :tool-version tool-version})])))))
 
 (defn read-orgs
   "The orgs a local config file names: {:xero {:orgs [{:tenant \"<tenant id>\" :name \"...\"}]}}, or [] when it
@@ -235,10 +274,10 @@
 (defn pull-orgs!
   "Pulls every resource in `source/pull-order`, then the reports and the documents' history, for each of `orgs`
   ({:tenant :name}), one org after another. Returns {name-or-tenant {resource {:items :written}}}."
-  [node {:keys [cli orgs reports history today]}]
+  [node {:keys [cli orgs reports history today keep-file]}]
   (ordered (for [{:keys [tenant name]} orgs]
              [(or name tenant) (pull! node {:cli cli :tenant tenant :resources source/pull-order :reports reports
-                                            :history history :today today})])))
+                                            :history history :today today :keep-file keep-file})])))
 
 (defn read-answers
   "Reads a folder of Xero answers saved as files, one per resource and named for its list (Invoices.json,

@@ -66,6 +66,15 @@ is done, and the next steps in order with what "done" means. Update it when a st
 
 ## Done
 
+- **Attachments' files (2026-10-26, asked for by the workspace).** Opt-in: `{:xero {:history {:files n}}}`
+  downloads up to n files a pull per org (default 0), after the history, through `xero-cli api <path> --raw
+  --accept <mime type>` (xero-cli `d6d1352`; it prints the bytes and keeps nothing). `store/keep-file!` keeps each
+  file in the data directory under `files/sha256/<2>/<sha256>`, written to a scratch name and moved into place,
+  never changed; snapshots and restores carry them. `xero.files` (row id `xero:<org>:file:<AttachmentID>`) names
+  each: document, attachment id, file name, mime type, sha256, bytes, path. A file is downloaded once per
+  attachment id. Queued after Plaid: a periodic recheck of recent documents' history and attachments, inside the
+  same cap once the backlog is clear, since receipts are often attached long after a transaction is coded without
+  changing its `UpdatedDateUTC`.
 - **Documents' history and attachments (2026-10-26, asked for by the workspace).** `xero.history` and
   `xero.attachments`: one row per document (row id `xero:<org>:history:<kind>:<Xero id>`, likewise
   `attachments`), Xero's answer to `/<Resource>/<id>/History` or `/Attachments` through `xero-cli api`, with

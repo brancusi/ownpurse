@@ -74,6 +74,25 @@
   [cli tenant path]
   (answer! (command cli "api" path "--org" tenant)))
 
+(defn download!
+  "Runs `xero-cli api <path> --org <tenant> --raw --accept <mime-type>` and copies the bytes it prints, a file as
+  Xero sent it, to `out`. Throws as `get-resource` does; `out` may then hold part of the file."
+  [cli tenant path mime-type ^java.io.OutputStream out]
+  (let [cmd (cond-> (command cli "api" path "--org" tenant "--raw")
+              mime-type (conj "--accept" mime-type))
+        p (try
+            (apply process/start {:out :pipe :err :pipe :env {"XERO_CLI_FORMAT" "json"}} cmd)
+            (catch java.io.IOException e
+              (throw (ex-info (str "Could not run " (pr-str (first cmd)) ": " (ex-message e)
+                                   ". Install xero-cli, or set OWNPURSE_XERO_CLI to its path.")
+                              {:type :xero/not-found :command cmd}))))
+        err (future (slurp (process/stderr p)))]
+    (with-open [in (process/stdout p)]
+      (.transferTo ^java.io.InputStream in out))
+    (let [exit (.waitFor ^Process p)]
+      (when-not (zero? exit)
+        (fail! cmd {:exit exit :err @err})))))
+
 (defn version
   "xero-cli's version, from the first line of its help (`xero-cli 0.1.0: ...`), or nil."
   [cli]

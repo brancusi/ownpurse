@@ -137,6 +137,9 @@ Each layer is derived from the one below and never writes past it.
    `xero.history` and `xero.attachments` hold, for each bank transaction, manual journal and invoice, Xero's
    history records (who changed what, and notes) and its attachments' details (file name, type, size, url; not
    the file), with the `document` row they belong to and `document_updated`, the version they were fetched for.
+   When asked for, each attachment's file is kept in the data directory (`files/sha256/..`, named for its SHA-256,
+   in every snapshot) and `xero.files` names it: `attachment_id`, `file_name`, `mime_type`, `sha256`, `bytes`,
+   `path`.
 2. **Documents** hold the same kind of thing from every source in one table, with `book`, `source` and
    `source_row`. A client asks here for every open invoice, whoever issued it. A bill is a payable invoice; a credit
    note is an invoice of kind `credit_note`. The same invoice seen by two sources is two rows joined by a `same-as`

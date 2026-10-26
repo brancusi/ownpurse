@@ -12,7 +12,8 @@
  ;; {:xero {:orgs [{:tenant "<tenant id>" :name "<a name for you>"}]}
  ;;  :mercury {:orgs [{:alias "<mercury-cli alias>" :name "<a name for you>"}] :window-days 60}}
  ;; Xero's reports: {:xero {:reports {:months 13 :refresh 2}}} keeps 13 months, the latest 2 fetched on every pull.
- ;; Documents' history and attachments: {:xero {:history {:calls 100}}} spends at most 100 calls a pull on them.
+ ;; Documents' history and attachments: {:xero {:history {:calls 100}}} spends at most 100 calls a pull on them;
+ ;; {:files 20} in it also downloads up to 20 attachments' files a pull, into the data directory.
  :local #or [#env OWNPURSE_LOCAL_CONFIG "config.local.edn"]
  ;; Xero is read through xero-cli, Mercury through mercury-cli.
  :xero {:cli #or [#env OWNPURSE_XERO_CLI "xero-cli"]}

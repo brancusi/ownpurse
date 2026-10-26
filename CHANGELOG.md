@@ -50,3 +50,5 @@
   (`xero.history`) and its attachments' details (`xero.attachments`), fetched when the document changes, at most
   100 calls a pull per org (`{:xero {:history {:calls n}}}`). `POST /pull` counts them under `History`, with the
   calls still `waiting`.
+- Attachments' files, opt-in (`{:xero {:history {:files n}}}`): each file is kept in the data directory under its
+  SHA-256 and named by a row of `xero.files`. Snapshots and restores carry the record's files.

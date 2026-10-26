@@ -31,7 +31,8 @@
   (let [tmp (temp-dir)
         record {:mode :disk :dir (str (io/file tmp "the record"))}
         restored {:mode :disk :dir (str (io/file tmp "restored record"))}
-        backups (io/file tmp "Some Person" "backups")]
+        backups (io/file tmp "Some Person" "backups")
+        receipt (store/keep-file! record (fn [^java.io.OutputStream out] (.write out (.getBytes "a receipt"))))]
     (try
       (let [node (store/start record)
             _ (store/put! node {:probes [{:xt/id "p1" :amount 10.00M :xt/valid-from #inst "2026-01-01"}]} metadata)
@@ -45,7 +46,9 @@
           (is (= #{"ownpurse-"} (set (map #(subs % 0 9) (.list backups)))))
           (is (= (str (io/file backups (.getName (io/file (:dir manifest))))) (:dir manifest)))
           (is (.exists (io/file (:dir manifest) "snapshot.edn")))
-          (is (= {:epoch 0 :transactions 3} (select-keys manifest [:epoch :transactions])))
+          (is (= {:epoch 0 :transactions 3 :kept-files 1 :kept-bytes 9}
+                 (select-keys manifest [:epoch :transactions :kept-files :kept-bytes])))
+          (is (.exists (io/file (:dir manifest) (:path receipt))))
           (is (pos? (:files manifest))))
         (testing "the record remembers its last snapshot"
           (is (= (:dir manifest) (:dir (store/last-snapshot node)))))
@@ -64,6 +67,7 @@
             (try
               (is (= (remove #(= "p3" (:xt/id %)) full) (history node)))
               (is (= (take 3 full-txs) (txs node)))
+              (is (= "a receipt" (slurp (io/file (:dir restored) (:path receipt)))))
               (store/put! node {:probes [{:xt/id "p4" :amount 4.00M}]} metadata)
               (finally (store/stop node)))))
         (testing "and goes on in a new epoch: what it writes after the restore survives a restart"

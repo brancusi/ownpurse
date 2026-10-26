@@ -155,7 +155,7 @@
 
 (defn- pull-all!
   "Pulls every org the local config names, Xero's then Mercury's."
-  [node {:keys [local xero mercury]}]
+  [node {:keys [local xero mercury store]}]
   (let [xero-orgs (xero/read-orgs local)
         mercury-orgs (mercury/read-orgs local)]
     (when (and (empty? xero-orgs) (empty? mercury-orgs))
@@ -164,7 +164,8 @@
                       {:type :ownpurse/no-local-config :path (str local)})))
     {:xero (if (seq xero-orgs)
              (xero/pull-orgs! node {:cli (:cli xero) :orgs xero-orgs :reports (xero/read-reports local)
-                                    :history (xero/read-history local)})
+                                    :history (xero/read-history local)
+                                    :keep-file (when (= :disk (:mode store)) #(store/keep-file! store %))})
              {})
      :mercury (if (seq mercury-orgs) (mercury/pull-orgs! node {:cli (:cli mercury) :orgs mercury-orgs}) {})}))
 
@@ -223,7 +224,7 @@
     {:post {:summary (str "Fetches every org in the local config through its source's tool, and keeps what changed. "
                           "Costs the source's API calls; later pulls ask only for what changed.")
             :responses {200 {:body Pulled} 409 {:body ApiError} 502 {:body ApiError}}
-            :handler (pull node (select-keys config [:local :xero :mercury]))}}]
+            :handler (pull node (select-keys config [:local :xero :mercury :store]))}}]
    ["/entities"
     {:get {:summary "Every entity, with the source accounts linked to it now."
            :responses {200 {:body Entities}}

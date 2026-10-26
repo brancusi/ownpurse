@@ -322,3 +322,44 @@
                      column (normalize-payload (read-dates (get answer list-key [])))
                      :xt/valid-from fetched-at}
               updated (assoc :document-updated updated))]}))
+
+(defn- document-xero-id
+  "Xero's id of the document whose row id is `document`."
+  [tenant resource document]
+  (subs document (count (row-id tenant (:kind (describe resource)) ""))))
+
+(defn file-calls
+  "The files to download for the attachments in `rows` (rows of xero.attachments), skipping those whose attachment
+  id is in `held`: documents in the order of `resources`, the latest versions first. Each call is {:resource :xero-id
+  :document :attachment-id :file-name :mime-type}. Pure."
+  [tenant resources rows held]
+  (let [rank (zipmap resources (range))
+        in-order (fn [a b] (compare [(rank (:resource a)) (:document-updated b)]
+                                    [(rank (:resource b)) (:document-updated a)]))]
+    (for [{:keys [resource document attachments]} (sort in-order (filter (comp rank :resource) rows))
+          {:keys [attachment-id file-name mime-type]} attachments
+          :when (and attachment-id (not (held attachment-id)))]
+      {:resource resource :xero-id (document-xero-id tenant resource document) :document document
+       :attachment-id attachment-id :file-name file-name :mime-type mime-type})))
+
+(defn file-path
+  "The path under Xero's API root of the file a call from `file-calls` asks for."
+  [{:keys [resource xero-id attachment-id]}]
+  (str "/api.xro/2.0/" resource "/" xero-id "/Attachments/" attachment-id))
+
+(defn file-row
+  "A downloaded attachment as a row of xero.files: the attachment (`attachment_id`, `file_name`, `mime_type`), the
+  `document` it belongs to, and the file the record keeps (`sha256`, `bytes`, `path` relative to the data
+  directory), valid from `fetched-at`."
+  [tenant {:keys [resource document attachment-id file-name mime-type]} {:keys [sha256 bytes path]} fetched-at]
+  {:xero/files [(cond-> {:xt/id (row-id tenant "file" attachment-id)
+                         :org tenant
+                         :resource resource
+                         :document document
+                         :attachment-id attachment-id
+                         :sha256 sha256
+                         :bytes bytes
+                         :path path
+                         :xt/valid-from fetched-at}
+                  file-name (assoc :file-name file-name)
+                  mime-type (assoc :mime-type mime-type))]})
