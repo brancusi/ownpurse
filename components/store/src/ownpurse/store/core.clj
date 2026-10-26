@@ -17,13 +17,14 @@
   {:host host :port -1 :read-only-port read-only-port})
 
 (defn node-config
-  "Builds the XTDB configuration from ours. Flight SQL is always off; the SQL server only when asked for."
+  "Builds the XTDB configuration from ours. Flight SQL is always off; the SQL server only when asked for. Paths go to
+  XTDB as Paths: a string with a space in it is not a valid URI, and XTDB parses strings as URIs."
   ^Xtdb$Config [{:keys [mode dir sql]}]
   (let [storage (case mode
                   :in-memory {}
                   :disk (let [root (io/file dir "xtdb")]
-                          {:log [:local {:path (str (io/file root "log")) :epoch (backup/epoch dir)}]
-                           :storage [:local {:path (str (io/file root "objects"))}]}))]
+                          {:log [:local {:path (.toPath (io/file root "log")) :epoch (backup/epoch dir)}]
+                           :storage [:local {:path (.toPath (io/file root "objects"))}]}))]
     (doto (xtn/->config (assoc storage :server (some-> sql sql-server)))
       (.setFlightSql nil))))
 

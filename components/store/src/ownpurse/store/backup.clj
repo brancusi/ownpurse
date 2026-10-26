@@ -112,8 +112,8 @@
   (let [root (io/file dir "xtdb")]
     (.open (doto (xtn/->config {:log (if log-in-memory?
                                        [:in-memory {:epoch log-epoch}]
-                                       [:local {:path (str (io/file root "log")) :epoch log-epoch}])
-                                :storage [:local {:path (str (io/file root "objects"))}]})
+                                       [:local {:path (.toPath (io/file root "log")) :epoch log-epoch}])
+                                :storage [:local {:path (.toPath (io/file root "objects"))}]})
              (-> (.getCompactor) (.threads 0))
              (.setServer nil)
              (.setFlightSql nil)))))

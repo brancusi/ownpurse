@@ -27,10 +27,11 @@
   (store/q node "SELECT _id, system_time, committed, user_metadata FROM xt.txs ORDER BY _id"))
 
 (deftest snapshot-and-restore-test
+  ;; Every folder has a space in its name, as synced folders on macOS do (CloudStorage/Dropbox-Team/Full Name).
   (let [tmp (temp-dir)
-        record {:mode :disk :dir (str (io/file tmp "record"))}
-        restored {:mode :disk :dir (str (io/file tmp "restored"))}
-        backups (io/file tmp "backups")]
+        record {:mode :disk :dir (str (io/file tmp "the record"))}
+        restored {:mode :disk :dir (str (io/file tmp "restored record"))}
+        backups (io/file tmp "Some Person" "backups")]
     (try
       (let [node (store/start record)
             _ (store/put! node {:probes [{:xt/id "p1" :amount 10.00M :xt/valid-from #inst "2026-01-01"}]} metadata)
@@ -69,7 +70,7 @@
           (let [node (store/start restored)]
             (try
               (is (= ["p1" "p4"] (map :xt/id (store/q node "SELECT _id FROM probes ORDER BY _id"))))
-              (is (= 1 (:epoch (store/snapshot! node restored (str (io/file tmp "backups-2"))))))
+              (is (= 1 (:epoch (store/snapshot! node restored (str (io/file tmp "Some Person" "backups 2"))))))
               (finally (store/stop node)))))
         (testing "a restore never writes over a record"
           (is (= :ownpurse/record-exists
