@@ -49,9 +49,9 @@
 
 (def Counts
   "For each org, for each resource: the items the source returned and the rows written. Under \"History\", also the
-  calls left for later pulls and the documents Xero refused."
+  calls left for later pulls, the documents Xero refused, and the documents looked at again."
   [:map-of :string [:map-of :string [:map [:items :int] [:written :int] [:waiting {:optional true} :int]
-                                     [:refused {:optional true} :int]]]])
+                                     [:refused {:optional true} :int] [:rechecked {:optional true} :int]]]])
 
 (def Pulled
   "What POST /pull returns: the counts for each source's orgs."

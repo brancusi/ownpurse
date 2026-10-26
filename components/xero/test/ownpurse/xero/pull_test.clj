@@ -387,3 +387,45 @@
             (is (= "BankTransactions/c0ffee05-0000-4000-8000-000000000006" next-one))))
         (testing "a range that is not two dates says how to write it"
           (is (= :ownpurse/invalid (:type (error #(pull {:calls 6 :first {:from "last year"}}))))))))))
+
+(deftest history-recheck-test
+  (with-node
+    (fn [node]
+      (let [log (temp-log)
+            api-calls #(filter (fn [call] (str/starts-with? call "api ")) (str/split-lines (slurp log)))
+            calls-of #(map (fn [call] (rest (re-find #"BankTransactions/c0ffee05-[-0-9]+?(\d)/(\w+)" call))) %)
+            t0 (Instant/parse "2026-03-20T17:00:00Z")
+            day #(.plus t0 (java.time.Duration/ofDays %))
+            pull (fn [dir now history]
+                   (let [before (count (api-calls))
+                         result (xero/pull! node {:cli ["bash" fake dir "0" (str log)] :tenant tenant :resources []
+                                                  :reports {:months 0} :now now
+                                                  :history (merge {:resources ["BankTransactions"]} history)})]
+                     [(result "History") (calls-of (drop before (api-calls)))]))]
+        (keep-all! node pull-1)
+        (testing "without a recheck, a pull fetches what is new and nothing else"
+          (is (= {:items 7 :written 7 :waiting 0} (first (pull pull-1 t0 {:calls 100})))))
+        (testing "a recheck looks at recent documents' attachments never looked at, the latest first"
+          (is (= [{:items 3 :written 3 :waiting 0 :rechecked 3}
+                  [["6" "Attachments"] ["4" "Attachments"] ["5" "Attachments"]]]
+                 (pull pull-1 (day 1) {:calls 100 :recheck {:days 7 :every 7}}))))
+        (testing "a document looked at within `every` days is not looked at again"
+          (is (= [{:items 0 :written 0 :waiting 0 :rechecked 0} []]
+                 (pull pull-1 (day 2) {:calls 100 :recheck {:days 7 :every 7}}))))
+        (testing "later, the never-looked-at first, then the longest since, the latest documents first, within the cap;
+                  an answer that did not change writes nothing but when it was asked"
+          (is (= [{:items 4 :written 2 :waiting 0 :rechecked 4}
+                  [["1" "Attachments"] ["2" "Attachments"] ["6" "History"] ["4" "History"]]]
+                 (pull pull-1 (day 9) {:calls 4 :recheck {:days 30 :every 7}})))
+          (is (= (day 9) (some-> (store/q node ["SELECT checked_at FROM xero.checks WHERE _id = ?"
+                                                (str "xero:" tenant ":history:bank-transaction:"
+                                                     "c0ffee05-0000-4000-8000-000000000006")])
+                                 first :checked-at (#(.toInstant ^ZonedDateTime %))))))
+        (testing "new versions of documents come before any recheck"
+          (keep-all! node pull-2)
+          (let [[counts calls] (pull pull-1 (day 10) {:calls 2 :recheck {:days 30 :every 7}})]
+            (is (= 0 (:rechecked counts)))
+            (is (pos? (:waiting counts)))
+            (is (= 2 (count calls)))))
+        (testing "a recheck that is not two whole numbers of days says how to write it"
+          (is (= :ownpurse/invalid (:type (error #(pull pull-1 (day 11) {:calls 1 :recheck {:days "90"}}))))))))))

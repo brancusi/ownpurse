@@ -16,6 +16,8 @@
  ;; Documents' history and attachments: {:xero {:history {:calls 100}}} spends at most 100 calls a pull on them;
  ;; {:files 20} in it also downloads up to 20 attachments' files a pull, into the data directory, and
  ;; {:first {:from "2025-01-01" :to "2025-12-31"}} fetches the documents dated in that range before the rest.
+ ;; {:recheck {:days 90 :every 7}} in it looks again, with the calls left over, at the documents dated in the last 90
+ ;; days not looked at for 7: Xero can add a note or a receipt without changing a document's version.
  :local #or [#env OWNPURSE_LOCAL_CONFIG "config.local.edn"]
  ;; Xero is read through xero-cli, Mercury through mercury-cli, banks through Plaid by plaid-reader.
  :xero {:cli #or [#env OWNPURSE_XERO_CLI "xero-cli"]}

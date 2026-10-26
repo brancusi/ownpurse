@@ -117,8 +117,9 @@
 (def default-history
   "How many calls a pull may spend, per org, on documents' history and attachment details (`:calls`), and on
   downloading attachments' files (`:files`, none unless asked for), and on which documents (see
-  `source/history-resources`; `:first {:from :to}` puts the documents dated in a range before the rest). A call
-  fetches one document's history, the list of its attachments, or one file.
+  `source/history-resources`; `:first {:from :to}` puts the documents dated in a range before the rest), and
+  whether to look again at recent documents (`:recheck {:days :every}`, none unless asked for). A call fetches one
+  document's history, the list of its attachments, or one file.
   Kept well under the org's daily 1000, so that an ordinary pull never runs out; what is left waits for the next
   pull."
   {:calls 100 :files 0 :resources source/history-resources})
@@ -144,17 +145,32 @@
          :has-attachments (true? (:has-attachments r))}))))
 
 (defn- held-documents
-  "What `table` (xero.history or xero.attachments) holds for org `tenant`, by document: {:updated :any?}."
+  "What `table` (xero.history or xero.attachments) holds for org `tenant`, by document: {:updated :any? :fetched}."
   [node table tenant]
   (if (store/table-exists? node table)
     (into {}
           (map (fn [r] [(:document r) {:updated (instant-of (:document-updated r))
-                                       :any? (boolean (seq (:attachments r)))}]))
-          (store/q node [(str "SELECT document, document_updated"
+                                       :any? (boolean (seq (:attachments r)))
+                                       :fetched (instant-of (:xt/valid-from r))}]))
+          (store/q node [(str "SELECT document, document_updated, _valid_from"
                               (when (= :xero/attachments table) ", attachments")
                               " FROM " (sql-table table) " WHERE org = ?")
                          tenant]))
     {}))
+
+(defn- checks
+  "When ownpurse last looked at each document's history or attachments for org `tenant`, by row id."
+  [node tenant]
+  (if (store/table-exists? node :xero/checks)
+    (into {} (map (juxt :xt/id (comp instant-of :checked-at)))
+          (store/q node ["SELECT _id, checked_at FROM xero.checks WHERE org = ?" tenant]))
+    {}))
+
+(defn- by-last-look
+  "Rechecks: those never looked at first, then the longest since, then the latest documents."
+  [a b]
+  (compare [(some? (:last a)) (:last a) (some-> (:date b) str) (:document a)]
+           [(some? (:last b)) (:last b) (some-> (:date a) str) (:document b)]))
 
 (defn pull-history!
   "Fetches the history and the attachment details of org `tenant`'s documents through xero-cli, for each document
@@ -162,9 +178,12 @@
   order of `:resources`, newest first, and at most `:calls` of them. With `:first {:from :to}` (dates, as strings),
   the documents dated in that range come before all the others. Each answer is a row of xero.history or
   xero.attachments, a new version when it changed. A document Xero refuses is skipped and tried again on the next
-  pull. Returns {:items n :written n :waiting n}, with :refused n when Xero refused any: :waiting counts the calls
-  left for later pulls."
-  [node {:keys [cli tenant tool-version] {:keys [calls resources] first-dates :first} :history}]
+  pull. With `:recheck {:days :every}`, the calls left after those look again at the documents dated in the last
+  `days` that were last looked at more than `every` days before `now` (`source/recheck-calls`), the longest since
+  first: a receipt is often attached long after a transaction is coded, without changing the transaction. Every
+  call is kept in xero.checks, with when it was made. Returns {:items n :written n :waiting n}, with :refused n when
+  Xero refused any and :rechecked n with a recheck: :waiting counts the calls left for later pulls, rechecks apart."
+  [node {:keys [cli tenant tool-version now] {:keys [calls resources recheck] first-dates :first} :history}]
   (let [history (held-documents node :xero/history tenant)
         attachments (held-documents node :xero/attachments tenant)
         docs (into {} (map (juxt identity #(documents node tenant %))) resources)
@@ -173,23 +192,38 @@
                  (concat (calls-for #(source/in-range? dates (:date %)))
                          (calls-for #(not (source/in-range? dates (:date %)))))
                  (calls-for any?))
-        [now later] (split-at calls wanted)
+        now (or now (Instant/now))
+        recheck (source/recheck recheck)
+        again (when recheck
+                (let [{:keys [days every]} recheck
+                      looked (checks node tenant)
+                      since (.minusDays (LocalDate/ofInstant now ZoneOffset/UTC) days)
+                      before (.minus ^Instant now (java.time.Duration/ofDays every))]
+                  (sort by-last-look
+                        (mapcat #(source/recheck-calls tenant % (docs %) history attachments looked
+                                                       {:since since :before before})
+                                resources))))
+        [this-pull later] (split-at calls (concat wanted again))
         refused? #(= :xero/refused (:type (ex-data %)))]
-    (-> (reduce (fn [acc {:keys [resource what] :as call}]
+    (-> (reduce (fn [acc {:keys [resource what recheck?] :as call}]
                   (if-let [answer (try (cli/get-path cli tenant (source/document-path call))
                                        (catch clojure.lang.ExceptionInfo e (when-not (refused? e) (throw e))))]
-                    (let [fetched-at (source/fetched-at answer (Instant/now))
-                          tables (source/document-row tenant call answer fetched-at)
+                    (let [fetched-at (source/fetched-at answer now)
+                          tables (merge (source/document-row tenant call answer fetched-at)
+                                        (source/check-row tenant call now))
                           {:keys [written]} (store/put-changed! node tables
                                                                 (cond-> {:source "xero-cli" :why "fetch" :org tenant
                                                                          :resource (str resource "/" what)
                                                                          :fetched-at (str fetched-at)}
+                                                                  recheck? (assoc :why "fetch: recheck")
                                                                   tool-version (assoc :tool-version tool-version)))]
-                      (-> acc (update :items inc) (update :written + (reduce + 0 (vals written)))))
+                      (cond-> (-> acc (update :items inc)
+                                  (update :written + (reduce + 0 (vals (dissoc written :xero/checks)))))
+                        recheck? (update :rechecked inc)))
                     (update acc :refused (fnil inc 0))))
-                {:items 0 :written 0}
-                now)
-        (assoc :waiting (count later)))))
+                (cond-> {:items 0 :written 0} recheck (assoc :rechecked 0))
+                this-pull)
+        (assoc :waiting (count (remove :recheck? later))))))
 
 (defn pull-files!
   "Downloads, through xero-cli, the file of each attachment in xero.attachments for org `tenant` that xero.files does
@@ -232,7 +266,7 @@
   counted under \"History\", and their files when `:history` asks for them (`pull-files!`, with `:keep-file`),
   counted under \"Files\". Returns {resource {:items :written}}. Stops at the first error xero-cli reports (see
   ownpurse.xero.cli/exit-types); what was kept before it stays kept."
-  [node {:keys [cli tenant resources reports history today keep-file]}]
+  [node {:keys [cli tenant resources reports history today now keep-file]}]
   (let [tool-version (cli/version cli)
         reports (merge default-reports reports)
         history (merge default-history history)
@@ -245,7 +279,7 @@
                (conj ["Reports" (pull-reports! node {:cli cli :tenant tenant :reports reports :tool-version tool-version
                                                      :today (or today (LocalDate/now ZoneOffset/UTC))})])
                (pos? (:calls history))
-               (conj ["History" (pull-history! node {:cli cli :tenant tenant :history history
+               (conj ["History" (pull-history! node {:cli cli :tenant tenant :history history :now now
                                                      :tool-version tool-version})])
                (pos? (:files history))
                (conj ["Files" (pull-files! node {:cli cli :tenant tenant :history history :keep-file keep-file
@@ -282,10 +316,10 @@
 (defn pull-orgs!
   "Pulls every resource in `source/pull-order`, then the reports and the documents' history, for each of `orgs`
   ({:tenant :name}), one org after another. Returns {name-or-tenant {resource {:items :written}}}."
-  [node {:keys [cli orgs reports history today keep-file]}]
+  [node {:keys [cli orgs reports history today now keep-file]}]
   (ordered (for [{:keys [tenant name]} orgs]
              [(or name tenant) (pull! node {:cli cli :tenant tenant :resources source/pull-order :reports reports
-                                            :history history :today today :keep-file keep-file})])))
+                                            :history history :today today :now now :keep-file keep-file})])))
 
 (defn read-answers
   "Reads a folder of Xero answers saved as files, one per resource and named for its list (Invoices.json,

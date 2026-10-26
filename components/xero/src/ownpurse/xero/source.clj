@@ -319,6 +319,57 @@
                                    (not= updated (:updated (attachments id)))))]
     {:resource resource :what what :xero-id xero-id :document id :updated updated}))
 
+(defn document-row-id
+  "The id of the xero.history or xero.attachments row for a call from `document-calls` or `recheck-calls`; a
+  xero.checks row has the same id."
+  [tenant {:keys [resource what xero-id]}]
+  (row-id tenant (case what "History" "history" "Attachments" "attachments")
+          (str (:kind (describe resource)) ":" xero-id)))
+
+(defn recheck
+  "The recheck a config asks for, {:days 90 :every 7}, checked: nil when it asks for none."
+  [{:keys [days every] :as recheck}]
+  (when (some? recheck)
+    (when-not (and (pos-int? days) (pos-int? every))
+      (throw (ex-info (str "The history's :recheck " (pr-str recheck) " is not two whole numbers of days. Write it as "
+                           "{:days 90 :every 7}: documents dated in the last 90 days, checked again every 7.")
+                      {:type :ownpurse/invalid :recheck recheck})))
+    recheck))
+
+(defn recheck-calls
+  "The calls that look again at the history and attachments of `docs` (documents of `resource`, as for
+  `document-calls`) dated on or after `since`, whose last look was before `before`, or which were never looked at:
+  Xero can add a note or a receipt to a document without changing its UpdatedDateUTC, so its version alone does not
+  say when to look. A call `document-calls` would make anyway is left to it. `checks` maps a row id
+  (`document-row-id`) to when it was last looked at; `history` and `attachments` are as for `document-calls`, with
+  :fetched, when the row held was fetched, for a row looked at before checks were kept. Each call is as for
+  `document-calls`, with :recheck? true and :last, the last look or nil. Pure."
+  [tenant resource docs history attachments checks {:keys [^LocalDate since ^Instant before]}]
+  (for [{:keys [xero-id updated has-attachments date] id :xt/id} docs
+        :when (and date (not (.isBefore ^LocalDate date since)))
+        what ["History" "Attachments"]
+        :let [held ((if (= "History" what) history attachments) id)
+              regular? (case what
+                         "History" (not= updated (:updated held))
+                         "Attachments" (and (or has-attachments (:any? held)) (not= updated (:updated held))))
+              call {:resource resource :what what :xero-id xero-id :document id :updated updated}
+              last-look (or (checks (document-row-id tenant call)) (:fetched held))]
+        :when (and (not regular?) (or (nil? last-look) (.isBefore ^Instant last-look before)))]
+    (assoc call :recheck? true :last last-look :date date)))
+
+(defn check-row
+  "When ownpurse last looked at a document's history or attachments (a call from `document-calls` or
+  `recheck-calls`), as a row of xero.checks: what Xero's answer was for is in xero.history or xero.attachments, which
+  change only when the answer does; this says when it was asked. Valid from `checked-at`."
+  [tenant {:keys [resource what document] :as call} ^Instant checked-at]
+  {:xero/checks [{:xt/id (document-row-id tenant call)
+                  :org tenant
+                  :resource resource
+                  :what what
+                  :document document
+                  :checked-at checked-at
+                  :xt/valid-from checked-at}]})
+
 (defn document-path
   "The path under Xero's API root that a call from `document-calls` asks for."
   [{:keys [resource what xero-id]}]

@@ -71,6 +71,15 @@ is done, and the next steps in order with what "done" means. Update it when a st
 
 ## Done
 
+- **Recheck of recent documents' history and attachments (2026-10-26, asked for by the workspace).** Opt-in:
+  `{:xero {:history {:recheck {:days 90 :every 7}}}}`. After the calls for new versions, the calls left in the cap
+  look again at the documents dated in the last `days` that were last looked at more than `every` days ago (or
+  never, for attachments of a document that had none), the never-looked-at first, then the longest since, the
+  latest documents first. Xero can add a note or a receipt without changing a document's `UpdatedDateUTC`, so its
+  version alone does not say when to look. Every call is kept in `xero.checks` (same row id as the history or
+  attachments row, with `checked_at`), so xero.history and xero.attachments change only when Xero's answer does.
+  The History count gains `rechecked`; `waiting` counts only new versions left for later.
+
 - **Plaid as a source (2026-10-26, asked for by the workspace).** The `plaid` component runs plaid-reader
   (`OWNPURSE_PLAID_CLI`, default `plaid-reader`) for each item in `{:plaid {:items [{:alias :name}]}}`: `item`, then
   `sync --all` from the cursor the record holds. `plaid.items` (Plaid's /item/get item), `plaid.accounts` (with the
@@ -261,8 +270,6 @@ Done when:
    `samples/xero-axi` exception. (Done 2026-10-25.)
 
 ## After 3b
-
-Next: the periodic recheck of recent Xero documents' history and attachments (asked for by the workspace).
 
 Steps 4 to 8 as in SPIKE.md. Step 5 (time) can use pull-1 and pull-2: what the books said on 2026-03-31, as we knew
 it on 2026-03-20 and on 2026-04-02.
