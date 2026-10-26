@@ -13,7 +13,7 @@ The spike, on branch `next`: a local ledger in Clojure on XTDB, from zero. The p
 ## What this is
 
 ownpurse is a local ledger with a clean API. Each source has its own tool (xero-cli for Xero, mercury-cli for
-Mercury). The tool talks to the provider and stores nothing; ownpurse runs it, keeps what it returns as facts, and
+Mercury, plaid-reader for banks through Plaid). The tool talks to the provider and stores nothing; ownpurse runs it, keeps what it returns as facts, and
 keeps one model of books, accounts, entries and postings over all of them, in XTDB. xero-cli lives in its own
 repository (`brancusi/xero-cli`), checked out beside this one. Clients (a CLI, a TUI, a web interface, agents) are
 separate and use the API. Never add knowledge of a source to code outside that source's component.
@@ -68,7 +68,8 @@ In VS Code with Calva, opening the folder does all of this: `.vscode/settings.js
 `(reset)`, `(halt)`, `(tests)` or `(watch)`. `(keep-xero-answers tenant "samples/xero/pull-1")` keeps a folder of
 synthetic Xero answers in the running system; `(pull-xero)` fetches the orgs named in `config.local.edn` through
 xero-cli (real calls; never in a test). `(keep-mercury-answers "samples/mercury/pull-1")` and `(pull-mercury)` do
-the same for Mercury through mercury-cli. CIDER and Cursive can attach to the same port (cider-nrepl is in the
+the same for Mercury through mercury-cli, and `(keep-plaid-answers "samples/plaid/pull-1")` and `(pull-plaid)` for Plaid
+through plaid-reader. CIDER and Cursive can attach to the same port (cider-nrepl is in the
 middleware).
 
 ## Clojure practice

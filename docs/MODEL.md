@@ -10,7 +10,7 @@ the working state is in [plans/NEXT.md](plans/NEXT.md).
 | Entity | One business or household: a legal entity. One Xero organisation is one entity's books. |
 | Book | The record of one entity, or of the group. Accounts, entries and postings belong to a book. |
 | Group | The entities you own, taken together. The **group book** belongs to no single entity. |
-| Source | Where data comes from: Xero, Mercury, QuickBooks, Quicken, a folder of receipts. |
+| Source | Where data comes from: Xero, Mercury, a bank through Plaid, QuickBooks, Quicken, a folder of receipts. |
 | System of record | The one source a book's entries come from. Each book has exactly one. |
 | Evidence | Every other source for a book: used to reconcile and to match, never posted. |
 | Source account | Something a source holds that can belong to an entity: a Xero organisation, a Mercury account, a credit card. Every source lists its own in one shape. |
@@ -56,7 +56,8 @@ entities                 source_accounts                         entity_links
 - **Entities** are made through the API. Their names live only in the record, never in this repository.
 - **Source accounts** are written by each source's component when it pulls, from its own rows: a Xero organisation
   and its bank accounts (`xero.organisations`, `xero.accounts` of type BANK), a Mercury organization, its deposit
-  accounts and credit card accounts. A source account's `_id` is the id of the source row it comes from, and
+  accounts and credit card accounts, and a Plaid item's deposit and credit card accounts (`plaid.accounts`; the
+  item, one login at one bank, is their org but not a source account itself). A source account's `_id` is the id of the source row it comes from, and
   `source_table` says where that row is, so its every field is one join away. Adding a source means mapping its own
   accounts into this shape; nothing else changes.
 - **Links** are made and ended through the API. A link's id comes from its account, so an account belongs to at

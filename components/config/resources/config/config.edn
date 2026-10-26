@@ -10,15 +10,17 @@
                                   :read-only-port #long #or [#env OWNPURSE_SQL_PORT 5433]}}}
  ;; Which orgs to read is in a local file that is never committed (their ids are private):
  ;; {:xero {:orgs [{:tenant "<tenant id>" :name "<a name for you>"}]}
- ;;  :mercury {:orgs [{:alias "<mercury-cli alias>" :name "<a name for you>"}] :window-days 60}}
+ ;;  :mercury {:orgs [{:alias "<mercury-cli alias>" :name "<a name for you>"}] :window-days 60}
+ ;;  :plaid {:items [{:alias "<plaid-reader alias>" :name "<a name for you>"}]}}
  ;; Xero's reports: {:xero {:reports {:months 13 :refresh 2}}} keeps 13 months, the latest 2 fetched on every pull.
  ;; Documents' history and attachments: {:xero {:history {:calls 100}}} spends at most 100 calls a pull on them;
  ;; {:files 20} in it also downloads up to 20 attachments' files a pull, into the data directory, and
  ;; {:first {:from "2025-01-01" :to "2025-12-31"}} fetches the documents dated in that range before the rest.
  :local #or [#env OWNPURSE_LOCAL_CONFIG "config.local.edn"]
- ;; Xero is read through xero-cli, Mercury through mercury-cli.
+ ;; Xero is read through xero-cli, Mercury through mercury-cli, banks through Plaid by plaid-reader.
  :xero {:cli #or [#env OWNPURSE_XERO_CLI "xero-cli"]}
  :mercury {:cli #or [#env OWNPURSE_MERCURY_CLI "mercury-cli"]}
+ :plaid {:cli #or [#env OWNPURSE_PLAID_CLI "plaid-reader"]}
  :http {:host "127.0.0.1"
         :port #profile {:test 0
                         :default #long #or [#env OWNPURSE_PORT 7070]}}}

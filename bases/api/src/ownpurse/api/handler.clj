@@ -9,6 +9,7 @@
    [ownpurse.entity.interface :as entity]
    [ownpurse.json.interface :as json]
    [ownpurse.mercury.interface :as mercury]
+   [ownpurse.plaid.interface :as plaid]
    [ownpurse.schema.interface :as schema]
    [ownpurse.store.interface :as store]
    [ownpurse.xero.interface :as xero]
@@ -54,7 +55,7 @@
 
 (def Pulled
   "What POST /pull returns: the counts for each source's orgs."
-  [:map [:pulled [:map [:xero Counts] [:mercury Counts]]]])
+  [:map [:pulled [:map [:xero Counts] [:mercury Counts] [:plaid Counts]]]])
 
 (def Entity
   "An entity: one business or household."
@@ -154,20 +155,23 @@
   (if (namespace t) (str (namespace t) "/" (name t)) (name t)))
 
 (defn- pull-all!
-  "Pulls every org the local config names, Xero's then Mercury's."
-  [node {:keys [local xero mercury store]}]
+  "Pulls every org and item the local config names: Xero's, then Mercury's, then Plaid's."
+  [node {:keys [local xero mercury plaid store]}]
   (let [xero-orgs (xero/read-orgs local)
-        mercury-orgs (mercury/read-orgs local)]
-    (when (and (empty? xero-orgs) (empty? mercury-orgs))
-      (throw (ex-info (str local " names no orgs. Add {:xero {:orgs [{:tenant \"<tenant id>\" :name \"<a name>\"}]}} "
-                           "or {:mercury {:orgs [{:alias \"<mercury-cli alias>\" :name \"<a name>\"}]}}.")
+        mercury-orgs (mercury/read-orgs local)
+        plaid-items (plaid/read-items local)]
+    (when (and (empty? xero-orgs) (empty? mercury-orgs) (empty? plaid-items))
+      (throw (ex-info (str local " names no orgs. Add {:xero {:orgs [{:tenant \"<tenant id>\" :name \"<a name>\"}]}}, "
+                           "{:mercury {:orgs [{:alias \"<mercury-cli alias>\" :name \"<a name>\"}]}} "
+                           "or {:plaid {:items [{:alias \"<plaid-reader alias>\" :name \"<a name>\"}]}}.")
                       {:type :ownpurse/no-local-config :path (str local)})))
     {:xero (if (seq xero-orgs)
              (xero/pull-orgs! node {:cli (:cli xero) :orgs xero-orgs :reports (xero/read-reports local)
                                     :history (xero/read-history local)
                                     :keep-file (when (= :disk (:mode store)) #(store/keep-file! store %))})
              {})
-     :mercury (if (seq mercury-orgs) (mercury/pull-orgs! node {:cli (:cli mercury) :orgs mercury-orgs}) {})}))
+     :mercury (if (seq mercury-orgs) (mercury/pull-orgs! node {:cli (:cli mercury) :orgs mercury-orgs}) {})
+     :plaid (if (seq plaid-items) (plaid/pull-items! node {:cli (:cli plaid) :items plaid-items}) {})}))
 
 (defn- pull
   "Pulls every org in the local config through its source's tool, one pull at a time."
@@ -182,7 +186,7 @@
             (let [t (:type (ex-data e))]
               (cond
                 (= :ownpurse/no-local-config t) (error 409 (error-type t) (ex-message e))
-                (#{"xero" "mercury"} (some-> t namespace)) (error 502 (error-type t) (ex-message e))
+                (#{"xero" "mercury" "plaid"} (some-> t namespace)) (error 502 (error-type t) (ex-message e))
                 :else (throw e))))
           (finally (reset! running false)))))))
 
@@ -224,7 +228,7 @@
     {:post {:summary (str "Fetches every org in the local config through its source's tool, and keeps what changed. "
                           "Costs the source's API calls; later pulls ask only for what changed.")
             :responses {200 {:body Pulled} 409 {:body ApiError} 502 {:body ApiError}}
-            :handler (pull node (select-keys config [:local :xero :mercury :store]))}}]
+            :handler (pull node (select-keys config [:local :xero :mercury :plaid :store]))}}]
    ["/entities"
     {:get {:summary "Every entity, with the source accounts linked to it now."
            :responses {200 {:body Entities}}
@@ -304,7 +308,7 @@
    :body (json/write-str body)})
 
 (defn handler
-  "The Ring handler over `node`. `local` is the config file naming the orgs to pull; `xero` and `mercury` are {:cli}:
+  "The Ring handler over `node`. `local` is the config file naming the orgs to pull; `xero`, `mercury` and `plaid` are {:cli}:
   the program that reads each source; `store` is the store's config, which says where the record is kept."
   [config]
   (ring/ring-handler

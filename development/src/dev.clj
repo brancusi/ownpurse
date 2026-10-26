@@ -13,6 +13,7 @@
    [ownpurse.api.system :as system]
    [ownpurse.config.interface :as config]
    [ownpurse.mercury.interface :as mercury]
+   [ownpurse.plaid.interface :as plaid]
    [ownpurse.store.interface :as store]
    [ownpurse.xero.interface :as xero]))
 
@@ -78,6 +79,26 @@
    (let [{:keys [mercury] default-local :local} (config/read-config :dev)]
      (mercury/pull-orgs! (or (:node opts) (node))
                          {:cli (:cli mercury) :orgs (mercury/read-orgs (or local default-local))}))))
+
+(defn keep-plaid-answers
+  "Pulls a folder of saved Plaid answers (samples/plaid/pull-1, then pull-2) into the running system, through the
+  stand-in plaid-reader the tests use, as of the instant `now` (default: now). The stand-in answers a sync from the
+  cursor the record holds."
+  ([dir] (keep-plaid-answers dir (java.time.Instant/now)))
+  ([dir now]
+   (plaid/pull! (node) {:cli ["bash" "components/plaid/test/ownpurse/plaid/fake-plaid-reader.sh" dir "0" "/dev/null"]
+                        :alias "ostley"
+                        :now now})))
+
+(defn pull-plaid
+  "Fetches each Plaid item in a local config through plaid-reader, and keeps what changed. Without arguments: the
+  running system's record and config.local.edn (never committed). `opts` may name another :node and another
+  :local config file. Each item syncs from the cursor the record holds: the first pull reads every transaction."
+  ([] (pull-plaid {}))
+  ([{:keys [local] :as opts}]
+   (let [{:keys [plaid] default-local :local} (config/read-config :dev)]
+     (plaid/pull-items! (or (:node opts) (node))
+                        {:cli (:cli plaid) :items (plaid/read-items (or local default-local))}))))
 
 (defn open-record
   "Opens a record on disk at `dir` beside the running system, with its read-only SQL on `sql-port` (or none):

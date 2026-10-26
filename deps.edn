@@ -12,6 +12,7 @@
                      poly/json {:local/root "components/json"}
                      poly/ledger {:local/root "components/ledger"}
                      poly/mercury {:local/root "components/mercury"}
+                     poly/plaid {:local/root "components/plaid"}
                      poly/money {:local/root "components/money"}
                      poly/schema {:local/root "components/schema"}
                      poly/store {:local/root "components/store"}
@@ -31,6 +32,7 @@
                        "components/json/test"
                        "components/ledger/test"
                        "components/mercury/test"
+                       "components/plaid/test"
                        "components/money/test"
                        "components/schema/test"
                        "components/store/test"

@@ -5,6 +5,7 @@
         poly/entity {:local/root "../../components/entity"}
         poly/json {:local/root "../../components/json"}
         poly/mercury {:local/root "../../components/mercury"}
+        poly/plaid {:local/root "../../components/plaid"}
         poly/money {:local/root "../../components/money"}
         poly/schema {:local/root "../../components/schema"}
         poly/store {:local/root "../../components/store"}

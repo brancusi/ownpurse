@@ -71,6 +71,20 @@ is done, and the next steps in order with what "done" means. Update it when a st
 
 ## Done
 
+- **Plaid as a source (2026-10-26, asked for by the workspace).** The `plaid` component runs plaid-reader
+  (`OWNPURSE_PLAID_CLI`, default `plaid-reader`) for each item in `{:plaid {:items [{:alias :name}]}}`: `item`, then
+  `sync --all` from the cursor the record holds. `plaid.items` (Plaid's /item/get item), `plaid.accounts` (with the
+  balances Plaid last saw) and `plaid.transactions` (every field, `original_description` included), row ids
+  `plaid:<item id>:<kind>:<Plaid id>`, and `plaid.cursors` (one row per item: the cursor to start from, and Plaid's
+  `transactions_update_status`), all written in one transaction, so the cursor never moves without what it covers;
+  a failed sync keeps nothing. Amounts are decimals of at least two places (Plaid sends 162 and 12.1). An added
+  transaction is valid from its date, a modified one from the fetch. A removed one (a pending charge that posted
+  under a new id, or one the bank took back) is a new version of its row with `removed` true; its bank line ends
+  by `DELETE`. Deposit and credit accounts are source accounts whose org is the item (an item is a login, not an
+  org, so it is not one itself); loans and investments are not kept as accounts yet. Bank lines: every transaction
+  not removed, Plaid's amount negated (Plaid's are positive for money out), pending or posted, with the merchant,
+  the original description and a check's number.
+
 - **History for a date range first (2026-10-26, asked for by the workspace).** `{:xero {:history {:first {:from
   "2025-01-01" :to "2025-12-31"}}}}`: the documents dated in the range (either end may be left out) get their history
   and attachment details before all others, in the usual order within each part, so the year being closed fills in
@@ -248,12 +262,7 @@ Done when:
 
 ## After 3b
 
-**Plaid as a source** (asked for by the workspace): a `plaid` component like `mercury`, running `plaid-reader
---format json`. Tables `plaid.items`, `plaid.accounts`, `plaid.transactions` as source rows; each item's cursor kept
-in the record and passed to `plaid-reader sync --item <alias> --cursor <c> --all`; `source_accounts` for each
-account; bank lines from transactions, Plaid's amounts negated (Plaid's are positive for money out) and set to two
-places; a removed transaction ends its bank line by `DELETE`, never its source row. Then the periodic recheck of
-recent Xero documents' history and attachments.
+Next: the periodic recheck of recent Xero documents' history and attachments (asked for by the workspace).
 
 Steps 4 to 8 as in SPIKE.md. Step 5 (time) can use pull-1 and pull-2: what the books said on 2026-03-31, as we knew
 it on 2026-03-20 and on 2026-04-02.
