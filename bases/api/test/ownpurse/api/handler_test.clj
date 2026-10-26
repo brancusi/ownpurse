@@ -248,3 +248,29 @@
                  [(get-in pair [:a :balance]) (get-in pair [:b :balance]) (:difference pair) (:reconciled pair)
                   (:matched pair)]))))
       (finally (store/stop node)))))
+
+(deftest payees-test
+  (let [node (store/start {:mode :in-memory})
+        orgs (doto (File/createTempFile "orgs" ".edn") .deleteOnExit)
+        log (doto (File/createTempFile "fake-cli" ".log") .deleteOnExit)
+        tenant "c0ffee00-0000-4000-8000-000000000000"
+        app (handler/handler
+             {:node node
+              :local (str orgs)
+              :xero {:cli ["bash" "components/xero/test/ownpurse/xero/fake-xero-cli.sh" "samples/xero/pull-1"
+                           "0" (str log)]}})]
+    (try
+      (spit orgs (pr-str {:xero {:orgs [{:tenant tenant :name "Tallowmere"}]}}))
+      (is (= 200 (:status (request app :post "/pull"))))
+      (let [{:keys [status body]} (request app :get (str "/payees?org=" tenant "&from=2026-01-01&to=2026-12-31"
+                                                         "&threshold=1"))
+            {:keys [threshold payees]} (:payees body)]
+        (testing "a Xero org's payees, by contact name, paid by bank, with the threshold given"
+          (is (= 200 status))
+          (is (= "1" threshold))
+          (is (seq payees))
+          (is (every? #(and (:name %) (not= (:name %) (:party %))) payees))
+          (is (every? :candidate (filter #(get-in % [:paid :bank]) payees)))))
+      (testing "dates are required"
+        (is (= 400 (:status (request app :get (str "/payees?org=" tenant))))))
+      (finally (store/stop node)))))

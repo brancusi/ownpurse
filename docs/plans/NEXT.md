@@ -327,8 +327,18 @@ postings, so a book's opening balances from before its documents begin are not i
 Eliminations come later, if ever: the entities file separately, so they would be close items with journals in the
 group book.
 
-Next for the close: a statement-file source (CSV, then PDF), an accountant export per entity, a 1099 candidate
-list.
+## Payees and 1099 candidates (built 2026-10-26)
+
+`GET /payees?org=&from=&to=&threshold=` lists who a Xero org paid, by contact: money out of its bank accounts and
+credit cards (its source accounts of those kinds), net of refunds. `candidate` marks a payee paid by bank at or
+above the threshold (default 600.00 for payments up to 2025, 2000.00 from 2026; the accountant decides); card
+payments are shown apart, since the card's processor reports them. A Xero payment's postings name the contact of
+the invoice or credit note it pays, so bill payments count. Payments with no contact (a manual journal, a
+transfer) are not counted. The `payees` component knows no source: the API gives it the org's payment accounts
+and contacts.
+
+Next for the close: a statement-file source (CSV, with a column mapping per format in the local config), an
+accountant export per entity.
 
 ## After 3b
 

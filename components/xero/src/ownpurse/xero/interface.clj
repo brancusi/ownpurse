@@ -129,3 +129,8 @@
   :other}."
   [node tenant date opts]
   (trial-balance/check node tenant date opts))
+
+(defn parties
+  "Org `tenant`'s contacts as parties, by the id its postings name them by: {party {:name :tax-number :supplier?}}."
+  [node tenant]
+  (pull/parties node tenant))

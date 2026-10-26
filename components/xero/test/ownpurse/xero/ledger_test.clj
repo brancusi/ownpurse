@@ -120,6 +120,10 @@
           (is (= (:items Ledger) (:written Ledger)))
           (is (nil? (:unbalanced Ledger))))
         (is (= [0.00M] (map :net (store/q node "SELECT SUM(amount) AS net FROM postings")))))
+      (testing "a payment's postings name the contact of the invoice it pays"
+        (is (= (set (map #(source/row-id tenant "contact" (str "c0ffee02-0000-4000-8000-00000000000" %)) [1 2 5]))
+               (set (map :party (store/q node ["SELECT * FROM postings WHERE entry LIKE ?"
+                                               (str "entry:xero:" tenant ":payment:%")]))))))
       (testing "a second pull of the same documents writes no entry"
         (is (= 0 (get-in (pull! node pull-1) ["Ledger" :written]))))
       (testing "after the documents change, the changed entries are written and those that no longer hold end"

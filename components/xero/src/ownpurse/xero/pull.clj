@@ -268,6 +268,15 @@
       (store/q node [(str "SELECT * FROM " (sql-table table) " WHERE org = ?") tenant])
       [])))
 
+(defn parties
+  "Org `tenant`'s contacts as parties, by the id postings name them by: {party {:name :tax-number :supplier?}}."
+  [node tenant]
+  (into {}
+        (for [{:keys [contact-id name tax-number is-supplier]} (current-rows node tenant "Contacts")]
+          [(source/row-id tenant "contact" contact-id)
+           (cond-> {:name name :supplier? (boolean is-supplier)}
+             (seq tax-number) (assoc :tax-number tax-number))])))
+
 (def ^:private posted-resources
   "The tables `post!` reads, by the key `ownpurse.xero.ledger/entries` takes them under."
   [[:accounts "Accounts"] [:bank-transactions "BankTransactions"] [:bank-transfers "BankTransfers"]

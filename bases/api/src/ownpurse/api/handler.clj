@@ -11,6 +11,7 @@
    [ownpurse.intercompany.interface :as ic]
    [ownpurse.json.interface :as json]
    [ownpurse.mercury.interface :as mercury]
+   [ownpurse.payees.interface :as payees]
    [ownpurse.plaid.interface :as plaid]
    [ownpurse.schema.interface :as schema]
    [ownpurse.store.interface :as store]
@@ -244,6 +245,31 @@
 (defn- pair-report-out [r]
   (-> r (assoc :reconciled (:reconciled? r)) (dissoc :reconciled?) strings))
 
+(def Payees
+  "Who a book paid from `from` to `to`, by party and by how. Amounts are decimal strings."
+  [:map [:org :string] [:from :string] [:to :string] [:threshold :string]
+   [:payees [:vector [:map [:party :string] [:name :string] [:paid [:map-of :keyword :string]] [:payments :int]
+                      [:candidate :boolean] [:supplier {:optional true} :boolean]
+                      [:tax-number {:optional true} :string]]]]])
+
+(defn- xero-payees
+  "A Xero org's payees: its bank and credit card accounts are the payment accounts, its contacts the parties."
+  [node {:keys [org from to threshold]}]
+  (let [accounts (into {} (for [a (entity/source-accounts node {:source "xero"})
+                                :when (and (= org (:org a)) (#{"bank" "credit-card"} (:kind a)))]
+                            [(:id a) (:kind a)]))
+        result (payees/payees node (cond-> {:book (xero/book-id org) :from from :to to :accounts accounts
+                                            :parties (xero/parties node org)}
+                                     threshold (assoc :threshold threshold)))]
+    (-> result
+        (dissoc :book)
+        (assoc :org org)
+        (update :payees (partial mapv #(-> %
+                                           (assoc :candidate (:candidate? %))
+                                           (dissoc :candidate? :supplier?)
+                                           (cond-> (contains? % :supplier?) (assoc :supplier (:supplier? %))))))
+        strings)))
+
 (defn- close-item-out [node item]
   (cond-> (-> item
               (assoc :approved (close/approved? node item))
@@ -438,6 +464,21 @@
                                                                node org date
                                                                (cond-> {:opening (keyword (or opening "balance-sheet"))}
                                                                  adjustments (assoc :adjustments adjustments))))))))}}]
+   ["/payees"
+    {:get {:summary (str "Who a Xero org paid from `from` to `to`, by contact: money out of its bank accounts and its "
+                         "credit cards, net of refunds, the largest paid by bank first. `candidate` marks a payee "
+                         "paid by bank at or above `threshold` (default 600.00 for payments up to 2025, 2000.00 from "
+                         "2026), who may need a 1099; card payments are shown apart, since the card's processor "
+                         "reports them. A list for the accountant, not a filing: whether a payee is exempt (a "
+                         "corporation, goods rather than services) is theirs to decide.")
+           :parameters {:query [:map
+                                [:org [:string {:min 1}]]
+                                [:from (schema/schema :ownpurse/date)]
+                                [:to (schema/schema :ownpurse/date)]
+                                [:threshold {:optional true} (schema/schema :ownpurse/amount)]]}
+           :responses {200 {:body [:map [:payees Payees]]}}
+           :handler (fn [{{:keys [query]} :parameters}]
+                      (answer #(hash-map :payees (xero-payees node query))))}}]
    ["/intercompany/pairs"
     {:get {:summary "Every intercompany pair: accounts in one book that mirror accounts in another."
            :responses {200 {:body [:map [:pairs [:vector :map]]]}}

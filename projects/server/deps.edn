@@ -2,6 +2,7 @@
 
         poly/close {:local/root "../../components/close"}
         poly/intercompany {:local/root "../../components/intercompany"}
+        poly/payees {:local/root "../../components/payees"}
         poly/compare {:local/root "../../components/compare"}
         poly/config {:local/root "../../components/config"}
         poly/entity {:local/root "../../components/entity"}

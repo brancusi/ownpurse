@@ -109,7 +109,10 @@
         postings (if (foreign? doc base) (convert postings (:currency-rate doc)) postings)
         kept (remove #(zero? (:amount %)) postings)
         {doc-kind :kind} (source/describe resource)
-        party (some->> (get-in doc [:contact :contact-id]) (source/row-id tenant "contact"))]
+        ;; A payment names its contact through the invoice or credit note it pays.
+        party (some->> (or (get-in doc [:contact :contact-id]) (get-in doc [:invoice :contact :contact-id])
+                           (get-in doc [:credit-note :contact :contact-id]))
+                       (source/row-id tenant "contact"))]
     (cond
       (not (zero? total)) {:unbalanced {:resource resource :id id :date (:date doc) :imbalance total}}
       (< (count kept) 2) {:skipped (str resource ":empty")}

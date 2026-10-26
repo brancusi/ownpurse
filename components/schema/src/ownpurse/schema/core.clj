@@ -36,6 +36,7 @@
    {:ownpurse/id [:string {:min 1}]
     :ownpurse/amount [:fn {:error/message "must be an exact decimal (a string such as \"12.50\" or a BigDecimal), never a float"
                            :decode/json decode-amount
+                           :decode/string decode-amount
                            :json-schema {:type "string" :pattern "^-?\\d+(\\.\\d+)?$"}}
                       money/amount?]
     :ownpurse/commodity [:re {:error/message "must be a three-letter code such as USD"} #"^[A-Z]{3}$"]
