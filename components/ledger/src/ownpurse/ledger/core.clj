@@ -90,3 +90,21 @@
                                  book]
                           from (conj from)
                           to (conj to))))))
+
+(defn postings [node book account {:keys [from to]}]
+  (if-not (store/table-exists? node :postings)
+    []
+    ;; Whole rows: XTDB refuses to name a column no row has yet (a description, a narration).
+    (let [rows (store/q node (cond-> [(str "SELECT * FROM postings WHERE book = ? AND account = ?"
+                                           (when from " AND date >= ?")
+                                           (when to " AND date <= ?")
+                                           " ORDER BY date, entry, line")
+                                      book account]
+                               from (conj from)
+                               to (conj to)))
+          narrations (if (seq rows)
+                       (into {} (map (juxt :xt/id :narration)) (store/q node ["SELECT * FROM entries WHERE book = ?" book]))
+                       {})]
+      (mapv (fn [r] (cond-> (select-keys r [:entry :line :date :amount :commodity :party :description])
+                      (narrations (:entry r)) (assoc :narration (narrations (:entry r)))))
+            rows))))

@@ -1,6 +1,7 @@
 #kaocha/v1
 {:tests [{:id :unit
           :test-paths ["components/close/test"
+                       "components/intercompany/test"
                        "components/compare/test"
                        "components/config/test"
                        "components/entity/test"
@@ -14,6 +15,7 @@
                        "components/xero/test"
                        "bases/api/test"]
           :source-paths ["components/close/src"
+                         "components/intercompany/src"
                          "components/compare/src"
                          "components/config/src"
                          "components/entity/src"

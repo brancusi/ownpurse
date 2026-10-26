@@ -311,8 +311,24 @@ owner's approval, before anything is posted. The `close` component holds them; i
   `pro-forma` (Xero's balance with them): balance sheet accounts take the journals dated up to the date, income and
   expense accounts those within the year. `proposed` counts every item not set aside, for a draft.
 
-Next for the close: intercompany pairs (a config of which account in one org mirrors which in another, a per-pair
-report, then eliminations), a statement-file source, an accountant export per entity, a 1099 candidate list.
+## Intercompany pairs (built 2026-10-26)
+
+`PUT /intercompany/pairs/{ref}` says which accounts in one book mirror which in another: `{a {book accounts
+parties} b {...} from to explained}`. A side may hold several accounts (one book spreads a receivable over an
+account per cost category, while the other holds one loan account), and `parties` keeps only those parties'
+postings (one owner-loan account that holds two people's balances, told apart by contact). `explained` pins known
+parts of the difference, such as a prior-period amount. `GET /intercompany?from=&to=&days=` reconciles each pair
+from the books' postings: each side's balance at `to` and movement in the period, the difference (zero when they
+mirror), what is unexplained, and the period's lines with no mirror on the other side (a line matches one of the
+opposite amount at most `days` apart, else its entry's total does). Lines that name no party on a side with
+parties (a manual journal has no contact) are listed as unattributed, not counted. Balances are the book's
+postings, so a book's opening balances from before its documents begin are not in them: pin them as explained.
+
+Eliminations come later, if ever: the entities file separately, so they would be close items with journals in the
+group book.
+
+Next for the close: a statement-file source (CSV, then PDF), an accountant export per entity, a 1099 candidate
+list.
 
 ## After 3b
 

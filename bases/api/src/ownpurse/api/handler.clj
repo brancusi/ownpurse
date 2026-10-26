@@ -8,6 +8,7 @@
    [ownpurse.close.interface :as close]
    [ownpurse.compare.interface :as cmp]
    [ownpurse.entity.interface :as entity]
+   [ownpurse.intercompany.interface :as ic]
    [ownpurse.json.interface :as json]
    [ownpurse.mercury.interface :as mercury]
    [ownpurse.plaid.interface :as plaid]
@@ -194,6 +195,54 @@
    [:ref :string] [:items [:vector :string]] [:hashes [:vector :string]] [:hash :string] [:sealed-at :string]
    [:changed [:vector :string]]
    [:approval {:optional true} [:map [:by :string] [:at :string] [:hash :string] [:note {:optional true} :string]]]])
+
+(def PairSide
+  "One side of an intercompany pair: a book, its accounts, and optionally the parties whose postings count."
+  [:map {:closed true}
+   [:book [:string {:min 1}]]
+   [:accounts [:vector {:min 1} [:string {:min 1}]]]
+   [:parties {:optional true} [:vector [:string {:min 1}]]]])
+
+(def PairBody
+  "PUT /intercompany/pairs/{ref}: accounts in one book that mirror accounts in another."
+  [:map {:closed true}
+   [:name {:optional true} :string]
+   [:a PairSide]
+   [:b PairSide]
+   [:from {:optional true} (schema/schema :ownpurse/date)]
+   [:to {:optional true} (schema/schema :ownpurse/date)]
+   [:note {:optional true} :string]
+   [:explained {:optional true} [:vector [:map {:closed true} [:ref [:string {:min 1}]]
+                                          [:amount (schema/schema :ownpurse/amount)]
+                                          [:note {:optional true} :string]]]]])
+
+(def PairLine
+  "A posting the reconciliation lists."
+  [:map [:entry :string] [:account :string] [:date :string] [:amount :string]])
+
+(def PairSideReport
+  "One side of a pair, reconciled."
+  [:map [:book :string] [:accounts [:vector :string]] [:balance :string] [:movement :string]
+   [:unattributed {:optional true} [:vector PairLine]]])
+
+(def PairReport
+  "A pair reconciled over a period. Amounts are decimal strings, debits positive."
+  [:map [:ref :string] [:a PairSideReport] [:b PairSideReport] [:difference :string] [:unexplained :string]
+   [:movement-difference :string] [:matched :int] [:reconciled :boolean]
+   [:unmatched [:map [:a [:vector PairLine]] [:b [:vector PairLine]]]]])
+
+(defn- strings
+  "`x` with every amount (a BigDecimal) and date as a string, all the way down."
+  [x]
+  (cond
+    (decimal? x) (amount-out x)
+    (instance? java.time.LocalDate x) (str x)
+    (map? x) (update-vals x strings)
+    (sequential? x) (mapv strings x)
+    :else x))
+
+(defn- pair-report-out [r]
+  (-> r (assoc :reconciled (:reconciled? r)) (dissoc :reconciled?) strings))
 
 (defn- close-item-out [node item]
   (cond-> (-> item
@@ -389,6 +438,34 @@
                                                                node org date
                                                                (cond-> {:opening (keyword (or opening "balance-sheet"))}
                                                                  adjustments (assoc :adjustments adjustments))))))))}}]
+   ["/intercompany/pairs"
+    {:get {:summary "Every intercompany pair: accounts in one book that mirror accounts in another."
+           :responses {200 {:body [:map [:pairs [:vector :map]]]}}
+           :handler (fn [_] (answer #(hash-map :pairs (strings (ic/pairs node)))))}}]
+   ["/intercompany/pairs/{ref}"
+    {:put {:summary (str "Adds or changes an intercompany pair: side a's accounts in one book mirror side b's in "
+                         "another (a loan and its receivable, a due-to and its due-from, a grant paid and received). "
+                         "A side may hold several accounts; `parties` keeps only those parties' postings, for one "
+                         "account that holds several counterparties'. `from` and `to` bound when the pair holds. "
+                         "`explained` pins known parts of the difference, such as a prior-period amount.")
+           :parameters {:path [:map [:ref [:string {:min 1}]]] :body PairBody}
+           :responses {200 {:body [:map [:pair :map]]} 400 {:body ApiError}}
+           :handler (fn [{{:keys [path body]} :parameters}]
+                      (answer #(hash-map :pair (strings (ic/put-pair! node (assoc body :ref (:ref path)))))))}}]
+   ["/intercompany"
+    {:get {:summary (str "Reconciles every intercompany pair in force from `from` to `to`, from the books' postings. "
+                         "Per pair: each side's balance at `to` and movement in the period, the difference (the "
+                         "balances summed, zero when they mirror), what is unexplained after the pinned "
+                         "explanations, and the period's lines the other side has no mirror for. A line matches one "
+                         "of the opposite amount at most `days` apart (default 5), else its entry's total does. A "
+                         "side with parties lists its lines that name no party as unattributed.")
+           :parameters {:query [:map
+                                [:from {:optional true} (schema/schema :ownpurse/date)]
+                                [:to (schema/schema :ownpurse/date)]
+                                [:days {:optional true} [:int {:min 0 :max 60}]]]}
+           :responses {200 {:body [:map [:pairs [:vector PairReport]]]}}
+           :handler (fn [{{:keys [query]} :parameters}]
+                      (answer #(hash-map :pairs (mapv pair-report-out (ic/report node query)))))}}]
    ["/close/items"
     {:get {:summary (str "The close register's items: the questions a close must decide, each with its workflow "
                          "status, evidence and the journals it proposes. `book` finds an item by its book or any of "

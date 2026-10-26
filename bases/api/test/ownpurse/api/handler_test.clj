@@ -5,6 +5,7 @@
    [clojure.test :refer [deftest is testing]]
    [ownpurse.api.handler :as handler]
    [ownpurse.json.interface :as json]
+   [ownpurse.ledger.interface :as ledger]
    [ownpurse.store.interface :as store])
   (:import
    (java.io File)))
@@ -219,4 +220,31 @@
       (testing "the routes are in the OpenAPI document"
         (is (every? (set (keys (:paths (:body (request app :get "/openapi.json")))))
                     (map keyword ["/close/items" "/close/packages" "/close/groups"]))))
+      (finally (store/stop node)))))
+
+(deftest intercompany-test
+  (let [node (store/start {:mode :in-memory})
+        app (handler/handler {:node node})
+        entry (fn [book id date & postings]
+                {:entry/id id :entry/book book :entry/date (java.time.LocalDate/parse date)
+                 :entry/postings (vec (map-indexed (fn [i [account amount]]
+                                                     {:posting/line i :posting/account account :posting/amount amount
+                                                      :posting/commodity "USD"})
+                                                   postings))})]
+    (try
+      (ledger/put-entries! node "book:a" [(entry "book:a" "a1" "2025-03-01" ["a:1800" 250.00M] ["a:1010" -250.00M])]
+                           {:source "test" :why "fixture"})
+      (ledger/put-entries! node "book:b" [(entry "book:b" "b1" "2025-03-02" ["b:1010" 250.00M] ["b:2800" -250.00M])]
+                           {:source "test" :why "fixture"})
+      (testing "a pair is put, amounts as decimal strings"
+        (is (= 200 (:status (request app :put "/intercompany/pairs/loan"
+                                     {:a {:book "book:a" :accounts ["a:1800"]} :b {:book "book:b" :accounts ["b:2800"]}
+                                      :from "2025-01-01" :explained [{:ref "x" :amount "0.00"}]}))))
+        (is (= 400 (:status (request app :put "/intercompany/pairs/loan" {:a {:book "book:a" :accounts []}
+                                                                          :b {:book "book:b" :accounts ["b:2800"]}})))))
+      (testing "the report reconciles it"
+        (let [[pair] (:pairs (:body (request app :get "/intercompany?from=2025-01-01&to=2025-12-31")))]
+          (is (= ["250.00" "-250.00" "0.00" true 1]
+                 [(get-in pair [:a :balance]) (get-in pair [:b :balance]) (:difference pair) (:reconciled pair)
+                  (:matched pair)]))))
       (finally (store/stop node)))))

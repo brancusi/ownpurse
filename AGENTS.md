@@ -38,7 +38,8 @@ A Polylith workspace (top namespace `ownpurse`):
   never the implementation.
 - `bases/`: the entry points (the HTTP API: `GET /health`, `POST /pull`, `GET /entities`, `PUT /entities/{id}`,
   `GET /source-accounts`, `PUT` and `DELETE /links`, `GET /compare`, `GET /trial-balance`, the close register
-  (`/close/items`, `/close/groups`, `/close/packages`), `PUT` and `DELETE /matches`, `POST /backup`,
+  (`/close/items`, `/close/groups`, `/close/packages`), `GET /intercompany` and `/intercompany/pairs`, `PUT` and
+  `DELETE /matches`, `POST /backup`,
   `GET /openapi.json`; `restore` restores a snapshot, see docs/BACKUP.md).
 - `projects/`: what gets built (the server uberjar).
 - `development/`: the REPL project. `user.clj` stays tiny; `dev.clj` holds the REPL system.

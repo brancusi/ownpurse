@@ -40,3 +40,9 @@
   included; either may be nil for no bound)."
   [node book opts]
   (core/balances node book opts))
+
+(defn postings
+  "`book`'s postings to `account` over the dates `from` to `to` (either may be nil), by date: [{:entry :line :date
+  :amount :commodity :party :description :narration}], the narration being the entry's."
+  [node book account opts]
+  (core/postings node book account opts))
