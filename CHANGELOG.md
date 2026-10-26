@@ -42,3 +42,7 @@
   fresh node opens, checked before it is kept, and `GET /health` says when the last one was taken. `restore
   <snapshot> [<data dir>]` restores one with every version's valid and system times and `xt.txs` as they were
   (`docs/BACKUP.md`).
+- Xero's reports as source rows in `xero.reports`, versioned: for each of the last 13 months, the trial balance and
+  balance sheet at its end, the profit and loss on an accrual and a cash basis, and the bank summary. The latest
+  two months are fetched again on every pull, older ones once (`{:xero {:reports {:months n :refresh n}}}` in the
+  local config). A pull also keeps Xero's items, users, linked transactions and batch payments.

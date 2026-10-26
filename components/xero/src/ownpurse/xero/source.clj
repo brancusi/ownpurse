@@ -28,12 +28,17 @@
          ["Prepayments" :PrepaymentID "prepayments" "prepayment"]
          ["BankTransactions" :BankTransactionID "bank-transactions" "bank-transaction"]
          ["BankTransfers" :BankTransferID "bank-transfers" "bank-transfer"]
-         ["ManualJournals" :ManualJournalID "manual-journals" "manual-journal"]]))
+         ["ManualJournals" :ManualJournalID "manual-journals" "manual-journal"]
+         ["Items" :ItemID "items" "item"]
+         ["Users" :UserID "users" "user"]
+         ["LinkedTransactions" :LinkedTransactionID "linked-transactions" "linked-transaction"]
+         ["BatchPayments" :BatchPaymentID "batch-payments" "batch-payment"]]))
 
 (def pull-order
   "What a pull asks Xero for, in this order: the org and its lists first, then the documents."
   ["Organisation" "Accounts" "TaxRates" "TrackingCategories" "Currencies" "Contacts" "Invoices" "CreditNotes"
-   "Payments" "Overpayments" "Prepayments" "BankTransactions" "BankTransfers" "ManualJournals"])
+   "Payments" "Overpayments" "Prepayments" "BankTransactions" "BankTransfers" "ManualJournals" "Items" "Users"
+   "LinkedTransactions" "BatchPayments"])
 
 (defn- kebab
   "BankAccount → :bank-account, AccountID → :account-id, UpdatedDateUTC → :updated-date-utc."
@@ -217,3 +222,50 @@
                :description (get-in r [:invoice :invoice-number])}))
 
       [])))
+
+(defn- month-end ^LocalDate [^LocalDate d]
+  (.withDayOfMonth d (.lengthOfMonth d)))
+
+(defn report-requests
+  "The reports to ask Xero for, for the `months` months that end with the month of `today`, newest first: for each
+  month, the trial balance and the balance sheet at its last day, the profit and loss for the month on an accrual
+  basis and on a cash basis, and the bank summary for the month. Each is {:report name :params {param value}
+  :month-end date}."
+  [^LocalDate today months]
+  (for [i (range months)
+        :let [end (month-end (.minusMonths today i))
+              start (.withDayOfMonth end 1)
+              month {"fromDate" (str start) "toDate" (str end)}]
+        request [{:report "TrialBalance" :params {"date" (str end)}}
+                 {:report "BalanceSheet" :params {"date" (str end)}}
+                 {:report "ProfitAndLoss" :params month}
+                 {:report "ProfitAndLoss" :params (assoc month "paymentsOnly" "true")}
+                 {:report "BankSummary" :params month}]]
+    (assoc request :month-end end)))
+
+(defn report-id
+  "The row id of `report` with `params` in org `tenant`: the report and its parameters, in order, so that a later
+  fetch of the same report is a new version of the same row."
+  [tenant report params]
+  (row-id tenant "report" (str report "?" (str/join "&" (map (fn [[k v]] (str k "=" v)) (sort params))))))
+
+(defn report-row
+  "Xero's answer to `report` with `params` for org `tenant` as a row of xero.reports: the report as Xero sent it
+  (rows, cells and their values as strings), less what changes on every fetch (UpdatedDateUTC, ReportDate), with
+  `report`, the dates it covers (`date`, or `from_date` and `to_date`), its `basis` for a profit and loss, and
+  valid from `fetched-at`."
+  [tenant report params answer ^Instant fetched-at]
+  (let [[content] (:Reports answer)
+        day #(some-> (get params %) LocalDate/parse)]
+    (when-not content
+      (throw (ex-info (str "Xero's answer to the report " report " holds no report.")
+                      {:type :ownpurse/no-xero-report :report report :params params})))
+    (cond-> (assoc (normalize-payload (read-dates (dissoc content :UpdatedDateUTC :ReportDate)))
+                   :xt/id (report-id tenant report params)
+                   :org tenant
+                   :report report
+                   :xt/valid-from fetched-at)
+      (day "date") (assoc :date (day "date"))
+      (day "fromDate") (assoc :from-date (day "fromDate") :to-date (day "toDate"))
+      (= "ProfitAndLoss" report) (assoc :basis (if (= "true" (get params "paymentsOnly")) "cash" "accrual")))))
+

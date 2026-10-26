@@ -40,8 +40,9 @@
   (pull/keep! node tenant resource answer opts))
 
 (defn pull!
-  "Fetches and keeps each resource in `resources` for one org: {:cli :tenant :resources}. After the first fetch, a
-  resource with UpdatedDateUTC asks only for what changed. Returns {resource {:items :written}}."
+  "Fetches and keeps each resource in `resources` for one org, then its reports: {:cli :tenant :resources :reports
+  :today}. After the first fetch, a resource with UpdatedDateUTC asks only for what changed. Returns {resource
+  {:items :written}}."
   [node opts]
   (pull/pull! node opts))
 
@@ -51,8 +52,28 @@
   [path]
   (pull/read-orgs path))
 
+(def default-reports
+  "The reports a pull keeps unless the local config says otherwise: {:months 13 :refresh 2}, the months ending with
+  this one, the latest of them fetched again on every pull."
+  pull/default-reports)
+
+(defn report-requests
+  "The reports a pull asks for over `months` months ending with the month of `today`, newest first: for each, the
+  TrialBalance and BalanceSheet at its last day, the ProfitAndLoss on an accrual and on a cash basis, and the
+  BankSummary. Each is {:report :params :month-end}. Pure."
+  [today months]
+  (source/report-requests today months))
+
+(defn read-reports
+  "Which reports a local config file asks for, {:xero {:reports {:months n :refresh n}}}, over `default-reports`.
+  {:months 0} asks for none."
+  [path]
+  (pull/read-reports path))
+
 (defn pull-orgs!
-  "Pulls every resource in `pull-order` for each org: {:cli :orgs}. Returns {name {resource {:items :written}}}."
+  "Pulls every resource in `pull-order`, then the reports, for each org: {:cli :orgs :reports :today}. Reports are
+  rows of xero.reports, one per report, org and parameters, and a new version when Xero's figures change. Returns
+  {name {resource {:items :written}}}, with the reports under \"Reports\"."
   [node opts]
   (pull/pull-orgs! node opts))
 

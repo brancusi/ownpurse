@@ -1,0 +1,519 @@
+{
+  "Id": "c0ffee09-0000-4000-8000-000000000020",
+  "Status": "OK",
+  "ProviderName": "ownpurse samples",
+  "DateTimeUTC": "/Date(1774026300000+0000)/",
+  "Reports": [
+    {
+      "ReportID": "TrialBalance",
+      "ReportName": "Trial Balance",
+      "ReportType": "TrialBalance",
+      "ReportTitles": [
+        "Trial Balance",
+        "Tallowmere Coffee Roasting Co.",
+        "As at 31 March 2026"
+      ],
+      "ReportDate": "20 March 2026",
+      "UpdatedDateUTC": "/Date(1774026300000+0000)/",
+      "Fields": [],
+      "Rows": [
+        {
+          "RowType": "Header",
+          "Cells": [
+            {
+              "Value": "Account"
+            },
+            {
+              "Value": "Debit"
+            },
+            {
+              "Value": "Credit"
+            },
+            {
+              "Value": "YTD Debit"
+            },
+            {
+              "Value": "YTD Credit"
+            }
+          ]
+        },
+        {
+          "RowType": "Section",
+          "Title": "Revenue",
+          "Rows": [
+            {
+              "RowType": "Row",
+              "Cells": [
+                {
+                  "Value": "Wholesale coffee sales (4000)",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000009",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000009",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "1846.13",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000009",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000009",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "16509.85",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000009",
+                      "Id": "account"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "RowType": "Section",
+          "Title": "Expenses",
+          "Rows": [
+            {
+              "RowType": "Row",
+              "Cells": [
+                {
+                  "Value": "Green coffee (5000)",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000011",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "1200.00",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000011",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000011",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "6240.00",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000011",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000011",
+                      "Id": "account"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "RowType": "Row",
+              "Cells": [
+                {
+                  "Value": "Rent (6200)",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000013",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "1200.00",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000013",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000013",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "3600.00",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000013",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000013",
+                      "Id": "account"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "RowType": "Section",
+          "Title": "Assets",
+          "Rows": [
+            {
+              "RowType": "Row",
+              "Cells": [
+                {
+                  "Value": "Operating account (1010)",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000001",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "1846.13",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000001",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "2400.00",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000001",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "12480.25",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000001",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000001",
+                      "Id": "account"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "RowType": "Row",
+              "Cells": [
+                {
+                  "Value": "Roasting equipment (1500)",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000004",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000004",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000004",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "18000.00",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000004",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000004",
+                      "Id": "account"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "RowType": "Row",
+              "Cells": [
+                {
+                  "Value": "Accumulated depreciation (1510)",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000005",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000005",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000005",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000005",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "1500.00",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000005",
+                      "Id": "account"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "RowType": "Section",
+          "Title": "Liabilities",
+          "Rows": [
+            {
+              "RowType": "Row",
+              "Cells": [
+                {
+                  "Value": "Accounts payable (2000)",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000006",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000006",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000006",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000006",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "2310.40",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000006",
+                      "Id": "account"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "RowType": "Row",
+              "Cells": [
+                {
+                  "Value": "Equipment loan (2500)",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000008",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000008",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000008",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000008",
+                      "Id": "account"
+                    }
+                  ]
+                },
+                {
+                  "Value": "10000.00",
+                  "Attributes": [
+                    {
+                      "Value": "c0ffee01-0000-4000-8000-000000000008",
+                      "Id": "account"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "RowType": "Section",
+          "Title": "Equity",
+          "Rows": [
+            {
+              "RowType": "Row",
+              "Cells": [
+                {
+                  "Value": "Retained Earnings"
+                },
+                {
+                  "Value": ""
+                },
+                {
+                  "Value": ""
+                },
+                {
+                  "Value": ""
+                },
+                {
+                  "Value": "10000.00"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "RowType": "Section",
+          "Title": "",
+          "Rows": [
+            {
+              "RowType": "SummaryRow",
+              "Cells": [
+                {
+                  "Value": "Total"
+                },
+                {
+                  "Value": "4246.13"
+                },
+                {
+                  "Value": "4246.13"
+                },
+                {
+                  "Value": "40320.25"
+                },
+                {
+                  "Value": "40320.25"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

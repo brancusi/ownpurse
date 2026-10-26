@@ -129,7 +129,11 @@ Each layer is derived from the one below and never writes past it.
 
 1. **Sources** keep each item exactly as the provider sent it, one row per item, in a schema named for the provider
    (`xero.invoices`). Only that provider's component reads them. A new version of an item is a new version of its
-   row, valid from when the provider says it changed; nothing is deleted.
+   row, valid from when the provider says it changed; nothing is deleted. A provider's report is a source row too:
+   `xero.reports` holds one row per report, org and parameters (`TrialBalance?date=2026-03-31`), as Xero sent it,
+   and a new version whenever Xero's figures for it change, valid from when Xero answered. The reports carry what
+   the documents do not, such as a bank account's opening balance from before its first line, and the trial
+   balance a book's postings are checked against.
 2. **Documents** hold the same kind of thing from every source in one table, with `book`, `source` and
    `source_row`. A client asks here for every open invoice, whoever issued it. A bill is a payable invoice; a credit
    note is an invoice of kind `credit_note`. The same invoice seen by two sources is two rows joined by a `same-as`

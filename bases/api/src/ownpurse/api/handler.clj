@@ -160,7 +160,7 @@
       (throw (ex-info (str local " names no orgs. Add {:xero {:orgs [{:tenant \"<tenant id>\" :name \"<a name>\"}]}} "
                            "or {:mercury {:orgs [{:alias \"<mercury-cli alias>\" :name \"<a name>\"}]}}.")
                       {:type :ownpurse/no-local-config :path (str local)})))
-    {:xero (if (seq xero-orgs) (xero/pull-orgs! node {:cli (:cli xero) :orgs xero-orgs}) {})
+    {:xero (if (seq xero-orgs) (xero/pull-orgs! node {:cli (:cli xero) :orgs xero-orgs :reports (xero/read-reports local)}) {})
      :mercury (if (seq mercury-orgs) (mercury/pull-orgs! node {:cli (:cli mercury) :orgs mercury-orgs}) {})}))
 
 (defn- pull

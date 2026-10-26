@@ -153,7 +153,8 @@
   (with-node
     (fn [node]
       (let [log (temp-log)
-            opts {:cli ["bash" fake pull-1 "0" (str log)] :tenant tenant :resources ["Organisation" "Invoices"]}]
+            opts {:cli ["bash" fake pull-1 "0" (str log)] :tenant tenant :resources ["Organisation" "Invoices"]
+                  :reports {:months 0}}]
         (testing "pull! runs xero-cli for each resource and keeps what it prints"
           (is (= {"Organisation" {:items 1 :written 1} "Invoices" {:items 7 :written 7}} (xero/pull! node opts))))
         (testing "the next pull asks only for what changed since the latest update held"
@@ -185,9 +186,57 @@
         (fn [node]
           (let [log (temp-log)
                 result (xero/pull-orgs! node {:cli ["bash" fake pull-1 "0" (str log)]
-                                              :orgs (xero/read-orgs (str config))})]
+                                              :orgs (xero/read-orgs (str config))
+                                              :reports {:months 1}
+                                              :today (LocalDate/parse "2026-03-20")})]
             (is (= ["Tallowmere"] (keys result)))
-            (is (= xero/pull-order (keys (result "Tallowmere"))))))))))
+            (is (= (conj xero/pull-order "Reports") (keys (result "Tallowmere"))))))))
+    (testing "the config may say how many months of reports to keep"
+      (is (= xero/default-reports (xero/read-reports "/nowhere/config.local.edn")))
+      (spit config (pr-str {:xero {:orgs [] :reports {:months 24}}}))
+      (is (= {:months 24 :refresh 2} (xero/read-reports (str config)))))))
+
+(deftest report-requests-test
+  (let [requests (xero/report-requests (LocalDate/parse "2026-03-20") 2)]
+    (is (= 10 (count requests)))
+    (is (= [["TrialBalance" {"date" "2026-03-31"}]
+            ["BalanceSheet" {"date" "2026-03-31"}]
+            ["ProfitAndLoss" {"fromDate" "2026-03-01" "toDate" "2026-03-31"}]
+            ["ProfitAndLoss" {"fromDate" "2026-03-01" "toDate" "2026-03-31" "paymentsOnly" "true"}]
+            ["BankSummary" {"fromDate" "2026-03-01" "toDate" "2026-03-31"}]]
+           (map (juxt :report :params) (take 5 requests))))
+    (is (= [(LocalDate/parse "2026-02-28")] (distinct (map :month-end (drop 5 requests)))))))
+
+(deftest reports-test
+  (with-node
+    (fn [node]
+      (let [log (temp-log)
+            opts {:cli ["bash" fake pull-1 "0" (str log)] :tenant tenant :resources []
+                  :reports {:months 3 :refresh 1} :today (LocalDate/parse "2026-03-20")}
+            report-calls #(filter (fn [call] (str/starts-with? call "report ")) (str/split-lines (slurp log)))]
+        (testing "a first pull fetches every report of every month, each a row of xero.reports"
+          (is (= {"Reports" {:items 15 :written 15}} (xero/pull! node opts)))
+          (is (= 15 (count (report-calls))))
+          (is (some #{(str "report ProfitAndLoss --org " tenant " --param fromDate=2026-01-01 --param paymentsOnly=true "
+                           "--param toDate=2026-01-31")}
+                    (report-calls)))
+          (is (= [["ProfitAndLoss" "accrual"] ["ProfitAndLoss" "cash"]]
+                 (map (juxt :report :basis)
+                      (store/q node ["SELECT report, basis FROM xero.reports WHERE report = 'ProfitAndLoss' AND from_date = ? ORDER BY basis"
+                                     (LocalDate/parse "2026-02-01")])))))
+        (testing "a trial balance keeps Xero's rows and cells, with the date it is at"
+          (let [[tb] (store/q node ["SELECT * FROM xero.reports WHERE _id = ?"
+                                    (str "xero:" tenant ":report:TrialBalance?date=2026-03-31")])
+                cells (for [section (:rows tb) row (:rows section) :when (= "Row" (:row-type row))]
+                        (mapv :value (:cells row)))]
+            (is (= {:report "TrialBalance" :date (LocalDate/parse "2026-03-31") :org tenant}
+                   (select-keys tb [:report :date :org])))
+            (is (some #{["Operating account (1010)" "1846.13" "2400.00" "12480.25" ""]} cells))
+            (is (nil? (:report-date tb)) "what changes on every fetch is not kept")))
+        (testing "the next pull fetches only the latest month again, and keeps nothing when nothing changed"
+          (is (= {"Reports" {:items 5 :written 0}} (xero/pull! node opts)))
+          (is (= 20 (count (report-calls))))
+          (is (= 15 (:n (first (store/q node "SELECT COUNT(*) AS n FROM xero.reports"))))))))))
 
 (deftest fetch-errors-test
   (testing "xero-cli's exit code becomes the error's type, with xero-cli's own error as data"
@@ -199,3 +248,18 @@
     (is (= :xero/not-found (:type (error #(xero/fetch "/nowhere/xero-cli" tenant "Invoices" {}))))))
   (testing "the samples are where the tests expect them"
     (is (.isDirectory (io/file pull-1)))))
+
+(deftest smaller-lists-test
+  (testing "items, users, linked transactions and batch payments are rows of their own tables, by Xero's id"
+    (let [at (Instant/parse "2026-03-20T12:00:00Z")]
+      (is (= {:xero/items [(str "xero:" tenant ":item:i1")]
+              :xero/users [(str "xero:" tenant ":user:u1")]
+              :xero/linked-transactions [(str "xero:" tenant ":linked-transaction:l1")]
+              :xero/batch-payments [(str "xero:" tenant ":batch-payment:b1")]}
+             (into {} (for [[resource answer] {"Items" {:Items [{:ItemID "i1" :Code "GREEN-1"}]}
+                                               "Users" {:Users [{:UserID "u1" :IsSubscriber false}]}
+                                               "LinkedTransactions" {:LinkedTransactions [{:LinkedTransactionID "l1"}]}
+                                               "BatchPayments" {:BatchPayments [{:BatchPaymentID "b1"
+                                                                                 :TotalAmount 920.00M}]}}
+                            [table rows] (xero/rows tenant resource answer at)]
+                        [table (map :xt/id rows)])))))))

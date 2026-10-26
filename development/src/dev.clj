@@ -45,12 +45,14 @@
   "Fetches every resource for each org in a local config through xero-cli, and keeps what changed. Without
   arguments: the running system's record and config.local.edn (never committed). `opts` may name another
   :node (a record opened with `open-record`) and another :local config file. Costs Xero calls: the first pull
-  of an org is about one call per resource per 1000 items; later pulls ask only for what changed."
+  of an org is about one call per resource per 1000 items; later pulls ask only for what changed. Reports cost
+  five calls a month: 65 on the first pull, 10 on later ones (see xero/default-reports)."
   ([] (pull-xero {}))
   ([{:keys [local] :as opts}]
    (let [{:keys [xero] default-local :local} (config/read-config :dev)]
      (xero/pull-orgs! (or (:node opts) (node))
-                      {:cli (:cli xero) :orgs (xero/read-orgs (or local default-local))}))))
+                      {:cli (:cli xero) :orgs (xero/read-orgs (or local default-local))
+                       :reports (xero/read-reports (or local default-local))}))))
 
 (defn keep-mercury-answers
   "Pulls a folder of saved Mercury answers (samples/mercury/pull-1) into the running system, through the stand-in

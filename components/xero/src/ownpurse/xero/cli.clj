@@ -57,6 +57,17 @@
       (json/parse out)
       (fail! cmd result))))
 
+(defn get-report
+  "Runs `xero-cli report <report> --org <tenant> --param k=v ...` for each of `params` and returns Xero's answer,
+  every number exact. Throws as `get-resource` does."
+  [cli tenant report params]
+  (let [cmd (into (command cli "report" report "--org" tenant)
+                  (mapcat (fn [[k v]] ["--param" (str k "=" v)]) (sort params)))
+        {:keys [exit out] :as result} (run cmd)]
+    (if (zero? exit)
+      (json/parse out)
+      (fail! cmd result))))
+
 (defn version
   "xero-cli's version, from the first line of its help (`xero-cli 0.1.0: ...`), or nil."
   [cli]
