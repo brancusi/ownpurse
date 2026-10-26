@@ -339,8 +339,30 @@ the invoice or credit note it pays, so bill payments count. Payments with no con
 transfer) are not counted. The `payees` component knows no source: the API gives it the org's payment accounts
 and contacts.
 
-Next for the close: a statement-file source (CSV, with a column mapping per format in the local config), an
-accountant export per entity.
+## Statement files (built 2026-10-26)
+
+For accounts no API reaches, the `statement` component reads CSV exports named in the local config:
+
+```clojure
+{:statements
+ {:formats {"bank-export" {:skip 1 :date "Posted Date" :date-format "MM/dd/yyyy" :debit "Debit" :credit "Credit"
+                           :description "Description" :id "Reference" :balance "Balance"}
+            "card-export" {:delimiter ";" :decimal "," :date "Transaction Date" :amount "Amount"
+                           :sign "debit-positive" :description "Description"}}
+  :accounts [{:account "operating" :name "Operating checking" :kind "bank" :currency "USD"}]
+  :files [{:path "/absolute/path/export.csv" :account "operating" :format "bank-export"
+           :opening "1000.00" :closing "1002.90" :from "2025-01-01" :to "2025-03-31"}]}}
+```
+
+A format says which column holds what; a new export needs config, not code. Each line is a row of
+`statement.lines` (its id is the file's reference, else its date, amount, description and occurrence, so
+overlapping exports do not double), each file a row of `statement.files` (its name and hash, never its path, its
+lines, opening, closing and running-balance breaks). Each account is a source account
+(`statement:<account>:account`) to link as evidence for a book's bank account; its lines are bank lines, so
+`GET /compare` works as for Plaid. `POST /pull` imports the files; `GET /statements` says whether each ties. The
+samples are in `samples/statement`. PDF is not read: transcribe a PDF statement into a CSV with a format of its own.
+
+Next for the close: an accountant export per entity.
 
 ## After 3b
 

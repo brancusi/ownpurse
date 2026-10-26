@@ -26,7 +26,9 @@
                                          (.getDescription e) ".")
                   {:ref ref :side k}))))
   (when (some (comp str/blank? :entry) assigned)
-    (fail! :ownpurse/invalid (str "Side " (name k) " of pair " ref ": each assigned line names its entry.")
+    (fail! :ownpurse/invalid (str "Side " (name k) " of pair " ref ": each assigned line names its entry, and "
+                                  "optionally its line: {entry, line}. To assign lines by their narration, give the "
+                                  "side a narration pattern instead.")
            {:ref ref :side k}))
   (when (and opening (nil? (:amount opening)))
     (fail! :ownpurse/invalid (str "Side " (name k) " of pair " ref ": an opening needs an amount.") {:ref ref :side k})))

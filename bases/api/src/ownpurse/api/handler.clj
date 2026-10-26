@@ -14,6 +14,7 @@
    [ownpurse.payees.interface :as payees]
    [ownpurse.plaid.interface :as plaid]
    [ownpurse.schema.interface :as schema]
+   [ownpurse.statement.interface :as statement]
    [ownpurse.store.interface :as store]
    [ownpurse.xero.interface :as xero]
    [reitit.coercion.malli :as rcm]
@@ -59,7 +60,15 @@
 
 (def Pulled
   "What POST /pull returns: the counts for each source's orgs."
-  [:map [:pulled [:map [:xero Counts] [:mercury Counts] [:plaid Counts]]]])
+  [:map [:pulled [:map [:xero Counts] [:mercury Counts] [:plaid Counts]
+                  [:statements {:optional true} [:map [:files :int] [:lines :int] [:written :int]]]]]])
+
+(def Statement
+  "A statement file the record holds, and whether it ties. Amounts are decimal strings."
+  [:map [:account :string] [:name :string] [:format :string] [:lines :int] [:total :string] [:tied :boolean]
+   [:opening {:optional true} :string] [:closing {:optional true} :string]
+   [:from {:optional true} :string] [:to {:optional true} :string]
+   [:breaks [:vector [:map [:row :int] [:expected :string] [:balance :string]]]]])
 
 (def Entity
   "An entity: one business or household."
@@ -253,7 +262,7 @@
 (def Payees
   "Who a book paid from `from` to `to`, by party and by how. Amounts are decimal strings."
   [:map [:org :string] [:from :string] [:to :string] [:threshold :string]
-   [:payees [:vector [:map [:party :string] [:name :string] [:paid [:map-of :keyword :string]] [:payments :int]
+   [:payees [:vector [:map [:party :string] [:name :string] [:paid [:map [:bank {:optional true} :string] [:credit-card {:optional true} :string]]] [:payments :int]
                       [:candidate :boolean] [:supplier {:optional true} :boolean]
                       [:tax-number {:optional true} :string]]]]])
 
@@ -271,6 +280,7 @@
         (assoc :org org)
         (update :payees (partial mapv #(-> %
                                            (assoc :candidate (:candidate? %))
+                                           (update :paid update-keys keyword)
                                            (dissoc :candidate? :supplier?)
                                            (cond-> (contains? % :supplier?) (assoc :supplier (:supplier? %))))))
         strings)))
@@ -339,12 +349,14 @@
   (if (namespace t) (str (namespace t) "/" (name t)) (name t)))
 
 (defn- pull-all!
-  "Pulls every org and item the local config names: Xero's, then Mercury's, then Plaid's."
+  "Pulls every org and item the local config names: Xero's, then Mercury's, then Plaid's; then imports its statement
+  files."
   [node {:keys [local xero mercury plaid store]}]
   (let [xero-orgs (xero/read-orgs local)
         mercury-orgs (mercury/read-orgs local)
-        plaid-items (plaid/read-items local)]
-    (when (and (empty? xero-orgs) (empty? mercury-orgs) (empty? plaid-items))
+        plaid-items (plaid/read-items local)
+        statements (statement/read-config local)]
+    (when (and (empty? xero-orgs) (empty? mercury-orgs) (empty? plaid-items) (empty? (:files statements)))
       (throw (ex-info (str local " names no orgs. Add {:xero {:orgs [{:tenant \"<tenant id>\" :name \"<a name>\"}]}}, "
                            "{:mercury {:orgs [{:alias \"<mercury-cli alias>\" :name \"<a name>\"}]}} "
                            "or {:plaid {:items [{:alias \"<plaid-reader alias>\" :name \"<a name>\"}]}}.")
@@ -355,7 +367,8 @@
                                     :keep-file (when (= :disk (:mode store)) #(store/keep-file! store %))})
              {})
      :mercury (if (seq mercury-orgs) (mercury/pull-orgs! node {:cli (:cli mercury) :orgs mercury-orgs}) {})
-     :plaid (if (seq plaid-items) (plaid/pull-items! node {:cli (:cli plaid) :items plaid-items}) {})}))
+     :plaid (if (seq plaid-items) (plaid/pull-items! node {:cli (:cli plaid) :items plaid-items}) {})
+     :statements (if (seq (:files statements)) (statement/import! node statements {}) {:files 0 :lines 0 :written 0})}))
 
 (defn- pull
   "Pulls every org in the local config through its source's tool, one pull at a time."
@@ -469,6 +482,16 @@
                                                                node org date
                                                                (cond-> {:opening (keyword (or opening "balance-sheet"))}
                                                                  adjustments (assoc :adjustments adjustments))))))))}}]
+   ["/statements"
+    {:get {:summary (str "Every statement file the record holds (the local config's :statements :files, imported on "
+                         "each pull), and whether it ties: its opening and its lines' total make its closing, and its "
+                         "running balance, when it has one, follows from its lines (`breaks` lists where not). Link "
+                         "a statement account (GET /source-accounts?source=statement) as evidence for a book's bank "
+                         "account, and GET /compare compares them.")
+           :responses {200 {:body [:map [:statements [:vector Statement]]]}}
+           :handler (fn [_] (answer #(hash-map :statements
+                                               (mapv (fn [f] (-> f (assoc :tied (:tied? f)) (dissoc :tied?) strings))
+                                                     (statement/statements node)))))}}]
    ["/payees"
     {:get {:summary (str "Who a Xero org paid from `from` to `to`, by contact: money out of its bank accounts and its "
                          "credit cards, net of refunds, the largest paid by bank first. `candidate` marks a payee "

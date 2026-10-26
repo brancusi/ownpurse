@@ -14,6 +14,7 @@
    [ownpurse.config.interface :as config]
    [ownpurse.mercury.interface :as mercury]
    [ownpurse.plaid.interface :as plaid]
+   [ownpurse.statement.interface :as statement]
    [ownpurse.store.interface :as store]
    [ownpurse.xero.interface :as xero]))
 
@@ -99,6 +100,14 @@
    (let [{:keys [plaid] default-local :local} (config/read-config :dev)]
      (plaid/pull-items! (or (:node opts) (node))
                         {:cli (:cli plaid) :items (plaid/read-items (or local default-local))}))))
+
+(defn import-statements
+  "Imports the statement files a local config names ({:statements {:formats :accounts :files}}) into the running
+  system. Without arguments: config.local.edn (never committed); or give another `local` config file."
+  ([] (import-statements nil))
+  ([local]
+   (let [{default-local :local} (config/read-config :dev)]
+     (statement/import! (node) (statement/read-config (or local default-local)) {}))))
 
 (defn open-record
   "Opens a record on disk at `dir` beside the running system, with its read-only SQL on `sql-port` (or none):

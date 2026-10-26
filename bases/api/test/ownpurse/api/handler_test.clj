@@ -270,7 +270,13 @@
           (is (= "1" threshold))
           (is (seq payees))
           (is (every? #(and (:name %) (not= (:name %) (:party %))) payees))
-          (is (every? :candidate (filter #(get-in % [:paid :bank]) payees)))))
+          (is (= {:bank "3215.47"} (:paid (first payees))))
+          (is (every? :candidate (filter #(get-in % [:paid :bank]) payees))))
+        (testing "a payee paid less than the threshold is no candidate"
+          (let [{:keys [payees]} (:payees (:body (request app :get (str "/payees?org=" tenant
+                                                                        "&from=2026-01-01&to=2026-12-31"))))]
+            (is (= [true false] (map :candidate [(first payees) (last payees)])))
+            (is (every? #(seq (:paid %)) payees)))))
       (testing "dates are required"
         (is (= 400 (:status (request app :get (str "/payees?org=" tenant))))))
       (finally (store/stop node)))))
