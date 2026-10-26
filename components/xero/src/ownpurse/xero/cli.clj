@@ -45,28 +45,34 @@
 (defn- command [cli & args]
   (into (if (string? cli) [cli] (vec cli)) args))
 
+(defn- answer!
+  "Runs `cmd` and returns its answer, every number exact, or throws as `fail!` does."
+  [cmd]
+  (let [{:keys [exit out] :as result} (run cmd)]
+    (if (zero? exit)
+      (json/parse out)
+      (fail! cmd result))))
+
 (defn get-resource
   "Runs `xero-cli get <resource> --org <tenant> --all [--modified-since <instant>]` and returns Xero's answer, every
   number exact. `cli` is the program (a path, or a vector with leading arguments). Throws an error whose :type
   says what xero-cli's exit code means (see `exit-types`), with xero-cli's own error, hint included, as data."
   [cli tenant resource {:keys [modified-since]}]
-  (let [cmd (cond-> (command cli "get" resource "--org" tenant "--all")
-              modified-since (conj "--modified-since" (str modified-since)))
-        {:keys [exit out] :as result} (run cmd)]
-    (if (zero? exit)
-      (json/parse out)
-      (fail! cmd result))))
+  (answer! (cond-> (command cli "get" resource "--org" tenant "--all")
+             modified-since (conj "--modified-since" (str modified-since)))))
 
 (defn get-report
   "Runs `xero-cli report <report> --org <tenant> --param k=v ...` for each of `params` and returns Xero's answer,
   every number exact. Throws as `get-resource` does."
   [cli tenant report params]
-  (let [cmd (into (command cli "report" report "--org" tenant)
-                  (mapcat (fn [[k v]] ["--param" (str k "=" v)]) (sort params)))
-        {:keys [exit out] :as result} (run cmd)]
-    (if (zero? exit)
-      (json/parse out)
-      (fail! cmd result))))
+  (answer! (into (command cli "report" report "--org" tenant)
+                 (mapcat (fn [[k v]] ["--param" (str k "=" v)]) (sort params)))))
+
+(defn get-path
+  "Runs `xero-cli api <path> --org <tenant>` (a path under Xero's API root, such as
+  /api.xro/2.0/Invoices/<id>/History) and returns Xero's answer, every number exact. Throws as `get-resource` does."
+  [cli tenant path]
+  (answer! (command cli "api" path "--org" tenant)))
 
 (defn version
   "xero-cli's version, from the first line of its help (`xero-cli 0.1.0: ...`), or nil."

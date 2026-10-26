@@ -1,0 +1,15 @@
+{
+  "Id": "c0ffee09-0000-4000-8000-000000000010",
+  "Status": "OK",
+  "ProviderName": "ownpurse samples",
+  "DateTimeUTC": "/Date(1774026300000+0000)/",
+  "Attachments": [
+    {
+      "AttachmentID": "c0ffee0a-0000-4000-8000-000000000001",
+      "FileName": "receipt-sample-bags.pdf",
+      "Url": "https://api.xero.com/api.xro/2.0/BankTransactions/c0ffee05-0000-4000-8000-000000000003/Attachments/receipt-sample-bags.pdf",
+      "MimeType": "application/pdf",
+      "ContentLength": 48213
+    }
+  ]
+}

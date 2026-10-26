@@ -88,6 +88,7 @@
         (let [{:keys [status body]} (request (handler/handler (sources (str orgs))) :post "/pull")]
           (is (= 200 status))
           (is (= {:items 7 :written 7} (get-in body [:pulled :xero :Tallowmere :Invoices])))
+          (is (= {:items 14 :written 14 :waiting 0} (get-in body [:pulled :xero :Tallowmere :History])))
           (is (= {:items 8 :written 8} (get-in body [:pulled :mercury :Tallowmere :transactions])))))
       (finally (store/stop node)))))
 

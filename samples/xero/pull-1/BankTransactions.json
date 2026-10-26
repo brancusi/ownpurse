@@ -113,7 +113,7 @@
       "Total": 186.40,
       "CurrencyCode": "USD",
       "UpdatedDateUTC": "/Date(1773392400000+0000)/",
-      "HasAttachments": false
+      "HasAttachments": true
     },
     {
       "BankTransactionID": "c0ffee05-0000-4000-8000-000000000004",

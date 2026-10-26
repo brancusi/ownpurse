@@ -66,14 +66,21 @@ is done, and the next steps in order with what "done" means. Update it when a st
 
 ## Done
 
+- **Documents' history and attachments (2026-10-26, asked for by the workspace).** `xero.history` and
+  `xero.attachments`: one row per document (row id `xero:<org>:history:<kind>:<Xero id>`, likewise
+  `attachments`), Xero's answer to `/<Resource>/<id>/History` or `/Attachments` through `xero-cli api`, with
+  `document`, `resource` and `document_updated`. A pull fetches them only for a document whose version in the
+  record is newer than the one they were fetched for, attachments only when it has or had some, bank transactions
+  first, then manual journals, then invoices, newest first, at most 100 calls a pull per org
+  (`{:xero {:history {:calls n}}}`); the rest waits, counted as `waiting`. A document Xero refuses is skipped and
+  counted. Not yet: the files themselves (a separate opt-in, inside the data directory so a snapshot holds them);
+  a note or attachment added without changing the document's `UpdatedDateUTC` is seen only at its next change.
 - **Xero's reports and smaller lists (2026-10-26, asked for by the workspace).** `xero.reports`: one row per
   report, org and parameters (row id `xero:<org>:report:<Report>?<params in order>`), Xero's report less
   `UpdatedDateUTC` and `ReportDate` (they change on every fetch), with `report`, `date` or `from_date`/`to_date`,
   and `basis` for a profit and loss; valid from Xero's `DateTimeUTC`, so a changed figure is a new version. Five
   calls a month per org: 65 on a first pull, 10 after. Items, Users, LinkedTransactions and BatchPayments join the
-  pull. Next from the same request: History and attachment metadata per document, which cost a call per document
-  and need a daily budget (only documents changed since their last fetch, `HasAttachments` for attachments, a cap
-  per pull).
+  pull.
 - **Backups (2026-10-26, asked for by the workspace).** `store/snapshot!` asks XTDB to finish a block (its
   flush-block message, as XTDB's own `/system/finish-block` does), copies every storage file up to that block, opens
   the copy on a separate node to check it, and only then renames it into place; `POST /backup` and `(backup dir)`

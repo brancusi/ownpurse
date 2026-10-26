@@ -46,3 +46,7 @@
   balance sheet at its end, the profit and loss on an accrual and a cash basis, and the bank summary. The latest
   two months are fetched again on every pull, older ones once (`{:xero {:reports {:months n :refresh n}}}` in the
   local config). A pull also keeps Xero's items, users, linked transactions and batch payments.
+- Xero documents' history and attachments: each bank transaction's, manual journal's and invoice's history
+  (`xero.history`) and its attachments' details (`xero.attachments`), fetched when the document changes, at most
+  100 calls a pull per org (`{:xero {:history {:calls n}}}`). `POST /pull` counts them under `History`, with the
+  calls still `waiting`.

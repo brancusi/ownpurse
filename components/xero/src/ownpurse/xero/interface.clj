@@ -40,9 +40,10 @@
   (pull/keep! node tenant resource answer opts))
 
 (defn pull!
-  "Fetches and keeps each resource in `resources` for one org, then its reports: {:cli :tenant :resources :reports
-  :today}. After the first fetch, a resource with UpdatedDateUTC asks only for what changed. Returns {resource
-  {:items :written}}."
+  "Fetches and keeps each resource in `resources` for one org, then its reports, then its documents' history and
+  attachments: {:cli :tenant :resources :reports :history :today}. After the first fetch, a resource with
+  UpdatedDateUTC asks only for what changed. Returns {resource {:items :written}}, with {:items :written :waiting}
+  under \"History\"."
   [node opts]
   (pull/pull! node opts))
 
@@ -70,10 +71,23 @@
   [path]
   (pull/read-reports path))
 
+(def default-history
+  "What a pull spends on documents' history and attachment details unless the local config says otherwise: at most
+  {:calls 100} per org, on {:resources [\"BankTransactions\" \"ManualJournals\" \"Invoices\"]} in that order."
+  pull/default-history)
+
+(defn read-history
+  "How a local config file limits the documents' history and attachments, {:xero {:history {:calls n :resources
+  [...]}}}, over `default-history`. {:calls 0} fetches none."
+  [path]
+  (pull/read-history path))
+
 (defn pull-orgs!
-  "Pulls every resource in `pull-order`, then the reports, for each org: {:cli :orgs :reports :today}. Reports are
-  rows of xero.reports, one per report, org and parameters, and a new version when Xero's figures change. Returns
-  {name {resource {:items :written}}}, with the reports under \"Reports\"."
+  "Pulls every resource in `pull-order`, then the reports, then the documents' history and attachments, for each
+  org: {:cli :orgs :reports :history :today}. Reports are rows of xero.reports, one per report, org and parameters,
+  and a new version when Xero's figures change. A document's history and its attachments' details are rows of
+  xero.history and xero.attachments, fetched for each version of it the store holds, within a cap per pull. Returns
+  {name {resource {:items :written}}}, with the reports under \"Reports\" and the history under \"History\"."
   [node opts]
   (pull/pull-orgs! node opts))
 

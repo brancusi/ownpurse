@@ -133,7 +133,10 @@ Each layer is derived from the one below and never writes past it.
    `xero.reports` holds one row per report, org and parameters (`TrialBalance?date=2026-03-31`), as Xero sent it,
    and a new version whenever Xero's figures for it change, valid from when Xero answered. The reports carry what
    the documents do not, such as a bank account's opening balance from before its first line, and the trial
-   balance a book's postings are checked against.
+   balance a book's postings are checked against. A document's history and its attachments are source rows too:
+   `xero.history` and `xero.attachments` hold, for each bank transaction, manual journal and invoice, Xero's
+   history records (who changed what, and notes) and its attachments' details (file name, type, size, url; not
+   the file), with the `document` row they belong to and `document_updated`, the version they were fetched for.
 2. **Documents** hold the same kind of thing from every source in one table, with `book`, `source` and
    `source_row`. A client asks here for every open invoice, whoever issued it. A bill is a payable invoice; a credit
    note is an invoice of kind `credit_note`. The same invoice seen by two sources is two rows joined by a `same-as`

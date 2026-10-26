@@ -4,7 +4,9 @@
 #   fake-xero-cli.sh <answers dir> <exit code> <log file> <xero-cli arguments...>
 #
 # With exit code 0, `get <Resource>` prints <dir>/<Resource>.json (Organisation prints Organisations.json), or an
-# empty list when there is no such file; `report <Name>` prints <dir>/reports/<Name>.json, or an empty report.
+# empty list when there is no such file; `report <Name>` prints <dir>/reports/<Name>.json, or an empty report;
+# `api /api.xro/2.0/<Resource>/<id>/History` prints <dir>/history/<id>.json, or no records (Attachments likewise,
+# from <dir>/attachments), and Xero refuses it when <dir>/history/<id>.refused exists.
 # With any other code, it prints xero-cli's error JSON on stderr and exits with that code. Each call's arguments
 # are appended to the log file, one line per call.
 set -euo pipefail
@@ -40,6 +42,24 @@ if [ "$1" = "report" ]; then
     cat "$dir/reports/$report.json"
   else
     echo "{\"Reports\":[{\"ReportID\":\"$report\",\"ReportName\":\"$report\",\"ReportTitles\":[\"$report\",\"${params# }\"],\"ReportDate\":\"$(date +%d%H%M%S%N)\",\"Rows\":[]}]}"
+  fi
+  echo "fetched in 1 call" >&2
+  exit 0
+fi
+
+if [ "$1" = "api" ]; then
+  IFS=/ read -r _ _ _ _ id what <<< "$2"
+  sub=$(echo "$what" | tr '[:upper:]' '[:lower:]')
+  if [ -f "$dir/$sub/$id.refused" ]; then
+    echo '{"error":{"type":"refused","message":"Xero refused the request.","hint":"Check the id."}}' >&2
+    exit 4
+  fi
+  if [ -f "$dir/$sub/$id.json" ]; then
+    cat "$dir/$sub/$id.json"
+  elif [ "$what" = "History" ]; then
+    echo '{"HistoryRecords":[]}'
+  else
+    echo '{"Attachments":[]}'
   fi
   echo "fetched in 1 call" >&2
   exit 0

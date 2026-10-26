@@ -269,3 +269,56 @@
       (day "fromDate") (assoc :from-date (day "fromDate") :to-date (day "toDate"))
       (= "ProfitAndLoss" report) (assoc :basis (if (= "true" (get params "paymentsOnly")) "cash" "accrual")))))
 
+(def history-resources
+  "The documents whose history and attachments a pull keeps, in the order it spends calls on them: bank
+  transactions, then manual journals, then invoices (bills among them)."
+  ["BankTransactions" "ManualJournals" "Invoices"])
+
+(defn id-column
+  "The SQL column that holds the Xero id of `resource`'s items (bank_transaction_id)."
+  [resource]
+  (str/replace (name (kebab (:id-field (describe resource)))) "-" "_"))
+
+(defn- newest-first [a b]
+  (if (= (:updated a) (:updated b))
+    (compare (:xt/id a) (:xt/id b))
+    (compare (:updated b) (:updated a))))
+
+(defn document-calls
+  "The calls to make for the history and attachments of `docs`, documents of `resource` ({:xt/id :xero-id :updated
+  :has-attachments}), newest first (then by id). `history` and `attachments` map a document's row id to what the
+  store holds for it: {:updated, the document's UpdatedDateUTC when it was fetched; :any?, whether it held any
+  attachments}. A document's history is fetched when the store holds none for this version of it; its attachments
+  too, when it has some or had some. Each call is {:resource :what (\"History\" or \"Attachments\") :xero-id
+  :document :updated}. Pure."
+  [resource docs history attachments]
+  (for [{:keys [xero-id updated has-attachments] id :xt/id} (sort newest-first docs)
+        what ["History" "Attachments"]
+        :when (case what
+                "History" (not= updated (:updated (history id)))
+                "Attachments" (and (or has-attachments (:any? (attachments id)))
+                                   (not= updated (:updated (attachments id)))))]
+    {:resource resource :what what :xero-id xero-id :document id :updated updated}))
+
+(defn document-path
+  "The path under Xero's API root that a call from `document-calls` asks for."
+  [{:keys [resource what xero-id]}]
+  (str "/api.xro/2.0/" resource "/" xero-id "/" what))
+
+(defn document-row
+  "Xero's answer to a call from `document-calls`, as a row of xero.history (`history_records`) or xero.attachments
+  (`attachments`: each attachment's id, file name, url, type and size; not the file): the list as Xero sent it,
+  with the `document` row it belongs to, its `resource`, and `document_updated`, the version of the document it was
+  fetched for. Valid from `fetched-at`."
+  [tenant {:keys [resource what xero-id document updated]} answer ^Instant fetched-at]
+  (let [{:keys [kind]} (describe resource)
+        [table column list-key] (case what
+                                  "History" [:xero/history :history-records :HistoryRecords]
+                                  "Attachments" [:xero/attachments :attachments :Attachments])]
+    {table [(cond-> {:xt/id (row-id tenant (name table) (str kind ":" xero-id))
+                     :org tenant
+                     :resource resource
+                     :document document
+                     column (normalize-payload (read-dates (get answer list-key [])))
+                     :xt/valid-from fetched-at}
+              updated (assoc :document-updated updated))]}))

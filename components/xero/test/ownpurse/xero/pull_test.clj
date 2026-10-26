@@ -8,7 +8,9 @@
    [ownpurse.xero.source :as source])
   (:import
    (java.io File)
-   (java.time Instant LocalDate)))
+   (java.nio.file Files)
+   (java.nio.file.attribute FileAttribute)
+   (java.time Instant LocalDate ZonedDateTime)))
 
 (def ^:private tenant "c0ffee00-0000-4000-8000-000000000000")
 (def ^:private pull-1 "samples/xero/pull-1")
@@ -154,7 +156,7 @@
     (fn [node]
       (let [log (temp-log)
             opts {:cli ["bash" fake pull-1 "0" (str log)] :tenant tenant :resources ["Organisation" "Invoices"]
-                  :reports {:months 0}}]
+                  :reports {:months 0} :history {:calls 0}}]
         (testing "pull! runs xero-cli for each resource and keeps what it prints"
           (is (= {"Organisation" {:items 1 :written 1} "Invoices" {:items 7 :written 7}} (xero/pull! node opts))))
         (testing "the next pull asks only for what changed since the latest update held"
@@ -188,13 +190,18 @@
                 result (xero/pull-orgs! node {:cli ["bash" fake pull-1 "0" (str log)]
                                               :orgs (xero/read-orgs (str config))
                                               :reports {:months 1}
+                                              :history {:calls 5}
                                               :today (LocalDate/parse "2026-03-20")})]
             (is (= ["Tallowmere"] (keys result)))
-            (is (= (conj xero/pull-order "Reports") (keys (result "Tallowmere"))))))))
+            (is (= (conj xero/pull-order "Reports" "History") (keys (result "Tallowmere"))))))))
     (testing "the config may say how many months of reports to keep"
       (is (= xero/default-reports (xero/read-reports "/nowhere/config.local.edn")))
       (spit config (pr-str {:xero {:orgs [] :reports {:months 24}}}))
-      (is (= {:months 24 :refresh 2} (xero/read-reports (str config)))))))
+      (is (= {:months 24 :refresh 2} (xero/read-reports (str config)))))
+    (testing "and how many calls to spend on documents' history and attachments"
+      (is (= xero/default-history (xero/read-history (str config))))
+      (spit config (pr-str {:xero {:orgs [] :history {:calls 20}}}))
+      (is (= (assoc xero/default-history :calls 20) (xero/read-history (str config)))))))
 
 (deftest report-requests-test
   (let [requests (xero/report-requests (LocalDate/parse "2026-03-20") 2)]
@@ -212,7 +219,7 @@
     (fn [node]
       (let [log (temp-log)
             opts {:cli ["bash" fake pull-1 "0" (str log)] :tenant tenant :resources []
-                  :reports {:months 3 :refresh 1} :today (LocalDate/parse "2026-03-20")}
+                  :reports {:months 3 :refresh 1} :history {:calls 0} :today (LocalDate/parse "2026-03-20")}
             report-calls #(filter (fn [call] (str/starts-with? call "report ")) (str/split-lines (slurp log)))]
         (testing "a first pull fetches every report of every month, each a row of xero.reports"
           (is (= {"Reports" {:items 15 :written 15}} (xero/pull! node opts)))
@@ -263,3 +270,65 @@
                                                                                  :TotalAmount 920.00M}]}}
                             [table rows] (xero/rows tenant resource answer at)]
                         [table (map :xt/id rows)])))))))
+
+(deftest history-test
+  (with-node
+    (fn [node]
+      (let [log (temp-log)
+            opts (fn [dir calls] {:cli ["bash" fake dir "0" (str log)] :tenant tenant :resources []
+                                  :reports {:months 0} :history {:calls calls}})
+            api-calls #(filter (fn [call] (str/starts-with? call "api ")) (str/split-lines (slurp log)))
+            bt (fn [n] (str "c0ffee05-0000-4000-8000-00000000000" n))]
+        (keep-all! node pull-1)
+        (testing "a pull spends at most its calls, bank transactions first and the newest of them first"
+          (is (= {"History" {:items 3 :written 3 :waiting 11}} (xero/pull! node (opts pull-1 3))))
+          (is (= [(str "api /api.xro/2.0/BankTransactions/" (bt 6) "/History --org " tenant)
+                  (str "api /api.xro/2.0/BankTransactions/" (bt 4) "/History --org " tenant)
+                  (str "api /api.xro/2.0/BankTransactions/" (bt 5) "/History --org " tenant)]
+                 (api-calls))))
+        (testing "the next pull goes on where it stopped: the history of every document, and the attachments of one"
+          (is (= {"History" {:items 11 :written 11 :waiting 0}} (xero/pull! node (opts pull-1 100))))
+          (is (= {"BankTransactions" 6 "Invoices" 7}
+                 (into {} (map (juxt :resource :n))
+                       (store/q node "SELECT resource, COUNT(*) AS n FROM xero.history GROUP BY resource"))))
+          (is (= [(str "api /api.xro/2.0/BankTransactions/" (bt 3) "/Attachments --org " tenant)]
+                 (filter #(str/includes? % "/Attachments") (api-calls)))))
+        (testing "a document's history is Xero's records, with the document it belongs to and its version"
+          (let [[h] (store/q node ["SELECT * FROM xero.history WHERE _id = ?"
+                                   (str "xero:" tenant ":history:bank-transaction:" (bt 3))])]
+            (is (= {:resource "BankTransactions" :org tenant
+                    :document (str "xero:" tenant ":bank-transaction:" (bt 3))}
+                   (select-keys h [:resource :org :document])))
+            (is (= ["Note" "Created"] (map :changes (:history-records h))))
+            (is (= (Instant/parse "2026-03-13T09:00:00Z")
+                   (.toInstant ^ZonedDateTime (:date-utc (second (:history-records h))))))))
+        (testing "an attachment's details are kept, not its file"
+          (is (= [{:file-name "receipt-sample-bags.pdf" :mime-type "application/pdf" :content-length 48213}]
+                 (map #(select-keys % [:file-name :mime-type :content-length])
+                      (:attachments (first (store/q node "SELECT attachments FROM xero.attachments")))))))
+        (testing "with nothing changed, a pull makes no calls"
+          (is (= {"History" {:items 0 :written 0 :waiting 0}} (xero/pull! node (opts pull-1 100)))))
+        (testing "after the documents change, only the new versions are fetched"
+          (keep-all! node pull-2)
+          (let [before (count (api-calls))
+                result (xero/pull! node (opts pull-1 100))
+                calls (drop before (api-calls))]
+            (is (= 10 (get-in result ["History" :items])))
+            (is (= {"BankTransactions" 6 "ManualJournals" 1 "Invoices" 3}
+                   (frequencies (map #(second (re-find #"^api /api.xro/2.0/(\w+)/" %)) calls))))))))))
+
+(deftest history-refused-test
+  (with-node
+    (fn [node]
+      (let [dir (.toFile (Files/createTempDirectory "fake-xero" (make-array FileAttribute 0)))
+            refused "c0ffee05-0000-4000-8000-000000000006"]
+        (io/make-parents dir "history" "x")
+        (spit (io/file dir "history" (str refused ".refused")) "")
+        (keep-all! node pull-1)
+        (testing "a document Xero refuses is skipped, and tried again on the next pull"
+          (is (= {"History" {:items 13 :written 13 :refused 1 :waiting 0}}
+                 (xero/pull! node {:cli ["bash" fake (str dir) "0" (str (temp-log))] :tenant tenant :resources []
+                                   :reports {:months 0} :history {:calls 100}})))
+          (is (= {"History" {:items 0 :written 0 :refused 1 :waiting 0}}
+                 (xero/pull! node {:cli ["bash" fake (str dir) "0" (str (temp-log))] :tenant tenant :resources []
+                                   :reports {:months 0} :history {:calls 100}}))))))))

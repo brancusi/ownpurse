@@ -47,8 +47,10 @@
   [:map {:closed true} [:dir [:string {:min 1}]]])
 
 (def Counts
-  "For each org, for each resource: the items the source returned and the rows written."
-  [:map-of :string [:map-of :string [:map [:items :int] [:written :int]]]])
+  "For each org, for each resource: the items the source returned and the rows written. Under \"History\", also the
+  calls left for later pulls and the documents Xero refused."
+  [:map-of :string [:map-of :string [:map [:items :int] [:written :int] [:waiting {:optional true} :int]
+                                     [:refused {:optional true} :int]]]])
 
 (def Pulled
   "What POST /pull returns: the counts for each source's orgs."
@@ -160,7 +162,10 @@
       (throw (ex-info (str local " names no orgs. Add {:xero {:orgs [{:tenant \"<tenant id>\" :name \"<a name>\"}]}} "
                            "or {:mercury {:orgs [{:alias \"<mercury-cli alias>\" :name \"<a name>\"}]}}.")
                       {:type :ownpurse/no-local-config :path (str local)})))
-    {:xero (if (seq xero-orgs) (xero/pull-orgs! node {:cli (:cli xero) :orgs xero-orgs :reports (xero/read-reports local)}) {})
+    {:xero (if (seq xero-orgs)
+             (xero/pull-orgs! node {:cli (:cli xero) :orgs xero-orgs :reports (xero/read-reports local)
+                                    :history (xero/read-history local)})
+             {})
      :mercury (if (seq mercury-orgs) (mercury/pull-orgs! node {:cli (:cli mercury) :orgs mercury-orgs}) {})}))
 
 (defn- pull
