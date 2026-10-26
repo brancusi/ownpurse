@@ -63,6 +63,11 @@ is done, and the next steps in order with what "done" means. Update it when a st
 - **2026-10-25: the source tools print TOON by default** (Aram), JSON or EDN on request. ownpurse always asks for
   JSON: it runs xero-cli with `XERO_CLI_FORMAT=json` (which older xero-cli ignores) and mercury-cli with
   `--format json`.
+- **2026-10-26: banks and cards outside Xero and Mercury come through plaid-reader** (`brancusi/plaid-reader`,
+  private), a Babashka tool on Plaid's API built like the other two, not Plaid's own CLI (which trims transactions
+  to ten fields, keeps the sync cursor itself and holds one token). It keeps items by alias and stores no bank data;
+  ownpurse keeps the transactions and each item's cursor in the record, and decides which book an account belongs
+  to through its links. Existing items are imported, never relinked.
 
 ## Done
 
@@ -243,6 +248,13 @@ Done when:
 
 ## After 3b
 
+**Plaid as a source** (asked for by the workspace): a `plaid` component like `mercury`, running `plaid-reader
+--format json`. Tables `plaid.items`, `plaid.accounts`, `plaid.transactions` as source rows; each item's cursor kept
+in the record and passed to `plaid-reader sync --item <alias> --cursor <c> --all`; `source_accounts` for each
+account; bank lines from transactions, Plaid's amounts negated (Plaid's are positive for money out) and set to two
+places; a removed transaction ends its bank line by `DELETE`, never its source row. Then the periodic recheck of
+recent Xero documents' history and attachments.
+
 Steps 4 to 8 as in SPIKE.md. Step 5 (time) can use pull-1 and pull-2: what the books said on 2026-03-31, as we knew
 it on 2026-03-20 and on 2026-04-02.
 
@@ -253,7 +265,8 @@ it on 2026-03-20 and on 2026-04-02.
   and how to use it. Open as of 2026-10-25: Xero's reports, attachments, history and small lists (Mercury as a
   source is done).
 - **Repositories (2026-10-25).** `brancusi/xero-cli` (private) is the Xero tool and `brancusi/mercury-cli` (private)
-  the Mercury tool, each with its own `docs/NEXT.md`.
+  the Mercury tool, and `brancusi/plaid-reader` (private, 2026-10-26) the Plaid tool, each with its own
+  `docs/NEXT.md`.
   `brancusi/xero-axi` is archived on GitHub (read-only); its branches and `archive/*` tags are there.
 
 - ownpurse's `next` branch is pushed (2026-10-25); `main` is still the Rust code as released, until the spike passes.
