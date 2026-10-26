@@ -15,6 +15,7 @@
                      poly/money {:local/root "components/money"}
                      poly/schema {:local/root "components/schema"}
                      poly/store {:local/root "components/store"}
+                     poly/test-support {:local/root "components/test-support"}
                      poly/xero {:local/root "components/xero"}
 
                      poly/api {:local/root "bases/api"}}

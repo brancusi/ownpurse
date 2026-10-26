@@ -20,6 +20,7 @@
                          "components/money/src"
                          "components/schema/src"
                          "components/store/src"
+                         "components/test-support/src"
                          "components/xero/src"
                          "bases/api/src"]}]
  :fail-fast? false

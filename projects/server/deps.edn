@@ -12,5 +12,6 @@
 
         poly/api {:local/root "../../bases/api"}}
 
+ ;; test-support is for the bricks' tests only, so it is on the test classpath and never in the uberjar.
  :aliases {:test {:extra-paths []
-                  :extra-deps {}}}}
+                  :extra-deps {poly/test-support {:local/root "../../components/test-support"}}}}}

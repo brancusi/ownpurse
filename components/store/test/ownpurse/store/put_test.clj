@@ -4,7 +4,7 @@
    [clojure.test.check.clojure-test :refer [defspec]]
    [clojure.test.check.generators :as gen]
    [clojure.test.check.properties :as prop]
-   [ownpurse.money.interface.gen :as mgen]
+   [ownpurse.test-support.interface.money :as mgen]
    [ownpurse.store.interface :as store]))
 
 (def ^:dynamic *node* nil)

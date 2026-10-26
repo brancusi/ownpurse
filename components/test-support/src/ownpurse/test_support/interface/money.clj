@@ -1,4 +1,4 @@
-(ns ownpurse.money.interface.gen
+(ns ownpurse.test-support.interface.money
   "test.check generators for exact amounts, for property tests in any brick."
   (:require
    [clojure.test.check.generators :as gen]))

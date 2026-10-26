@@ -5,7 +5,7 @@
    [clojure.test.check.generators :as gen]
    [clojure.test.check.properties :as prop]
    [ownpurse.money.interface :as money]
-   [ownpurse.money.interface.gen :as mgen]))
+   [ownpurse.test-support.interface.money :as mgen]))
 
 (defn- error-type [f]
   (try (f) nil (catch clojure.lang.ExceptionInfo e (:type (ex-data e)))))

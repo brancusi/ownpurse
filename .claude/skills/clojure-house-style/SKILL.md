@@ -82,7 +82,7 @@ question (`clojure -M ...`, a Kaocha run) when the REPL can answer it in a secon
 - JSON in and out with jsonista, configured to read every number as `BigDecimal`. Never let a JSON library decide.
 - In XTDB, money columns are `DECIMAL` with an explicit precision and scale. Sum in SQL with `SUM` over `DECIMAL`
   columns only.
-- Tests for money use `test.check` with the generators in `ownpurse.money.interface.gen` (`amount`, `money`,
+- Tests for money use `test.check` with the generators in `ownpurse.test-support.interface.money` (`amount`, `money`,
   `balanced`), and assert exact equality. `=` ignores scale (`1.10M` equals `1.1M`): compare `.scale` when it matters.
 - Write to the store only with `store/put!`: it refuses floats anywhere in the documents and requires
   `{:source :why}` metadata.
