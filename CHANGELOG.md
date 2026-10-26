@@ -52,3 +52,5 @@
   calls still `waiting`.
 - Attachments' files, opt-in (`{:xero {:history {:files n}}}`): each file is kept in the data directory under its
   SHA-256 and named by a row of `xero.files`. Snapshots and restores carry the record's files.
+- `{:xero {:history {:first {:from "2025-01-01" :to "2025-12-31"}}}}` fetches the history of documents dated in that
+  range before the rest.

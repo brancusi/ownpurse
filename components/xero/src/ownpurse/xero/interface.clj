@@ -80,7 +80,8 @@
 
 (defn read-history
   "How a local config file limits the documents' history and attachments, {:xero {:history {:calls n :files n
-  :resources [...]}}}, over `default-history`. {:calls 0} fetches none; {:files n} downloads up to n files a pull."
+  :resources [...] :first {:from \"2025-01-01\" :to \"2025-12-31\"}}}}, over `default-history`. {:calls 0} fetches
+  none; {:files n} downloads up to n files a pull; :first fetches the documents dated in that range before the rest."
   [path]
   (pull/read-history path))
 

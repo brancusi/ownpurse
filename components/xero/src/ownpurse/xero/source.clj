@@ -279,6 +279,25 @@
   [resource]
   (str/replace (name (kebab (:id-field (describe resource)))) "-" "_"))
 
+(defn date-range
+  "The range of document dates a pull fetches history for first, from the config's {:from \"2025-01-01\" :to
+  \"2025-12-31\"} (either may be left out), as {:from :to} LocalDates; nil without one."
+  [{:keys [from to] :as dates}]
+  (when (or from to)
+    (try
+      {:from (some-> from str LocalDate/parse) :to (some-> to str LocalDate/parse)}
+      (catch java.time.format.DateTimeParseException _
+        (throw (ex-info (str "The history's :first range " (pr-str dates) " is not two dates. Write it as "
+                             "{:from \"2025-01-01\" :to \"2025-12-31\"}.")
+                        {:type :ownpurse/invalid :first dates}))))))
+
+(defn in-range?
+  "Whether `date` is within `dates` ({:from :to}, both ends included, either open)."
+  [{:keys [from to]} date]
+  (boolean (and date
+                (or (nil? from) (not (.isBefore ^LocalDate date from)))
+                (or (nil? to) (not (.isAfter ^LocalDate date to))))))
+
 (defn- newest-first [a b]
   (if (= (:updated a) (:updated b))
     (compare (:xt/id a) (:xt/id b))

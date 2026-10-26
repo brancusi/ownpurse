@@ -363,3 +363,27 @@
         (testing "a record in memory cannot keep files"
           (is (= :ownpurse/no-disk
                  (:type (error #(xero/pull! node (assoc (opts pull-1 {:calls 0 :files 5}) :keep-file nil)))))))))))
+
+(deftest history-first-test
+  (with-node
+    (fn [node]
+      (let [log (temp-log)
+            api-calls #(filter (fn [call] (str/starts-with? call "api ")) (str/split-lines (slurp log)))
+            documents #(map (fn [call] (second (re-find #"^api /api.xro/2.0/(\w+/c0ffee0\d-[-0-9]+?\d)/" call))) %)
+            pull #(xero/pull! node {:cli ["bash" fake pull-1 "0" (str log)] :tenant tenant :resources []
+                                    :reports {:months 0} :history %})]
+        (keep-all! node pull-1)
+        (testing "documents dated in the :first range come before the rest, bank transactions first"
+          (is (= {"History" {:items 6 :written 6 :waiting 8}}
+                 (pull {:calls 6 :first {:from "2026-03-01" :to "2026-03-10"}})))
+          (let [[in-range [next-one]] (split-at 5 (documents (api-calls)))]
+            (is (= ["BankTransactions/c0ffee05-0000-4000-8000-000000000002"
+                    "BankTransactions/c0ffee05-0000-4000-8000-000000000001"]
+                   (take 2 in-range)))
+            (is (= #{"Invoices/c0ffee03-0000-4000-8000-000000000002"
+                     "Invoices/c0ffee03-0000-4000-8000-000000000005"
+                     "Invoices/c0ffee03-0000-4000-8000-000000000006"}
+                   (set (drop 2 in-range))))
+            (is (= "BankTransactions/c0ffee05-0000-4000-8000-000000000006" next-one))))
+        (testing "a range that is not two dates says how to write it"
+          (is (= :ownpurse/invalid (:type (error #(pull {:calls 6 :first {:from "last year"}}))))))))))

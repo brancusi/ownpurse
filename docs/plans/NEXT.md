@@ -66,6 +66,10 @@ is done, and the next steps in order with what "done" means. Update it when a st
 
 ## Done
 
+- **History for a date range first (2026-10-26, asked for by the workspace).** `{:xero {:history {:first {:from
+  "2025-01-01" :to "2025-12-31"}}}}`: the documents dated in the range (either end may be left out) get their history
+  and attachment details before all others, in the usual order within each part, so the year being closed fills in
+  first. Files still follow xero.attachments' order.
 - **Attachments' files (2026-10-26, asked for by the workspace).** Opt-in: `{:xero {:history {:files n}}}`
   downloads up to n files a pull per org (default 0), after the history, through `xero-cli api <path> --raw
   --accept <mime type>` (xero-cli `d6d1352`; it prints the bytes and keeps nothing). `store/keep-file!` keeps each

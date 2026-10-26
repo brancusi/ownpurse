@@ -117,7 +117,8 @@
 (def default-history
   "How many calls a pull may spend, per org, on documents' history and attachment details (`:calls`), and on
   downloading attachments' files (`:files`, none unless asked for), and on which documents (see
-  `source/history-resources`). A call fetches one document's history, the list of its attachments, or one file.
+  `source/history-resources`; `:first {:from :to}` puts the documents dated in a range before the rest). A call
+  fetches one document's history, the list of its attachments, or one file.
   Kept well under the org's daily 1000, so that an ordinary pull never runs out; what is left waits for the next
   pull."
   {:calls 100 :files 0 :resources source/history-resources})
@@ -129,15 +130,16 @@
   (if (instance? ZonedDateTime t) (.toInstant ^ZonedDateTime t) t))
 
 (defn- documents
-  "The documents of `resource` the store holds for org `tenant`: {:xt/id :xero-id :updated :has-attachments}."
+  "The documents of `resource` the store holds for org `tenant`: {:xt/id :xero-id :date :updated :has-attachments}."
   [node tenant resource]
   (let [{:keys [table]} (source/describe resource)]
     (when (store/table-exists? node table)
       (for [r (store/q node [(str "SELECT _id, " (source/id-column resource) " AS xero_id, updated_date_utc, "
-                                  "has_attachments FROM " (sql-table table) " WHERE org = ?")
+                                  "has_attachments, date FROM " (sql-table table) " WHERE org = ?")
                              tenant])]
         {:xt/id (:xt/id r)
          :xero-id (:xero-id r)
+         :date (:date r)
          :updated (instant-of (:updated-date-utc r))
          :has-attachments (true? (:has-attachments r))}))))
 
@@ -157,14 +159,20 @@
 (defn pull-history!
   "Fetches the history and the attachment details of org `tenant`'s documents through xero-cli, for each document
   the store holds a newer version of than the one its history was fetched for (`source/document-calls`), in the
-  order of `:resources`, newest first, and at most `:calls` of them. Each answer is a row of xero.history or
+  order of `:resources`, newest first, and at most `:calls` of them. With `:first {:from :to}` (dates, as strings),
+  the documents dated in that range come before all the others. Each answer is a row of xero.history or
   xero.attachments, a new version when it changed. A document Xero refuses is skipped and tried again on the next
   pull. Returns {:items n :written n :waiting n}, with :refused n when Xero refused any: :waiting counts the calls
   left for later pulls."
-  [node {:keys [cli tenant tool-version] {:keys [calls resources]} :history}]
+  [node {:keys [cli tenant tool-version] {:keys [calls resources] first-dates :first} :history}]
   (let [history (held-documents node :xero/history tenant)
         attachments (held-documents node :xero/attachments tenant)
-        wanted (mapcat #(source/document-calls % (documents node tenant %) history attachments) resources)
+        docs (into {} (map (juxt identity #(documents node tenant %))) resources)
+        calls-for (fn [keep?] (mapcat #(source/document-calls % (filter keep? (docs %)) history attachments) resources))
+        wanted (if-let [dates (source/date-range first-dates)]
+                 (concat (calls-for #(source/in-range? dates (:date %)))
+                         (calls-for #(not (source/in-range? dates (:date %)))))
+                 (calls-for any?))
         [now later] (split-at calls wanted)
         refused? #(= :xero/refused (:type (ex-data %)))]
     (-> (reduce (fn [acc {:keys [resource what] :as call}]
