@@ -280,3 +280,36 @@
       (testing "dates are required"
         (is (= 400 (:status (request app :get (str "/payees?org=" tenant))))))
       (finally (store/stop node)))))
+
+(deftest export-test
+  (let [node (store/start {:mode :in-memory})
+        orgs (doto (File/createTempFile "orgs" ".edn") .deleteOnExit)
+        log (doto (File/createTempFile "fake-cli" ".log") .deleteOnExit)
+        dir (str (java.nio.file.Files/createTempDirectory "ownpurse-export"
+                                                          (make-array java.nio.file.attribute.FileAttribute 0)))
+        tenant "c0ffee00-0000-4000-8000-000000000000"
+        app (handler/handler
+             {:node node
+              :local (str orgs)
+              :xero {:cli ["bash" "components/xero/test/ownpurse/xero/fake-xero-cli.sh" "samples/xero/pull-1"
+                           "0" (str log)]}})]
+    (try
+      (spit orgs (pr-str {:xero {:orgs [{:tenant tenant :name "Tallowmere"}]}}))
+      (is (= 200 (:status (request app :post "/pull"))))
+      (testing "an export of the org's book for the year writes the workbook and its CSV files"
+        (let [{:keys [status body]} (request app :post "/export" {:org tenant :date "2026-02-28" :dir dir
+                                                                  :opening "ledger"})]
+          (is (= 200 status))
+          (is (str/ends-with? (get-in body [:export :workbook]) ".xlsx"))
+          (is (.isFile (io/file (get-in body [:export :workbook]))))
+          (is (pos? (:rows (first (filter #(= "General ledger" (:name %)) (get-in body [:export :sheets]))))))))
+      (testing "the general ledger links each document back to Xero"
+        (let [gl (slurp (first (filter #(= "general-ledger.csv" (.getName ^File %)) (file-seq (io/file dir)))))]
+          (is (str/includes? gl "https://go.xero.com/"))))
+      (testing "an export never overwrites one; a relative folder is refused"
+        (is (= 409 (:status (request app :post "/export" {:org tenant :date "2026-02-28" :dir dir :opening "ledger"}))))
+        (is (= 400 (:status (request app :post "/export" {:org tenant :date "2026-02-28" :dir "relative"
+                                                          :opening "ledger"})))))
+      (finally
+        (store/stop node)
+        (doseq [^File f (reverse (file-seq (io/file dir)))] (.delete f))))))

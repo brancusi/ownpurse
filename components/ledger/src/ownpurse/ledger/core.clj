@@ -102,9 +102,11 @@
                                       book account]
                                from (conj from)
                                to (conj to)))
-          narrations (if (seq rows)
-                       (into {} (map (juxt :xt/id :narration)) (store/q node ["SELECT * FROM entries WHERE book = ?" book]))
-                       {})]
-      (mapv (fn [r] (cond-> (select-keys r [:entry :line :date :amount :commodity :party :description])
-                      (narrations (:entry r)) (assoc :narration (narrations (:entry r)))))
+          entries (if (seq rows)
+                    (into {} (map (juxt :xt/id identity)) (store/q node ["SELECT * FROM entries WHERE book = ?" book]))
+                    {})]
+      (mapv (fn [r] (let [e (entries (:entry r))]
+                      (cond-> (select-keys r [:entry :line :date :amount :commodity :party :description])
+                        (:narration e) (assoc :narration (:narration e))
+                        (:document e) (assoc :document (:document e)))))
             rows))))

@@ -134,3 +134,14 @@
   "Org `tenant`'s contacts as parties, by the id its postings name them by: {party {:name :tax-number :supplier?}}."
   [node tenant]
   (pull/parties node tenant))
+
+(defn chart
+  "Org `tenant`'s accounts, by the id its postings name them by: {account {:code :name :class}}."
+  [node tenant]
+  (pull/chart node tenant))
+
+(defn document-links
+  "{document row id → url} for org `tenant`'s documents in Xero's web app, through the org's login, for tracing a
+  posting to its document. A payment links to the invoice or credit note it pays."
+  [node tenant]
+  (pull/document-links node tenant))

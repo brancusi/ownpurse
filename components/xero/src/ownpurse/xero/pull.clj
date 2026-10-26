@@ -10,6 +10,7 @@
    [ownpurse.ledger.interface :as ledger]
    [ownpurse.xero.cli :as cli]
    [ownpurse.xero.ledger :as xero-ledger]
+   [ownpurse.xero.links :as links]
    [ownpurse.xero.source :as source])
   (:import
    (java.time Instant LocalDate ZoneOffset ZonedDateTime)))
@@ -276,6 +277,23 @@
           [(source/row-id tenant "contact" contact-id)
            (cond-> {:name name :supplier? (boolean is-supplier)}
              (seq tax-number) (assoc :tax-number tax-number))])))
+
+(defn chart
+  "Org `tenant`'s accounts, by the id postings name them by: {account {:code :name :class}}."
+  [node tenant]
+  (into {}
+        (for [{:keys [account-id code name class]} (current-rows node tenant "Accounts")]
+          [(source/row-id tenant "account" account-id)
+           (cond-> {:name name}
+             (seq code) (assoc :code code)
+             class (assoc :class class))])))
+
+(defn document-links
+  "{document row id → url in Xero's web app} for org `tenant`'s documents."
+  [node tenant]
+  (links/links tenant (:short-code (first (current-rows node tenant "Organisation")))
+               (into {} (for [r ["Invoices" "CreditNotes" "Payments" "BankTransactions" "BankTransfers" "ManualJournals"]]
+                          [r (current-rows node tenant r)]))))
 
 (def ^:private posted-resources
   "The tables `post!` reads, by the key `ownpurse.xero.ledger/entries` takes them under."

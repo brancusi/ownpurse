@@ -8,6 +8,7 @@
    [ownpurse.close.interface :as close]
    [ownpurse.compare.interface :as cmp]
    [ownpurse.entity.interface :as entity]
+   [ownpurse.export.interface :as export]
    [ownpurse.intercompany.interface :as ic]
    [ownpurse.json.interface :as json]
    [ownpurse.mercury.interface :as mercury]
@@ -266,15 +267,20 @@
                       [:candidate :boolean] [:supplier {:optional true} :boolean]
                       [:tax-number {:optional true} :string]]]]])
 
-(defn- xero-payees
+(defn- xero-payees*
   "A Xero org's payees: its bank and credit card accounts are the payment accounts, its contacts the parties."
   [node {:keys [org from to threshold]}]
   (let [accounts (into {} (for [a (entity/source-accounts node {:source "xero"})
                                 :when (and (= org (:org a)) (#{"bank" "credit-card"} (:kind a)))]
-                            [(:id a) (:kind a)]))
-        result (payees/payees node (cond-> {:book (xero/book-id org) :from from :to to :accounts accounts
-                                            :parties (xero/parties node org)}
-                                     threshold (assoc :threshold threshold)))]
+                            [(:id a) (:kind a)]))]
+    (payees/payees node (cond-> {:book (xero/book-id org) :from from :to to :accounts accounts
+                                 :parties (xero/parties node org)}
+                          threshold (assoc :threshold threshold)))))
+
+(defn- xero-payees
+  "A Xero org's payees as the API returns them."
+  [node {:keys [org] :as query}]
+  (let [result (xero-payees* node query)]
     (-> result
         (dissoc :book)
         (assoc :org org)
@@ -284,6 +290,31 @@
                                            (dissoc :candidate? :supplier?)
                                            (cond-> (contains? % :supplier?) (assoc :supplier (:supplier? %))))))
         strings)))
+
+(def ExportBody
+  "POST /export: the org, the end of its financial year, and the folder to write into."
+  [:map {:closed true}
+   [:org [:string {:min 1}]]
+   [:date (schema/schema :ownpurse/date)]
+   [:dir [:string {:min 1}]]
+   [:pro-forma {:optional true} [:enum "approved" "proposed"]]
+   [:opening {:optional true} [:enum "balance-sheet" "ledger"]]])
+
+(defn- xero-export!
+  "The accountant's export of a Xero org's book for the financial year ending `date`."
+  [node {:keys [org date dir pro-forma opening]}]
+  (let [book (xero/book-id org)
+        basis (or pro-forma "approved")
+        tb (xero/check-trial-balance node org date {:opening (keyword (or opening "balance-sheet"))
+                                                    :adjustments #(close/balances node book (assoc % :basis (keyword basis)))})
+        name (or (some #(when (and (= org (:org %)) (= "org" (:kind %))) (:name %))
+                       (entity/source-accounts node {:source "xero"}))
+                 org)
+        result (export/export! node {:dir dir :name name :book book :from (:year-start tb) :to date :basis basis
+                                     :trial-balance tb :accounts (xero/chart node org) :parties (xero/parties node org)
+                                     :links (xero/document-links node org)
+                                     :payees (xero-payees* node {:org org :from (:year-start tb) :to date})})]
+    (assoc result :tied (:tied? tb))))
 
 (defn- close-item-out [node item]
   (cond-> (-> item
@@ -389,7 +420,7 @@
 
 (def ^:private entity-errors
   {:ownpurse/invalid 400 :ownpurse/invalid-link 400 :ownpurse/invalid-match 400 :ownpurse/not-found 404
-   :ownpurse/link-conflict 409 :ownpurse/match-conflict 409 :ownpurse/close-conflict 409 :ownpurse/no-disk 409 :ownpurse/backup-exists 409
+   :ownpurse/link-conflict 409 :ownpurse/match-conflict 409 :ownpurse/close-conflict 409 :ownpurse/export-exists 409 :ownpurse/no-disk 409 :ownpurse/backup-exists 409
    :ownpurse/backup-timeout 503 :ownpurse/backup-invalid 500})
 
 (defn- answer
@@ -482,6 +513,22 @@
                                                                node org date
                                                                (cond-> {:opening (keyword (or opening "balance-sheet"))}
                                                                  adjustments (assoc :adjustments adjustments))))))))}}]
+   ["/export"
+    {:post {:summary (str "Writes the accountant's export of a Xero org's book for the financial year ending `date` into "
+                          "a new folder under `dir` (an absolute path): a workbook with a README (the record's "
+                          "transaction and each source's last fetch), the trial balance, balance sheet and profit and "
+                          "loss (the system's figures beside the pro-forma, with the close items' journals counted as "
+                          "`pro-forma` says), the general ledger with each line's document and a link to it in Xero, "
+                          "the adjustments, the exclusions, the bank reconciliation and its unmatched lines, the "
+                          "intercompany pairs and the payees; and the same sheets as CSV files beside it. Amounts are "
+                          "exact decimals, debits positive. Reads what the record holds; it calls no source. `tied` "
+                          "says whether the book ties with the system's trial balance.")
+            :parameters {:body ExportBody}
+            :responses {200 {:body [:map [:export [:map [:dir :string] [:workbook :string] [:tied :boolean]
+                                                   [:sheets [:vector [:map [:name :string] [:rows :int]]]]]]]}
+                        400 {:body ApiError} 404 {:body ApiError} 409 {:body ApiError}}
+            :handler (fn [{{:keys [body]} :parameters}]
+                       (answer #(hash-map :export (xero-export! node body))))}}]
    ["/statements"
     {:get {:summary (str "Every statement file the record holds (the local config's :statements :files, imported on "
                          "each pull), and whether it ties: its opening and its lines' total make its closing, and its "

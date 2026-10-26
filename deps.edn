@@ -10,6 +10,7 @@
                      poly/intercompany {:local/root "components/intercompany"}
                      poly/payees {:local/root "components/payees"}
                      poly/statement {:local/root "components/statement"}
+                     poly/export {:local/root "components/export"}
                      poly/compare {:local/root "components/compare"}
                      poly/config {:local/root "components/config"}
                      poly/entity {:local/root "components/entity"}
@@ -34,6 +35,7 @@
                        "components/intercompany/test"
                        "components/payees/test"
                        "components/statement/test"
+                       "components/export/test"
                        "components/compare/test"
                        "components/config/test"
                        "components/entity/test"

@@ -362,7 +362,20 @@ lines, opening, closing and running-balance breaks). Each account is a source ac
 `GET /compare` works as for Plaid. `POST /pull` imports the files; `GET /statements` says whether each ties. The
 samples are in `samples/statement`. PDF is not read: transcribe a PDF statement into a CSV with a format of its own.
 
-Next for the close: an accountant export per entity.
+## The accountant's export (built 2026-10-26)
+
+`POST /export {org date dir pro-forma? opening?}` writes, into a new folder under `dir`, one workbook per org for
+the financial year ending `date`, and the same sheets as CSV files beside it, for diffing: README (the record's last
+transaction and each source's last fetch or import), trial balance, balance sheet and profit and loss (the system's
+figures beside the pro-forma, the balance sheet carrying the year's earnings so it sums to zero), general ledger
+(opening, running balance, each line's document and a link to it in Xero through the org's login), adjustments,
+exclusions (set-aside items and why), bank reconciliation and its unmatched lines, intercompany, and payees. The
+`export` component knows no source: the API gives it the trial balance check, the chart, the contacts, the
+document links and the payees. The workbook is written by hand (`ownpurse.export.xlsx`): amounts are number cells
+holding their exact decimal text, never a double and never a formula.
+
+Every item on the workspace's close list from ownpurse's side is built. What remains is theirs: the real runs, the
+owner's statement exports, the close register's decisions, and the owner's approval.
 
 ## After 3b
 
