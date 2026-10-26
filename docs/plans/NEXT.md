@@ -66,6 +66,14 @@ is done, and the next steps in order with what "done" means. Update it when a st
 
 ## Done
 
+- **Backups (2026-10-26, asked for by the workspace).** `store/snapshot!` asks XTDB to finish a block (its
+  flush-block message, as XTDB's own `/system/finish-block` does), copies every storage file up to that block, opens
+  the copy on a separate node to check it, and only then renames it into place; `POST /backup` and `(backup dir)`
+  call it, the `backups` table keeps each one, and `GET /health` shows the last. `restore` (in `ownpurse.api.main`)
+  copies a snapshot into an empty data directory and writes the next log epoch to `xtdb/epoch.edn`, which the store
+  reads when it starts; a node on disk now catches up with its log before it answers. XTDB's internals
+  (`xtdb.log`, the block index) are used only in `ownpurse.store.backup`: check it when XTDB is upgraded. Not done:
+  restoring from a full-history export (system times would be the replay's), in `docs/BACKUP.md`.
 - **Bank lines and the compare (2026-10-25).** `bank_lines`, the first documents table: Xero's authorised bank
   transactions and payments (never bank transfers, whose legs are bank transactions already) and Mercury's pending
   and sent transactions, money in positive, derived on each pull from every row held; a line that no longer holds

@@ -15,7 +15,7 @@
                   :stop (fn [{::ds/keys [instance]}] (store/stop instance))
                   :config (:store config)}
      :handler #::ds{:start (fn [{::ds/keys [config]}] (handler/handler config))
-                    :config (merge {:node (ds/local-ref [:store])} (select-keys config [:local :xero :mercury]))}
+                    :config (merge {:node (ds/local-ref [:store])} (select-keys config [:local :xero :mercury :store]))}
      :http #::ds{:start (fn [{::ds/keys [config]}] (http/start config))
                  :stop (fn [{::ds/keys [instance]}] (http/stop instance))
                  :config (assoc (:http config) :handler (ds/local-ref [:handler]))}}}})

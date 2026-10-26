@@ -1,5 +1,6 @@
 (ns ownpurse.api.handler-test
   (:require
+   [clojure.java.io :as io]
    [clojure.string :as str]
    [clojure.test :refer [deftest is testing]]
    [ownpurse.api.handler :as handler]
@@ -29,6 +30,33 @@
     (let [node (doto (store/start {:mode :in-memory}) store/stop)]
       (is (= {:status 503 :body {:status "unavailable"}}
              (request (handler/handler {:node node}) :get "/health"))))))
+
+(deftest backup-test
+  (let [tmp (.toFile (java.nio.file.Files/createTempDirectory "ownpurse-api-backup"
+                                                              (make-array java.nio.file.attribute.FileAttribute 0)))
+        store-config {:mode :disk :dir (str (io/file tmp "record"))}
+        node (store/start store-config)
+        app (handler/handler {:node node :store store-config})]
+    (try
+      (testing "health says nothing of snapshots until there is one"
+        (is (= {:status "ok"} (:body (request app :get "/health")))))
+      (testing "a folder given as a relative path is refused"
+        (is (= {:status 400 :type "ownpurse/invalid"}
+               (let [{:keys [status body]} (request app :post "/backup" {:dir "backups"})]
+                 {:status status :type (get-in body [:error :type])}))))
+      (store/put! node {:probes [{:xt/id "p1" :amount 1.00M}]} {:source "test" :why "fixtures"})
+      (let [{:keys [status body]} (request app :post "/backup" {:dir (str (io/file tmp "backups"))})
+            snapshot (:snapshot body)]
+        (testing "a snapshot of the running record, with what it holds"
+          (is (= 200 status))
+          (is (= {:epoch 0 :transactions 1} (select-keys snapshot [:epoch :transactions])))
+          (is (.exists (io/file (:dir snapshot) "snapshot.edn"))))
+        (testing "health then says when the last snapshot was taken"
+          (is (= (select-keys snapshot [:dir :taken-at :block :transactions])
+                 (:last-snapshot (:body (request app :get "/health")))))))
+      (finally
+        (store/stop node)
+        (run! io/delete-file (reverse (file-seq tmp)))))))
 
 (deftest errors-test
   (let [app (handler/handler {:node nil})]

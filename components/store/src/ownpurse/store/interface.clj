@@ -59,3 +59,28 @@
   seen, so a read of a table that may not exist yet asks this first."
   [node table]
   (core/table-exists? node table))
+
+(defn snapshot!
+  "Snapshots the running record into a new folder under `to` (ownpurse-<time>), while it runs: asks the node to
+  write every transaction to storage files, copies them, and checks that a fresh node opens the copy and holds every
+  transaction. Keeps the snapshot in the table backups, and returns its manifest {:dir :taken-at :block :epoch
+  :latest-tx-id :transactions :tables :files :bytes}. `config` is the store's config, which says where the record
+  is. Throws :ownpurse/no-disk for a record in memory, :ownpurse/backup-timeout, :ownpurse/backup-exists or
+  :ownpurse/backup-invalid; a failed snapshot leaves nothing under `to`."
+  [node config to]
+  (core/snapshot! node config to))
+
+(defn last-snapshot
+  "The latest snapshot the record keeps, or nil: {:xt/id :dir :taken-at :block :epoch :transactions :tables :files
+  :bytes}."
+  [node]
+  (core/last-snapshot node))
+
+(defn restore!
+  "Restores the snapshot in `from` as the record in the data directory `dir`, which must not hold one yet (throws
+  :ownpurse/record-exists, or :ownpurse/not-a-snapshot). Run it with ownpurse stopped, then start ownpurse on `dir`:
+  every version keeps its valid and system times, and xt.txs keeps every transaction and its metadata. The record
+  continues on a new log, in the next epoch (written to xtdb/epoch.edn). Returns {:dir :epoch :block
+  :transactions}."
+  [opts]
+  (core/restore! opts))

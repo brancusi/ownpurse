@@ -37,7 +37,8 @@ A Polylith workspace (top namespace `ownpurse`):
 - `components/`: the bricks with the logic, each with an `interface` namespace. Other bricks call the interface,
   never the implementation.
 - `bases/`: the entry points (the HTTP API: `GET /health`, `POST /pull`, `GET /entities`, `PUT /entities/{id}`,
-  `GET /source-accounts`, `PUT` and `DELETE /links`, `GET /compare`, `PUT` and `DELETE /matches`, `GET /openapi.json`).
+  `GET /source-accounts`, `PUT` and `DELETE /links`, `GET /compare`, `PUT` and `DELETE /matches`, `POST /backup`,
+  `GET /openapi.json`; `restore` restores a snapshot, see docs/BACKUP.md).
 - `projects/`: what gets built (the server uberjar).
 - `development/`: the REPL project. `user.clj` stays tiny; `dev.clj` holds the REPL system.
 - `samples/`: synthetic source files, used as test input. `docs/`, `brand/`, `site/` as before.

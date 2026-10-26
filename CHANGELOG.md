@@ -38,3 +38,7 @@
 - Matches by hand: `PUT /matches` says an evidence line and a book line are the same money, and the compare pairs
   them first. The compare counts how each pair was made (by hand, by check number, by amount), and lists the pairs
   with `pairs=true`.
+- Backups of a running record: `POST /backup {"dir": ...}` (or `(backup dir)` at the REPL) writes a snapshot that a
+  fresh node opens, checked before it is kept, and `GET /health` says when the last one was taken. `restore
+  <snapshot> [<data dir>]` restores one with every version's valid and system times and `xt.txs` as they were
+  (`docs/BACKUP.md`).

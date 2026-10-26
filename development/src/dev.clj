@@ -29,6 +29,11 @@
   []
   (system/node state/system))
 
+(defn backup
+  "Snapshots the running system's record into a new folder under `dir` while it runs (see docs/BACKUP.md)."
+  [dir]
+  (store/snapshot! (node) (:store (config/read-config :dev)) dir))
+
 (defn keep-xero-answers
   "Keeps a folder of saved Xero answers (samples/xero/pull-1) as org `tenant` in the running system."
   [tenant dir]

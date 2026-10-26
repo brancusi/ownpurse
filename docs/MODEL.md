@@ -161,5 +161,5 @@ INV-0418, and is paid by ACH into Mercury. Xero is the book's system of record; 
 - Source tables: `<provider>.<resource>` in kebab case as SQL folds it (`xero.bank_transactions`). Row ids:
   `<provider>:<org>:<kind>:<the provider's id>`.
 - Documents and ledger tables: the `public` schema, plain names (`invoices`, `postings`), as are `entities`,
-  `source_accounts` and `entity_links`.
+  `source_accounts`, `entity_links`, `line_matches` and `backups` (each snapshot of the record, `docs/BACKUP.md`).
 - Columns: plain, snake case in SQL, no namespace (`invoice_number`, `org`).

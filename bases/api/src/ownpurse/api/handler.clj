@@ -1,7 +1,9 @@
 (ns ownpurse.api.handler
   "The HTTP API: routes, schemas and the Ring handler. Thin: it turns requests into interface calls and back."
   (:require
+   [clojure.java.io :as io]
    [malli.error :as me]
+   [malli.util :as mu]
    [ownpurse.api.json :as api.json]
    [ownpurse.compare.interface :as cmp]
    [ownpurse.entity.interface :as entity]
@@ -22,9 +24,27 @@
   "Every error the API returns."
   [:map [:error [:map [:type :string] [:message :string]]]])
 
+(def Snapshot
+  "A snapshot of the record: where it is, when it was taken, and what it holds."
+  [:map
+   [:dir :string]
+   [:taken-at :string]
+   [:block :int]
+   [:epoch :int]
+   [:transactions :int]
+   [:tables :int]
+   [:files :int]
+   [:bytes :int]])
+
 (def Health
-  "What GET /health returns."
-  [:map [:status [:enum "ok" "unavailable"]]])
+  "What GET /health returns: whether the record answers, and its last snapshot when it has one."
+  [:map
+   [:status [:enum "ok" "unavailable"]]
+   [:last-snapshot {:optional true} (mu/select-keys Snapshot [:dir :taken-at :block :transactions])]])
+
+(def BackupBody
+  "POST /backup: the folder to put the snapshot in, as an absolute path."
+  [:map {:closed true} [:dir [:string {:min 1}]]])
 
 (def Counts
   "For each org, for each resource: the items the source returned and the rows written."
@@ -112,8 +132,21 @@
 (defn- health [node]
   (fn [_]
     (if (:ok? (store/health node))
-      {:status 200 :body {:status "ok"}}
+      {:status 200 :body (if-let [{:keys [dir taken-at block transactions]} (store/last-snapshot node)]
+                           {:status "ok"
+                            :last-snapshot {:dir dir :taken-at (str (.toInstant ^java.time.ZonedDateTime taken-at))
+                                            :block block :transactions transactions}}
+                           {:status "ok"})}
       {:status 503 :body {:status "unavailable"}})))
+
+(defn- backup!
+  "Snapshots the record into the folder `dir`, which must be an absolute path."
+  [node store-config {:keys [dir]}]
+  (when-not (.isAbsolute (io/file dir))
+    (throw (ex-info (str dir " is not an absolute path. Give the folder for snapshots in full, for example "
+                         "/Volumes/backup/ownpurse.")
+                    {:type :ownpurse/invalid :dir dir})))
+  {:snapshot (dissoc (store/snapshot! node store-config dir) :format :latest-tx-id)})
 
 (defn- error-type [t]
   (if (namespace t) (str (namespace t) "/" (name t)) (name t)))
@@ -149,10 +182,11 @@
 
 (def ^:private entity-errors
   {:ownpurse/invalid 400 :ownpurse/invalid-link 400 :ownpurse/invalid-match 400 :ownpurse/not-found 404
-   :ownpurse/link-conflict 409 :ownpurse/match-conflict 409})
+   :ownpurse/link-conflict 409 :ownpurse/match-conflict 409 :ownpurse/no-disk 409 :ownpurse/backup-exists 409
+   :ownpurse/backup-timeout 503 :ownpurse/backup-invalid 500})
 
 (defn- answer
-  "Calls `f` and answers 200 with what it returns, or the error the entity component threw, as structured JSON."
+  "Calls `f` and answers 200 with what it returns, or the error a component threw, as structured JSON."
   [f]
   (try
     {:status 200 :body (f)}
@@ -172,6 +206,14 @@
     {:get {:summary "Whether ownpurse and its record are up."
            :responses {200 {:body Health} 503 {:body Health}}
            :handler (health node)}}]
+   ["/backup"
+    {:post {:summary (str "Snapshots the running record into a new folder under dir (ownpurse-<time>), and checks that "
+                          "a fresh node opens it. Restore it with ownpurse stopped: see docs/BACKUP.md.")
+            :parameters {:body BackupBody}
+            :responses {200 {:body [:map [:snapshot Snapshot]]} 400 {:body ApiError} 409 {:body ApiError}
+                        500 {:body ApiError} 503 {:body ApiError}}
+            :handler (fn [{{:keys [body]} :parameters}]
+                       (answer #(backup! node (:store config) body)))}}]
    ["/pull"
     {:post {:summary (str "Fetches every org in the local config through its source's tool, and keeps what changed. "
                           "Costs the source's API calls; later pulls ask only for what changed.")
@@ -257,7 +299,7 @@
 
 (defn handler
   "The Ring handler over `node`. `local` is the config file naming the orgs to pull; `xero` and `mercury` are {:cli}:
-  the program that reads each source."
+  the program that reads each source; `store` is the store's config, which says where the record is kept."
   [config]
   (ring/ring-handler
    (ring/router

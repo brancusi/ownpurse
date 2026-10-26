@@ -4,10 +4,11 @@
    [clojure.string :as str]
    [clojure.walk :as walk]
    [ownpurse.money.interface :as money]
+   [ownpurse.store.backup :as backup]
    [xtdb.api :as xt]
    [xtdb.node :as xtn])
   (:import
-   (java.time OffsetDateTime ZonedDateTime)
+   (java.time Duration OffsetDateTime ZonedDateTime)
    (xtdb.api Xtdb Xtdb$Config)))
 
 (defn- sql-server
@@ -21,15 +22,19 @@
   (let [storage (case mode
                   :in-memory {}
                   :disk (let [root (io/file dir "xtdb")]
-                          {:log [:local {:path (str (io/file root "log"))}]
+                          {:log [:local {:path (str (io/file root "log")) :epoch (backup/epoch dir)}]
                            :storage [:local {:path (str (io/file root "objects"))}]}))]
     (doto (xtn/->config (assoc storage :server (some-> sql sql-server)))
       (.setFlightSql nil))))
 
 (defn start
-  "Starts an in-process node."
-  ^Xtdb [config]
-  (xtn/start-node (node-config config)))
+  "Starts an in-process node. A node on disk first catches up with its log, so that what it answers includes
+  every transaction written before it stopped."
+  ^Xtdb [{:keys [mode] :as config}]
+  (let [node (xtn/start-node (node-config config))]
+    (when (= :disk mode)
+      (backup/sync! node (Duration/ofMinutes 5)))
+    node))
 
 (defn stop
   "Closes the node."
@@ -141,3 +146,21 @@
                         [table fresh]))]
     {:written (update-vals changed count)
      :tx (when (seq changed) (put! node changed metadata))}))
+
+(defn snapshot! [node {:keys [mode dir]} to]
+  (when-not (= :disk mode)
+    (throw (ex-info "The record is in memory: there are no files to snapshot. Run ownpurse with a data directory."
+                    {:type :ownpurse/no-disk})))
+  (let [manifest (backup/snapshot! node {:dir dir :to to})]
+    (put! node {:backups [(-> (select-keys manifest [:dir :block :epoch :transactions :tables :files :bytes])
+                              (assoc :xt/id (str "snapshot:" (:taken-at manifest))
+                                     :taken-at (ZonedDateTime/parse (:taken-at manifest))))]}
+          {:source "ownpurse" :why "backup"})
+    manifest))
+
+(defn last-snapshot [node]
+  (when (table-exists? node :backups)
+    (first (q node "SELECT * FROM backups ORDER BY taken_at DESC LIMIT 1" {}))))
+
+(defn restore! [opts]
+  (backup/restore! opts))
