@@ -24,8 +24,14 @@
   [s]
   (if (str/blank? s) 0M (bigdec (str/replace s "," ""))))
 
-(defn- account-of [row]
-  (some #(when (= "account" (:id %)) (:value %)) (mapcat :attributes (:cells row))))
+(def ^:private no-account
+  "The id Xero's reports give a computed row (Current Year Earnings) that is no account in the chart."
+  "abababab-abab-abab-abab-abababababab")
+
+(defn- account-of
+  "The AccountID a report row names, or nil for a row that names none (or only Xero's placeholder)."
+  [row]
+  (some #(when (and (= "account" (:id %)) (not= no-account (:value %))) (:value %)) (mapcat :attributes (:cells row))))
 
 (defn- report-rows
   "Every row of a report (rows within sections), each with the title of its section."
@@ -97,7 +103,9 @@
         before (.minusDays start 1)
         accounts (into {} (map (juxt :account-id identity)) (rows-of node tenant "Accounts"))
         profit-or-loss? #(#{"REVENUE" "EXPENSE"} (:class (accounts %)))
-        credit? #(#{"LIABILITY" "EQUITY" "REVENUE"} (:class (accounts %)))
+        ;; A credit card is a bank account of class ASSET, but the balance sheet shows it as a liability.
+        credit? #(let [a (accounts %)]
+                   (or (#{"LIABILITY" "EQUITY" "REVENUE"} (:class a)) (= "CREDITCARD" (:bank-account-type a))))
         tb (or (report node tenant "TrialBalance" date)
                (throw (ex-info (str "ownpurse holds no Xero trial balance at " date ". A pull keeps one at the end of "
                                     "each month it covers ({:xero {:reports {:months n}}}); choose a month end.")

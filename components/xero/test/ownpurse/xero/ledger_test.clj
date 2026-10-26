@@ -148,14 +148,17 @@
   (with-node
     (fn [node]
       (pull! node pull-1)
-      ;; A retained earnings account, as Xero's charts have.
+      ;; A retained earnings account, as Xero's charts have, and a credit card, which Xero keeps as a bank account.
       (store/put-changed! node {:xero/accounts [{:xt/id (id 30) :org tenant :account-id (acct 30) :code "3200"
                                                  :name "Retained Earnings" :class "EQUITY"
-                                                 :system-account "RETAINEDEARNINGS"}]}
+                                                 :system-account "RETAINEDEARNINGS"}
+                                                {:xt/id (id 31) :org tenant :account-id (acct 31) :code "2100"
+                                                 :name "Company card" :class "ASSET" :type "BANK"
+                                                 :bank-account-type "CREDITCARD"}]}
                           {:source "test" :why "fixture"})
       (let [year (into {} (keep (fn [[k v]] (when-let [[_ x] (re-find #":account:(.+)$" k)] [x v])))
                        (ledger/balances node (xero/book-id tenant) {:from (day "2026-01-01") :to (day "2026-03-31")}))
-            opening {(acct 1) 10000M (acct 4) 18000M (acct 8) -10000M (acct 30) -12000M}
+            opening {(acct 1) 10000M (acct 4) 18000M (acct 8) -10000M (acct 30) -12000M (acct 31) -2481.37M}
             plain #(.toPlainString (.abs ^BigDecimal %))
             expected (merge-with + opening year {(acct 30) -6000M (acct 13) 0.01M})
             tb-answer (report-answer ["Account" "Debit" "Credit" "YTD Debit" "YTD Credit"]
@@ -164,9 +167,12 @@
             bs-answer (report-answer ["" "31 Dec 2025"]
                                      [["Assets" [["Operating account" (acct 1) "10000.00"]
                                                  ["Roasting equipment" (acct 4) "18000.00"]]]
-                                      ["Liabilities" [["Equipment loan" (acct 8) "10000.00"]]]
+                                      ["Liabilities" [["Equipment loan" (acct 8) "10000.00"]
+                                                      ["Company card" (acct 31) "2481.37"]]]
+                                      ;; Xero names its computed earnings row with a placeholder account id.
                                       ["Equity" [["Retained Earnings" (acct 30) "12000.00"]
-                                                 ["Current Year Earnings" nil "6000.00"]]]])]
+                                                 ["Current Year Earnings" "abababab-abab-abab-abab-abababababab"
+                                                  "6000.00"]]]])]
         (testing "without the trial balance, the check says which month ends it can use"
           (is (= :ownpurse/not-found
                  (:type (ex-data (try (xero/check-trial-balance node tenant (day "2026-03-31") {})
@@ -184,7 +190,11 @@
           (testing "balance sheet accounts open at Xero's balance sheet; last year's earnings join retained earnings"
             (is (= {:xero -18000M :ownpurse -18000M :difference 0M}
                    (select-keys (by-code "3200") [:xero :ownpurse :difference])))
-            (is (zero? (:difference (by-code "1010")))))
+            (is (zero? (:difference (by-code "1010"))))
+            (is (not-any? #(re-find #"abababab" (:account %)) accounts)))
+          (testing "a credit card opens as the liability the balance sheet shows it as"
+            (is (= {:xero -2481.37M :ownpurse -2481.37M :difference 0M}
+                   (select-keys (by-code "2100") [:xero :ownpurse :difference]))))
           (testing "an account that differs is shown with its difference, and the book does not tie"
             (is (false? tied?))
             (is (= [["6200" -0.01M]] (keep #(when-not (zero? (:difference %)) [(:code %) (:difference %)]) accounts)))))
