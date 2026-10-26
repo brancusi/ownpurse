@@ -202,7 +202,11 @@
   [:map {:closed true}
    [:book [:string {:min 1}]]
    [:accounts [:vector {:min 1} [:string {:min 1}]]]
-   [:parties {:optional true} [:vector [:string {:min 1}]]]])
+   [:parties {:optional true} [:vector [:string {:min 1}]]]
+   [:assigned {:optional true} [:vector [:map {:closed true} [:entry [:string {:min 1}]] [:line {:optional true} :int]]]]
+   [:narration {:optional true} [:string {:min 1}]]
+   [:opening {:optional true} [:map {:closed true} [:amount (schema/schema :ownpurse/amount)]
+                               [:note {:optional true} :string]]]])
 
 (def PairBody
   "PUT /intercompany/pairs/{ref}: accounts in one book that mirror accounts in another."
@@ -230,6 +234,7 @@
   "A pair reconciled over a period. Amounts are decimal strings, debits positive."
   [:map [:ref :string] [:a PairSideReport] [:b PairSideReport] [:difference :string] [:unexplained :string]
    [:movement-difference :string] [:matched :int] [:reconciled :boolean]
+   [:months [:vector [:map [:month :string] [:a :string] [:b :string] [:difference :string]]]]
    [:unmatched [:map [:a [:vector PairLine]] [:b [:vector PairLine]]]]])
 
 (defn- strings
@@ -487,7 +492,10 @@
     {:put {:summary (str "Adds or changes an intercompany pair: side a's accounts in one book mirror side b's in "
                          "another (a loan and its receivable, a due-to and its due-from, a grant paid and received). "
                          "A side may hold several accounts; `parties` keeps only those parties' postings, for one "
-                         "account that holds several counterparties'. `from` and `to` bound when the pair holds. "
+                         "account that holds several counterparties', with the lines that name no party but are "
+                         "`assigned` to them by entry (and line), or whose narration matches the `narration` pattern. "
+                         "`opening` is a balance a side holds from before its postings. `from` and `to` bound when "
+                         "the pair holds. "
                          "`explained` pins known parts of the difference, such as a prior-period amount.")
            :parameters {:path [:map [:ref [:string {:min 1}]]] :body PairBody}
            :responses {200 {:body [:map [:pair :map]]} 400 {:body ApiError}}
@@ -498,7 +506,8 @@
                          "Per pair: each side's balance at `to` and movement in the period, the difference (the "
                          "balances summed, zero when they mirror), what is unexplained after the pinned "
                          "explanations, and the period's lines the other side has no mirror for. A line matches one "
-                         "of the opposite amount at most `days` apart (default 5), else its entry's total does. A "
+                         "of the opposite amount at most `days` apart (default 5), else its entry's total does; "
+                         "`months` gives each side's movement by month and their difference. A "
                          "side with parties lists its lines that name no party as unattributed.")
            :parameters {:query [:map
                                 [:from {:optional true} (schema/schema :ownpurse/date)]

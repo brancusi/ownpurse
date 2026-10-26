@@ -88,6 +88,22 @@
         (ic/put-pair! node (assoc owner-loan :explained [{:ref "prior" :amount 25.00M :note "2024 receivable"}]))
         (let [[r] (ic/report node {:from (day "2025-01-01") :to (day "2025-12-31")})]
           (is (= 75.00M (:unexplained r)))))
+      (testing "lines with no party are assigned to the side's party by entry, or by narration"
+        (let [report #(first (ic/report node {:from (day "2025-01-01") :to (day "2025-12-31")}))]
+          (ic/put-pair! node (assoc-in owner-loan [:b :assigned] [{:entry "b-journal"}]))
+          (is (= [-640.00M []] ((juxt (comp :balance :b) (comp :unattributed :b)) (report))))
+          (ic/put-pair! node (assoc-in owner-loan [:b :narration] "(?i)^B-JOURNAL$"))
+          (is (= -640.00M (get-in (report) [:b :balance])))
+          (is (= :ownpurse/invalid (:type (error #(ic/put-pair! node (assoc-in owner-loan [:b :narration] "("))))))))
+      (testing "an opening on a side counts in its balance, not its movement"
+        (ic/put-pair! node (assoc-in owner-loan [:b :opening] {:amount -25.00M :note "conversion balance"}))
+        (let [[r] (ic/report node {:from (day "2025-01-01") :to (day "2025-12-31")})]
+          (is (= [-625.00M -600.00M] [(get-in r [:b :balance]) (get-in r [:b :movement])]))
+          (is (= 75.00M (:difference r)))))
+      (testing "each side's movement by month, and their difference"
+        (let [[r] (ic/report node {:from (day "2025-01-01") :to (day "2025-12-31")})]
+          (is (= [["2025-02" 500.00M -500.00M 0.00M] ["2025-03" 100.00M -100.00M 0.00M] ["2025-06" 75.00M 0M 75.00M]]
+                 (map (juxt :month :a :b :difference) (:months r))))))
       (testing "a pair that ends before the period is left out"
         (ic/put-pair! node (assoc owner-loan :to (day "2025-01-31")))
         (is (= [] (ic/report node {:from (day "2025-02-01") :to (day "2025-12-31")})))))))

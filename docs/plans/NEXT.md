@@ -321,8 +321,10 @@ parts of the difference, such as a prior-period amount. `GET /intercompany?from=
 from the books' postings: each side's balance at `to` and movement in the period, the difference (zero when they
 mirror), what is unexplained, and the period's lines with no mirror on the other side (a line matches one of the
 opposite amount at most `days` apart, else its entry's total does). Lines that name no party on a side with
-parties (a manual journal has no contact) are listed as unattributed, not counted. Balances are the book's
-postings, so a book's opening balances from before its documents begin are not in them: pin them as explained.
+parties (a manual journal has no contact) are listed as unattributed, not counted, unless the side `assigned` them
+to its party (by entry, or entry and line) or its `narration` pattern matches them. A side's `opening` is a balance
+from before its postings (a conversion balance), with a note. `months` gives each side's movement by month and
+their difference, for a side that books a month in one journal against many lines on the other.
 
 Eliminations come later, if ever: the entities file separately, so they would be close items with journals in the
 group book.
