@@ -38,7 +38,7 @@
 
 (deftest scenario-test
   (testing "the scenario holds together: every code, category, card and id is known"
-    (is (= 31 (count (:cases s))))
+    (is (= 41 (count (:cases s))))
     (is (every? :when (:rules s)))))
 
 (deftest enrich-test
@@ -95,12 +95,13 @@
 (deftest eval-test
   (let [run (classify/run-eval s (stub-ask "needs_person"))
         score (classify/score s run)]
-    (testing "with a careful person's fuzzy answers, the building blocks alone code every case acceptably"
-      (is (= 31 (get-in score [:strategies :blocks :accurate])))
-      (is (= [] (get-in score [:strategies :blocks :wrong 0M]))))
+    (testing "with a careful person's fuzzy answers, the building blocks code every case acceptably but the two traps
+      written for them: an airline on a project trip booked for a holiday, a restaurant on a project trip for a meeting"
+      (is (= 39 (get-in score [:strategies :blocks :accurate])))
+      (is (= [["c34" :project-cost] ["c40" :per-diem]] (get-in score [:strategies :blocks :wrong 0M]))))
     (testing "a Choice that always says needs_person codes nothing automatically, so it is never silently wrong"
       (is (= 0 (get-in score [:strategies :choice :by-threshold 0M :right])
              (get-in score [:strategies :choice :by-threshold 0M :wrong]))))
     (testing "the run keeps every raw response and counts its requests: two per line, one more to enrich"
-      (is (= 63 (get-in run [:usage :requests])))
+      (is (= 84 (get-in run [:usage :requests])))
       (is (= :enrichment (get-in (first (filter #(= "c31" (:id %)) (:results run))) [:facts :category-from]))))))

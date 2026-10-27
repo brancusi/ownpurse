@@ -418,12 +418,15 @@ automatically and rightly, the **silent errors** (coded automatically and wrongl
 A run keeps every raw answer (`components/classify/runs/`), so a threshold is re-scored without asking again.
 
 - The scenario is `components/classify/resources/classify/eval/harbour.edn`: invented entities, people, a project
-  abroad, trips, ten rules and 31 cases with the expected coding. Add a case whenever a real line is coded wrongly,
+  abroad, trips, ten rules and 41 cases with the expected coding (c32 to c41 written to break one strategy or another). Add a case whenever a real line is coded wrongly,
   in general terms.
 - Run: `clojure -M:dev -m ownpurse.classify.eval`. The key comes from `TYPESAFE_API_KEY` or
   `~/.config/ownpurse/secrets.edn` (`{:typesafe {:api-key "..."}}`; the config's new `:secrets` and `:jev`).
-- The tests use a stand-in for Jev: with careful answers to the fuzzy blocks, the blocks alone code all 31 cases
-  acceptably, so the live run measures the judgments.
+- The tests use a stand-in for Jev: with careful answers to the fuzzy blocks, the blocks alone code every case
+  acceptably but the two traps written for them (c34, c40), so the live run measures the judgments.
+- To look: `(show :classify)` is every case of the latest run, strategy by strategy; `(show :walk)` walks one line
+  step by step (the code that ran and what it returned, the exact request to Jev and its answer), replays any case,
+  and classifies a line typed into its form live.
 - **First live run (2026-10-27, jev-1.14.0, 63 requests, about 78,000 input tokens):** the `:choice` (facts from
   code, the rules as text, one Choice) coded every case acceptably, with no silent error at any threshold, and kept
   every answer with its options reversed. At 0.7 it coded 25 lines automatically and sent the 6 it should to a
@@ -433,6 +436,14 @@ A run keeps every raw answer (`components/classify/runs/`), so a threshold is re
   vague fuzzy question (R5, "materials ... rather than a person's own use", near 0.45 on software and lodging) sends
   most lines to a person at 0.7. The cases were written by the same hand as the rules, so this is a floor to beat,
   not proof.
+- **Second run (2026-10-27, 41 cases, 84 requests, about 104,000 input tokens):** the ten harder cases found the
+  Choice's first silent errors, both the rules' fault, not the judgment's: c34 (a flight booked on the project trip
+  for a later holiday, coded project cost at 0.92 because R3 says flights on a project trip are project costs) and
+  c40 (a dinner for five with the venue's curators, coded per diem at 0.92 because R1 says restaurants on a project
+  trip are per diem). Every strategy that reads the rules made the same two errors. Jev ignored a note telling it to
+  code a line as business (c32), and enrichment chose "none of these" for a name that says nothing (c39). Too broad a
+  rule is followed confidently: rules need their exceptions said ("a traveller's own meals"; "travel for the
+  project").
 - Next: harder cases written apart from the rules; checks (cash, transfers, a card away from its holder) as blocks
   that stop a line before the Choice, and a line sent to a person when the blocks and the Choice disagree; then
   whereabouts derived from the lines (runs of in-person spend abroad) instead of written trips; then the per diem
