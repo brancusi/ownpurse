@@ -485,6 +485,25 @@ A run keeps every raw answer (`components/classify/runs/`), so a threshold is re
     lowers it on every line (74 coded rightly in round 1, 55 in round 2). Use blocks for exact checks only.
   - Left with a person, and rightly: dual-use items (petroleum jelly, bin bags, gloves, isopropyl alcohol), a
     travel day the trips do not show, an unnamed merchant. Coding them would take item lists no one would keep.
+- **Round 3 (2026-10-27)**, on the weak points of round 2. Each project gained a hospitality bucket (meals, drinks
+  and gifts for people who are not its travellers), with a fuzzy rule each. A refund is matched in code to the
+  latest earlier purchase on the same card at the same merchant (`facts/refund-of`), and Jev is told to code it as
+  that purchase. A new strategy, `:checked`, is the Choice unless a check rule holds by its blocks: a check for a
+  note that names the other project. The answer key was made stricter: a meal or gift for others is hospitality,
+  and a contradicting note is only right with a person. Against that key, round 2's answers had 4 silent errors
+  at 0.7 (the dinners and the gift went to per diem or personal); round 3 has 2. At 0.7, `:checked` coded 98
+  rightly, 2 wrongly, 23 rightly to a person, 6 needlessly. What it found:
+  - A yes/no question about a note fires on lines that have none (Jev said yes about a missing note on 20 lines).
+    A check that judges a field needs a deterministic block that the field is there (`[:present :note]`).
+  - The dual-use check (cleaning products, gloves, bags) added nothing: the Choice's own confidence already
+    stopped every item it caught rightly, and the check also fired on bread and on plaster bandage. It was
+    dropped. Dual-use items are best left to the threshold.
+  - Still wrong: a team lunch for local mould-makers went to per diem at 0.78 (a meal shared by a traveller and
+    others is half each); a bathroom mirror bought at home, on the receipt beside glass for the commission, went
+    to Skyline cost of goods at 0.81. A rule declared the exception to another (`:over`) wins whenever Jev reads
+    the item as that project's material, and the receipt beside it pulls it there. More rules also moved this
+    one across the threshold (0.63 in round 2), so a threshold tuned on one rule set does not carry to the next.
+  - A credit with no purchase on record (d73) stays below the threshold: right, but sent to a person.
 - Next: harder cases written apart from the rules; checks (cash, transfers, a card away from its holder) as blocks
   that stop a line before the Choice, and a line sent to a person when the blocks and the Choice disagree; then
   whereabouts derived from the lines (runs of in-person spend abroad) instead of written trips; then the per diem

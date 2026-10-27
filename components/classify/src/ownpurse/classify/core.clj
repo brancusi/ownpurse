@@ -7,13 +7,14 @@
   - :no-rules   Jev picks the coding from the facts alone: what the rules add
   - :rule-nouls Jev says whether each rule applies; code combines them
   - :blocks     each rule's building blocks decide, Jev answering only the fuzzy ones
-  - :hybrid     :blocks, and where no rule or several disagreeing rules apply, the :choice answer"
+  - :hybrid     :blocks, and where no rule or several disagreeing rules apply, the :choice answer
+  - :checked    the :choice answer, unless a check rule holds by its blocks: then a person looks"
   (:require
    [clojure.string :as str]
    [ownpurse.classify.blocks :as blocks]
    [ownpurse.classify.facts :as facts]))
 
-(def strategies [:choice :reversed :no-rules :rule-nouls :blocks :hybrid])
+(def strategies [:choice :reversed :no-rules :rule-nouls :blocks :hybrid :checked])
 
 (def ^:private yes 0.5M)
 
@@ -25,7 +26,8 @@
   {:type "choice"
    :instructions (str "How should this bank line be coded? Apply the rules in `rules` to the facts in `transaction` "
                       "and `context`. When `transaction.item` is present, code that one item of the line, not the "
-                      "whole line. If no rule decides it, or the facts contradict each other, choose needs_person.")
+                      "whole line. A refund (`context.refund_of`) is coded as the purchase it refunds. If no rule "
+                      "decides it, or the facts contradict each other, choose needs_person.")
    :criteria (apply array-map (mapcat (fn [[c d]] [(option c) d]) (cond-> (seq codes) reversed? reverse)))})
 
 (defn- plain-code-question [codes]
@@ -124,7 +126,9 @@
   [{:keys [rules]} line-facts {:keys [rules-answers plain-answers]}]
   (let [fuzzy (fuzzy-answers rules plain-answers)
         by-blocks (combine rules (into {} (map (fn [r] [(:id r) (blocks/rule-holds r line-facts fuzzy)])) rules))
-        choice (chose (:code rules-answers))]
+        choice (chose (:code rules-answers))
+        checks (keep (fn [r] (let [p (blocks/rule-holds r line-facts fuzzy)] (when (>= p yes) [(:id r) p])))
+                     (filter :check rules))]
     {:choice choice
      :reversed (chose (:reversed rules-answers))
      :no-rules (chose (:code plain-answers))
@@ -134,7 +138,11 @@
      :blocks by-blocks
      :hybrid (if (#{:no-rule :conflict} (:reason by-blocks))
                (assoc choice :fallback (:reason by-blocks) :by (:by by-blocks))
-               by-blocks)}))
+               by-blocks)
+     :checked (if (seq checks)
+                {:code :needs-person :reason :check :by (mapv first checks)
+                 :confidence (reduce min 1M (map (comp certainty second) checks))}
+                choice)}))
 
 (defn classify
   "Classifies `line` in `scenario`, calling `ask` (state, questions → a System One response) for every judgment:

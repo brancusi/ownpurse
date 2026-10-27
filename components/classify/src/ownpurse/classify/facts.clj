@@ -42,6 +42,17 @@
          (sort-by :from)
          vec)))
 
+(defn refund-of
+  "The purchase a refund (a line with a negative amount) returns: the latest earlier purchase in the scenario's
+  :cases on the same card at the same merchant, or nil. Matched in code, so the refund can follow it."
+  [{:keys [cases]} {:keys [amount card merchant] d :date}]
+  (when (and amount (neg? amount))
+    (->> cases
+         (filter #(and (= card (:card %)) (= merchant (:merchant %)) (pos? (:amount %))
+                       (.isBefore (date (:date %)) (date d))))
+         (sort-by :date)
+         last)))
+
 (defn running-projects
   "The ids of the projects running on day `d`."
   [{:keys [projects]} d]
@@ -70,7 +81,8 @@
    (let [{:keys [holder entity] :as card-info} (get cards card)
          mcc (or mcc category)
          where (whereabouts scenario holder date)
-         running (running-projects scenario date)]
+         running (running-projects scenario date)
+         refunded (refund-of scenario line)]
      (cond-> (merge (select-keys line [:id :line :date :merchant :amount :currency :country :city :channel :note
                                        :item :line-amount :items-from :other-items])
                     {:card card :card-name (:name card-info) :holder holder :card-entity entity
@@ -82,6 +94,8 @@
                                                      (or (and country (not= country (:place where)))
                                                          (and (:city line) (:city where)
                                                               (not= (:city line) (:city where))))))})
+       refunded (assoc :refund-of (assoc (select-keys refunded [:id :date :amount :currency :note])
+                                         :whereabouts (whereabouts scenario holder (:date refunded))))
        mcc (assoc :mcc mcc :category (get categories mcc))
        (and mcc (not (:mcc line))) (assoc :category-from :enrichment)))))
 
@@ -123,4 +137,10 @@
                      (vec (for [{:keys [place city from to project]} (:upcoming facts)]
                             (str (if city (str city ", " place) place) ", " from " to " to ": "
                                  (if project (str "for " (get-in projects [project :name])) "a personal trip, no project")))))
-              (= :in-store channel) (assoc :shop_is_where_cardholder_was (not country-mismatch)))})
+              (= :in-store channel) (assoc :shop_is_where_cardholder_was (not country-mismatch))
+              (:refund-of facts)
+              (assoc :refund_of
+                     (let [{:keys [date amount currency note whereabouts]} (:refund-of facts)]
+                       (str "a purchase at this merchant on this card on " date ", " currency " "
+                            (.toPlainString ^BigDecimal amount) (some->> note (str ", note: "))
+                            ", when the cardholder was " (where-text scenario whereabouts)))))})

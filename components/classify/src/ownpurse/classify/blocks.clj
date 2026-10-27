@@ -14,6 +14,7 @@
   [[op & args :as block] facts fuzzy]
   (case op
     :is (let [[field v] args] (yes (= (str/lower-case v) (text facts field))))
+    :present (yes (not (str/blank? (str (get facts (first args))))))
     :contains (let [[field v] args] (yes (str/includes? (text facts field) (str/lower-case v))))
     :amount (let [[cmp a b] args
                   amount (abs (:amount facts))]

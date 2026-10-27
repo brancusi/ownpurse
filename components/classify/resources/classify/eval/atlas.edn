@@ -62,16 +62,18 @@
  :codes {:harbour-per-diem "Harbour Exhibition, per diem: a traveller's own living costs while on a trip to Lisbon for it (food, groceries, restaurants, cafés, gym, pharmacy)"
          :harbour-cogs "Harbour Exhibition, cost of goods: materials, tools, fabrication and shipping for its plaster sculptures"
          :harbour-travel "Harbour Exhibition, travel: flights, trains, taxis and lodging for a trip to Lisbon for it"
+         :harbour-hospitality "Harbour Exhibition, hospitality: meals, drinks and gifts for people who are not its travellers (clients, the gallery, collaborators, local hires), given for its work"
          :skyline-per-diem "Skyline Commission, per diem: a traveller's own living costs while on a trip to New York for it (food, groceries, restaurants, cafés, gym, pharmacy)"
          :skyline-cogs "Skyline Commission, cost of goods: materials, tools, fabrication and shipping for its steel and glass installation"
          :skyline-travel "Skyline Commission, travel: flights, trains, taxis and lodging for a trip to New York for it"
+         :skyline-hospitality "Skyline Commission, hospitality: meals, drinks and gifts for people who are not its travellers (clients, the architect, collaborators, local hires), given for its work"
          :overhead "Studio overhead: the studio's ordinary running costs (software, utilities, insurance, phone, accounting), not any one project's"
          :personal "Personal: a person's own spending that no project and not the studio covers"
          :needs-person "The rules do not decide this line, or the facts contradict each other: a person must look at it"}
 
  ;; How the buckets are laid out on a page: by project, then the studio, then the rest.
- :buckets [{:project "harbour" :codes [[:harbour-per-diem "Per diem"] [:harbour-cogs "Cost of goods"] [:harbour-travel "Travel"]]}
-           {:project "skyline" :codes [[:skyline-per-diem "Per diem"] [:skyline-cogs "Cost of goods"] [:skyline-travel "Travel"]]}
+ :buckets [{:project "harbour" :codes [[:harbour-per-diem "Per diem"] [:harbour-cogs "Cost of goods"] [:harbour-travel "Travel"] [:harbour-hospitality "Hospitality"]]}
+           {:project "skyline" :codes [[:skyline-per-diem "Per diem"] [:skyline-cogs "Cost of goods"] [:skyline-travel "Travel"] [:skyline-hospitality "Hospitality"]]}
            {:title "Studio" :codes [[:overhead "Overhead"]]}
            {:title "Personal, or a person to look" :codes [[:personal "Personal"] [:needs-person "Needs a person"]]}]
 
@@ -114,6 +116,16 @@
           :rule "On a personal card, a person's own purchases (clothing, entertainment, books, things for their home, gifts) are personal, unless they are a project's materials or the studio's running costs."
           :when [[:card :in #{"card-r" "card-s"}]
                  [:jev "Is this a person's own purchase, for themselves or their home, rather than for the studio's or a project's work?"]]}
+         {:id "A15" :code :harbour-hospitality :over ["A1" "A2" "A9" "A13" "A14"]
+          :rule "A meal, drink or gift for people who are not the project's travellers (clients, the gallery, collaborators, local hires), given for the Harbour Exhibition's work, is Harbour hospitality. A traveller's own meal is per diem."
+          :when [[:jev "Is this a meal, drink or gift for people who are not the travellers (clients, the gallery, collaborators, local hires), given for the Harbour Exhibition's work?"]]}
+         {:id "A16" :code :skyline-hospitality :over ["A1" "A2" "A9" "A13" "A14"]
+          :rule "A meal, drink or gift for people who are not the project's travellers (clients, the architect, collaborators, local hires), given for the Skyline Commission's work, is Skyline hospitality. A traveller's own meal is per diem."
+          :when [[:jev "Is this a meal, drink or gift for people who are not the travellers (clients, the architect, collaborators, local hires), given for the Skyline Commission's work?"]]}
+         {:id "A17" :code :needs-person :check true
+          :rule "When the line's note names one project while the cardholder is on a trip for the other, the note and the facts disagree: a person looks. Bookings for a later trip are not a disagreement."
+          :when [[:present :note] [:trip :project] [:not [:category :in #{"4511" "7011" "4722"}]]
+                 [:jev "Does the line's note name a project, or its city, other than the one the cardholder's current trip is for?"]]}
          {:id "A11" :code :needs-person :check true
           :rule "Cash withdrawals and transfers are never coded automatically."
           :when [[:any [:category :in #{"6011"}] [:channel :in #{:transfer}]]]}
@@ -279,16 +291,16 @@
           {:item "Bathroom mirror, bevelled 600x900" :amount 188.99M :expect :personal}]}
  {:id "d73" :date "2025-12-02" :card "card-t" :merchant "Valley Steel Stockists" :mcc "5051" :amount -212.40M :currency "USD" :country "United States" :channel :online :note "Credit - returned unused angle, Skyline job" :expect :skyline-cogs
   :why "a return credited after the commission closed still belongs to its cost of goods"}
- {:id "d74" :date "2025-07-11" :card "card-ts" :merchant "Restaurante Cais Velho" :mcc "5812" :amount 46.80M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "Skyline team dinner" :expect :needs-person :ok #{:harbour-per-diem}
+ {:id "d74" :date "2025-07-11" :card "card-ts" :merchant "Restaurante Cais Velho" :mcc "5812" :amount 46.80M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "Skyline team dinner" :expect :needs-person
   :hard "the memo names the New York project but Sol is in Lisbon on the Harbour trip: the note and the facts disagree"}
  {:id "d75" :date "2025-06-26" :card "card-ts" :merchant "Gesso e Estuques do Poço" :mcc "5200" :amount 133.85M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-cogs
   :why "gesso is plaster: a plaster supplier, named in Portuguese"}
- {:id "d76" :date "2025-06-20" :card "card-r" :merchant "Livraria do Cais" :mcc "5942" :amount 28.50M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "presente - diretora da galeria" :expect :needs-person :ok #{:personal}
-  :hard "a gift for the gallery director: tied to the project but no project bucket covers gifts, so it is personal or a person decides"}
- {:id "d77" :date "2025-09-19" :card "card-t" :merchant "Graystone Chophouse" :mcc "5812" :amount 412.86M :currency "USD" :country "United States" :city "New York" :channel :in-store :note "dinner w/ client + architect, lobby review" :expect :needs-person :ok #{:skyline-per-diem}
-  :hard "a client dinner is a project cost but not the traveller's own living cost; per diem is the nearest bucket, not the right one"}
- {:id "d78" :date "2025-07-25" :card "card-ts" :merchant "Tasca do Pescador" :mcc "5812" :amount 63.40M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "almoço equipa - Sol + 2 moldadores" :expect :harbour-per-diem :ok #{:needs-person}
-  :why "Sol buying lunch for two local mould-makers: a team meal on the trip"}
+ {:id "d76" :date "2025-06-20" :card "card-r" :merchant "Livraria do Cais" :mcc "5942" :amount 28.50M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "presente - diretora da galeria" :expect :harbour-hospitality :ok #{:needs-person}
+  :hard "a gift for the gallery director, on a personal card at a bookshop: the project's hospitality, not the buyer's own purchase"}
+ {:id "d77" :date "2025-09-19" :card "card-t" :merchant "Graystone Chophouse" :mcc "5812" :amount 412.86M :currency "USD" :country "United States" :city "New York" :channel :in-store :note "dinner w/ client + architect, lobby review" :expect :skyline-hospitality :ok #{:needs-person}
+  :hard "a client dinner is a project cost but not the traveller's own living cost: hospitality, not per diem"}
+ {:id "d78" :date "2025-07-25" :card "card-ts" :merchant "Tasca do Pescador" :mcc "5812" :amount 63.40M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "almoço equipa - Sol + 2 moldadores" :expect :harbour-hospitality :ok #{:needs-person}
+  :why "Sol buying lunch for two local mould-makers: two of the three are local hires, so hospitality"}
  {:id "d79" :date "2025-05-15" :card "card-t" :merchant "Moldaria Portuguesa" :mcc "5999" :amount 156.20M :currency "EUR" :country "Portugal" :channel :online :note "Encomenda 2291 - látex para moldes" :expect :harbour-cogs
   :why "ordered from home, in euros, from a Portuguese supplier"}
  {:id "d80" :date "2025-10-03" :card "card-s" :merchant "Canal Street Fasteners" :mcc "5200" :amount 64.37M :currency "USD" :country "United States" :city "New York" :channel :in-store :note "glass standoff bolts" :expect :skyline-cogs

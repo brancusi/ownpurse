@@ -107,7 +107,31 @@
       (is (:country-mismatch (facts "d15")))
       (is (not (:country-mismatch (facts "d02"))))
       (is (= "at home in Los Angeles, United States"
-             (get-in (classify/state atlas (facts "d15")) [:context :cardholder_was]))))))
+             (get-in (classify/state atlas (facts "d15")) [:context :cardholder_was]))))
+    (testing "a refund is matched in code to the latest earlier purchase on the same card at the same merchant"
+      (is (= "d39" (get-in (facts "d60") [:refund-of :id])))
+      (is (= "skyline" (get-in (facts "d60") [:refund-of :whereabouts :project])))
+      (is (nil? (:refund-of (facts "d73"))) "a credit with no purchase on record has nothing to follow")
+      (is (nil? (:refund-of (facts "d39")))))
+    (testing "a check that needs a note does not apply to a line without one"
+      (is (= 0M (blocks/holds [:present :note] (facts "d02") {})))
+      (is (= 1M (blocks/holds [:present :note] (facts "d74") {}))))
+    (testing ":checked is the Choice unless a check rule holds by its blocks"
+      (let [chosen {:choice "harbour_per_diem" :confidence 0.9M}
+            answers (fn [fuzzy-yes?]
+                      {:rules-answers (into {:code chosen :reversed chosen}
+                                            (map (fn [{:keys [id]}] [(keyword (str "rule_" id)) {:noul 0M}]))
+                                            (:rules atlas))
+                       :plain-answers (into {:code chosen}
+                                            (map-indexed (fn [i _] [(keyword (str "fuzzy_" i))
+                                                                    {:noul (if fuzzy-yes? 1M 0M)}]))
+                                            (blocks/fuzzy-questions (:rules atlas)))})]
+        (is (= {:code :harbour-per-diem :confidence 0.9M}
+               (:checked (core/decide atlas (facts "d02") (answers false)))))
+        (is (= :harbour-per-diem (:code (:checked (core/decide atlas (facts "d02") (answers true)))))
+            "with no note, the note check cannot hold however the model answers")
+        (is (= {:code :needs-person :reason :check :by ["A17"] :confidence 1M}
+               (:checked (core/decide atlas (facts "d74") (answers true)))))))))
 
 (deftest blocks-test
   (let [f (classify/enrich s (line "c11"))]
