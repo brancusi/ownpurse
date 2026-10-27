@@ -4,6 +4,7 @@
   compares ways of combining them over a scenario of invented lines."
   (:require
    [ownpurse.classify.core :as core]
+   [ownpurse.classify.blocks :as blocks]
    [ownpurse.classify.eval :as eval]
    [ownpurse.classify.facts :as facts]
    [ownpurse.classify.jev :as jev]))
@@ -16,6 +17,16 @@
   "The facts about a bank line in a scenario, computed without any judgment."
   [scenario line]
   (facts/enrich scenario line))
+
+(defn state
+  "What a judgment is shown about a line, from its facts."
+  [scenario facts]
+  (facts/state scenario facts))
+
+(defn fuzzy-questions
+  "Every fuzzy block's question in `rules`, once each, in the order they are asked."
+  [rules]
+  (blocks/fuzzy-questions rules))
 
 (defn classify
   "Classifies one line with `ask` (state, questions → a System One response): its facts, the raw responses and each
@@ -53,3 +64,24 @@
   "Writes a run to `dir` and returns the file."
   [dir run]
   (eval/save! dir run))
+
+(def thresholds
+  "The confidence thresholds the eval scores at."
+  eval/thresholds)
+
+(defn explain
+  "Why each rule did or did not apply to a classified line: its blocks, what each held, and Jev's judgment of it."
+  [scenario result]
+  (core/explain scenario result))
+
+(defn outcome
+  "How a strategy's coding of a case fares at a threshold: :right, :wrong, :stopped (sent to a person, rightly) or
+  :review (sent to a person needlessly)."
+  [case coding threshold]
+  (eval/outcome case coding threshold))
+
+(defn load-run
+  "Reads a saved run."
+  [file]
+  (eval/load-run file))
+

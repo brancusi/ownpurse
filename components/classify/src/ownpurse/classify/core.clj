@@ -92,12 +92,16 @@
       (next codes) {:code :needs-person :reason :conflict :by by :confidence confidence}
       :else {:code (first codes) :by by :confidence confidence})))
 
+(defn- fuzzy-answers
+  "Each fuzzy block's question in `rules` with Jev's answer to it, from the answers to the :plain request."
+  [rules plain-answers]
+  (let [questions (blocks/fuzzy-questions rules)]
+    (zipmap questions (map-indexed (fn [i _] (get-in plain-answers [(keyword (str "fuzzy_" i)) :noul])) questions))))
+
 (defn decide
   "Each strategy's coding of a line, from its facts and the answers to its two requests."
   [{:keys [rules]} line-facts {:keys [rules-answers plain-answers]}]
-  (let [fuzzy (zipmap (blocks/fuzzy-questions rules)
-                      (map-indexed (fn [i _] (get-in plain-answers [(keyword (str "fuzzy_" i)) :noul]))
-                                   (blocks/fuzzy-questions rules)))
+  (let [fuzzy (fuzzy-answers rules plain-answers)
         by-blocks (combine rules (into {} (map (fn [r] [(:id r) (blocks/rule-holds r line-facts fuzzy)])) rules))
         choice (chose (:code rules-answers))]
     {:choice choice
@@ -129,3 +133,14 @@
                   enrich-response (assoc :enrich enrich-response))
      :decisions (decide scenario line-facts {:rules-answers (:answers rules-response)
                                              :plain-answers (:answers plain-response)})}))
+
+(defn explain
+  "Why each rule did or did not apply to a classified line (a result of `classify`): each of its building blocks
+  with the probability it holds, the rule's (the least of them), and Jev's own judgment of the whole rule."
+  [{:keys [rules]} {:keys [facts responses]}]
+  (let [fuzzy (fuzzy-answers rules (get-in responses [:plain :answers]))]
+    (vec (for [{:keys [id] :as rule} rules]
+           (assoc (select-keys rule [:id :code :check :rule])
+                  :blocks (mapv (fn [block] {:block block :holds (blocks/holds block facts fuzzy)}) (:when rule))
+                  :holds (blocks/rule-holds rule facts fuzzy)
+                  :jev (get-in responses [:rules :answers (keyword (str "rule_" id)) :noul]))))))

@@ -49,7 +49,7 @@
              :output-tokens (reduce + (map :output_tokens usage))}
      :results results}))
 
-(defn- outcome
+(defn outcome
   "How one coding fares at `threshold`: :right or :wrong when it was coded automatically, :stopped when it went to a
   person and should have, :review when it went to a person needlessly."
   [{:keys [expect ok]} {:keys [code confidence]} threshold]
