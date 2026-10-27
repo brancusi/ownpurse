@@ -100,12 +100,20 @@
      {:strategy (name s) :accurate accurate :threshold (str t)
       :auto-right right :auto-wrong wrong :stopped-rightly stopped :needless-review review})))
 
+(defn load-run
+  "Reads a saved run."
+  [file]
+  (edn/read-string (slurp file)))
+
 (defn save!
-  "Writes `run` to `dir` as <scenario>-<time>.edn and returns the file."
+  "Writes `run` to `dir` as <scenario>-<time>.edn and returns the file, once it reads back as the same run."
   [dir run]
   (let [f (io/file dir (str (:scenario run) "-" (.replace ^String (:at run) ":" "") ".edn"))]
     (io/make-parents f)
     (spit f (with-out-str (pprint/pprint run)))
+    (when-not (= run (load-run f))
+      (throw (ex-info (str "The run written to " f " does not read back as the same run")
+                      {:type :ownpurse/unreadable-run :file (str f)})))
     f))
 
 (defn -main

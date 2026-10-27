@@ -21,6 +21,16 @@
         response (.send ^HttpClient @http request (HttpResponse$BodyHandlers/ofString))]
     {:status (.statusCode response) :body (.body response)}))
 
+(defn- option-names
+  "An answer's options and levels keyed by their names as strings: a name is data (\"none of these\"), and as a
+  keyword it would not read back."
+  [response]
+  (update response :answers update-vals
+          (fn [answer]
+            (cond-> answer
+              (:probabilities answer) (update :probabilities update-keys name)
+              (:legend answer) (update :legend update-keys name)))))
+
 (defn ask
   "Asks Jev `questions` (a map of id to question) about `state`, and returns the response: :model, :answers by the
   same ids, and :usage. Retries a rate limit or an overload with backoff."
@@ -33,7 +43,7 @@
     (loop [attempt 1]
       (let [{:keys [status] :as response} (post jev body)]
         (cond
-          (= 200 status) (json/parse (:body response))
+          (= 200 status) (option-names (json/parse (:body response)))
           (and (retryable status) (< attempt 5)) (do (Thread/sleep (* 500 (bit-shift-left 1 attempt)))
                                                      (recur (inc attempt)))
           :else (throw (ex-info (str "TypeSafe answered " status ": " (:body response))

@@ -424,8 +424,19 @@ A run keeps every raw answer (`components/classify/runs/`), so a threshold is re
   `~/.config/ownpurse/secrets.edn` (`{:typesafe {:api-key "..."}}`; the config's new `:secrets` and `:jev`).
 - The tests use a stand-in for Jev: with careful answers to the fuzzy blocks, the blocks alone code all 31 cases
   acceptably, so the live run measures the judgments.
-- Next: the first live run; then whereabouts derived from the lines (runs of in-person spend abroad) instead of
-  written trips; then the per diem itself, generated from trip days, not from purchases.
+- **First live run (2026-10-27, jev-1.14.0, 63 requests, about 78,000 input tokens):** the `:choice` (facts from
+  code, the rules as text, one Choice) coded every case acceptably, with no silent error at any threshold, and kept
+  every answer with its options reversed. At 0.7 it coded 25 lines automatically and sent the 6 it should to a
+  person (cash, a transfer, the card used where its holder was not, an online order, two the rules do not settle).
+  `:no-rules` made 3 silent errors (a taxi and a train as per diem, cash as per diem): the rules are what make it
+  right. `:blocks` and `:rule-nouls` were also accurate, but their confidence is the least certain rule's, so one
+  vague fuzzy question (R5, "materials ... rather than a person's own use", near 0.45 on software and lodging) sends
+  most lines to a person at 0.7. The cases were written by the same hand as the rules, so this is a floor to beat,
+  not proof.
+- Next: harder cases written apart from the rules; checks (cash, transfers, a card away from its holder) as blocks
+  that stop a line before the Choice, and a line sent to a person when the blocks and the Choice disagree; then
+  whereabouts derived from the lines (runs of in-person spend abroad) instead of written trips; then the per diem
+  itself, generated from trip days, not from purchases.
 
 ## After 3b
 
