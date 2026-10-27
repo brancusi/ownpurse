@@ -467,6 +467,24 @@ A run keeps every raw answer (`components/classify/runs/`), so a threshold is re
   acceptable bucket, none wrongly at any threshold, including the traps (a flight to New York booked in Lisbon, glass
   ordered from Lisbon for New York, one order's two items for two projects). `(show :cards)` shows every line as a
   card: the raw line, the bucket it belongs in, Jev's bucket and confidence, and the payloads and answers.
+- **Stress test (2026-10-27): 100 atlas lines, 129 units.** Cases d25 to d100 were written by a separate agent from
+  the bookkeeping policy alone, without the rules. Round 1 (259 requests, about 485,000 input tokens): at 0.7 the
+  Choice coded 89 rightly, none wrongly, 23 rightly to a person, 17 needlessly. Round 2, after general fixes only
+  (a new fact, the cardholder's upcoming trips, so a booking can be matched to its trip; a rule that a trip with no
+  project is personal; one that a person's own purchases on a personal card are personal; rent named as overhead;
+  "what the item is for decides the project, not where the buyer was"; each project's materials in its brief):
+  102 rightly, none wrongly, 20 rightly to a person, 7 needlessly. Weak points found:
+  - No bucket for a client or team meal or a gift: Jev puts them in the nearest bucket (per diem, personal) at
+    0.93 to 1.0, not in needs-person. A missing bucket is followed confidently, as a too-broad rule is.
+  - A note that contradicts the facts ("Skyline team dinner" while in Lisbon) is not treated as a contradiction.
+  - A strong category beats what an item is (a bathroom mirror at a glass shop, at home, as Skyline cost of goods
+    at 0.63; a glass cutter ordered while in Lisbon as Harbour). Only the threshold catches them.
+  - An item is pulled by the rest of its receipt (bread beside plaster bandage).
+  - A refund belongs where the purchase it refunds went: that needs the refund matched to the purchase, in code.
+  - The building blocks do not scale: their confidence is the least certain rule's, so every fuzzy rule added
+    lowers it on every line (74 coded rightly in round 1, 55 in round 2). Use blocks for exact checks only.
+  - Left with a person, and rightly: dual-use items (petroleum jelly, bin bags, gloves, isopropyl alcohol), a
+    travel day the trips do not show, an unnamed merchant. Coding them would take item lists no one would keep.
 - Next: harder cases written apart from the rules; checks (cash, transfers, a card away from its holder) as blocks
   that stop a line before the Choice, and a line sent to a person when the blocks and the Choice disagree; then
   whereabouts derived from the lines (runs of in-person spend abroad) instead of written trips; then the per diem

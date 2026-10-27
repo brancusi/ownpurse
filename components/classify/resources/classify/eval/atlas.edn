@@ -12,23 +12,34 @@
 
  :cards {"card-r" {:holder "robin" :entity "robin" :name "Robin's personal card"}
          "card-s" {:holder "sol" :entity "sol" :name "Sol's personal card"}
-         "card-t" {:holder "robin" :entity "tallowmere" :name "Tallowmere Studio's business card"}}
+         "card-t" {:holder "robin" :entity "tallowmere" :name "Tallowmere Studio's business card"}
+         "card-ts" {:holder "sol" :entity "tallowmere" :name "Tallowmere Studio's business card held by Sol"}}
 
  :projects {"harbour" {:name "Harbour Exhibition" :from "2025-05-01" :to "2025-12-31"
-                       :place "Lisbon, Portugal" :work "fabricating plaster sculptures for an exhibition"
+                       :place "Lisbon, Portugal" :work "fabricating plaster sculptures for an exhibition (plaster, gypsum, moulds, silicone and latex, sanding and finishing)"
                        :bears "tallowmere" :travellers ["robin" "sol"]}
             "skyline" {:name "Skyline Commission" :from "2025-07-01" :to "2025-11-30"
-                       :place "New York, United States" :work "a steel and glass installation for a building's lobby"
-                       :bears "tallowmere" :travellers ["robin"]}}
+                       :place "New York, United States" :work "a steel and glass installation for a building's lobby (steel, glass, glazing, fixings, cutting and welding)"
+                       :bears "tallowmere" :travellers ["robin" "sol"]}}
 
  ;; Where each person was, by day, with the city. Any other day they are at home, in Los Angeles.
  :trips [{:person "robin" :place "Portugal" :city "Lisbon" :from "2025-06-01" :to "2025-06-30" :project "harbour"}
          {:person "robin" :place "United States" :city "New York" :from "2025-07-07" :to "2025-07-20" :project "skyline"}
          {:person "robin" :place "Portugal" :city "Lisbon" :from "2025-08-01" :to "2025-08-31" :project "harbour"}
          {:person "robin" :place "United States" :city "New York" :from "2025-09-10" :to "2025-09-24" :project "skyline"}
-         {:person "sol" :place "Portugal" :city "Lisbon" :from "2025-06-10" :to "2025-08-31" :project "harbour"}]
+         {:person "sol" :place "Portugal" :city "Lisbon" :from "2025-06-10" :to "2025-08-31" :project "harbour"}
+         {:person "sol" :place "United States" :city "New York" :from "2025-10-01" :to "2025-10-12" :project "skyline"}
+         {:person "robin" :place "Mexico" :city "Mexico City" :from "2025-10-15" :to "2025-10-21"}
+         {:person "robin" :place "Portugal" :city "Lisbon" :from "2025-11-03" :to "2025-11-16" :project "harbour"}]
 
- :categories {"4112" "Passenger railways"
+ :categories {"7832" "Motion picture theaters"
+              "6513" "Real estate agents and managers (rentals)"
+              "5942" "Book stores"
+              "5651" "Family clothing stores"
+              "4814" "Telecommunication services"
+              "8931" "Accounting, auditing and bookkeeping services"
+              "6300" "Insurance sales and underwriting"
+              "4112" "Passenger railways"
               "4121" "Taxis and rideshare"
               "4215" "Courier services"
               "4511" "Airlines"
@@ -82,19 +93,27 @@
          {:id "A6" :code :skyline-travel :over ["A3"]
           :rule "A flight or lodging booked for travel to New York is Skyline travel, even when booked while on a Harbour trip or at home."
           :when [[:category :in #{"4511" "7011" "4722"}] [:jev "Was this flight or lodging booked for travel to New York?"]]}
-         {:id "A7" :code :harbour-cogs :over ["A1" "A2" "A9"]
-          :rule "Materials, tools, fabrication services and shipping for plaster sculptures are the Harbour Exhibition's cost of goods, wherever they were bought and whoever's card paid, even at a grocery store."
+         {:id "A7" :code :harbour-cogs :over ["A1" "A2" "A9" "A14"]
+          :rule "Materials, tools, fabrication services and shipping for plaster sculptures are the Harbour Exhibition's cost of goods, wherever they were bought and whoever's card paid, even at a grocery store. What the item is for decides the project, not where the buyer was."
           :when [[:jev "Is this a material, tool, fabrication service or shipping for plaster sculptures?"]]}
-         {:id "A8" :code :skyline-cogs :over ["A1" "A2" "A9"]
-          :rule "Materials, tools, fabrication services and shipping for a steel and glass installation are the Skyline Commission's cost of goods, wherever they were bought and whoever's card paid."
+         {:id "A8" :code :skyline-cogs :over ["A1" "A2" "A9" "A14"]
+          :rule "Materials, tools, fabrication services and shipping for a steel and glass installation are the Skyline Commission's cost of goods, wherever they were bought and whoever's card paid. What the item is for decides the project, not where the buyer was."
           :when [[:jev "Is this a material, tool, fabrication service or shipping for a steel and glass installation?"]]}
          {:id "A9" :code :personal
           :rule "Food, groceries, restaurants, gym and pharmacy at home are personal, even while projects run."
           :when [[:at-home] [:category :in #{"5411" "5812" "5814" "7997" "5912"}]]}
          {:id "A10" :code :overhead
-          :rule "Software, utilities, insurance, phone and accounting are studio overhead, not any project's, wherever the person is."
+          :rule "Software, the studio's rent, utilities, insurance, phone and accounting are studio overhead, not any project's, wherever the person is."
           :when [[:any [:category :in #{"5734" "4900"}]
-                  [:jev "Is this an ordinary running cost of a studio: software, utilities, insurance, phone or accounting?"]]]}
+                  [:jev "Is this an ordinary running cost of a studio: software, rent, utilities, insurance, phone or accounting?"]]]}
+         {:id "A13" :code :personal
+          :rule "Anything spent on a trip with no project (a holiday), and the flights and lodging booked for one, is personal."
+          :when [[:any [:trip :personal]
+                  [:jev "Was this flight or lodging booked for one of the cardholder's upcoming trips that has no project?"]]]}
+         {:id "A14" :code :personal
+          :rule "On a personal card, a person's own purchases (clothing, entertainment, books, things for their home, gifts) are personal, unless they are a project's materials or the studio's running costs."
+          :when [[:card :in #{"card-r" "card-s"}]
+                 [:jev "Is this a person's own purchase, for themselves or their home, rather than for the studio's or a project's work?"]]}
          {:id "A11" :code :needs-person :check true
           :rule "Cash withdrawals and transfers are never coded automatically."
           :when [[:any [:category :in #{"6011"}] [:channel :in #{:transfer}]]]}
@@ -146,4 +165,183 @@
           :hard "booked from home, before the trip: no trip says Skyline yet"}
          {:id "d23" :date "2025-09-12" :card "card-r" :merchant "Hudson Row Bistro" :mcc "5812" :amount 38.60M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :skyline-per-diem}
          {:id "d24" :date "2025-06-18" :card "card-r" :merchant "Atlantic Wing Airways" :mcc "4511" :amount 641.75M :currency "EUR" :country "Portugal" :channel :online :note "Lisbon to New York, 7 July" :expect :skyline-travel :ok #{:needs-person}
-          :hard "the same trap as d07, a month earlier"}]}
+          :hard "the same trap as d07, a month earlier"}
+
+         ;; Cases d25 to d100 were written apart from the rules, from the bookkeeping policy alone, to test the
+         ;; approach and not the rules' wording.
+
+ ;; ---- routine ----
+ {:id "d25" :date "2025-06-03" :card "card-t" :merchant "Pastelaria Rio Seco" :mcc "5814" :amount 6.40M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-per-diem
+  :why "Robin's breakfast in Lisbon on the June Harbour trip"}
+ {:id "d26" :date "2025-06-18" :card "card-s" :merchant "Mercado Alfaia" :mcc "5411" :amount 38.72M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-per-diem
+  :why "Sol's groceries in Lisbon during the Harbour trip, on the personal card"}
+ {:id "d27" :date "2025-07-02" :card "card-ts" :merchant "Gessos do Tejo Lda" :mcc "5200" :amount 412.30M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :items-from :receipt
+  :items [{:item "Gesso cerâmico 25 kg x6" :amount 287.40M :expect :harbour-cogs}
+          {:item "Serapilheira (hessian scrim) 10 m" :amount 64.95M :expect :harbour-cogs}
+          {:item "Taças de mistura flexíveis x3" :amount 59.95M :expect :harbour-cogs :why "mixing bowls for plaster"}]}
+ {:id "d28" :date "2025-07-09" :card "card-t" :merchant "Hudson Ironworks Supply" :mcc "5051" :amount 1873.45M :currency "USD" :country "United States" :city "New York" :channel :in-store :items-from :receipt
+  :items [{:item "Stainless flat bar 316, 50x6 mm, 6 m x8" :amount 1312.80M :expect :skyline-cogs}
+          {:item "Cut to length and TIG weld, 3 hrs" :amount 465.00M :expect :skyline-cogs}
+          {:item "Local delivery, Midtown" :amount 95.65M :expect :skyline-cogs}]}
+ {:id "d29" :date "2025-07-15" :card "card-t" :merchant "Metro Checker Cab Co" :mcc "4121" :amount 27.60M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :skyline-travel}
+ {:id "d30" :date "2025-04-14" :card "card-t" :merchant "Draftline Studio Suite" :mcc "5734" :amount 54.99M :currency "USD" :country "United States" :channel :online :note "Monthly plan" :expect :overhead}
+ {:id "d31" :date "2025-05-20" :card "card-t" :merchant "Basin Valley Power & Light" :mcc "4900" :amount 187.42M :currency "USD" :country "United States" :channel :online :note "Studio electric acct 4471-02" :expect :overhead}
+ {:id "d32" :date "2025-05-09" :card "card-r" :merchant "Silverlake Fresh Market" :mcc "5411" :amount 92.17M :currency "USD" :country "United States" :city "Los Angeles" :channel :in-store :expect :personal
+  :why "groceries at home while projects run"}
+ {:id "d33" :date "2025-10-04" :card "card-s" :merchant "Bowery Morning Coffee" :mcc "5814" :amount 7.85M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :skyline-per-diem
+  :why "Sol's New York trip"}
+ {:id "d34" :date "2025-10-06" :card "card-ts" :merchant "Brightwater Glassworks" :mcc "5231" :amount 2640.18M :currency "USD" :country "United States" :city "New York" :channel :in-store :items-from :receipt
+  :items [{:item "Laminated tempered panel 1200x2400, low-iron x2" :amount 2184.00M :expect :skyline-cogs}
+          {:item "Edge polish, flat, 14.4 lm" :amount 311.18M :expect :skyline-cogs}
+          {:item "Edge protectors and crating" :amount 145.00M :expect :skyline-cogs}]}
+ {:id "d35" :date "2025-10-17" :card "card-r" :merchant "Taquería El Farolito Azul" :mcc "5812" :amount 312.50M :currency "MXN" :country "Mexico" :city "Mexico City" :channel :in-store :expect :personal
+  :why "Robin's Mexico City trip has no project"}
+ {:id "d36" :date "2025-11-08" :card "card-r" :merchant "Ginásio Alto Mar" :mcc "7997" :amount 14.50M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "Day pass" :expect :harbour-per-diem
+  :why "gym on Robin's November Lisbon trip"}
+ {:id "d37" :date "2025-11-05" :card "card-t" :merchant "Farmácia Graça Nova" :mcc "5912" :amount 27.43M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :items-from :receipt
+  :items [{:item "Ibuprofeno 400 mg 20 comp." :amount 4.95M :expect :harbour-per-diem}
+          {:item "Protector solar FPS 50" :amount 13.90M :expect :harbour-per-diem}
+          {:item "Luvas de nitrilo, caixa 100" :amount 8.58M :expect :harbour-cogs :ok #{:harbour-per-diem :needs-person}
+           :hard "a box of 100 nitrile gloves from a pharmacy is shop-floor kit for plaster work, but it sits on a personal pharmacy receipt"}]}
+ {:id "d38" :date "2025-08-14" :card "card-s" :merchant "Tejo Rail Urbano" :mcc "4112" :amount 4.35M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-travel}
+ {:id "d39" :date "2025-09-11" :card "card-t" :merchant "Lexington Arms Hotel" :mcc "7011" :amount 2214.63M :currency "USD" :country "United States" :city "New York" :channel :in-store :note "Deposit, 14 nights" :expect :skyline-travel}
+ {:id "d40" :date "2025-08-22" :card "card-t" :merchant "Pacific Shore Mutual" :mcc "6300" :amount 318.76M :currency "USD" :country "United States" :channel :online :note "General liability policy, monthly" :expect :overhead
+  :why "studio insurance, billed while Robin is in Lisbon"}
+ {:id "d41" :date "2025-03-31" :card "card-t" :merchant "Ledgerwell Bookkeeping" :mcc "8931" :amount 427.50M :currency "USD" :country "United States" :channel :online :note "Q1 bookkeeping" :expect :overhead}
+ {:id "d42" :date "2025-06-22" :card "card-ts" :merchant "Fundição Moldes Atlântico" :mcc "5999" :amount 845.50M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "Molde em silicone, peça 3" :expect :harbour-cogs
+  :why "a mould made to order for a sculpture"}
+ {:id "d43" :date "2025-09-13" :card "card-s" :merchant "Vermont Ave Picture House" :mcc "7832" :amount 31.75M :currency "USD" :country "United States" :city "Los Angeles" :channel :in-store :expect :personal}
+ {:id "d44" :date "2025-09-18" :card "card-r" :merchant "Delancey Deli & Grocer" :mcc "5411" :amount 23.44M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :skyline-per-diem}
+ {:id "d45" :date "2025-10-09" :card "card-s" :merchant "Gotham Line Rides" :mcc "4121" :amount 18.92M :currency "USD" :country "United States" :city "New York" :channel :online :expect :skyline-travel
+  :why "rideshare app charge during Sol's New York trip"}
+ {:id "d46" :date "2025-07-28" :card "card-ts" :merchant "Transportes Ribeira Express" :mcc "4215" :amount 286.40M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "Entrega 4 caixas, atelier > galeria" :expect :harbour-cogs
+  :why "moving crated sculptures from the workshop to the gallery"}
+ {:id "d47" :date "2025-12-06" :card "card-r" :merchant "Echo Park Supper Club" :mcc "5812" :amount 68.20M :currency "USD" :country "United States" :city "Los Angeles" :channel :in-store :expect :personal}
+ {:id "d48" :date "2025-11-12" :card "card-t" :merchant "Lixas e Abrasivos Belém" :mcc "5200" :amount 61.85M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :items-from :receipt
+  :items [{:item "Lixa de água P400, 25 folhas" :amount 18.90M :expect :harbour-cogs}
+          {:item "Bloco de lixar em cortiça x2" :amount 9.80M :expect :harbour-cogs}
+          {:item "Máscaras FFP2, caixa 20" :amount 33.15M :expect :harbour-cogs :ok #{:needs-person}
+           :why "dust masks for sanding plaster, bought with the sandpaper"}]}
+ {:id "d49" :date "2025-08-09" :card "card-r" :merchant "Mercearia Preço Certo da Graça" :mcc "5411" :amount 52.66M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-per-diem
+  :why "both Robin and Sol are in Lisbon; one card's groceries for both travellers is still per diem"}
+ {:id "d50" :date "2025-06-10" :card "card-s" :merchant "Táxis Aeroporto Lisboa" :mcc "4121" :amount 22.40M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-travel
+  :why "Sol's arrival day, airport to the flat"}
+ {:id "d51" :date "2025-09-10" :card "card-r" :merchant "Midtown Corner Pharmacy" :mcc "5912" :amount 18.73M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :skyline-per-diem
+  :why "first day of Robin's September New York trip"}
+ {:id "d52" :date "2025-10-16" :card "card-r" :merchant "Taxi Seguro Reforma" :mcc "4121" :amount 186.50M :currency "MXN" :country "Mexico" :city "Mexico City" :channel :in-store :expect :personal}
+ {:id "d53" :date "2025-03-01" :card "card-t" :merchant "Arroyo Works Lofts LLC" :mcc "6513" :amount 3850.00M :currency "USD" :country "United States" :channel :online :note "Studio rent - March" :expect :overhead}
+ {:id "d54" :date "2025-11-14" :card "card-r" :merchant "Tasca da Rua Nova" :mcc "5812" :amount 23.80M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-per-diem}
+
+ ;; ---- edge cases ----
+ {:id "d55" :date "2025-05-12" :card "card-r" :merchant "Pacifica Atlantic Airways" :mcc "4511" :amount 1124.80M :currency "USD" :country "United States" :channel :online :note "LAX-LIS 01JUN / LIS-LAX 30JUN" :expect :harbour-travel
+  :why "booked from home three weeks ahead for the June Lisbon trip"}
+ {:id "d56" :date "2025-06-30" :card "card-r" :merchant "Café Partidas T1" :mcc "5814" :amount 9.20M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-per-diem
+  :why "last day of the trip, at the airport before flying home"}
+ {:id "d57" :date "2025-07-07" :card "card-r" :merchant "Westside Terminal Grill" :mcc "5812" :amount 21.35M :currency "USD" :country "United States" :city "Los Angeles" :channel :in-store :expect :skyline-per-diem :ok #{:personal :needs-person}
+  :hard "the first day of the New York trip, but the meal is at the departure airport in Los Angeles: a travel-day meal, though the city says home"}
+ {:id "d58" :date "2025-08-31" :card "card-s" :merchant "Mercado Doce Lar Intendente" :mcc "5411" :amount 17.36M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-per-diem
+  :why "Sol's last day in Lisbon"}
+ {:id "d59" :date "2025-09-01" :card "card-s" :merchant "Silverlake Fresh Market" :mcc "5411" :amount 74.09M :currency "USD" :country "United States" :city "Los Angeles" :channel :in-store :expect :personal
+  :why "the day after Sol's trip ended: home again"}
+ {:id "d60" :date "2025-09-27" :card "card-t" :merchant "Lexington Arms Hotel" :mcc "7011" :amount -186.40M :currency "USD" :country "United States" :channel :online :note "Folio adjustment - refund" :expect :skyline-travel
+  :why "a refund on the September New York hotel goes back where the stay went"}
+ {:id "d61" :date "2025-08-10" :card "card-t" :merchant "Lã & Linho Boutique" :mcc "5651" :amount 89.00M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :personal :ok #{:needs-person}
+  :why "clothing on the business card during a trip: not a living cost the per diem covers"}
+ {:id "d62" :date "2025-05-24" :card "card-r" :merchant "Eastside Builders Hardware" :mcc "5200" :amount 71.43M :currency "USD" :country "United States" :city "Los Angeles" :channel :in-store :items-from :receipt
+  :items [{:item "Plaster of Paris, 25 lb" :amount 32.98M :expect :harbour-cogs :why "personal card, at home, project material"}
+          {:item "Mixing bucket, 5 gal x2" :amount 13.96M :expect :harbour-cogs :ok #{:needs-person}}
+          {:item "Potting mix, 2 cu ft" :amount 24.49M :expect :personal}]}
+ {:id "d63" :date "2025-07-16" :card "card-ts" :merchant "Supermercado Bairro Alto" :mcc "5411" :amount 21.81M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :items-from :receipt
+  :items [{:item "Pão, fruta e iogurtes" :amount 14.37M :expect :harbour-per-diem}
+          {:item "Vaselina 500 g" :amount 4.29M :expect :needs-person :ok #{:harbour-cogs :harbour-per-diem}
+           :hard "petroleum jelly is a common plaster mould release, and also an ordinary toiletry: the receipt cannot say which"}
+          {:item "Sacos do lixo 30 L" :amount 3.15M :expect :harbour-per-diem :ok #{:harbour-cogs}}]}
+ {:id "d64" :date "2025-08-05" :card "card-t" :merchant "Makerhaus Direct" :mcc "5999" :amount 197.27M :currency "USD" :country "United States" :channel :online :items-from :order
+  :items [{:item "Platinum silicone mould rubber, 1 gal kit" :amount 128.95M :expect :harbour-cogs}
+          {:item "EPDM glazing gasket, 25 m" :amount 46.33M :expect :skyline-cogs}
+          {:item "Nitrile gloves, box of 100" :amount 21.99M :expect :needs-person :ok #{:harbour-cogs :skyline-cogs}
+           :hard "gloves serve both projects' workshops; splitting or choosing one is a judgement call"}]}
+ {:id "d65" :date "2025-08-19" :card "card-t" :merchant "Skybridge Travel Desk" :mcc "4722" :amount 486.30M :currency "USD" :country "United States" :channel :online :note "Hotel Midtown 10-24 SEP" :expect :skyline-travel
+  :why "booked from Lisbon for the September New York trip"}
+ {:id "d66" :date "2025-09-03" :card "card-ts" :merchant "Coastline Freight Couriers" :mcc "4215" :amount 734.55M :currency "USD" :country "United States" :city "Los Angeles" :channel :in-store :note "LAX>JFK 2 crates glass fittings" :expect :skyline-cogs
+  :why "shipping project material from the studio to New York"}
+ {:id "d67" :date "2025-10-28" :card "card-t" :merchant "Transatlantic Parcel Line" :mcc "4215" :amount 1288.17M :currency "USD" :country "United States" :channel :online :note "Maquetes p/ Lisboa, 3 volumes" :expect :harbour-cogs}
+ {:id "d68" :date "2025-09-15" :card "card-t" :merchant "Ninth Ave Car Service" :mcc "4121" :amount 12.00M :currency "USD" :country "United States" :city "New York" :channel :in-store :note "TIP" :expect :skyline-travel
+  :why "a tip posted separately from the fare"}
+ {:id "d69" :date "2025-06-12" :card "card-r" :merchant "Cervejaria Maré Alta" :mcc "5812" :amount 4.50M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "Gratificação" :expect :harbour-per-diem
+  :why "the tip on a dinner, posted as its own line"}
+ {:id "d70" :date "2025-06-15" :card "card-t" :merchant "Cordwave Mobile" :mcc "4814" :amount 82.37M :currency "USD" :country "United States" :channel :online :note "Monthly - studio lines" :expect :overhead
+  :why "the studio phone bill, charged while Robin is in Lisbon"}
+ {:id "d71" :date "2025-08-02" :card "card-t" :merchant "Cordwave Mobile" :mcc "4814" :amount 45.00M :currency "USD" :country "United States" :channel :online :note "Intl Travel Pass - Portugal 30 days" :expect :overhead :ok #{:harbour-travel :needs-person}
+  :hard "roaming bought for the Lisbon trip: the phone is overhead, but this charge exists only because of the trip"}
+ {:id "d72" :date "2025-10-27" :card "card-r" :merchant "Downtown Glass & Mirror" :mcc "5231" :amount 507.63M :currency "USD" :country "United States" :city "Los Angeles" :channel :in-store :items-from :receipt
+  :items [{:item "Tempered sample cuts, 300x300, low-iron x6" :amount 318.64M :expect :skyline-cogs :why "personal card, at home, for the commission"}
+          {:item "Bathroom mirror, bevelled 600x900" :amount 188.99M :expect :personal}]}
+ {:id "d73" :date "2025-12-02" :card "card-t" :merchant "Valley Steel Stockists" :mcc "5051" :amount -212.40M :currency "USD" :country "United States" :channel :online :note "Credit - returned unused angle, Skyline job" :expect :skyline-cogs
+  :why "a return credited after the commission closed still belongs to its cost of goods"}
+ {:id "d74" :date "2025-07-11" :card "card-ts" :merchant "Restaurante Cais Velho" :mcc "5812" :amount 46.80M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "Skyline team dinner" :expect :needs-person :ok #{:harbour-per-diem}
+  :hard "the memo names the New York project but Sol is in Lisbon on the Harbour trip: the note and the facts disagree"}
+ {:id "d75" :date "2025-06-26" :card "card-ts" :merchant "Gesso e Estuques do Poço" :mcc "5200" :amount 133.85M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-cogs
+  :why "gesso is plaster: a plaster supplier, named in Portuguese"}
+ {:id "d76" :date "2025-06-20" :card "card-r" :merchant "Livraria do Cais" :mcc "5942" :amount 28.50M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "presente - diretora da galeria" :expect :needs-person :ok #{:personal}
+  :hard "a gift for the gallery director: tied to the project but no project bucket covers gifts, so it is personal or a person decides"}
+ {:id "d77" :date "2025-09-19" :card "card-t" :merchant "Graystone Chophouse" :mcc "5812" :amount 412.86M :currency "USD" :country "United States" :city "New York" :channel :in-store :note "dinner w/ client + architect, lobby review" :expect :needs-person :ok #{:skyline-per-diem}
+  :hard "a client dinner is a project cost but not the traveller's own living cost; per diem is the nearest bucket, not the right one"}
+ {:id "d78" :date "2025-07-25" :card "card-ts" :merchant "Tasca do Pescador" :mcc "5812" :amount 63.40M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "almoço equipa - Sol + 2 moldadores" :expect :harbour-per-diem :ok #{:needs-person}
+  :why "Sol buying lunch for two local mould-makers: a team meal on the trip"}
+ {:id "d79" :date "2025-05-15" :card "card-t" :merchant "Moldaria Portuguesa" :mcc "5999" :amount 156.20M :currency "EUR" :country "Portugal" :channel :online :note "Encomenda 2291 - látex para moldes" :expect :harbour-cogs
+  :why "ordered from home, in euros, from a Portuguese supplier"}
+ {:id "d80" :date "2025-10-03" :card "card-s" :merchant "Canal Street Fasteners" :mcc "5200" :amount 64.37M :currency "USD" :country "United States" :city "New York" :channel :in-store :note "glass standoff bolts" :expect :skyline-cogs
+  :why "Sol's personal card for project fixings"}
+ {:id "d81" :date "2025-04-03" :card "card-t" :merchant "Griffith Park Pilates Club" :mcc "7997" :amount 138.50M :currency "USD" :country "United States" :city "Los Angeles" :channel :in-store :expect :personal
+  :why "gym at home on the business card"}
+ {:id "d82" :date "2025-10-18" :card "card-r" :merchant "Pacifica Atlantic Airways" :mcc "4511" :amount 1342.65M :currency "USD" :country "United States" :channel :online :note "LAX-LIS 03NOV / LIS-LAX 16NOV" :expect :harbour-travel
+  :why "booked from Mexico City, on a personal trip, for the November Lisbon trip"}
+ {:id "d83" :date "2025-09-29" :card "card-r" :merchant "Aerolíneas Sierra Madre" :mcc "4511" :amount 412.38M :currency "USD" :country "United States" :channel :online :note "LAX-MEX 15OCT / MEX-LAX 21OCT" :expect :personal}
+ {:id "d84" :date "2025-10-19" :card "card-t" :merchant "Ferretería La Paloma" :mcc "5200" :amount 1240.00M :currency "MXN" :country "Mexico" :city "Mexico City" :channel :in-store :items-from :receipt
+  :items [{:item "Yeso cerámico tipo III, 25 kg x2" :amount 985.40M :expect :harbour-cogs :ok #{:needs-person}
+           :hard "plaster on the business card during a personal trip: cost of goods wherever bought, but a person may want to know why it was bought there"}
+          {:item "Espátulas de acero, juego de 5" :amount 254.60M :expect :harbour-cogs :ok #{:needs-person}}]}
+ {:id "d85" :date "2025-09-22" :card "card-ts" :merchant "Ironbridge Suites Brooklyn" :mcc "7011" :amount 1618.90M :currency "USD" :country "United States" :channel :online :note "Res. 01-12 OCT, prepaid" :expect :skyline-travel
+  :why "Sol prepays the October New York stay from home"}
+ {:id "d86" :date "2025-10-20" :card "card-t" :merchant "Alfama Stays Apartamentos" :mcc "7011" :amount 742.00M :currency "EUR" :country "Portugal" :channel :online :note "Reserva 03-16 NOV" :expect :harbour-travel
+  :why "booked while Robin is in Mexico City, for the November Lisbon trip"}
+ {:id "d87" :date "2025-07-17" :card "card-t" :merchant "Chelsea Provisions Market" :mcc "5411" :amount 27.46M :currency "USD" :country "United States" :city "New York" :channel :in-store :items-from :receipt
+  :items [{:item "Turkey club and side salad" :amount 14.25M :expect :skyline-per-diem}
+          {:item "Sparkling water 1 L" :amount 2.49M :expect :skyline-per-diem}
+          {:item "Isopropyl alcohol 99%, 1 L" :amount 10.72M :expect :skyline-cogs :ok #{:needs-person :skyline-per-diem}
+           :hard "a litre of 99% IPA is for cleaning glass before bonding, but it came on a lunch receipt"}]}
+ {:id "d88" :date "2025-07-20" :card "card-t" :merchant "Lexington Arms Hotel" :mcc "7011" :amount 3392.16M :currency "USD" :country "United States" :city "New York" :channel :in-store :items-from :receipt
+  :items [{:item "Room, 13 nights" :amount 3146.00M :expect :skyline-travel}
+          {:item "Lobby Bar & Kitchen charges" :amount 184.36M :expect :skyline-per-diem}
+          {:item "Laundry service" :amount 61.80M :expect :skyline-per-diem :ok #{:personal :needs-person}
+           :hard "laundry on a long trip is a living cost, but the policy's per diem list does not name it"}]}
+ {:id "d89" :date "2025-08-01" :card "card-r" :merchant "Pacifica Atlantic Airways" :mcc "4511" :amount 1262.40M :currency "USD" :country "United States" :channel :online :items-from :order
+  :items [{:item "Fare LAX-LIS 01AUG / LIS-LAX 31AUG" :amount 1136.15M :expect :harbour-travel}
+          {:item "Extra checked bag - tools" :amount 126.25M :expect :harbour-travel :ok #{:harbour-cogs}}]}
+ {:id "d90" :date "2025-06-24" :card "card-r" :merchant "Benchmark Tool Supply" :mcc "5999" :amount 251.73M :currency "USD" :country "United States" :channel :online :items-from :order
+  :items [{:item "Carbide wheel glass cutter, oil-fed" :amount 38.95M :expect :skyline-cogs}
+          {:item "Plaster rasp set, 4 pc" :amount 67.80M :expect :harbour-cogs}
+          {:item "Trail running shoes, men's 10" :amount 144.98M :expect :personal}]}
+ {:id "d91" :date "2025-08-23" :card "card-s" :merchant "Mercearia Bom Sucesso" :mcc "5411" :amount 44.68M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :items-from :receipt
+  :items [{:item "Mercearia diversa" :amount 22.79M :expect :harbour-per-diem}
+          {:item "Vinho do Porto 10 anos (presente)" :amount 21.89M :expect :personal :ok #{:needs-person :harbour-per-diem}
+           :why "a bottle of port as a gift, on Sol's grocery receipt"}]}
+
+ ;; ---- needs a person ----
+ {:id "d92" :date "2025-09-12" :card "card-s" :merchant "Union Square Grocers" :mcc "5411" :amount 41.27M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :needs-person
+  :why "Sol is recorded at home in September; her New York trip is in October"}
+ {:id "d93" :date "2025-07-03" :card "card-r" :merchant "Café Largo das Andorinhas" :mcc "5814" :amount 5.60M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :needs-person
+  :why "in-store in Lisbon three days after Robin's June trip ended"}
+ {:id "d94" :date "2025-10-13" :card "card-ts" :merchant "Terminal Four Market" :mcc "5814" :amount 14.62M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :needs-person :ok #{:skyline-per-diem}
+  :hard "the day after Sol's trip is recorded to end, at the New York airport: most likely a late flight home and per diem, but the trip dates say otherwise"}
+ {:id "d95" :date "2025-06-05" :card "card-t" :merchant "Caixa Automática Rossio" :mcc "6011" :amount 200.00M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :needs-person}
+ {:id "d96" :date "2025-08-29" :card "card-t" :merchant "Transfer to Sol" :amount 1247.83M :currency "USD" :country "United States" :channel :transfer :note "reimb. Lisbon expenses Jul-Aug" :expect :needs-person}
+ {:id "d97" :date "2025-05-28" :card "card-t" :merchant "Parcelbox Marketplace" :mcc "5999" :amount 73.19M :currency "USD" :country "United States" :channel :online :expect :needs-person
+  :why "an online order with no detail"}
+ {:id "d98" :date "2025-09-05" :card "card-s" :merchant "Ginásio Alto Mar" :mcc "7997" :amount 39.90M :currency "EUR" :country "Portugal" :channel :online :note "Mensalidade setembro" :expect :personal :ok #{:needs-person}
+  :hard "a Lisbon gym membership taken for the trip keeps billing after Sol is home: personal now, but someone should cancel it or claim the month"}
+ {:id "d99" :date "2025-08-12" :card "card-ts" :merchant "TPV*MRB LDA" :amount 31.40M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :needs-person :ok #{:harbour-per-diem}
+  :hard "Sol is on the Harbour trip, but the merchant name and missing category say nothing about what was bought"}
+ {:id "d100" :date "2025-11-10" :card "card-t" :merchant "Aços Tejo Metalúrgica" :mcc "5051" :amount 384.20M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :needs-person :ok #{:harbour-cogs :skyline-cogs}
+  :hard "steel is Skyline's material, but it was bought in Lisbon on a Harbour trip and plaster sculptures use steel armatures"}]}

@@ -29,6 +29,19 @@
       (cond-> {:place country :trip nil}
         city (assoc :city city)))))
 
+(defn upcoming-trips
+  "`person`'s trips that start after day `d` and within `days` of it, soonest first: what a booking made on `d` may be
+  for."
+  [{:keys [trips]} person d days]
+  (let [d (date d)
+        until (.plusDays d days)]
+    (->> trips
+         (filter #(and (= person (:person %))
+                       (.isAfter (date (:from %)) d)
+                       (not (.isAfter (date (:from %)) until))))
+         (sort-by :from)
+         vec)))
+
 (defn running-projects
   "The ids of the projects running on day `d`."
   [{:keys [projects]} d]
@@ -63,6 +76,7 @@
                     {:card card :card-name (:name card-info) :holder holder :card-entity entity
                      :whereabouts where
                      :projects running
+                     :upcoming (upcoming-trips scenario holder date 90)
                      :traveller (boolean (some #(some #{holder} (get-in projects [% :travellers])) running))
                      :country-mismatch (boolean (and (= :in-store channel)
                                                      (or (and country (not= country (:place where)))
@@ -104,4 +118,9 @@
                                                   :let [{:keys [name place work]} (get projects p)]]
                                               (str name ", in " place (some->> work (str ": ")))))}
               (:traveller facts) (assoc :cardholder_travels_for_a_running_project true)
+              (seq (:upcoming facts))
+              (assoc :cardholder_upcoming_trips
+                     (vec (for [{:keys [place city from to project]} (:upcoming facts)]
+                            (str (if city (str city ", " place) place) ", " from " to " to ": "
+                                 (if project (str "for " (get-in projects [project :name])) "a personal trip, no project")))))
               (= :in-store channel) (assoc :shop_is_where_cardholder_was (not country-mismatch)))})
