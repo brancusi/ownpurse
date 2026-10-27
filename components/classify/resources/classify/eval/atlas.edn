@@ -1,0 +1,149 @@
+;; Two projects at once: a studio fabricating plaster sculptures for an exhibition in Lisbon, and a steel and glass
+;; installation in New York, while its people live in Los Angeles. The same card pays for both, so where its holder
+;; was (by city), and what was bought, decide the project. Each line is coded into a bucket: a project's per diem, its
+;; cost of goods or its travel, the studio's overhead, personal, or a person must look. Everything here is made up.
+{:scenario "atlas"
+ :home {:country "United States" :city "Los Angeles"}
+ :business "tallowmere"
+
+ :entities {"tallowmere" {:name "Tallowmere Studio" :kind :business}
+            "robin" {:name "Robin" :kind :household}
+            "sol" {:name "Sol" :kind :household}}
+
+ :cards {"card-r" {:holder "robin" :entity "robin" :name "Robin's personal card"}
+         "card-s" {:holder "sol" :entity "sol" :name "Sol's personal card"}
+         "card-t" {:holder "robin" :entity "tallowmere" :name "Tallowmere Studio's business card"}}
+
+ :projects {"harbour" {:name "Harbour Exhibition" :from "2025-05-01" :to "2025-12-31"
+                       :place "Lisbon, Portugal" :work "fabricating plaster sculptures for an exhibition"
+                       :bears "tallowmere" :travellers ["robin" "sol"]}
+            "skyline" {:name "Skyline Commission" :from "2025-07-01" :to "2025-11-30"
+                       :place "New York, United States" :work "a steel and glass installation for a building's lobby"
+                       :bears "tallowmere" :travellers ["robin"]}}
+
+ ;; Where each person was, by day, with the city. Any other day they are at home, in Los Angeles.
+ :trips [{:person "robin" :place "Portugal" :city "Lisbon" :from "2025-06-01" :to "2025-06-30" :project "harbour"}
+         {:person "robin" :place "United States" :city "New York" :from "2025-07-07" :to "2025-07-20" :project "skyline"}
+         {:person "robin" :place "Portugal" :city "Lisbon" :from "2025-08-01" :to "2025-08-31" :project "harbour"}
+         {:person "robin" :place "United States" :city "New York" :from "2025-09-10" :to "2025-09-24" :project "skyline"}
+         {:person "sol" :place "Portugal" :city "Lisbon" :from "2025-06-10" :to "2025-08-31" :project "harbour"}]
+
+ :categories {"4112" "Passenger railways"
+              "4121" "Taxis and rideshare"
+              "4215" "Courier services"
+              "4511" "Airlines"
+              "4722" "Travel agencies and booking sites"
+              "4900" "Utilities"
+              "5051" "Metal service centers"
+              "5200" "Home supply and hardware stores"
+              "5231" "Glass, paint and wallpaper stores"
+              "5411" "Grocery stores and supermarkets"
+              "5734" "Computer software stores"
+              "5812" "Restaurants"
+              "5814" "Fast food and cafés"
+              "5912" "Pharmacies"
+              "5999" "Miscellaneous retail"
+              "6011" "Cash withdrawal (ATM)"
+              "7011" "Hotels and lodging"
+              "7997" "Gyms and clubs"}
+
+ ;; The buckets. Jev reads each description as an option of its Choice.
+ :codes {:harbour-per-diem "Harbour Exhibition, per diem: a traveller's own living costs while on a trip to Lisbon for it (food, groceries, restaurants, cafés, gym, pharmacy)"
+         :harbour-cogs "Harbour Exhibition, cost of goods: materials, tools, fabrication and shipping for its plaster sculptures"
+         :harbour-travel "Harbour Exhibition, travel: flights, trains, taxis and lodging for a trip to Lisbon for it"
+         :skyline-per-diem "Skyline Commission, per diem: a traveller's own living costs while on a trip to New York for it (food, groceries, restaurants, cafés, gym, pharmacy)"
+         :skyline-cogs "Skyline Commission, cost of goods: materials, tools, fabrication and shipping for its steel and glass installation"
+         :skyline-travel "Skyline Commission, travel: flights, trains, taxis and lodging for a trip to New York for it"
+         :overhead "Studio overhead: the studio's ordinary running costs (software, utilities, insurance, phone, accounting), not any one project's"
+         :personal "Personal: a person's own spending that no project and not the studio covers"
+         :needs-person "The rules do not decide this line, or the facts contradict each other: a person must look at it"}
+
+ ;; How the buckets are laid out on a page: by project, then the studio, then the rest.
+ :buckets [{:project "harbour" :codes [[:harbour-per-diem "Per diem"] [:harbour-cogs "Cost of goods"] [:harbour-travel "Travel"]]}
+           {:project "skyline" :codes [[:skyline-per-diem "Per diem"] [:skyline-cogs "Cost of goods"] [:skyline-travel "Travel"]]}
+           {:title "Studio" :codes [[:overhead "Overhead"]]}
+           {:title "Personal, or a person to look" :codes [[:personal "Personal"] [:needs-person "Needs a person"]]}]
+
+ :rules [{:id "A1" :code :harbour-per-diem
+          :rule "While a traveller is on a trip for the Harbour Exhibition, their food, groceries, restaurants, cafés, gym and pharmacy purchases are Harbour per diem."
+          :when [[:on-trip-for "harbour"] [:category :in #{"5411" "5812" "5814" "7997" "5912"}]]}
+         {:id "A2" :code :skyline-per-diem
+          :rule "While a traveller is on a trip for the Skyline Commission, their food, groceries, restaurants, cafés, gym and pharmacy purchases are Skyline per diem."
+          :when [[:on-trip-for "skyline"] [:category :in #{"5411" "5812" "5814" "7997" "5912"}]]}
+         {:id "A3" :code :harbour-travel
+          :rule "Transport and lodging while on a trip for the Harbour Exhibition are Harbour travel."
+          :when [[:on-trip-for "harbour"] [:category :in #{"4112" "4121" "4511" "7011" "4722"}]]}
+         {:id "A4" :code :skyline-travel
+          :rule "Transport and lodging while on a trip for the Skyline Commission are Skyline travel."
+          :when [[:on-trip-for "skyline"] [:category :in #{"4112" "4121" "4511" "7011" "4722"}]]}
+         {:id "A5" :code :harbour-travel :over ["A4"]
+          :rule "A flight or lodging booked for travel to Lisbon is Harbour travel, even when booked while on a Skyline trip or at home."
+          :when [[:category :in #{"4511" "7011" "4722"}] [:jev "Was this flight or lodging booked for travel to Lisbon?"]]}
+         {:id "A6" :code :skyline-travel :over ["A3"]
+          :rule "A flight or lodging booked for travel to New York is Skyline travel, even when booked while on a Harbour trip or at home."
+          :when [[:category :in #{"4511" "7011" "4722"}] [:jev "Was this flight or lodging booked for travel to New York?"]]}
+         {:id "A7" :code :harbour-cogs :over ["A1" "A2" "A9"]
+          :rule "Materials, tools, fabrication services and shipping for plaster sculptures are the Harbour Exhibition's cost of goods, wherever they were bought and whoever's card paid, even at a grocery store."
+          :when [[:jev "Is this a material, tool, fabrication service or shipping for plaster sculptures?"]]}
+         {:id "A8" :code :skyline-cogs :over ["A1" "A2" "A9"]
+          :rule "Materials, tools, fabrication services and shipping for a steel and glass installation are the Skyline Commission's cost of goods, wherever they were bought and whoever's card paid."
+          :when [[:jev "Is this a material, tool, fabrication service or shipping for a steel and glass installation?"]]}
+         {:id "A9" :code :personal
+          :rule "Food, groceries, restaurants, gym and pharmacy at home are personal, even while projects run."
+          :when [[:at-home] [:category :in #{"5411" "5812" "5814" "7997" "5912"}]]}
+         {:id "A10" :code :overhead
+          :rule "Software, utilities, insurance, phone and accounting are studio overhead, not any project's, wherever the person is."
+          :when [[:any [:category :in #{"5734" "4900"}]
+                  [:jev "Is this an ordinary running cost of a studio: software, utilities, insurance, phone or accounting?"]]]}
+         {:id "A11" :code :needs-person :check true
+          :rule "Cash withdrawals and transfers are never coded automatically."
+          :when [[:any [:category :in #{"6011"}] [:channel :in #{:transfer}]]]}
+         {:id "A12" :code :needs-person :check true
+          :rule "A purchase made in person in a city or country where the cardholder is not recorded to be is never coded automatically."
+          :when [[:channel :in #{:in-store}] [:country-mismatch]]}]
+
+ ;; Each case is built so its bucket is known (:expect; :ok holds other acceptable answers). :hard says what makes
+ ;; it hard, when it is.
+ :cases [{:id "d01" :date "2025-06-05" :card "card-r" :merchant "Mercado Azul" :mcc "5411" :amount 41.35M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-per-diem}
+         {:id "d02" :date "2025-07-10" :card "card-r" :merchant "Corner Greens Market" :mcc "5411" :amount 57.80M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :skyline-per-diem
+          :why "the same card as d01, a month later, in New York for the other project"}
+         {:id "d03" :date "2025-07-28" :card "card-r" :merchant "Prairie Market" :mcc "5411" :amount 63.15M :currency "USD" :country "United States" :city "Los Angeles" :channel :in-store :expect :personal
+          :why "at home between trips, though both projects are running"}
+         {:id "d04" :date "2025-07-12" :card "card-r" :merchant "MetroCab" :mcc "4121" :amount 23.40M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :skyline-travel}
+         {:id "d05" :date "2025-08-04" :card "card-r" :merchant "RideNow" :mcc "4121" :amount 11.65M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-travel}
+         {:id "d06" :date "2025-09-10" :card "card-t" :merchant "Hudson Row Hotel" :mcc "7011" :amount 2846.30M :currency "USD" :country "United States" :city "New York" :channel :online :expect :skyline-travel}
+         {:id "d07" :date "2025-08-25" :card "card-r" :merchant "Atlantic Wing Airways" :mcc "4511" :amount 893.20M :currency "EUR" :country "Portugal" :channel :online :note "Lisbon to New York, 10 September" :expect :skyline-travel :ok #{:needs-person}
+          :hard "booked while on a Harbour trip, for the Skyline trip: where Robin was says Harbour, the note says Skyline"}
+         {:id "d08" :date "2025-06-12" :card "card-r" :merchant "Obra e Casa" :mcc "5200" :amount 52.85M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :items-from :receipt
+          :items [{:item "Plaster of Paris, 25 kg" :amount 38.90M :expect :harbour-cogs}
+                  {:item "Sanding sponges, pack of 6" :amount 13.95M :expect :harbour-cogs :ok #{:needs-person}}]}
+         {:id "d09" :date "2025-07-15" :card "card-t" :merchant "Ironbridge Steel Stock" :mcc "5051" :amount 1287.45M :currency "USD" :country "United States" :city "New York" :channel :in-store :note "stainless flat bar, cut to length" :expect :skyline-cogs}
+         {:id "d10" :date "2025-08-12" :card "card-r" :merchant "Clearpane Glassworks" :mcc "5231" :amount 3415.60M :currency "USD" :country "United States" :channel :online :note "tempered panels, deliver to the New York site" :expect :skyline-cogs :ok #{:needs-person}
+          :hard "ordered while Robin was in Lisbon for Harbour: what was bought decides, not where Robin was"}
+         {:id "d11" :date "2025-07-25" :card "card-t" :merchant "Sketchloom" :mcc "5734" :amount 15.00M :currency "USD" :country "United States" :channel :online :expect :overhead}
+         {:id "d12" :date "2025-08-03" :card "card-t" :merchant "Pacific Power and Light" :mcc "4900" :amount 186.72M :currency "USD" :country "United States" :channel :online :note "studio electricity, July" :expect :overhead
+          :why "the studio's running cost, while Robin is in Lisbon"}
+         {:id "d13" :date "2025-08-20" :card "card-t" :merchant "Correio Rápido" :mcc "4215" :amount 412.30M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :note "crate of glass fittings to the New York site" :expect :skyline-cogs :ok #{:needs-person}
+          :hard "shipping paid in Lisbon, for the New York installation"}
+         {:id "d14" :date "2025-07-01" :card "card-s" :merchant "Mercado Azul" :mcc "5411" :amount 29.75M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :harbour-per-diem}
+         {:id "d15" :date "2025-09-15" :card "card-s" :merchant "Corner Greens Market" :mcc "5411" :amount 34.10M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :needs-person
+          :hard "Sol's card in a New York shop while Sol is recorded at home in Los Angeles: the same country, so only the city tells"}
+         {:id "d16" :date "2025-09-18" :card "card-r" :merchant "Iron Loft Gym" :mcc "7997" :amount 45.00M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :skyline-per-diem}
+         {:id "d17" :date "2025-07-07" :card "card-r" :merchant "Café Andorinha" :mcc "5814" :amount 4.80M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :expect :needs-person :ok #{:skyline-per-diem}
+          :hard "a coffee in Lisbon on the day the New York trip starts: a travel day the trips do not show"}
+         {:id "d18" :date "2025-09-20" :card "card-r" :merchant "Everystore.com" :mcc "5999" :amount 48.62M :currency "USD" :country "United States" :channel :online :expect :needs-person
+          :hard "an online order with no receipt says nothing about what it was for"}
+         {:id "d19" :date "2025-07-14" :card "card-r" :merchant "Hudson Savings ATM" :mcc "6011" :amount 200.00M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :needs-person}
+         {:id "d20" :date "2025-08-10" :card "card-r" :merchant "Mercado Azul" :mcc "5411" :amount 23.15M :currency "EUR" :country "Portugal" :city "Lisbon" :channel :in-store :items-from :receipt
+          :items [{:item "Bread and cheese" :amount 8.45M :expect :harbour-per-diem}
+                  {:item "Plaster bandage rolls" :amount 14.70M :expect :harbour-cogs :ok #{:needs-person}
+                   :hard "plaster at a supermarket: the cost of goods rule is the exception to the per diem one"}]}
+         {:id "d21" :date "2025-10-05" :card "card-r" :merchant "Everystore.com" :mcc "5999" :amount 61.48M :currency "USD" :country "United States" :channel :online :items-from :order
+          :items [{:item "Casting plaster, 10 kg" :amount 24.99M :expect :harbour-cogs :ok #{:needs-person}}
+                  {:item "Glass suction lifter" :amount 36.49M :expect :skyline-cogs :ok #{:needs-person}
+                   :hard "one order from home, two projects: only the items tell them apart"}]}
+         {:id "d22" :date "2025-09-01" :card "card-r" :merchant "Hudson Row Hotel" :mcc "7011" :amount 1932.40M :currency "USD" :country "United States" :channel :online :note "10 to 24 September" :expect :skyline-travel :ok #{:needs-person}
+          :hard "booked from home, before the trip: no trip says Skyline yet"}
+         {:id "d23" :date "2025-09-12" :card "card-r" :merchant "Hudson Row Bistro" :mcc "5812" :amount 38.60M :currency "USD" :country "United States" :city "New York" :channel :in-store :expect :skyline-per-diem}
+         {:id "d24" :date "2025-06-18" :card "card-r" :merchant "Atlantic Wing Airways" :mcc "4511" :amount 641.75M :currency "EUR" :country "Portugal" :channel :online :note "Lisbon to New York, 7 July" :expect :skyline-travel :ok #{:needs-person}
+          :hard "the same trap as d07, a month earlier"}]}

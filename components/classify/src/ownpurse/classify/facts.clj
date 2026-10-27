@@ -17,12 +17,17 @@
   (inc (.between ChronoUnit/DAYS (date from) (date to))))
 
 (defn whereabouts
-  "Where `person` was on day `d`: on one of their trips (with its project, if any, and which day of it), else at home."
+  "Where `person` was on day `d`: on one of their trips (with its project, if any, and which day of it), else at home.
+  :place is the country; :city is there when the trip or the home names one. A scenario's :home is a country, or
+  {:country :city}."
   [{:keys [trips home]} person d]
-  (if-let [{:keys [place project from to]} (first (filter #(and (= person (:person %)) (within? d %)) trips))]
-    {:place place :trip (if project :project :personal) :project project
-     :day (days-between from d) :days (days-between from to)}
-    {:place home :trip nil}))
+  (if-let [{:keys [place city project from to]} (first (filter #(and (= person (:person %)) (within? d %)) trips))]
+    (cond-> {:place place :trip (if project :project :personal) :project project
+             :day (days-between from d) :days (days-between from to)}
+      city (assoc :city city))
+    (let [{:keys [country city]} (if (map? home) home {:country home})]
+      (cond-> {:place country :trip nil}
+        city (assoc :city city)))))
 
 (defn running-projects
   "The ids of the projects running on day `d`."
@@ -53,28 +58,31 @@
          mcc (or mcc category)
          where (whereabouts scenario holder date)
          running (running-projects scenario date)]
-     (cond-> (merge (select-keys line [:id :line :date :merchant :amount :currency :country :channel :note
+     (cond-> (merge (select-keys line [:id :line :date :merchant :amount :currency :country :city :channel :note
                                        :item :line-amount :items-from :other-items])
                     {:card card :card-name (:name card-info) :holder holder :card-entity entity
                      :whereabouts where
                      :projects running
                      :traveller (boolean (some #(some #{holder} (get-in projects [% :travellers])) running))
-                     :country-mismatch (boolean (and (= :in-store channel) country
-                                                     (not= country (:place where))))})
+                     :country-mismatch (boolean (and (= :in-store channel)
+                                                     (or (and country (not= country (:place where)))
+                                                         (and (:city line) (:city where)
+                                                              (not= (:city line) (:city where))))))})
        mcc (assoc :mcc mcc :category (get categories mcc))
        (and mcc (not (:mcc line))) (assoc :category-from :enrichment)))))
 
-(defn- where-text [{:keys [projects]} {:keys [place trip project day days]}]
-  (case trip
-    :project (str "in " place ", on a project trip for " (get-in projects [project :name])
-                  " (day " day " of " days ")")
-    :personal (str "in " place ", on a personal trip (no project)")
-    (str "at home in " place)))
+(defn- where-text [{:keys [projects]} {:keys [city trip project day days] :as where}]
+  (let [place (if city (str city ", " (:place where)) (:place where))]
+    (case trip
+      :project (str "in " place ", on a project trip for " (get-in projects [project :name])
+                    " (day " day " of " days ")")
+      :personal (str "in " place ", on a personal trip (no project)")
+      (str "at home in " place))))
 
 (defn state
   "What a judgment sees about a line: its facts in words, named fields only, and nothing it does not need."
   [{:keys [entities projects] :as scenario}
-   {:keys [merchant category amount currency country channel note card-name holder whereabouts country-mismatch
+   {:keys [merchant category amount currency country city channel note card-name holder whereabouts country-mismatch
            item line-amount items-from other-items]
     :as facts}]
   {:transaction (cond-> {:merchant merchant
@@ -83,6 +91,7 @@
                                     (name channel))}
                   category (assoc :category category)
                   country (assoc :merchant_country country)
+                  city (assoc :merchant_city city)
                   note (assoc :note note)
                   item (assoc :item (cond-> {:name item
                                              :amount (str currency " " (.toPlainString ^BigDecimal amount))

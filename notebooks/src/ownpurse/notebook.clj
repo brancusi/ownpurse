@@ -65,7 +65,8 @@
   {:tour 'ownpurse.notebooks.tour
    :book 'ownpurse.notebooks.book
    :classify 'ownpurse.notebooks.classify
-   :walk 'ownpurse.notebooks.walk})
+   :walk 'ownpurse.notebooks.walk
+   :cards 'ownpurse.notebooks.cards})
 
 (def reports
   "The reports the book notebook shows, by keyword, as the export names its sheets."
@@ -76,7 +77,7 @@
 
 (defn show!
   "Shows a notebook: a keyword from `reports` shows that report of a book ((show! :profit-and-loss {:org \"Tallowmere\"
-  :date \"2026-02-28\"})); :tour, :book, :classify or :walk a notebook here; any other symbol or file path that notebook. `params` are
+  :date \"2026-02-28\"})); :tour, :book, :classify, :walk or :cards a notebook here; any other symbol or file path that notebook. `params` are
   what the notebook reads with (params): for a book, :org (its id or the start of its name), :date (the end of the
   financial year), :reports (keywords; all when absent), :pro-forma (\"approved\" or \"proposed\")."
   ([notebook] (show! notebook {}))

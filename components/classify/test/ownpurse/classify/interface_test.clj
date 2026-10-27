@@ -95,6 +95,20 @@
     (is (= "sol" (:bears (classify/attribute s (classify/enrich s (line "c02")) :per-diem))))
     (is (nil? (classify/attribute s (classify/enrich s (line "c15")) :needs-person)))))
 
+(deftest two-projects-test
+  (let [atlas (classify/scenario "atlas")
+        unit (fn [id] (first (filter #(= id (:id %)) (mapcat classify/units (:cases atlas)))))
+        facts #(classify/enrich atlas (unit %))]
+    (testing "the same card, a month apart, on trips for different projects"
+      (is (= ["harbour" "skyline"] (map #(get-in (facts %) [:whereabouts :project]) ["d01" "d02"])))
+      (is (= 1M (blocks/holds [:on-trip-for "skyline"] (facts "d02") {})))
+      (is (= 0M (blocks/holds [:on-trip-for "harbour"] (facts "d02") {}))))
+    (testing "a shop in another city of the same country is where the cardholder was not"
+      (is (:country-mismatch (facts "d15")))
+      (is (not (:country-mismatch (facts "d02"))))
+      (is (= "at home in Los Angeles, United States"
+             (get-in (classify/state atlas (facts "d15")) [:context :cardholder_was]))))))
+
 (deftest blocks-test
   (let [f (classify/enrich s (line "c11"))]
     (testing "exact blocks hold or don't"

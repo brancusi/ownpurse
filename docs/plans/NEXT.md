@@ -459,6 +459,14 @@ A run keeps every raw answer (`components/classify/runs/`), so a threshold is re
   leak into the item's judgment). Gypsum cement, which no keyword names, was caught by R11's fuzzy block. To catch
   items like paper towels, a check rule over a watch list of dual-use items (paper towels, gloves, rags, buckets,
   tape) is the next thing to try.
+- **Two projects at once (scenario `atlas`, 2026-10-27).** Lisbon (plaster sculptures) and New York (steel and
+  glass), people living in Los Angeles, the same card for both. Lines are coded into buckets (each project's per
+  diem, cost of goods and travel; studio overhead; personal; needs a person). Whereabouts and shops carry a city, so
+  a shop in New York while its cardholder is in Los Angeles is caught though the country is the same; the block
+  `[:on-trip-for "id"]` names the project. First run (27 units, 54 requests): the Choice put every unit in an
+  acceptable bucket, none wrongly at any threshold, including the traps (a flight to New York booked in Lisbon, glass
+  ordered from Lisbon for New York, one order's two items for two projects). `(show :cards)` shows every line as a
+  card: the raw line, the bucket it belongs in, Jev's bucket and confidence, and the payloads and answers.
 - Next: harder cases written apart from the rules; checks (cash, transfers, a card away from its holder) as blocks
   that stop a line before the Choice, and a line sent to a person when the blocks and the Choice disagree; then
   whereabouts derived from the lines (runs of in-person spend abroad) instead of written trips; then the per diem
