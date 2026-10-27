@@ -1,6 +1,7 @@
 (ns ownpurse.config.interface-test
   (:require
    [clojure.test :refer [deftest is testing]]
+   [ownpurse.config.core :as core]
    [ownpurse.config.interface :as config]))
 
 (deftest read-config-test
@@ -17,6 +18,8 @@
     (is (nil? (get-in (config/read-config :test) [:jev :api-key])))
     (doseq [profile [:test :dev :prod]]
       (is (not (contains? (config/read-config profile) :secrets)))))
+  (testing "a Keychain service that holds nothing reads as no secret"
+    (is (nil? (core/keychain "ownpurse-test-no-such-service"))))
   (testing "an unknown profile says which ones exist"
     (is (= :ownpurse/unknown-profile
            (try (config/read-config :staging)
