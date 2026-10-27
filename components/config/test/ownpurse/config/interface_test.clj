@@ -13,6 +13,10 @@
     (doseq [profile [:dev :prod]
             :let [{:keys [store http]} (config/read-config profile)]]
       (is (= "127.0.0.1" (:host http) (get-in store [:sql :host])))))
+  (testing "tests have no Jev key, and no config carries the secrets file itself"
+    (is (nil? (get-in (config/read-config :test) [:jev :api-key])))
+    (doseq [profile [:test :dev :prod]]
+      (is (not (contains? (config/read-config profile) :secrets)))))
   (testing "an unknown profile says which ones exist"
     (is (= :ownpurse/unknown-profile
            (try (config/read-config :staging)

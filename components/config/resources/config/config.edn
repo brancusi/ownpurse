@@ -23,6 +23,18 @@
  :xero {:cli #or [#env OWNPURSE_XERO_CLI "xero-cli"]}
  :mercury {:cli #or [#env OWNPURSE_MERCURY_CLI "mercury-cli"]}
  :plaid {:cli #or [#env OWNPURSE_PLAID_CLI "plaid-reader"]}
+ ;; Secrets live outside every repository, in a file only you can read (chmod 600):
+ ;; {:typesafe {:api-key "<your TypeSafe API key>"}}
+ ;; A missing file is no error: what needs a secret says so when it is used.
+ :secrets #profile {:test {}
+                     :default #include #or [#env OWNPURSE_SECRETS
+                                            #join [#env HOME "/.config/ownpurse/secrets.edn"]]}
+ ;; Jev, TypeSafe's System One model, judges how a bank line is coded (the classify component). The key comes from
+ ;; TYPESAFE_API_KEY, else from the secrets file's [:typesafe :api-key]. Tests never have one.
+ :jev {:url #or [#env OWNPURSE_JEV_URL "https://api.typesafe.ai"]
+       :model #or [#env OWNPURSE_JEV_MODEL "jev-latest"]
+       :api-key #profile {:test nil
+                          :default #env TYPESAFE_API_KEY}}
  :http {:host "127.0.0.1"
         :port #profile {:test 0
                         :default #long #or [#env OWNPURSE_PORT 7070]}}}

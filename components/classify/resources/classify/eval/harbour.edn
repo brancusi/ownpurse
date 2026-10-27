@@ -1,0 +1,145 @@
+;; The classification eval: an invented group running a project abroad, its atomic rules, and bank lines with the
+;; coding a bookkeeper would give each. Everything here is made up. Add a case whenever a real-world line is coded
+;; wrongly (in general terms), and keep each rule one sentence that says one thing.
+{:scenario "harbour"
+ :home "United States"
+
+ :entities {"tallowmere" {:name "Tallowmere Studio" :kind :business}
+            "lantern" {:name "Lantern Fund" :kind :nonprofit}
+            "robin" {:name "Robin" :kind :household}
+            "sol" {:name "Sol" :kind :household}}
+
+ :cards {"card-r" {:holder "robin" :entity "robin" :name "Robin's personal card"}
+         "card-s" {:holder "sol" :entity "sol" :name "Sol's personal card"}
+         "card-t" {:holder "robin" :entity "tallowmere" :name "Tallowmere Studio's business card"}}
+
+ :projects {"harbour" {:name "Harbour Exhibition"
+                       :from "2025-05-01" :to "2025-12-31"
+                       :place "Portugal"
+                       :entities ["tallowmere" "lantern"]
+                       :travellers ["robin" "sol"]}}
+
+ ;; Where each person was, by day. Derived from the lines in time; written by hand here.
+ :trips [{:person "robin" :place "Portugal" :from "2025-06-10" :to "2025-07-20" :project "harbour"}
+         {:person "robin" :place "Portugal" :from "2025-08-05" :to "2025-09-30" :project "harbour"}
+         {:person "robin" :place "Spain" :from "2025-11-10" :to "2025-11-17"}
+         {:person "sol" :place "Portugal" :from "2025-06-15" :to "2025-09-15" :project "harbour"}]
+
+ ;; Merchant category codes (ISO 18245): a lookup, not a judgment.
+ :categories {"0742" "Veterinary services"
+              "4112" "Passenger railways"
+              "4121" "Taxis and rideshare"
+              "4215" "Courier services"
+              "4511" "Airlines"
+              "4722" "Travel agencies and booking sites"
+              "4899" "Cable and streaming services"
+              "5200" "Home supply and hardware stores"
+              "5411" "Grocery stores and supermarkets"
+              "5734" "Computer software stores"
+              "5812" "Restaurants"
+              "5814" "Fast food and cafés"
+              "5912" "Pharmacies"
+              "5995" "Pet shops"
+              "5999" "Miscellaneous retail"
+              "6011" "Cash withdrawal (ATM)"
+              "7011" "Hotels and lodging"
+              "7299" "Miscellaneous services"
+              "7997" "Gyms and clubs"}
+
+ ;; How a line can be coded. The project's own defaults (which entity bears a project cost, the per diem's rate) are
+ ;; applied after, in code.
+ :codes {:per-diem "A living cost of a project traveller while on a project trip (food, groceries, restaurants, cafés, gym, pet care, pharmacy and other small incidentals), covered by the traveller's per diem"
+         :project-cost "A cost of the project itself: its travel, transport and lodging, its venue, materials, equipment, shipping and events"
+         :business "An ordinary running cost of the studio's business, not tied to the project"
+         :personal "Personal spend that no per diem or business covers"
+         :needs-person "The rules do not decide this line, or the facts contradict each other: a person must look at it"}
+
+ ;; Atomic rules: one sentence, one idea. :rule is what a person said; :code is what the rule says when it applies;
+ ;; :when is the same rule as building blocks, every one of which must hold:
+ ;;   [:is :merchant "x"] [:contains :merchant "x"] (case ignored; also :note)
+ ;;   [:amount :between 10.00M 50.00M] [:amount :over 500.00M] [:amount :under 20.00M]
+ ;;   [:category :in #{"5411"}] [:card :in #{"card-t"}] [:channel :in #{:online}]
+ ;;   [:trip :project] [:trip :personal] [:trip :any] [:at-home] [:during-project] [:country-mismatch]
+ ;;   [:not block] [:any block ...]
+ ;;   [:jev "a yes/no question"]: the fuzzy block, a Noul Jev answers about the line
+ ;; A :check rule only ever stops a line for a person, and wins over every other rule.
+ :rules [{:id "R1" :code :per-diem
+          :rule "While a traveller is on a project trip, their food, groceries, restaurants and cafés are covered by their per diem."
+          :when [[:trip :project] [:category :in #{"5411" "5812" "5814"}]]}
+         {:id "R2" :code :per-diem
+          :rule "While a traveller is on a project trip, their gym, pet care and pharmacy purchases are covered by their per diem."
+          :when [[:trip :project] [:category :in #{"7997" "0742" "5995" "5912"}]]}
+         {:id "R3" :code :project-cost
+          :rule "Transport, flights, trains, taxis and lodging for a traveller on a project trip are project costs."
+          :when [[:trip :project] [:category :in #{"4112" "4121" "4511" "7011" "4722"}]]}
+         {:id "R4" :code :project-cost
+          :rule "A flight or lodging booked before a project trip, for that trip, is a project cost."
+          :when [[:not [:trip :any]] [:during-project] [:category :in #{"4511" "7011" "4722"}]
+                 [:jev "Was this flight or lodging booked for a trip to the project's place?"]]}
+         {:id "R5" :code :project-cost
+          :rule "Materials, equipment, venue hire, shipping and event catering for the project are project costs, whoever's card paid."
+          :when [[:during-project]
+                 [:jev "Is this purchase materials, equipment, venue hire, shipping or event catering for the project, rather than something for a person's own use?"]]}
+         {:id "R6" :code :personal
+          :rule "Food, groceries, gym and pet care while the person is at home are personal, even while a project is running."
+          :when [[:at-home] [:category :in #{"5411" "5812" "5814" "7997" "0742" "5995"}]]}
+         {:id "R7" :code :business
+          :rule "Software subscriptions and online tools for the studio are ordinary business costs, wherever the person is."
+          :when [[:any [:category :in #{"5734"}]
+                  [:jev "Is this a software subscription or online tool used for a creative studio's work?"]]]}
+         {:id "R8" :code :needs-person :check true
+          :rule "Cash withdrawals and transfers between our own people or accounts are never coded automatically."
+          :when [[:any [:category :in #{"6011"}] [:channel :in #{:transfer}]]]}
+         {:id "R9" :code :personal
+          :rule "Spending on a personal holiday, outside any project trip, is personal."
+          :when [[:trip :personal]]}
+         {:id "R10" :code :needs-person :check true
+          :rule "A purchase made in person in a country where the cardholder is not recorded to be is never coded automatically."
+          :when [[:channel :in #{:in-store}] [:country-mismatch]]}]
+
+ ;; :expect is the coding a bookkeeper would give; :ok holds other answers that are acceptable.
+ :cases [{:id "c01" :date "2025-06-12" :card "card-r" :merchant "Mercado Azul" :mcc "5411" :amount 42.10M :currency "EUR" :country "Portugal" :channel :in-store :expect :per-diem}
+         {:id "c02" :date "2025-06-20" :card "card-s" :merchant "Supermercado Faro Verde" :mcc "5411" :amount 88.00M :currency "EUR" :country "Portugal" :channel :in-store :expect :per-diem}
+         {:id "c03" :date "2025-07-25" :card "card-r" :merchant "Prairie Market" :mcc "5411" :amount 64.20M :currency "USD" :country "United States" :channel :in-store :expect :personal
+          :why "Robin is home between trips: no per diem, though the project is running"}
+         {:id "c04" :date "2025-11-12" :card "card-r" :merchant "Mercado Solano" :mcc "5411" :amount 37.00M :currency "EUR" :country "Spain" :channel :in-store :expect :personal
+          :why "abroad, but on a holiday, not a project trip"}
+         {:id "c05" :date "2025-06-14" :card "card-r" :merchant "Tasca da Ribeira Velha" :mcc "5812" :amount 26.50M :currency "EUR" :country "Portugal" :channel :in-store :expect :per-diem}
+         {:id "c06" :date "2025-08-10" :card "card-t" :merchant "Ginásio Onda" :mcc "7997" :amount 35.00M :currency "EUR" :country "Portugal" :channel :in-store :expect :per-diem
+          :why "the gym is per diem even when the business card paid"}
+         {:id "c07" :date "2025-06-18" :card "card-s" :merchant "Clínica Veterinária Gaivota" :mcc "0742" :amount 117.35M :currency "EUR" :country "Portugal" :channel :in-store :expect :per-diem}
+         {:id "c08" :date "2025-06-16" :card "card-t" :merchant "RideNow" :mcc "4121" :amount 14.30M :currency "EUR" :country "Portugal" :channel :in-store :expect :project-cost}
+         {:id "c09" :date "2025-06-11" :card "card-t" :merchant "Casa Gaivota Apartments" :mcc "7011" :amount 2400.00M :currency "EUR" :country "Portugal" :channel :online :expect :project-cost}
+         {:id "c10" :date "2025-05-20" :card "card-t" :merchant "Atlantic Wing Airways" :mcc "4511" :amount 1180.00M :currency "USD" :country "Portugal" :channel :online :note "Home to the project city, departing 10 June" :expect :project-cost
+          :why "booked from home before the trip"}
+         {:id "c11" :date "2025-08-12" :card "card-t" :merchant "Obra e Casa" :mcc "5200" :amount 310.00M :currency "EUR" :country "Portugal" :channel :in-store :note "plywood and fixings for the installation" :expect :project-cost}
+         {:id "c12" :date "2025-08-14" :card "card-r" :merchant "Obra e Casa" :mcc "5200" :amount 46.00M :currency "EUR" :country "Portugal" :channel :in-store :expect :project-cost :ok #{:needs-person}
+          :why "a hardware store on a project trip is most likely materials, but nothing says so"}
+         {:id "c13" :date "2025-06-30" :card "card-t" :merchant "Sketchloom" :mcc "5734" :amount 15.00M :currency "USD" :country "United States" :channel :online :expect :business}
+         {:id "c14" :date "2025-09-03" :card "card-r" :merchant "StreamBox" :mcc "4899" :amount 15.49M :currency "USD" :country "United States" :channel :online :expect :personal :ok #{:needs-person}
+          :why "no rule covers it; a person's own streaming is personal"}
+         {:id "c15" :date "2025-07-02" :card "card-r" :merchant "Banco Mar ATM" :mcc "6011" :amount 200.00M :currency "EUR" :country "Portugal" :channel :in-store :expect :needs-person}
+         {:id "c16" :date "2025-06-22" :card "card-s" :merchant "Farmácia Luz do Rio" :mcc "5912" :amount 18.40M :currency "EUR" :country "Portugal" :channel :in-store :expect :per-diem}
+         {:id "c17" :date "2025-08-01" :card "card-r" :merchant "PawPantry" :mcc "5995" :amount 52.00M :currency "USD" :country "United States" :channel :in-store :expect :personal}
+         {:id "c18" :date "2025-07-20" :card "card-r" :merchant "Mercado Azul" :mcc "5411" :amount 12.00M :currency "EUR" :country "Portugal" :channel :in-store :expect :per-diem
+          :why "the last day of the trip still counts"}
+         {:id "c19" :date "2025-09-20" :card "card-s" :merchant "Mercado Azul" :mcc "5411" :amount 30.00M :currency "EUR" :country "Portugal" :channel :in-store :expect :needs-person
+          :why "Sol's card was used in a shop in Portugal after Sol's trip ended: the trip dates or the card are wrong"}
+         {:id "c20" :date "2025-08-20" :card "card-t" :merchant "Correio Rápido" :mcc "4215" :amount 85.00M :currency "EUR" :country "Portugal" :channel :in-store :note "shipping crates" :expect :project-cost}
+         {:id "c21" :date "2025-06-25" :card "card-t" :merchant "Galeria Cais Sete" :mcc "7299" :amount 3000.00M :currency "EUR" :country "Portugal" :channel :online :note "venue deposit" :expect :project-cost}
+         {:id "c22" :date "2025-10-05" :card "card-t" :merchant "Layerworks" :mcc "5734" :amount 59.99M :currency "USD" :country "United States" :channel :online :expect :business}
+         {:id "c23" :date "2025-08-09" :card "card-r" :merchant "Linha Costeira Railways" :mcc "4112" :amount 22.00M :currency "EUR" :country "Portugal" :channel :in-store :expect :project-cost}
+         {:id "c24" :date "2025-11-14" :card "card-r" :merchant "Ferrovía Solana" :mcc "4112" :amount 40.00M :currency "EUR" :country "Spain" :channel :in-store :expect :personal
+          :why "a train on holiday is not project travel"}
+         {:id "c25" :date "2025-08-07" :card "card-t" :merchant "Mercado Azul" :mcc "5411" :amount 640.00M :currency "EUR" :country "Portugal" :channel :in-store :note "catering for the opening reception" :expect :project-cost :ok #{:needs-person}
+          :why "food, but for the project's event, not for the traveller"}
+         {:id "c26" :date "2025-06-13" :card "card-r" :merchant "Everystore.com" :mcc "5999" :amount 34.99M :currency "USD" :country "United States" :channel :online :expect :needs-person :ok #{:personal}
+          :why "an online order says nothing about what it was for"}
+         {:id "c27" :date "2025-09-10" :card "card-s" :merchant "Transfer to Robin" :amount 500.00M :currency "USD" :channel :transfer :expect :needs-person}
+         {:id "c28" :date "2025-07-28" :card "card-t" :merchant "Greenleaf Grocers" :mcc "5411" :amount 70.00M :currency "USD" :country "United States" :channel :in-store :expect :personal :ok #{:needs-person}
+          :why "groceries at home are personal, even on the business card"}
+         {:id "c29" :date "2025-08-18" :card "card-r" :merchant "Café Andorinha" :mcc "5814" :amount 6.20M :currency "EUR" :country "Portugal" :channel :in-store :expect :per-diem}
+         {:id "c30" :date "2025-09-27" :card "card-r" :merchant "StayFinder" :mcc "4722" :amount 176.40M :currency "EUR" :country "Portugal" :channel :online :note "hotel in another city, 2 nights" :expect :project-cost :ok #{:needs-person}
+          :why "lodging on a project trip, though a weekend away is possible"}
+         {:id "c31" :date "2025-08-22" :card "card-r" :merchant "Minimercado Andorinha" :amount 19.80M :currency "EUR" :country "Portugal" :channel :in-store :expect :per-diem
+          :why "the bank gave no category: enrichment has to find it before the rules can"}]}

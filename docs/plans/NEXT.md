@@ -396,6 +396,37 @@ notebook shows is written to disk. The reports come from `ownpurse.export.interf
 `ownpurse.api.books/xero-book` (what the export's reports are made from, moved out of the handler). How:
 [docs/NOTEBOOKS.md](../NOTEBOOKS.md).
 
+## Classifying by context: the eval (started 2026-10-27)
+
+A workspace's request: code bank lines the way a bookkeeper who knows the context would, for a project several
+entities run (a grocery bought while a traveller is on a project trip is covered by their per diem; the same grocery
+at home is personal). The `classify` component is an eval for now, not part of the server. Three stages:
+
+1. **Enrichment** (`ownpurse.classify.facts`): what code knows for certain. The category from the merchant code, who
+   held the card, where they were that day (trips, by day, both ends included), which projects were running, and
+   whether a shop's country matches where the cardholder was. Dates are compared in code, never by a model. A line
+   with no merchant code gets its category from a Jev Choice first.
+2. **Rules**: atomic, one sentence each as a person said it, and the same rule as building blocks (`:is`,
+   `:contains`, `:amount`, `:category`, `:card`, `:channel`, `:trip`, `:at-home`, `:during-project`,
+   `:country-mismatch`, `:not`, `:any`, and the fuzzy `[:jev "question"]`, a Noul). A `:check` rule only stops a
+   line for a person. Rules that apply must agree, or the line goes to a person: no priorities, no order.
+3. **Judgment**: Jev (TypeSafe's System One API) answers the fuzzy blocks, and in some strategies picks the coding.
+
+Six strategies over the same questions (two requests a line): `:choice`, `:reversed`, `:no-rules`, `:rule-nouls`,
+`:blocks`, `:hybrid` (ownpurse.classify.core). The score counts, per confidence threshold, the lines coded
+automatically and rightly, the **silent errors** (coded automatically and wrongly), and the lines sent to a person.
+A run keeps every raw answer (`components/classify/runs/`), so a threshold is re-scored without asking again.
+
+- The scenario is `components/classify/resources/classify/eval/harbour.edn`: invented entities, people, a project
+  abroad, trips, ten rules and 31 cases with the expected coding. Add a case whenever a real line is coded wrongly,
+  in general terms.
+- Run: `clojure -M:dev -m ownpurse.classify.eval`. The key comes from `TYPESAFE_API_KEY` or
+  `~/.config/ownpurse/secrets.edn` (`{:typesafe {:api-key "..."}}`; the config's new `:secrets` and `:jev`).
+- The tests use a stand-in for Jev: with careful answers to the fuzzy blocks, the blocks alone code all 31 cases
+  acceptably, so the live run measures the judgments.
+- Next: the first live run; then whereabouts derived from the lines (runs of in-person spend abroad) instead of
+  written trips; then the per diem itself, generated from trip days, not from purchases.
+
 ## After 3b
 
 Steps 4 to 8 as in SPIKE.md. Step 5 (time) can use pull-1 and pull-2: what the books said on 2026-03-31, as we knew
