@@ -49,6 +49,9 @@ notebooks over its own record:
 (notebook/show! "notebooks/close.clj")                        ; a notebook of the workspace's own
 ```
 
+The REPL must hold the record itself: `use-record!` refuses a client of a server running elsewhere, because the
+reports call ownpurse's components on the node. Stop that server first.
+
 The loop: open both folders in one editor window, connected to the workspace's REPL. Change ownpurse's code here;
 saving a file loads it into that REPL and shows the notebook again over the real record. ownpurse's tests run here,
 over the samples, as before; nothing changes about what is committed.

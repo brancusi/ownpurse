@@ -9,7 +9,9 @@
    [nextjournal.beholder :as beholder]
    [nextjournal.clerk :as clerk]
    [nextjournal.clerk.config :as clerk.config]
-   [nextjournal.clerk.viewer :as viewer]))
+   [nextjournal.clerk.viewer :as viewer])
+  (:import
+   (xtdb.api Xtdb)))
 
 ;; Clerk's cache keeps each result on disk under .clerk/ and reuses it while the code is unchanged: a record's
 ;; figures would be written beside the code, and a notebook would show them stale after a pull.
@@ -18,18 +20,30 @@
 ;; {:record (fn [] node) :params {...} :shown notebook :watcher w}
 (defonce ^:private state (atom {:params {}}))
 
+(defn- not-a-node [x]
+  (ex-info (str "The notebooks need an XTDB node in this JVM, and were given " (if x (.getName (class x)) "nothing")
+                ". A client of a server running elsewhere will not do: the reports call ownpurse's components "
+                "on the node. Stop that server and open the record in this REPL, then call use-record! again.")
+           {:type :ownpurse/no-record :given (some-> x class .getName)}))
+
 (defn use-record!
   "Says which record the notebooks read: `node-fn`, a function of no arguments that returns an XTDB node (called on
-  each read, so it follows a restarted system)."
+  each read, so it follows a restarted system). Throws when it returns something else, such as a client of a server
+  running elsewhere; a record not opened yet is let through until a notebook reads it."
   [node-fn]
+  (let [x (try (node-fn) (catch Exception _ nil))]
+    (when (and x (not (instance? Xtdb x)))
+      (throw (not-a-node x))))
   (swap! state assoc :record node-fn)
   :ok)
 
 (defn record
-  "The XTDB node the notebooks read. Throws, saying what to do, when the REPL has not said which."
+  "The XTDB node the notebooks read. Throws, saying what to do, when the REPL has not said which or it is not a
+  node."
   []
   (if-let [f (:record @state)]
-    (f)
+    (let [x (f)]
+      (if (instance? Xtdb x) x (throw (not-a-node x))))
     (throw (ex-info (str "No record for the notebooks. In the REPL that holds one, call "
                          "(ownpurse.notebook/use-record! (fn [] node)).")
                     {:type :ownpurse/no-record}))))

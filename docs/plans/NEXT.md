@@ -409,3 +409,7 @@ it on 2026-03-20 and on 2026-04-02.
 - ownpurse's `next` branch is pushed (2026-10-25); `main` is still the Rust code as released, until the spike passes.
 - `site/` still describes the archived Rust tool (its docs, quickstart and CLI reference). It is rewritten when the
   spike passes; published blog posts stay as written.
+- **One response shape (asked 2026-10-27, for later).** Lists come back wrapped one level deep under a different
+  key per endpoint (`{:pairs [...]}`, `{:items [...]}`), and `/trial-balance` nests under `:trial-balance`. One shape
+  across endpoints would make clients and notebooks shorter. It changes the contract, so do it in one pass with the
+  OpenAPI document and the clients, not endpoint by endpoint.
