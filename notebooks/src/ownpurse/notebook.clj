@@ -28,14 +28,21 @@
 
 (defn use-record!
   "Says which record the notebooks read: `node-fn`, a function of no arguments that returns an XTDB node (called on
-  each read, so it follows a restarted system). Throws when it returns something else, such as a client of a server
-  running elsewhere; a record not opened yet is let through until a notebook reads it."
-  [node-fn]
-  (let [x (try (node-fn) (catch Exception _ nil))]
-    (when (and x (not (instance? Xtdb x)))
-      (throw (not-a-node x))))
-  (swap! state assoc :record node-fn)
-  :ok)
+  each read, so it follows a restarted system), and `label`, what every notebook names it by at its top (where the
+  record is: \"data/ in ownpurse, the dev system\"). Throws when `node-fn` returns something else, such as a client
+  of a server running elsewhere; a record not opened yet is let through until a notebook reads it."
+  ([node-fn] (use-record! node-fn "a record the REPL did not name"))
+  ([node-fn label]
+   (let [x (try (node-fn) (catch Exception _ nil))]
+     (when (and x (not (instance? Xtdb x)))
+       (throw (not-a-node x))))
+   (swap! state assoc :record node-fn :label label)
+   :ok))
+
+(defn label
+  "What the REPL called the record the notebooks read."
+  []
+  (:label @state))
 
 (defn record
   "The XTDB node the notebooks read. Throws, saying what to do, when the REPL has not said which or it is not a

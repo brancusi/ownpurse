@@ -25,10 +25,26 @@ the workspace holds the record, the config naming its orgs, and its own decision
 over them (the server, with `OWNPURSE_DATA_DIR` and `OWNPURSE_LOCAL_CONFIG` pointed at its files). Its agent works
 there; the agent working here changes ownpurse.
 
-When a workspace needs something ownpurse does not do, its agent asks this repository's agent by direct message
-(a message between Claude Code sessions), written in general terms: what is needed and why, with synthetic
-examples. No names, ids, amounts or paths from the workspace's books, ever. Build it here as a general feature, with
-synthetic fixtures, and reply with how to use it. Nothing in this repository knows about any one workspace.
+When a workspace needs something ownpurse does not do, it is built here as a general feature, with synthetic
+fixtures: in general terms, with no names, ids, amounts or paths from the workspace's books, ever. Nothing in this
+repository knows about any one workspace. The change can come from a session working in the workspace itself, which
+loads this checkout's source live and may edit it, or by direct message to this repository's agent. Either way the
+change is made and tested here over the samples, and it passes the privacy check below before it is committed.
+
+## The privacy check
+
+`.githooks/pre-commit` runs `bin/privacy-check` before every commit (turn the hooks on once per clone:
+`git config core.hooksPath .githooks`):
+
+1. The staged change against a private denylist, kept outside this repository (`$OWNPURSE_DENYLIST` or
+   `~/.config/ownpurse/denylist.txt`, less `~/.config/ownpurse/denylist-allow.txt`). A hit names the file, the line
+   and the entry's number, never the term.
+2. An agent's review: the staged diff goes to Claude (`claude -p`, no tools), which refuses the commit when it finds
+   a leak (a real person or organisation, an id, a figure from real books, a path on someone's machine, a secret).
+
+A refused commit means the change carries something private: take it out, or replace it with an invented value, and
+commit again. Agents never skip the check: no `--no-verify`, no `OWNPURSE_PRIVACY_REVIEW=off`. Only a person sets
+those, after reading the diff. `bin/privacy-check --all` checks every tracked file against the denylist.
 
 ## Layout
 

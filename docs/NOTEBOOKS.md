@@ -9,7 +9,8 @@ the server. A REPL puts them on its classpath beside ownpurse and says which rec
 | `ownpurse.notebooks.tour` | ownpurse from nothing over the synthetic samples: a record, a pull through a stand-in xero-cli, the book, the trial balance check, a proposed close journal and the pro-forma. It opens its own record in memory. |
 | `ownpurse.notebooks.book` | any report of one Xero org's book for a financial year, from the record the REPL said to read: the tables the accountant's export writes. |
 
-`ownpurse.notebook` holds what they share: `use-record!` (which record), `serve!` and `halt!` (Clerk on
+`ownpurse.notebook` holds what they share: `use-record!` (which record, and the label every notebook shows at its top,
+so a page always says whose data it is), `serve!` and `halt!` (Clerk on
 127.0.0.1), `show!` (a notebook with its params), `reshow!` (again, after a pull or a change) and `table` (a report
 as a Clerk table, amounts exact).
 
@@ -41,7 +42,7 @@ notebooks over its own record:
 ```clojure
 ;; in that REPL, once it holds the record
 (require '[ownpurse.notebook :as notebook])
-(notebook/use-record! (fn [] <the workspace's node>))
+(notebook/use-record! (fn [] <the workspace's node>) "<where the record is>")
 (notebook/serve! {:port 7778
                   :watch-paths ["notebooks"]                   ; the workspace's own notebooks
                   :code-paths ["../ownpurse/components" "../ownpurse/bases"]})
@@ -49,10 +50,23 @@ notebooks over its own record:
 (notebook/show! "notebooks/close.clj")                        ; a notebook of the workspace's own
 ```
 
+A workspace can also run a known version of ownpurse instead of the checkout beside it, for a run that must not
+change under it: an alias that overrides the two local roots with this repository at a commit.
+
+```clojure
+:pinned {:override-deps
+         {ownpurse/server {:git/url "https://github.com/brancusi/ownpurse.git" :git/sha "<commit>"
+                           :deps/root "projects/server"}
+          ownpurse/notebooks {:git/url "https://github.com/brancusi/ownpurse.git" :git/sha "<commit>"
+                              :deps/root "notebooks"}}}
+```
+
 The REPL must hold the record itself: `use-record!` refuses a client of a server running elsewhere, because the
 reports call ownpurse's components on the node. Stop that server first.
 
-The loop: open both folders in one editor window, connected to the workspace's REPL. Change ownpurse's code here;
+The loop: open both folders in one editor window, connected to the workspace's REPL (a `.code-workspace` file in the
+workspace that lists both folders and sets Calva to jack in there; its settings win over each folder's own, so this
+repository's REPL does not start too). Change ownpurse's code here;
 saving a file loads it into that REPL and shows the notebook again over the real record. ownpurse's tests run here,
 over the samples, as before; nothing changes about what is committed.
 

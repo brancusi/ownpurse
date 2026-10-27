@@ -1,0 +1,181 @@
+#!/usr/bin/env bb
+;; Refuses private data on its way into this public repository. Runs as the pre-commit hook (.githooks/pre-commit)
+;; and by hand:
+;;
+;;   bin/privacy-check            the staged change: the denylist, then an agent's review
+;;   bin/privacy-check --all      every tracked file against the denylist (no agent)
+;;   bin/privacy-check --denylist the staged change against the denylist only
+;;
+;; The denylist is private and never in this repository: one term per line (# starts a comment), at
+;; $OWNPURSE_DENYLIST or ~/.config/ownpurse/denylist.txt. A term like 1234.56 is an amount and also matches 1,234.56;
+;; any other term matches as text, ignoring case. Terms shorter than four characters are skipped. A hit names the
+;; file, the line and the term's line in the denylist, never the term or the text. Terms in the private allow list
+;; ($OWNPURSE_DENYLIST_ALLOW or ~/.config/ownpurse/denylist-allow.txt, same format) are skipped: public names and
+;; round amounts the books share with this repository's code and samples.
+;;
+;; The agent's review sends the staged diff to Claude (`claude -p`, no tools) and refuses the commit when it finds
+;; a leak. Only a person may skip it, after reading the diff: OWNPURSE_PRIVACY_REVIEW=off. Agents never do.
+(require '[babashka.process :as p]
+         '[cheshire.core :as json]
+         '[clojure.java.io :as io]
+         '[clojure.string :as str])
+
+(def denylist-path
+  (or (System/getenv "OWNPURSE_DENYLIST")
+      (str (System/getProperty "user.home") "/.config/ownpurse/denylist.txt")))
+
+(def allow-path
+  (or (System/getenv "OWNPURSE_DENYLIST_ALLOW")
+      (str (System/getProperty "user.home") "/.config/ownpurse/denylist-allow.txt")))
+
+(defn- git [& args]
+  (let [{:keys [out exit err]} (apply p/shell {:out :string :err :string :continue true} "git" args)]
+    (when-not (zero? exit) (throw (ex-info (str "git " (str/join " " args) " failed: " err) {})))
+    out))
+
+(defn- entries [path]
+  (->> (str/split-lines (slurp path))
+       (map-indexed (fn [i l] [(inc i) (str/trim l)]))
+       (remove (fn [[_ t]] (or (str/blank? t) (str/starts-with? t "#"))))))
+
+(defn- terms
+  "The denylist's terms with their line numbers, [[n term] ...], less the allowed ones."
+  []
+  (let [allowed (if (.exists (io/file allow-path)) (set (map (comp str/lower-case second) (entries allow-path))) #{})]
+    (remove (fn [[_ t]] (or (< (count t) 4) (allowed (str/lower-case t)))) (entries denylist-path))))
+
+(def ^:private amount-token #"(?<![\d.,])(?:\d{1,3}(?:,\d{3})+|\d+)\.\d{2}(?![\d])")
+
+(defn- matcher
+  "Finds the denylist entries in a line: amounts by every amount in the line (with or without thousands commas),
+  other terms by a four-character prefix index. Returns a function of a line to the first entry's number or nil."
+  [ts]
+  (let [amount? #(re-matches #"\d+\.\d{2}" %)
+        amounts (into {} (for [[n t] ts :when (amount? t)] [t n]))
+        index (group-by #(subs (second %) 0 4)
+                        (for [[n t] ts :when (not (amount? t))] [n (str/lower-case t)]))]
+    (fn [^String line]
+      (or (some #(amounts (str/replace % "," "")) (re-seq amount-token line))
+          (let [l (str/lower-case line)
+                len (count l)]
+            (loop [i 0]
+              (when (<= (+ i 4) len)
+                (or (some (fn [[n ^String t]] (when (.startsWith ^String l t (int i)) n)) (index (subs l i (+ i 4))))
+                    (recur (inc i))))))))))
+
+(defn- hits
+  "[[file line entry] ...] for `lines`, [[file line text] ...]."
+  [entry-of lines]
+  (for [[file line text] lines
+        :let [n (entry-of text)]
+        :when n]
+    [file line n]))
+
+(defn- staged-lines
+  "The staged change's added lines, [[file line text] ...], with each staged file's path as line 0."
+  []
+  (let [files (remove str/blank? (str/split-lines (git "diff" "--cached" "--name-only" "--diff-filter=ACMR")))]
+    (concat
+     (map (fn [f] [f 0 f]) files)
+     (loop [[l & more] (str/split-lines (git "diff" "--cached" "-U0" "--no-color" "--diff-filter=ACMR" "--text"))
+            file nil line 0 out []]
+       (cond
+         (nil? l) out
+         (str/starts-with? l "+++ ") (recur more (str/replace (subs l 4) #"^b/" "") 0 out)
+         (str/starts-with? l "@@") (recur more file (dec (parse-long (second (re-find #"\+(\d+)" l)))) out)
+         (str/starts-with? l "+") (recur more file (inc line) (conj out [file (inc line) (subs l 1)]))
+         :else (recur more file line out))))))
+
+(defn- tracked-lines []
+  (for [f (remove str/blank? (str/split-lines (git "ls-files")))
+        :let [file (io/file f)]
+        :when (.isFile file)
+        [i l] (cons [0 f] (map-indexed (fn [i l] [(inc i) l]) (str/split-lines (slurp file))))]
+    [f i l]))
+
+(defn- denylist-check [lines]
+  (if-not (.exists (io/file denylist-path))
+    (do (println (str "privacy-check: no denylist at " denylist-path "; set OWNPURSE_DENYLIST to check against one."))
+        true)
+    (let [ts (terms)
+          found (hits (matcher ts) lines)]
+      (if (empty? found)
+        (do (println (str "privacy-check: denylist (" (count ts) " terms): clean.")) true)
+        (do (println (str "privacy-check: denylist: " (count found) " line(s) match a private term:"))
+            (doseq [[file line n] (if (System/getenv "PRIVACY_ALL_HITS") found (take 50 found))]
+              (println (str "  " file (if (zero? line) " (its path)" (str ":" line)) "  denylist entry " n)))
+            false)))))
+
+(def review-schema
+  {:type "object"
+   :properties {:verdict {:type "string" :enum ["clean" "leak"]}
+                :findings {:type "array"
+                           :items {:type "object"
+                                   :properties {:file {:type "string"} :line {:type "integer"}
+                                                :severity {:type "string" :enum ["leak" "check"]}
+                                                :why {:type "string"}}
+                                   :required ["file" "severity" "why"]}}}
+   :required ["verdict" "findings"]})
+
+(def review-prompt
+  "You review a staged change to ownpurse, a PUBLIC open-source repository (a local ledger in Clojure). Private
+books are kept in separate private workspaces; nothing from them may enter this repository. Decide whether this
+change leaks private data. A leak is:
+- a real person's name, email, phone, address, or tax or account number; the maintainer may be named only as the
+  person who decided something (\"Aram's instruction\"), never with his finances, family or companies;
+- a real organisation's name or id (a Xero tenant id, contact id, bank account), or a real business's figures;
+- an absolute path on someone's machine (/Users/..., /home/...) or a private workspace's name or file paths;
+- credentials, tokens, keys, client ids or secrets;
+- a config, export, record or log copied from real books.
+Not a leak: the synthetic samples and test fixtures, whose names and ids are invented (Tallowmere Coffee Roasting
+Co., Ostley Joinery, Ridgeway Federal Bank, Quillfeather, Saltmarsh, ids like c0ffee00-..., amounts in samples/),
+public product names (Xero, Mercury, Plaid, Clerk, XTDB), example placeholders like <tenant id>, and code.
+Report each finding with severity \"leak\" (must not be committed) or \"check\" (probably fine, worth a look). The
+verdict is \"leak\" when any finding is a leak. Be precise: invented names in fixtures are not leaks.
+
+The staged change:
+")
+
+(def max-diff 200000)
+
+(defn- agent-review []
+  (if (= "off" (System/getenv "OWNPURSE_PRIVACY_REVIEW"))
+    (do (println "privacy-check: agent review skipped (OWNPURSE_PRIVACY_REVIEW=off, set by a person).") true)
+    (let [diff (git "diff" "--cached" "--no-color" "-U3" "--diff-filter=ACMR")
+          cut? (> (count diff) max-diff)
+          prompt (str review-prompt (subs diff 0 (min (count diff) max-diff))
+                      (when cut? (str "\n[The diff is cut at " max-diff " characters of " (count diff) ".]")))
+          {:keys [out exit err]} (try (p/shell {:in prompt :out :string :err :string :continue true}
+                                               "claude" "-p" "--model" "sonnet" "--tools" "" "--strict-mcp-config"
+                                               "--no-session-persistence" "--output-format" "json"
+                                               "--json-schema" (json/generate-string review-schema))
+                                      (catch java.io.IOException e {:exit 127 :err (ex-message e)}))
+          result (when (zero? exit) (try (json/parse-string out true) (catch Exception _ nil)))
+          review (or (:structured_output result)
+                     (try (json/parse-string (:result result) true) (catch Exception _ nil)))]
+      (cond
+        (not (zero? exit))
+        (do (println (str "privacy-check: the agent review could not run (claude exited " exit "): "
+                          (str/trim (str err)) "\nFix it, or a person reads the diff and commits with "
+                          "OWNPURSE_PRIVACY_REVIEW=off."))
+            false)
+
+        (not (map? review))
+        (do (println "privacy-check: the agent review gave no verdict; try again.") false)
+
+        :else
+        (let [{:keys [verdict findings]} review]
+          (doseq [{:keys [file line severity why]} findings]
+            (println (str "  " severity "  " file (when line (str ":" line)) "  " why)))
+          (if (= "leak" verdict)
+            (do (println "privacy-check: agent review: LEAK. Remove it from the change and commit again.") false)
+            (do (println (str "privacy-check: agent review: clean" (when (seq findings) " (see the checks above)")
+                              (when cut? "; the diff was cut, so its end was not reviewed") "."))
+                true)))))))
+
+(let [mode (first *command-line-args*)
+      ok (case mode
+           "--all" (denylist-check (tracked-lines))
+           "--denylist" (denylist-check (staged-lines))
+           (and (denylist-check (staged-lines)) (agent-review)))]
+  (System/exit (if ok 0 1)))

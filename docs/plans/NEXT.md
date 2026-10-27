@@ -69,6 +69,12 @@ is done, and the next steps in order with what "done" means. Update it when a st
   ownpurse keeps the transactions and each item's cursor in the record, and decides which book an account belongs
   to through its links. Existing items are imported, never relinked.
 
+- **2026-10-27: one session may work on both a workspace and ownpurse, behind a privacy check.** Aram's
+  instruction: a workspace loads this checkout's source live, and the session working there may change ownpurse
+  directly instead of asking by message, so developing against real books is one loop. Every commit here passes
+  `bin/privacy-check` first (the pre-commit hook): the staged change against a private denylist kept outside the
+  repository, then an agent's review of the diff for leaks. Agents never skip it (AGENTS.md, "The privacy check").
+
 ## Done
 
 - **Recheck of recent documents' history and attachments (2026-10-26, asked for by the workspace).** Opt-in:

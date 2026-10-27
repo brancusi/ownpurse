@@ -124,7 +124,7 @@
   ([opts]
    (let [use-record! (requiring-resolve 'ownpurse.notebook/use-record!)
          serve! (requiring-resolve 'ownpurse.notebook/serve!)]
-     (use-record! node)
+     (use-record! node "data/ in ownpurse: the dev system's record")
      (let [served (serve! (merge {:watch-paths ["notebooks/src"] :code-paths ["components" "bases"] :browse true} opts))]
        ((requiring-resolve 'ownpurse.notebook/show!) :tour)
        served))))

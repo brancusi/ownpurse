@@ -47,6 +47,8 @@
 
 {:nextjournal.clerk/visibility {:result :show}}
 
+(clerk/md (str "**Record:** " (notebook/label)))
+
 (if-not opts
   (clerk/md (str "No Xero org in the record matches `" (pr-str (:org params)) "`. The orgs it holds: "
                  (str/join ", " (map #(str (:name %) " (`" (:org %) "`)") orgs)) "."))

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Before every commit: the staged change against the private denylist, then an agent's review for leaks
+# (bin/privacy-check). Turn the hooks on once per clone: git config core.hooksPath .githooks
+set -euo pipefail
+exec "$(git rev-parse --show-toplevel)/bin/privacy-check"
