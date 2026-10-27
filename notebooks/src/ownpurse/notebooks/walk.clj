@@ -1,12 +1,14 @@
 ;; # Walking one bank line through the classifier
 ;;
-;; One line, step by step: what code works out about it, what Jev is asked, what Jev answers, and how each strategy
-;; turns that into a coding. Every step below is the code that ran and what it returned.
+;; One bank line, in three parts: **A**, the raw line as the bank gives it; **B**, how code turns it into facts;
+;; **C**, how it is classified: the context and rules, the exact payload sent to Jev, what Jev answers, and the coding.
+;; Every step is the code that ran and what it returned.
 ;;
 ;; Pick a case of the eval to replay its saved answers (no calls to Jev), or change any field and press
 ;; **Classify** to ask Jev live about your own line. Every name, number and place here is invented.
 (ns ownpurse.notebooks.walk
-  {:nextjournal.clerk/no-cache true}
+  {:nextjournal.clerk/no-cache true
+   :nextjournal.clerk/auto-expand-results? true}
   (:require
    [clojure.java.io :as io]
    [clojure.string :as str]
@@ -118,10 +120,7 @@
                        "Three calls at most; the same line is never asked twice."]]))]
         ^{:key (pr-str [picked fields])} [form fields]))})
 
-;; ## 0. The line
-;;
-;; A case is the line as the bank gives it, plus what a bookkeeper would code it (`:expect`), what else is
-;; acceptable (`:ok`), and why.
+;; ## Choose a line
 
 ^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
 (def pick @!pick)
@@ -131,26 +130,100 @@
 
 ^{:nextjournal.clerk/visibility {:code :hide}}
 (clerk/with-viewer form-viewer
-  {:cases (for [[id {:keys [merchant]}] cases] [id merchant])
-   :cards (for [[id {:keys [name]}] (:cards scenario)] [id name])
-   :categories (for [[mcc n] (sort-by key (:categories scenario))] [mcc (str mcc " " n)])
-   :codes (for [[c _] (:codes scenario)] [(name c) (name c)])
+  {:cases (vec (for [[id {:keys [merchant]}] cases] [id merchant]))
+   :cards (vec (for [[id {:keys [name]}] (:cards scenario)] [id name]))
+   :categories (vec (for [[mcc n] (sort-by key (:categories scenario))] [mcc (str mcc " " n)]))
+   :codes (vec (for [[c _] (:codes scenario)] [(name c) (name c)]))
    :picked (:case pick)
    :fields (or (:fields pick) (as-fields (cases (:case pick))))})
 
+^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
+(defn- pct [p] (str (.setScale (.multiply (bigdec p) 100M) 0 java.math.RoundingMode/HALF_UP) "%"))
+
+^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
+(defn- json [x]
+  (clerk/html
+   [:pre {:style {:font-size "0.8em" :background "#f8fafc" :border "1px solid #e5e7eb" :border-radius 6
+                  :padding 12 :white-space "pre-wrap" :color "#1f2937"}}
+    (j/write-value-as-string x (j/object-mapper {:pretty true}))]))
+
+^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
+(defn- callout [& body]
+  (clerk/html (into [:div {:style {:border-left "4px solid #4f46e5" :background "#eef2ff" :padding "8px 12px"
+                                   :border-radius 4 :margin "6px 0"}}]
+                    body)))
+
+;; # A. The raw transaction
+;;
+;; ## 1. The bank line, as it arrives
+;;
+;; This is everything the bank gives: a date, which card, a merchant and its category code, an amount, the shop's
+;; country, how it was paid, and sometimes a note. It says nothing about who was where, or about any project.
+
+^{:nextjournal.clerk/visibility {:result :hide}}
 (def line
   (if-let [fields (:fields pick)]
     (from-fields fields)
     (cases (:case pick))))
 
-;; Jev is asked through `ask`. A case of the eval replays the run's saved answers, so walking it costs nothing; your
-;; own line asks Jev live, and keeps each answer so a page shown again asks nothing.
+^{:nextjournal.clerk/visibility {:result :hide}}
+(def raw (select-keys line [:date :card :merchant :mcc :amount :currency :country :channel :note]))
+
+^{:nextjournal.clerk/visibility {:code :hide}}
+(json raw)
+
+;; The answer key. A case of the eval also says how a bookkeeper would code it. That is only for scoring: it is never
+;; part of the line and never reaches Jev.
+
+^{:nextjournal.clerk/visibility {:code :hide}}
+(let [{:keys [expect ok why]} line]
+  (if expect
+    (callout [:b "A bookkeeper would code it: " (name expect)]
+             (when (seq ok) (str " (also acceptable: " (str/join ", " (map name ok)) ")"))
+             (when why [:div [:i why]]))
+    (callout "No answer key: choose what it should be in the form to score it.")))
+
+;; # B. Turning it into facts
+;;
+;; Code, not a model, works out what the line means here, from what the workspace keeps beside the bank: who holds
+;; each card, who was where on which days, which projects run when, and what each category code means.
+
+;; ## 2. Who held the card
+
+(def card (get-in scenario [:cards (:card line)]))
+
+;; ## 3. Where they were that day
+;;
+;; The holder's trips, then the one that covers the line's date. Plain date arithmetic, done in code: a model is never
+;; asked whether a date falls in a range.
+
+(def trips (filterv #(= (:holder card) (:person %)) (:trips scenario)))
+
+(def whereabouts (facts/whereabouts scenario (:holder card) (:date line)))
+
+;; ## 4. Which projects were running
+
+(def projects (facts/running-projects scenario (:date line)))
+
+;; ## 5. What kind of merchant
+;;
+;; The bank's category code, looked up in the table of codes:
+
+(def category-name (get-in scenario [:categories (:mcc line)]))
+
+;; When the bank gave no code (and the line is not a transfer), Jev is asked first: the rules need a category. This is
+;; that payload, and its answer; both are nil when the bank gave a code.
+
+(def enrich-request (core/enrichment scenario line))
 
 ^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
 (defonce ^:private !asked (atom {}))
 
 ^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
 (def jev-config (:jev (config/read-config :dev)))
+
+;; Every question goes to Jev through `ask`. A case of the eval replays the run's saved answers, so walking it costs
+;; nothing; a line of your own asks Jev live, and keeps each answer so the same payload is never sent twice.
 
 ^{:nextjournal.clerk/visibility {:result :hide}}
 (defn ask [state questions]
@@ -163,80 +236,75 @@
           (swap! !asked assoc [state questions] response)
           response))))
 
-(clerk/html [:p (if saved
-                  [:span "Replaying " [:b (:id saved)] " from the run " [:code (.getName ^java.io.File run-file)]
-                   ", answered by " [:code (:model run)] "."]
-                  [:span "Your own line: Jev (" [:code (:model jev-config)] ") is asked live."])])
-
-;; ## 1. Who held the card
-;;
-;; A card belongs to an entity and is held by a person. The rules are about the person: where they were, whether
-;; they were travelling for the project.
-
-(def card (get-in scenario [:cards (:card line)]))
-
-;; ## 2. Where they were that day
-;;
-;; The trips are kept by day (written by hand here; in time, worked out from the lines). This is plain date
-;; arithmetic, done in code: a model is never asked whether a date falls in a range.
-
-(filter #(= (:holder card) (:person %)) (:trips scenario))
-
-(def whereabouts (facts/whereabouts scenario (:holder card) (:date line)))
-
-;; ## 3. Which projects were running
-
-(facts/running-projects scenario (:date line))
-
-;; ## 4. What kind of merchant
-;;
-;; The bank's merchant code (MCC) names the kind of merchant: a lookup, not a judgment.
-
-(get-in scenario [:categories (:mcc line)])
-
-;; When the bank gave no code, and only then, Jev is asked first, before anything else: the rules need the category.
-;; This is the request (nil when it is not needed):
-
-^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
-(defn- pct [p] (str (.setScale (.multiply (bigdec p) 100M) 0 java.math.RoundingMode/HALF_UP) "%"))
-
-^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
-(defn- json [x]
-  (clerk/html
-   [:pre {:style {:font-size "0.78em" :max-height 420 :overflow "auto" :background "#f8fafc"
-                  :border "1px solid #e5e7eb" :border-radius 6 :padding 10 :white-space "pre-wrap"
-                  :color "#1f2937" :opacity 1}}
-    (j/write-value-as-string x (j/object-mapper {:pretty true}))]))
-
-(def enrich-request (core/enrichment scenario line))
-
-(when enrich-request (json enrich-request))
+^{:nextjournal.clerk/visibility {:code :hide}}
+(callout (if saved
+           [:span "Replaying " [:b (:id saved)] " from the run " [:code (.getName ^java.io.File run-file)]
+            ", answered by " [:code (:model run)] "."]
+           [:span "A line of your own: Jev (" [:code (:model jev-config)] ") is asked live."]))
 
 (def enrich-response (when enrich-request (ask (:state enrich-request) (:questions enrich-request))))
-
-(when enrich-response (json (:answers enrich-response)))
 
 ;; Code takes the chosen category only when Jev is at least 50% confident of it.
 
 (def category (some->> enrich-response :answers :category (core/enriched-category scenario)))
 
-;; ## 5. Every fact, together
+;; ## 6. Before and after
 ;;
-;; Steps 1 to 4 in one call: everything code knows about the line before any judgment.
+;; Steps 2 to 5 in one call, `facts/enrich`:
 
 (def line-facts (facts/enrich scenario line category))
 
-;; ## 6. What Jev is shown
-;;
-;; The facts in words, as named fields. Dates never reach Jev as dates to compare: only the conclusion ("on a project
-;; trip, day 10 of 57").
+;; Side by side: what the bank said, what code added, and from what.
 
-(json (facts/state scenario line-facts))
+^{:nextjournal.clerk/visibility {:code :hide}}
+(clerk/html
+ (let [{:keys [place trip project day days]} (:whereabouts line-facts)
+       row (fn [field value from] [:tr [:td [:code field]] [:td value] [:td {:style {:color "#6b7280"}} from]])]
+   [:table {:style {:font-size "0.9em"}}
+    [:thead [:tr [:th "Fact"] [:th "Value"] [:th "Where it came from"]]]
+    [:tbody
+     (for [[k v] raw] (row (name k) (str v) "the bank"))
+     (row "holder" (get-in scenario [:entities (:holder line-facts) :name]) "the cards: who holds this card")
+     (row "card entity" (get-in scenario [:entities (:card-entity line-facts) :name]) "the cards: whose card it is")
+     (row "whereabouts" (case trip
+                          :project (str place ", project trip for " (get-in scenario [:projects project :name])
+                                        ", day " day " of " days)
+                          :personal (str place ", a personal trip")
+                          (str "at home, " place))
+          "the trips, by the line's date")
+     (row "projects running" (str/join ", " (map #(get-in scenario [:projects % :name]) (:projects line-facts)))
+          "the projects, by the line's date")
+     (row "category" (or (:category line-facts) "none")
+          (if (= :enrichment (:category-from line-facts)) "Jev, from the merchant's name (step 5)" "the category codes"))
+     (row "country mismatch" (str (:country-mismatch line-facts))
+          "in a shop, in a country other than where the holder was")]]))
 
-;; ## 7. The rules, and the questions asked about them
+;; ## 7. The facts, as Jev will read them
 ;;
-;; Each rule is a sentence a person said and the same rule as building blocks. Most blocks are exact and code checks
-;; them; a `:jev` block is a yes/no question about the line.
+;; The facts in words, as named fields: `transaction` (the line) and `context` (what code worked out). Dates reach Jev
+;; only as conclusions ("on a project trip, day 24 of 57"), never as ranges to compare.
+
+^{:nextjournal.clerk/visibility {:result :hide}}
+(def state (facts/state scenario line-facts))
+
+^{:nextjournal.clerk/visibility {:code :hide}}
+(json state)
+
+;; # C. Classifying it
+;;
+;; ## 8. The context and the rules
+;;
+;; The codes a line can take, each with what it means (Jev reads these as the options of its Choice):
+
+^{:nextjournal.clerk/visibility {:code :hide}}
+(clerk/html
+ [:table {:style {:font-size "0.85em"}}
+  [:thead [:tr [:th "Code"] [:th "Means"]]]
+  [:tbody (for [[c d] (:codes scenario)] [:tr [:td [:b (name c)]] [:td d]])]])
+
+;; The rules: each a sentence a person said, and the same rule as building blocks. Most blocks are exact and code
+;; checks them; a `:jev` block is a yes/no question Jev answers about the line. A rule that stops a line for a person
+;; wins over every other.
 
 ^{:nextjournal.clerk/visibility {:code :hide}}
 (clerk/html
@@ -246,37 +314,42 @@
             [:tr [:td [:b id]] [:td rule] [:td (if check "stops for a person" (name code))]
              [:td [:code {:style {:font-size "0.85em"}} (str/join " " (map pr-str (:when r)))]]])]])
 
-;; Two requests are built, and sent at once:
+;; Two payloads are built from the facts, and sent at once:
 ;;
-;; - **with the rules**: the facts and every rule's text. It asks one Choice, "how should this line be coded?" (and
-;;   the same Choice with its options reversed, to catch a lean to the first), and one yes/no per rule, "does this
-;;   rule apply?".
-;; - **plain**: the facts alone. It asks the same Choice without the rules (what the rules add), and each fuzzy block's
-;;   question.
+;; - **with the rules**: the state above plus every rule's text. It asks one Choice, "how should this line be coded?"
+;;   (and the same Choice with its options reversed, to catch a lean to the first option), and one yes/no per rule,
+;;   "does this rule apply?".
+;; - **plain**: the state alone. It asks the same Choice without the rules (to see what the rules add), and each fuzzy
+;;   block's question.
 
 (def requests (core/requests scenario line-facts))
 
-;; ## 8. Asking Jev, with the rules
+;; ## 9. The payload sent to Jev, with the rules
 ;;
-;; The body of the request, exactly as posted to `/v1/systemone`:
+;; Exactly as posted to `/v1/systemone` (the API key goes in a header, not here). `state` is what Jev reads;
+;; `questions` is what it answers, each by its id.
 
+^{:nextjournal.clerk/visibility {:code :hide}}
 (json (assoc (:rules requests) :model (:model jev-config)))
 
 (def rules-response (ask (get-in requests [:rules :state]) (get-in requests [:rules :questions])))
 
-;; What came back:
+;; What Jev returned, by question id:
 
+^{:nextjournal.clerk/visibility {:code :hide}}
 (json (:answers rules-response))
 
-;; ## 9. Asking Jev, without the rules
+;; ## 10. The payload sent to Jev, without the rules
 
+^{:nextjournal.clerk/visibility {:code :hide}}
 (json (assoc (:plain requests) :model (:model jev-config)))
 
 (def plain-response (ask (get-in requests [:plain :state]) (get-in requests [:plain :questions])))
 
+^{:nextjournal.clerk/visibility {:code :hide}}
 (json (:answers plain-response))
 
-;; ## 10. Reading Jev's Choice
+;; ## 11. Reading Jev's Choice
 ;;
 ;; A Choice gives a probability for every option. Its confidence says how concentrated they are: 100% when one option
 ;; has it all, 0% when they are spread evenly.
@@ -289,8 +362,7 @@
     [:tbody (for [[option p] (sort-by val > probabilities)]
               [:tr [:td (str/replace option "_" " ")]
                [:td [:div {:style {:width 140 :height 10 :background "#e5e7eb" :border-radius 2}}
-                     [:div {:style {:width (pct p) :height "100%"
-                                    :background "#4f46e5" :border-radius 2}}]]]
+                     [:div {:style {:width (pct p) :height "100%" :background "#4f46e5" :border-radius 2}}]]]
                [:td (pct p)]])]]])
 
 ^{:nextjournal.clerk/visibility {:code :hide}}
@@ -298,10 +370,10 @@
              [:div {:style {:display "inline-block"}} [:h4 "With the rules"] (bars (get-in rules-response [:answers :code]))]
              [:div {:style {:display "inline-block"}} [:h4 "Without them"] (bars (get-in plain-response [:answers :code]))]])
 
-;; ## 11. The building blocks, with Jev's answers
+;; ## 12. The building blocks, with Jev's answers
 ;;
 ;; Each rule holds as far as its weakest block. A rule applies when it holds at least 50%. Beside it, Jev's own
-;; yes/no on the whole rule (step 8).
+;; yes/no on the whole rule (step 9).
 
 (def explained (core/explain scenario {:facts line-facts
                                        :responses {:rules rules-response :plain plain-response}}))
@@ -327,7 +399,7 @@
         [:td (held holds) (when applies? [:b " applies"])]
         [:td (held jev)]])]]))
 
-;; ## 12. How each strategy codes it
+;; ## 13. The coding
 ;;
 ;; The same answers, combined six ways. Where rules are combined (judged by Jev, or by their blocks), a check rule
 ;; stops the line, the rules that apply must agree, and the confidence is the least certain rule's.
@@ -337,7 +409,7 @@
 
 ^{:nextjournal.clerk/visibility {:code :hide}}
 (clerk/html
- (let [{:keys [expect ok why]} line
+ (let [{:keys [expect ok]} line
        style {:right {:background "#dcfce7" :color "#14532d"} :wrong {:background "#fee2e2" :color "#7f1d1d"}
               :stopped {:background "#e0e7ff" :color "#312e81"} :review {:background "#fef3c7" :color "#78350f"}}
        words {:right "coded automatically, right" :wrong "coded automatically, WRONG"
@@ -346,8 +418,8 @@
               :rule-nouls "Jev judges each rule" :blocks "Building blocks" :hybrid "Blocks, Choice as fallback"}]
    [:div
     (if expect
-      [:p "Expected " [:b (name expect)] (when (seq ok) (str " (also acceptable: " (str/join ", " (map name ok)) ")"))
-       (when why [:span ": " [:i why]]) ". Scored at 70% confidence."]
+      [:p "A bookkeeper would code it " [:b (name expect)]
+       (when (seq ok) (str " (also acceptable: " (str/join ", " (map name ok)) ")")) ". Scored at 70% confidence."]
       [:p "Choose what it should be in the form to score it."])
     [:table
      [:thead [:tr [:th "Strategy"] [:th "Code"] [:th "Confidence"] [:th "Why"] [:th "At 70%"]]]
