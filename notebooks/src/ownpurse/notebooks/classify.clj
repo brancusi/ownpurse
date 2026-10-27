@@ -45,7 +45,7 @@
 (def threshold (bigdec (or (:threshold params) 0.7M)))
 
 ^{:nextjournal.clerk/visibility {:result :hide}}
-(def cases (into {} (map (juxt :id identity)) (:cases scenario)))
+(def cases (into {} (map (juxt :id identity)) (mapcat classify/units (:cases scenario))))
 
 ^{:nextjournal.clerk/visibility {:result :hide}}
 (def strategy-names
@@ -175,7 +175,7 @@
    (for [{:keys [id decisions]} shown
          :let [{:keys [date merchant expect ok] :as c} (cases id)]]
      [:tr [:td [:a {:href (str "#" id)} id]]
-      [:td date " · " merchant " · " (money c)]
+      [:td date " · " merchant (when (:item c) [:span " · " [:i (:item c)]]) " · " (money c)]
       [:td [:b (code-name expect)] (when (seq ok) (str " (or " (str/join ", " (map code-name ok)) ")"))]
       (for [s classify/strategies] [:td (coding-pill c (decisions s))])])]])
 
@@ -242,7 +242,7 @@
         plain-answers (get-in responses [:plain :answers])
         fuzzy (filter #(str/starts-with? (name (key %)) "fuzzy_") plain-answers)]
     [:section {:id id :style {:border-top "1px solid #d1d5db" :padding-top 12 :margin-top 24}}
-     [:h3 id ": " merchant ", " (money c)]
+     [:h3 id ": " merchant (when (:item c) (str " · " (:item c))) ", " (money c)]
      [:p date " · " (name channel) (when note [:span " · note: “" note "”"])]
      [:p "Expected: " [:b (code-name expect)]
       (when (seq ok) (str " (also acceptable: " (str/join ", " (map code-name ok)) ")"))

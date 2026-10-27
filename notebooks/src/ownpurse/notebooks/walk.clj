@@ -40,7 +40,12 @@
 (def scenario (classify/scenario "harbour"))
 
 ^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
-(def cases (into (sorted-map) (map (juxt :id identity)) (:cases scenario)))
+(def cases
+  "Every unit of the eval by id: a case, or one item of a case's receipt or order (\"c42/1\")."
+  (into (sorted-map) (map (juxt :id identity)) (mapcat classify/units (:cases scenario))))
+
+^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
+(def lines (into {} (map (juxt :id identity)) (:cases scenario)))
 
 ;; What the page shows: a case to replay, or a line of your own (its fields as typed). The form below changes it in
 ;; the REPL and shows the page again (Clerk's synced atoms need its cache, which the notebooks keep off).
@@ -59,9 +64,11 @@
 (defn- as-fields
   "A line as the form's fields: every value a string."
   [line]
-  (into {} (for [k [:date :card :merchant :mcc :amount :currency :country :channel :note :expect]]
+  (into {} (for [k [:date :card :merchant :mcc :amount :currency :country :channel :note :expect
+                    :item :line-amount :other-items :items-from]]
              [k (let [v (get line k)]
-                  (cond (nil? v) "" (keyword? v) (name v) (decimal? v) (.toPlainString ^BigDecimal v) :else (str v)))])))
+                  (cond (nil? v) "" (keyword? v) (name v) (decimal? v) (.toPlainString ^BigDecimal v)
+                        (sequential? v) (str/join ", " v) :else (str v)))])))
 
 ^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
 (defn- from-fields
@@ -74,7 +81,12 @@
       (blank->nil (:mcc fields)) (assoc :mcc (:mcc fields))
       (blank->nil (:country fields)) (assoc :country (str/trim (:country fields)))
       (blank->nil (:note fields)) (assoc :note (str/trim (:note fields)))
-      (blank->nil (:expect fields)) (assoc :expect (keyword (:expect fields))))))
+      (blank->nil (:expect fields)) (assoc :expect (keyword (:expect fields)))
+      (blank->nil (:item fields))
+      (assoc :item (str/trim (:item fields))
+             :items-from (keyword (or (blank->nil (:items-from fields)) "receipt"))
+             :line-amount (bigdec (or (blank->nil (:line-amount fields)) (str/trim (:amount fields))))
+             :other-items (vec (keep blank->nil (str/split (str (:other-items fields)) #",")))))))
 
 ^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
 (def form-viewer
@@ -112,6 +124,12 @@
                                                ["transfer" "a transfer"]])]
                       [:div (text :note "Note on the line" 420)
                        (choose :expect "What it should be (to score it)" (cons ["" "—"] codes))]
+                      [:div {:style {:border-top "1px dashed #d1d5db" :padding-top 8}}
+                       [:div {:style {:font-size "0.8em" :color "#6b7280" :margin-bottom 4}}
+                        "One item of a receipt or order (leave blank to code the whole line). The amount above is then the item's."]
+                       (text :item "Item" 220) (text :line-amount "Line total" 70)
+                       (choose :items-from "Listed on" [["receipt" "a scanned receipt"] ["order" "an online order"]])
+                       (text :other-items "Other items on it, by commas" 300)]
                       [:button {:style {:background "#4f46e5" :color "white" :border-radius 6 :padding "4px 14px"
                                         :font-weight 600}
                                 :on-click #(nextjournal.clerk.render/clerk-eval (list 'ownpurse.notebooks.walk/pick! {:fields @draft}))}
@@ -130,7 +148,7 @@
 
 ^{:nextjournal.clerk/visibility {:code :hide}}
 (clerk/with-viewer form-viewer
-  {:cases (vec (for [[id {:keys [merchant]}] cases] [id merchant]))
+  {:cases (vec (for [[id {:keys [merchant item]}] cases] [id (str merchant (some->> item (str " · ")))]))
    :cards (vec (for [[id {:keys [name]}] (:cards scenario)] [id name]))
    :categories (vec (for [[mcc n] (sort-by key (:categories scenario))] [mcc (str mcc " " n)]))
    :codes (vec (for [[c _] (:codes scenario)] [(name c) (name c)]))
@@ -167,10 +185,23 @@
     (cases (:case pick))))
 
 ^{:nextjournal.clerk/visibility {:result :hide}}
-(def raw (select-keys line [:date :card :merchant :mcc :amount :currency :country :channel :note]))
+(def raw (assoc (select-keys line [:date :card :merchant :mcc :currency :country :channel :note])
+                :amount (or (:line-amount line) (:amount line))))
 
 ^{:nextjournal.clerk/visibility {:code :hide}}
 (json raw)
+
+;; When a receipt was scanned or the online order is known, it lists what the line bought. It arrives apart from the
+;; bank line. Each item is then coded on its own; this page follows one of them.
+
+^{:nextjournal.clerk/visibility {:code :hide}}
+(if (:item line)
+  (json {:listed_on (name (:items-from line))
+         :items (if-let [{:keys [items]} (lines (:line line))]
+                  (mapv #(select-keys % [:item :amount]) items)
+                  (into [{:item (:item line) :amount (:amount line)}] (map (fn [i] {:item i}) (:other-items line))))
+         :this_page_codes (:item line)})
+  (clerk/md "_No receipt or order: the whole line is coded._"))
 
 ;; The answer key. A case of the eval also says how a bookkeeper would code it. That is only for scoring: it is never
 ;; part of the line and never reaches Jev.
@@ -274,6 +305,10 @@
           "the trips, by the line's date")
      (row "projects running" (str/join ", " (map #(get-in scenario [:projects % :name]) (:projects line-facts)))
           "the projects, by the line's date")
+     (when (:item line-facts)
+       (list (row "item" (str (:item line-facts) ", " (:amount line-facts)) "the receipt or order")
+             (row "other items" (str/join ", " (:other-items line-facts)) "the receipt or order")))
+     (row "travels for the project" (str (:traveller line-facts)) "the projects' travellers")
      (row "category" (or (:category line-facts) "none")
           (if (= :enrichment (:category-from line-facts)) "Jev, from the merchant's name (step 5)" "the category codes"))
      (row "country mismatch" (str (:country-mismatch line-facts))
@@ -399,10 +434,15 @@
         [:td (held holds) (when applies? [:b " applies"])]
         [:td (held jev)]])]]))
 
-;; ## 13. The coding
+;; ## 13. The coding, and who bears it
 ;;
 ;; The same answers, combined six ways. Where rules are combined (judged by Jev, or by their blocks), a check rule
-;; stops the line, the rules that apply must agree, and the confidence is the least certain rule's.
+;; stops the line, a rule that is the exception to another (its `:over`) sets that one aside, the rest that apply must
+;; agree, and the confidence is the least certain rule's.
+;;
+;; Then code, not Jev, says who bears it: a project cost is the project's entity's, the business's ordinary costs the
+;; studio's, the rest the cardholder's. When the card was someone else's, it was paid on that entity's behalf:
+;; `classify/attribute`.
 
 (def decisions (core/decide scenario line-facts {:rules-answers (:answers rules-response)
                                                  :plain-answers (:answers plain-response)}))
@@ -422,11 +462,18 @@
        (when (seq ok) (str " (also acceptable: " (str/join ", " (map name ok)) ")")) ". Scored at 70% confidence."]
       [:p "Choose what it should be in the form to score it."])
     [:table
-     [:thead [:tr [:th "Strategy"] [:th "Code"] [:th "Confidence"] [:th "Why"] [:th "At 70%"]]]
+     [:thead [:tr [:th "Strategy"] [:th "Code"] [:th "Confidence"] [:th "Why"] [:th "Who bears it"] [:th "At 70%"]]]
      [:tbody
       (for [s classify/strategies
-            :let [{:keys [code confidence reason fallback by] :as d} (decisions s)
+            :let [{:keys [code confidence reason fallback by overruled] :as d} (decisions s)
+                  {:keys [bears paid-by on-behalf]} (classify/attribute scenario line-facts code)
+                  entity #(get-in scenario [:entities % :name])
                   o (when expect (classify/outcome line d 0.7M))]]
         [:tr [:td (names s)] [:td [:b (name code)]] [:td (pct confidence)]
-         [:td (str (some-> (or fallback reason) name) (when (seq by) (str " " (str/join ", " by))))]
+         [:td (str (some-> (or fallback reason) name) (when (seq by) (str " " (str/join ", " by)))
+                   (when (seq overruled) (str " (over " (str/join ", " overruled) ")")))]
+         [:td (when bears
+                (if on-behalf
+                  [:span (entity bears) [:br] [:b "paid on its behalf"] " by " (entity paid-by)]
+                  (entity bears)))]
          [:td (when o [:span {:style (merge {:padding "1px 6px" :border-radius 4} (style o))} (words o)])]])]]]))

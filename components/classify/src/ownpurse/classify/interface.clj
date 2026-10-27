@@ -18,6 +18,16 @@
   [scenario line]
   (facts/enrich scenario line))
 
+(defn units
+  "What is coded about a line: the line, or each item its receipt or order lists."
+  [line]
+  (facts/units line))
+
+(defn attribute
+  "Who bears a line coded `code`, who paid it, and whether it was paid on behalf of another entity."
+  [scenario facts code]
+  (core/attribute scenario facts code))
+
 (defn state
   "What a judgment is shown about a line, from its facts."
   [scenario facts]

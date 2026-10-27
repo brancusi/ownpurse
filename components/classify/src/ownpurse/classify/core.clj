@@ -24,22 +24,25 @@
 (defn- code-question [codes reversed?]
   {:type "choice"
    :instructions (str "How should this bank line be coded? Apply the rules in `rules` to the facts in `transaction` "
-                      "and `context`. If no rule decides it, or the facts contradict each other, choose needs_person.")
+                      "and `context`. When `transaction.item` is present, code that one item of the line, not the "
+                      "whole line. If no rule decides it, or the facts contradict each other, choose needs_person.")
    :criteria (apply array-map (mapcat (fn [[c d]] [(option c) d]) (cond-> (seq codes) reversed? reverse)))})
 
 (defn- plain-code-question [codes]
   {:type "choice"
-   :instructions "How should this bank line be coded, given the facts in `transaction` and `context`?"
+   :instructions (str "How should this bank line be coded, given the facts in `transaction` and `context`? When "
+                      "`transaction.item` is present, code that one item of the line, not the whole line.")
    :criteria (apply array-map (mapcat (fn [[c d]] [(option c) d]) codes))})
 
 (defn- rule-question [{:keys [rule]}]
   {:type "noul"
-   :instructions (str "Does this rule apply to this bank line, given the facts in `transaction` and `context`? Rule: "
-                      rule)})
+   :instructions (str "Does this rule apply to this bank line (to `transaction.item` alone, when it is present), given "
+                      "the facts in `transaction` and `context`? Rule: " rule)})
 
 (defn- fuzzy-question [text]
   {:type "noul"
-   :instructions (str text " Judge from the facts in `transaction` and `context`.")})
+   :instructions (str text " Judge from the facts in `transaction` and `context`; when `transaction.item` is present, "
+                      "judge that item.")})
 
 (defn enrichment
   "The enrichment request a line needs before its rules can run, or nil: a line with no merchant code gets its
@@ -79,18 +82,36 @@
 (defn- certainty [p] (abs (- (* 2M p) 1M)))
 
 (defn combine
-  "One coding from each rule's probability of applying (`ps`, by rule id). A check rule that applies stops the line;
-  otherwise the rules that apply must agree. The confidence is the least certain rule's."
+  "One coding from each rule's probability of applying (`ps`, by rule id). A check rule that applies stops the line.
+  A rule that applies sets aside the rules it names in :over (it is the exception to them); the rest that apply must
+  agree. The confidence is the least certain rule's."
   [rules ps]
   (let [applying (filter #(>= (get ps (:id %)) yes) rules)
+        overruled (set (mapcat :over applying))
+        deciding (remove #(overruled (:id %)) applying)
         confidence (reduce min 1M (map certainty (vals ps)))
-        by (mapv :id applying)
-        codes (distinct (map :code (remove :check applying)))]
+        by (mapv :id deciding)
+        codes (distinct (map :code (remove :check deciding)))]
     (cond
-      (some :check applying) {:code :needs-person :reason :check :by by :confidence confidence}
+      (some :check applying) {:code :needs-person :reason :check :by (mapv :id (filter :check applying))
+                              :confidence confidence}
       (empty? codes) {:code :needs-person :reason :no-rule :by by :confidence confidence}
       (next codes) {:code :needs-person :reason :conflict :by by :confidence confidence}
-      :else {:code (first codes) :by by :confidence confidence})))
+      :else (cond-> {:code (first codes) :by by :confidence confidence}
+              (seq overruled) (assoc :overruled (vec (sort (filter overruled (map :id applying)))))))))
+
+(defn attribute
+  "Who bears a line coded `code`, who paid it, and whether it was paid on behalf of another entity: a project's costs
+  are borne by the entity the project names in :bears, the business's by the scenario's :business, the rest by the
+  cardholder. Decided in code, after the coding."
+  [{:keys [projects business]} {:keys [card-entity holder] :as facts} code]
+  (let [bears (case code
+                :project-cost (some #(get-in projects [% :bears]) (:projects facts))
+                :business business
+                (:per-diem :personal) holder
+                nil)]
+    (when bears
+      {:bears bears :paid-by card-entity :on-behalf (not= bears card-entity)})))
 
 (defn- fuzzy-answers
   "Each fuzzy block's question in `rules` with Jev's answer to it, from the answers to the :plain request."

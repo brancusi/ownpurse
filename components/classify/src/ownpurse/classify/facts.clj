@@ -29,18 +29,36 @@
   [{:keys [projects]} d]
   (vec (sort (for [[id p] projects :when (within? d p)] id))))
 
+(defn units
+  "What is coded about `line`: the line itself, or, when a receipt or an order lists its items, each item, as the
+  line narrowed to it (its own :id, :expect and :ok; :amount the item's, :line-amount the line's, :other-items the
+  rest of the receipt)."
+  [{:keys [id items amount] :as line}]
+  (if (seq items)
+    (vec (map-indexed
+          (fn [i it]
+            (merge (dissoc line :items :expect :ok :why)
+                   (select-keys it [:item :amount :expect :ok :why])
+                   {:id (str id "/" (inc i)) :line id :line-amount amount
+                    :other-items (vec (keep-indexed #(when (not= i %1) (:item %2)) items))}))
+          items))
+    [line]))
+
 (defn enrich
-  "The facts about `line` in `scenario`. A line with no merchant code takes its category from `category`, the code
-  an enrichment judgment chose (or nil when none fits)."
+  "The facts about `line` (or one unit of it) in `scenario`. A line with no merchant code takes its category from
+  `category`, the code an enrichment judgment chose (or nil when none fits)."
   ([scenario line] (enrich scenario line nil))
-  ([{:keys [cards categories] :as scenario} {:keys [date card mcc country channel] :as line} category]
+  ([{:keys [cards categories projects] :as scenario} {:keys [date card mcc country channel] :as line} category]
    (let [{:keys [holder entity] :as card-info} (get cards card)
          mcc (or mcc category)
-         where (whereabouts scenario holder date)]
-     (cond-> (merge (select-keys line [:id :date :merchant :amount :currency :country :channel :note])
+         where (whereabouts scenario holder date)
+         running (running-projects scenario date)]
+     (cond-> (merge (select-keys line [:id :line :date :merchant :amount :currency :country :channel :note
+                                       :item :line-amount :items-from :other-items])
                     {:card card :card-name (:name card-info) :holder holder :card-entity entity
                      :whereabouts where
-                     :projects (running-projects scenario date)
+                     :projects running
+                     :traveller (boolean (some #(some #{holder} (get-in projects [% :travellers])) running))
                      :country-mismatch (boolean (and (= :in-store channel) country
                                                      (not= country (:place where))))})
        mcc (assoc :mcc mcc :category (get categories mcc))
@@ -56,19 +74,25 @@
 (defn state
   "What a judgment sees about a line: its facts in words, named fields only, and nothing it does not need."
   [{:keys [entities projects] :as scenario}
-   {:keys [merchant category amount currency country channel note card-name holder whereabouts country-mismatch]
+   {:keys [merchant category amount currency country channel note card-name holder whereabouts country-mismatch
+           item line-amount items-from other-items]
     :as facts}]
   {:transaction (cond-> {:merchant merchant
-                         :amount (str currency " " (.toPlainString ^BigDecimal amount))
+                         :amount (str currency " " (.toPlainString ^BigDecimal (or line-amount amount)))
                          :how (case channel :in-store "in person, in a shop" :online "online" :transfer "a transfer"
                                     (name channel))}
                   category (assoc :category category)
                   country (assoc :merchant_country country)
-                  note (assoc :note note))
+                  note (assoc :note note)
+                  item (assoc :item (cond-> {:name item
+                                             :amount (str currency " " (.toPlainString ^BigDecimal amount))
+                                             :listed_on (case items-from :order "the online order" "the scanned receipt")}
+                                      (seq other-items) (assoc :other_items_on_it other-items))))
    :context (cond-> {:paid_with card-name
                      :cardholder (get-in entities [holder :name])
                      :cardholder_was (where-text scenario whereabouts)
                      :projects_running (vec (for [p (:projects facts)
-                                                  :let [{:keys [name place]} (get projects p)]]
-                                              (str name ", in " place)))}
+                                                  :let [{:keys [name place work]} (get projects p)]]
+                                              (str name ", in " place (some->> work (str ": ")))))}
+              (:traveller facts) (assoc :cardholder_travels_for_a_running_project true)
               (= :in-store channel) (assoc :shop_is_where_cardholder_was (not country-mismatch)))})

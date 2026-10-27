@@ -444,6 +444,21 @@ A run keeps every raw answer (`components/classify/runs/`), so a threshold is re
   code a line as business (c32), and enrichment chose "none of these" for a name that says nothing (c39). Too broad a
   rule is followed confidently: rules need their exceptions said ("a traveller's own meals"; "travel for the
   project").
+- **Items, exceptions and paid on behalf (2026-10-27).** A receipt or an order lists a line's items; each is coded
+  on its own (`facts/units`: "c42/1"), the line is their sum. A rule can name the rules it is the exception to
+  (`:over`): R11, fabrication materials are project costs even at a grocery store or a pharmacy, sets aside R1, R2
+  and R6; any other disagreement still goes to a person. Who bears a coded line, and whether it was paid on
+  another entity's behalf, is decided in code after the coding (`attribute`: the project's `:bears`, the
+  scenario's `:business`, else the cardholder). A lump-sum settlement (per diem and reimbursements at once) is a
+  transfer for a person and for reconciliation, not split by classification.
+- **Third run (51 lines, 65 units, 132 requests, about 198,000 input tokens):** at 0.7 the Choice coded 41 units
+  rightly, 4 wrongly, and sent 18 rightly to a person. New silent errors, both items: paper towels on a grocery
+  receipt as per diem (c44/4, 0.77; every strategy), and a box of nitrile gloves at a pharmacy as per diem (c46/1,
+  0.70: the Choice did not apply R11's "even at a pharmacy"; the blocks did not either, but R5 and R2 disagreed, so
+  the blocks sent it to a person). Bananas on a receipt with plaster made R5's fuzzy block say yes (the other items
+  leak into the item's judgment). Gypsum cement, which no keyword names, was caught by R11's fuzzy block. To catch
+  items like paper towels, a check rule over a watch list of dual-use items (paper towels, gloves, rags, buckets,
+  tape) is the next thing to try.
 - Next: harder cases written apart from the rules; checks (cash, transfers, a card away from its holder) as blocks
   that stop a line before the Choice, and a line sent to a person when the blocks and the Choice disagree; then
   whereabouts derived from the lines (runs of in-person spend abroad) instead of written trips; then the per diem

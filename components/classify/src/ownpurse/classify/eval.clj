@@ -7,6 +7,7 @@
    [clojure.java.io :as io]
    [clojure.pprint :as pprint]
    [ownpurse.classify.core :as core]
+   [ownpurse.classify.facts :as facts]
    [ownpurse.classify.jev :as jev]
    [ownpurse.config.interface :as config])
   (:import
@@ -14,14 +15,21 @@
 
 (def thresholds [0M 0.5M 0.7M 0.9M])
 
+(defn units
+  "Every unit the eval codes in `scenario`: each case, or each item of a case whose receipt or order lists them."
+  [scenario]
+  (vec (mapcat facts/units (:cases scenario))))
+
 (defn scenario
   "Reads the scenario `name` from the classpath (classify/eval/<name>.edn) and checks it."
   [name]
   (let [{:keys [codes rules cases categories cards] :as s}
         (edn/read-string (slurp (io/resource (str "classify/eval/" name ".edn"))))
+        rule-ids (set (map :id rules))
         problems (concat
                   (for [{:keys [id code]} rules :when (not (contains? codes code))] [:rule id :unknown-code code])
-                  (for [{:keys [id expect ok]} cases
+                  (for [{:keys [id over]} rules o over :when (not (rule-ids o))] [:rule id :overrules-unknown o])
+                  (for [{:keys [id expect ok]} (units s)
                         c (cons expect ok) :when (not (contains? codes c))] [:case id :unknown-code c])
                   (for [{:keys [id mcc card]} cases
                         :when (or (and mcc (not (contains? categories mcc))) (not (contains? cards card)))]
@@ -33,10 +41,10 @@
     s))
 
 (defn run
-  "Classifies every case of `scenario` with `ask`, four lines at a time. Returns the run: each case's facts, raw
+  "Classifies every unit of `scenario` (each case, or each item of one) with `ask`, four at a time. Returns the run: each case's facts, raw
   responses and codings, with the model and the tokens used."
   [scenario ask]
-  (let [results (->> (:cases scenario)
+  (let [results (->> (units scenario)
                      (partition-all 4)
                      (mapcat (fn [batch] (mapv deref (mapv #(future (core/classify scenario ask %)) batch))))
                      vec)
@@ -66,7 +74,7 @@
   wrongly (the silent errors that matter most), and how many went to a person. Also each strategy's plain accuracy
   (its answer, ignoring confidence) and how often the Choice kept its answer with its options reversed."
   [scenario {:keys [results]}]
-  (let [cases (into {} (map (juxt :id identity)) (:cases scenario))]
+  (let [cases (into {} (map (juxt :id identity)) (units scenario))]
     {:cases (count results)
      :choice-stable (count (filter #(= (get-in % [:decisions :choice :code]) (get-in % [:decisions :reversed :code]))
                                    results))
@@ -91,7 +99,7 @@
 (defn report
   "The score as a table to read."
   [{:keys [cases choice-stable strategies]}]
-  (println (format "%d cases. The Choice kept its answer with its options reversed on %d." cases choice-stable))
+  (println (format "%d units. The Choice kept its answer with its options reversed on %d." cases choice-stable))
   (pprint/print-table
    (for [s core/strategies
          :let [{:keys [accurate by-threshold]} (strategies s)]

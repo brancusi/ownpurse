@@ -3,6 +3,8 @@
 ;; wrongly (in general terms), and keep each rule one sentence that says one thing.
 {:scenario "harbour"
  :home "United States"
+ ;; The entity whose ordinary running costs are "business".
+ :business "tallowmere"
 
  :entities {"tallowmere" {:name "Tallowmere Studio" :kind :business}
             "lantern" {:name "Lantern Fund" :kind :nonprofit}
@@ -11,11 +13,16 @@
 
  :cards {"card-r" {:holder "robin" :entity "robin" :name "Robin's personal card"}
          "card-s" {:holder "sol" :entity "sol" :name "Sol's personal card"}
-         "card-t" {:holder "robin" :entity "tallowmere" :name "Tallowmere Studio's business card"}}
+         "card-t" {:holder "robin" :entity "tallowmere" :name "Tallowmere Studio's business card"}
+         "acct-r" {:holder "robin" :entity "robin" :name "Robin's bank account"}}
 
+ ;; :bears is the entity that bears the project's costs: a project cost paid on anyone else's card was paid on its
+ ;; behalf. :work is what the project makes, which Jev reads to judge whether an item is for it.
  :projects {"harbour" {:name "Harbour Exhibition"
                        :from "2025-05-01" :to "2025-12-31"
                        :place "Portugal"
+                       :work "fabricating plaster sculptures for the exhibition"
+                       :bears "tallowmere"
                        :entities ["tallowmere" "lantern"]
                        :travellers ["robin" "sol"]}}
 
@@ -39,6 +46,7 @@
               "5812" "Restaurants"
               "5814" "Fast food and cafés"
               "5912" "Pharmacies"
+              "5970" "Artist's supply and craft shops"
               "5995" "Pet shops"
               "5999" "Miscellaneous retail"
               "6011" "Cash withdrawal (ATM)"
@@ -60,9 +68,11 @@
  ;;   [:amount :between 10.00M 50.00M] [:amount :over 500.00M] [:amount :under 20.00M]
  ;;   [:category :in #{"5411"}] [:card :in #{"card-t"}] [:channel :in #{:online}]
  ;;   [:trip :project] [:trip :personal] [:trip :any] [:at-home] [:during-project] [:country-mismatch]
+ ;;   [:traveller] (the cardholder travels for a running project); [:contains :item "x"] (an item of a receipt)
  ;;   [:not block] [:any block ...]
  ;;   [:jev "a yes/no question"]: the fuzzy block, a Noul Jev answers about the line
- ;; A :check rule only ever stops a line for a person, and wins over every other rule.
+ ;; A :check rule only ever stops a line for a person, and wins over every other rule. :over names the rules a rule is
+ ;; the exception to: when both apply, it decides. Rules that apply and disagree otherwise send the line to a person.
  :rules [{:id "R1" :code :per-diem
           :rule "While a traveller is on a project trip, their food, groceries, restaurants and cafés are covered by their per diem."
           :when [[:trip :project] [:category :in #{"5411" "5812" "5814"}]]}
@@ -95,7 +105,12 @@
           :when [[:trip :personal]]}
          {:id "R10" :code :needs-person :check true
           :rule "A purchase made in person in a country where the cardholder is not recorded to be is never coded automatically."
-          :when [[:channel :in #{:in-store}] [:country-mismatch]]}]
+          :when [[:channel :in #{:in-store}] [:country-mismatch]]}
+         {:id "R11" :code :project-cost :over ["R1" "R2" "R6"]
+          :rule "Plaster, sandpaper, drill bits and other materials, tools and consumables for fabricating the sculptures, bought by a project traveller while the project runs, are project costs whatever the shop and whoever's card paid, even at a grocery store or a pharmacy."
+          :when [[:traveller]
+                 [:any [:contains :item "plaster"] [:contains :item "sandpaper"] [:contains :item "drill bit"]
+                  [:jev "Is this item a material, tool or consumable used in fabricating plaster sculptures?"]]]}]
 
  ;; :expect is the coding a bookkeeper would give; :ok holds other answers that are acceptable.
  :cases [{:id "c01" :date "2025-06-12" :card "card-r" :merchant "Mercado Azul" :mcc "5411" :amount 42.10M :currency "EUR" :country "Portugal" :channel :in-store :expect :per-diem}
@@ -165,4 +180,52 @@
          {:id "c40" :date "2025-08-28" :card "card-t" :merchant "Tasca da Ribeira Velha" :mcc "5812" :amount 186.00M :currency "EUR" :country "Portugal" :channel :in-store :note "dinner with the venue's curators, 5 people" :expect :project-cost :ok #{:needs-person}
           :why "a restaurant, but a project meeting for five, not a traveller's meal: R1's blocks see food on a project trip"}
          {:id "c41" :date "2025-06-09" :card "card-r" :merchant "Café Andorinha" :mcc "5814" :amount 4.80M :currency "EUR" :country "Portugal" :channel :in-store :expect :needs-person :ok #{:per-diem}
-          :why "Robin's trip starts tomorrow, yet the card was used in a shop in Portugal: the trip dates are likely a day out"}]}
+          :why "Robin's trip starts tomorrow, yet the card was used in a shop in Portugal: the trip dates are likely a day out"}
+
+         ;; Items: a scanned receipt or an online order lists what a line bought. Each item is coded on its own (its
+         ;; :expect and :ok); the line is the sum of them. The project fabricates plaster sculptures.
+         {:id "c42" :date "2025-08-19" :card "card-r" :merchant "Obra e Casa" :mcc "5200" :amount 72.70M :currency "EUR" :country "Portugal" :channel :in-store :items-from :receipt
+          :items [{:item "Plaster of Paris, 25 kg" :amount 38.90M :expect :project-cost
+                   :why "material for the sculptures, on Robin's own card: paid on behalf of the studio"}
+                  {:item "Sandpaper assortment, 120 to 400 grit" :amount 12.50M :expect :project-cost}
+                  {:item "Masonry drill bit set" :amount 21.30M :expect :project-cost}]}
+         {:id "c43" :date "2025-10-08" :card "card-r" :merchant "Everystore.com" :mcc "5999" :amount 59.47M :currency "USD" :country "United States" :channel :online :items-from :order
+          :items [{:item "Casting plaster, 10 kg" :amount 24.99M :expect :project-cost :ok #{:needs-person}}
+                  {:item "Paper towels, 12 rolls" :amount 18.49M :expect :project-cost :ok #{:needs-person}
+                   :why "on an order with casting plaster, most likely for the studio; a person looking is fine"}
+                  {:item "Phone charging cable" :amount 15.99M :expect :needs-person :ok #{:personal}
+                   :why "nothing says whose or what for"}]}
+         {:id "c44" :date "2025-08-23" :card "card-r" :merchant "Mercado Azul" :mcc "5411" :amount 22.30M :currency "EUR" :country "Portugal" :channel :in-store :items-from :receipt
+          :items [{:item "Bread" :amount 2.10M :expect :per-diem}
+                  {:item "Cheese" :amount 6.80M :expect :per-diem}
+                  {:item "Red wine" :amount 9.50M :expect :per-diem}
+                  {:item "Paper towels, 4 rolls" :amount 3.90M :expect :needs-person :ok #{:project-cost}
+                   :why "a household buys paper towels too: the point is to catch it, not to pass it as per diem unseen"}]}
+         {:id "c45" :date "2025-09-02" :card "card-r" :merchant "Supermercado Faro Verde" :mcc "5411" :amount 25.70M :currency "EUR" :country "Portugal" :channel :in-store :items-from :receipt
+          :items [{:item "Plaster bandage rolls" :amount 16.70M :expect :project-cost :ok #{:needs-person}
+                   :why "plaster at a supermarket: R11 is the exception to R1"}
+                  {:item "Mixing bucket, 10 litres" :amount 4.80M :expect :project-cost :ok #{:needs-person}}
+                  {:item "Bananas" :amount 1.80M :expect :per-diem}
+                  {:item "Rubber gloves" :amount 2.40M :expect :project-cost :ok #{:needs-person}
+                   :why "on a receipt with plaster and a bucket"}]}
+         {:id "c46" :date "2025-06-27" :card "card-s" :merchant "Farmácia Luz do Rio" :mcc "5912" :amount 17.35M :currency "EUR" :country "Portugal" :channel :in-store :items-from :receipt
+          :items [{:item "Nitrile gloves, box of 100" :amount 11.95M :expect :project-cost :ok #{:needs-person}
+                   :why "a box of a hundred is for the work, not the medicine cabinet"}
+                  {:item "Ibuprofen" :amount 5.40M :expect :per-diem}]}
+         {:id "c47" :date "2025-08-01" :card "acct-r" :merchant "Transfer from Tallowmere Studio" :amount -4637.25M :currency "USD" :channel :transfer :note "July: per diem and reimbursements" :expect :needs-person
+          :why "a lump sum settling the per diem and many purchases at once: reconciliation matches it, classification does not split it"}
+         {:id "c48" :date "2025-05-14" :card "card-r" :merchant "Prairie Hardware" :mcc "5200" :amount 74.97M :currency "USD" :country "United States" :channel :in-store :items-from :receipt
+          :items [{:item "Gypsum cement, 50 lb" :amount 41.99M :expect :project-cost :ok #{:needs-person}
+                   :why "plaster by another name: no keyword catches it, only the fuzzy block"}
+                  {:item "Mixing paddle" :amount 12.99M :expect :project-cost :ok #{:needs-person}}
+                  {:item "Doormat" :amount 19.99M :expect :personal :ok #{:needs-person}}]}
+         {:id "c49" :date "2025-10-20" :card "card-s" :merchant "Crafty Corner" :mcc "5970" :amount 9.89M :currency "USD" :country "United States" :channel :in-store :items-from :receipt
+          :items [{:item "Plaster of Paris, 5 lb" :amount 9.89M :expect :project-cost :ok #{:needs-person}
+                   :why "Sol travels for the project; bought at home while it runs"}]}
+         {:id "c50" :date "2025-11-15" :card "card-r" :merchant "Ferretería Solana" :mcc "5200" :amount 4.60M :currency "EUR" :country "Spain" :channel :in-store :items-from :receipt
+          :items [{:item "Sandpaper, 240 grit" :amount 4.60M :expect :needs-person :ok #{:project-cost}
+                   :why "a material, but bought on a holiday: R11 and R9 disagree, and neither is the exception to the other"}]}
+         {:id "c51" :date "2025-08-30" :card "card-t" :merchant "Obra e Casa" :mcc "5200" :amount 61.30M :currency "EUR" :country "Portugal" :channel :in-store :items-from :receipt
+          :items [{:item "Plaster of Paris, 25 kg" :amount 38.90M :expect :project-cost
+                   :why "on the studio's own card: a project cost, not paid on anyone's behalf"}
+                  {:item "Garden hose, 15 m" :amount 22.40M :expect :needs-person :ok #{:project-cost :business}}]}]}

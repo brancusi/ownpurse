@@ -29,6 +29,7 @@
             (yes (if (= :any kind) (some? trip) (= kind trip))))
     :at-home (yes (nil? (get-in facts [:whereabouts :trip])))
     :during-project (yes (seq (:projects facts)))
+    :traveller (yes (:traveller facts))
     :country-mismatch (yes (:country-mismatch facts))
     :not (- 1M (holds (first args) facts fuzzy))
     :any (reduce max 0M (map #(holds % facts fuzzy) args))
