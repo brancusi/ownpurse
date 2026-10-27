@@ -22,3 +22,7 @@ config.local.edn
 .clj-kondo/imports/
 .clj-kondo/inline-configs/
 .calva/
+
+# Clerk: its cache is off (ownpurse.notebook), but never commit what it writes
+.clerk/
+public/build/

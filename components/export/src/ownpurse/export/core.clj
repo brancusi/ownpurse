@@ -224,21 +224,31 @@
           ["tax number" :tax-number] ["party id" :party]]
          payees))
 
+(defn- sheets
+  "Every report of the export, in order, each as the function that makes it: [[name f] ...]."
+  [node {:keys [from to accounts] :as opts}]
+  (let [compares (delay (map (partial named accounts) (in-book accounts (cmp/compare-accounts node {:from from :to to}))))]
+    (cond-> [["README" #(readme node opts)]
+             ["Trial balance" #(trial-balance (:trial-balance opts))]
+             ["Balance sheet" #(balance-sheet opts)]
+             ["Profit and loss" #(profit-and-loss opts)]
+             ["General ledger" #(general-ledger node opts)]
+             ["Adjustments" #(adjustments node opts)]
+             ["Exclusions" #(exclusions node opts)]
+             ["Bank reconciliation" #(bank-reconciliation @compares)]
+             ["Unreconciled lines" #(unreconciled-lines @compares)]
+             ["Intercompany" #(intercompany node opts)]]
+      (:payees opts) (conj ["Payees" #(payees (:payees opts))]))))
+
 (defn reports
   "Every report of the export, in order: [[name table] ...]."
-  [node {:keys [from to accounts] :as opts}]
-  (let [compares (map (partial named accounts) (in-book accounts (cmp/compare-accounts node {:from from :to to})))]
-    (cond-> [["README" (readme node opts)]
-             ["Trial balance" (trial-balance (:trial-balance opts))]
-             ["Balance sheet" (balance-sheet opts)]
-             ["Profit and loss" (profit-and-loss opts)]
-             ["General ledger" (general-ledger node opts)]
-             ["Adjustments" (adjustments node opts)]
-             ["Exclusions" (exclusions node opts)]
-             ["Bank reconciliation" (bank-reconciliation compares)]
-             ["Unreconciled lines" (unreconciled-lines compares)]
-             ["Intercompany" (intercompany node opts)]]
-      (:payees opts) (conj ["Payees" (payees (:payees opts))]))))
+  [node opts]
+  (mapv (fn [[name f]] [name (f)]) (sheets node opts)))
+
+(defn report
+  "One report of the export by its sheet's name, or nil when the export has none by that name."
+  [node opts sheet]
+  (some (fn [[name f]] (when (= sheet name) (f))) (sheets node opts)))
 
 (defn- file-name [s]
   (str/replace (str/lower-case (str s)) #"[^a-z0-9._-]+" "-"))

@@ -378,6 +378,18 @@ tied}}`: `tied` says whether the book ties with the system's trial balance at `d
 Every item on the workspace's close list from ownpurse's side is built. What remains is theirs: the real runs, the
 owner's statement exports, the close register's decisions, and the owner's approval.
 
+## Notebooks (built 2026-10-27)
+
+Aram's request: a living document to run, and a tight loop for working on ownpurse against a group's real books
+while those books stay in the group's workspace. [Clerk](https://clerk.vision) notebooks in `notebooks/` (a local
+project on the `:dev` classpath, not a brick): `ownpurse.notebooks.tour` runs ownpurse from nothing over the
+samples; `ownpurse.notebooks.book` shows any report of a Xero org's book from the record the REPL names
+(`ownpurse.notebook/use-record!`). `(dev/notebooks)` and `(dev/show :profit-and-loss {...})` here; a workspace
+adds `{:local/root "../ownpurse/notebooks"}` and shows them over its record. Clerk's cache is off, so nothing a
+notebook shows is written to disk. The reports come from `ownpurse.export.interface/report` (one sheet alone) and
+`ownpurse.api.books/xero-book` (what the export's reports are made from, moved out of the handler). How:
+[docs/NOTEBOOKS.md](../NOTEBOOKS.md).
+
 ## After 3b
 
 Steps 4 to 8 as in SPIKE.md. Step 5 (time) can use pull-1 and pull-2: what the books said on 2026-03-31, as we knew

@@ -4,7 +4,9 @@
         :extra-deps {org.clojure/clojure {:mvn/version "1.12.6"}
                      org.clojure/tools.namespace {:mvn/version "1.5.1"}
                      ;; Tests on save at the REPL: (dev/watch)
-                     com.nextjournal/beholder {:mvn/version "1.0.2"}
+                     com.nextjournal/beholder {:mvn/version "1.0.3"}
+                     ;; Notebooks over a record, in Clerk: (dev/notebooks)
+                     ownpurse/notebooks {:local/root "notebooks"}
 
                      poly/close {:local/root "components/close"}
                      poly/intercompany {:local/root "components/intercompany"}

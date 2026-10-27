@@ -93,6 +93,10 @@
               (is (str/includes? (sheet 2) "<v>1300.00</v>"))
               (is (str/includes? (sheet 1) "Record transaction"))
               (is (not (str/includes? (sheet 2) "<f>"))))))
+        (testing "one report alone is the export's sheet of that name; a name it has none by is nil"
+          (is (= (some #(when (= "Profit and loss" (first %)) (second %)) (export/reports node opts))
+                 (export/report node opts "Profit and loss")))
+          (is (nil? (export/report node opts "Cash flow"))))
         (testing "an export never overwrites one"
           (is (= :ownpurse/export-exists (:type (ex-data (try (export/export! node opts)
                                                               (catch clojure.lang.ExceptionInfo e e))))))))

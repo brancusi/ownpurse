@@ -11,6 +11,12 @@
   [node opts]
   (core/reports node opts))
 
+(defn report
+  "One of the export's reports by its sheet's name (\"Profit and loss\"), {:columns :rows}, or nil when there is none
+  by that name. opts as `export!`, but for :dir."
+  [node opts sheet]
+  (core/report node opts sheet))
+
 (defn export!
   "Writes the export into a new folder under `dir` (an absolute path), named after the book and the period's end:
   the workbook, and a folder of CSV files. opts: {:dir :name (the entity's) :book :from :to :basis (approved or

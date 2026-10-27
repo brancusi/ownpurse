@@ -43,6 +43,7 @@ A Polylith workspace (top namespace `ownpurse`):
   `GET /openapi.json`; `restore` restores a snapshot, see docs/BACKUP.md).
 - `projects/`: what gets built (the server uberjar).
 - `development/`: the REPL project. `user.clj` stays tiny; `dev.clj` holds the REPL system.
+- `notebooks/`: Clerk notebooks over a record, not a brick and not in the server (docs/NOTEBOOKS.md).
 - `samples/`: synthetic source files, used as test input. `docs/`, `brand/`, `site/` as before.
 
 ## The REPL
@@ -61,13 +62,16 @@ the tests run on save. Restarting the JVM is the exception. One long-lived REPL 
 4. The loop: edit the file, evaluate the changed form (or `(require 'ns :reload)`), call it at the REPL with real
    arguments, read `(last-run)`. After a rename, a deleted var or a change to the system (routes, components,
    config), `(reset)`. If anything seems off, restart the JVM.
-5. Never leave a definition only in the REPL: it must be in a file.
-6. The test run from the shell is the truth, not the REPL's state. Run it before every commit.
+5. `(notebooks)` starts Clerk on http://127.0.0.1:7777 with the notebooks reading the running system's record;
+   `(show :profit-and-loss {:org "Tallowmere" :date "2026-03-31"})` shows a report of a book. A private workspace
+   shows the same notebooks over its own record from its own REPL ([docs/NOTEBOOKS.md](docs/NOTEBOOKS.md)).
+6. Never leave a definition only in the REPL: it must be in a file.
+7. The test run from the shell is the truth, not the REPL's state. Run it before every commit.
 
 In VS Code with Calva, opening the folder does all of this: `.vscode/settings.json` jacks in with `:dev:test`, runs
 `(dev)`, `(go)` and `(watch)`, and connects instead if `.nrepl-port` already exists. Calva's jack-in writes
-`.nrepl-port` at the root, so agents share that REPL. `ctrl+alt+space` then `g`, `r`, `h`, `t` or `w` runs `(go)`,
-`(reset)`, `(halt)`, `(tests)` or `(watch)`. `(keep-xero-answers tenant "samples/xero/pull-1")` keeps a folder of
+`.nrepl-port` at the root, so agents share that REPL. `ctrl+alt+space` then `g`, `r`, `h`, `t`, `w` or `n` runs `(go)`,
+`(reset)`, `(halt)`, `(tests)`, `(watch)` or `(notebooks)`. `(keep-xero-answers tenant "samples/xero/pull-1")` keeps a folder of
 synthetic Xero answers in the running system; `(pull-xero)` fetches the orgs named in `config.local.edn` through
 xero-cli (real calls; never in a test). `(keep-mercury-answers "samples/mercury/pull-1")` and `(pull-mercury)` do
 the same for Mercury through mercury-cli, and `(keep-plaid-answers "samples/plaid/pull-1")` and `(pull-plaid)` for Plaid
@@ -141,8 +145,8 @@ mise install                    # JDK 21, the Clojure CLI, Babashka (pinned in m
 clojure -M:poly info            # the workspace
 clojure -M:poly check           # the workspace's rules
 clojure -M:dev:test:kaocha      # the tests (tests.edn)
-clj-kondo --lint components bases development projects
-cljfmt check components bases development
+clj-kondo --lint components bases development projects notebooks
+cljfmt check components bases development notebooks
 ```
 
 All four pass before every commit. `poly test` does not run XTDB yet (see the plan); use Kaocha.

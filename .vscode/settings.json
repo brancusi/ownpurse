@@ -24,12 +24,14 @@
       "afterPrimaryReplConnectedCode": ["(dev)"]
     }
   ],
-  // ctrl+alt+space, then the key: g starts, r reloads and restarts, h halts, t runs the tests, w watches.
+  // ctrl+alt+space, then the key: g starts, r reloads and restarts, h halts, t runs the tests, w watches,
+  // n starts the notebooks (Clerk).
   "calva.customREPLCommandSnippets": [
     { "name": "ownpurse: go", "key": "g", "repl": "clj", "ns": "dev", "snippet": "(go)" },
     { "name": "ownpurse: reset", "key": "r", "repl": "clj", "ns": "dev", "snippet": "(reset)" },
     { "name": "ownpurse: halt", "key": "h", "repl": "clj", "ns": "dev", "snippet": "(halt)" },
     { "name": "ownpurse: run the tests", "key": "t", "repl": "clj", "ns": "dev", "snippet": "(tests)" },
-    { "name": "ownpurse: tests on save", "key": "w", "repl": "clj", "ns": "dev", "snippet": "(watch)" }
+    { "name": "ownpurse: tests on save", "key": "w", "repl": "clj", "ns": "dev", "snippet": "(watch)" },
+    { "name": "ownpurse: notebooks", "key": "n", "repl": "clj", "ns": "dev", "snippet": "(notebooks)" }
   ]
 }

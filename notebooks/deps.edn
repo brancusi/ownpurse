@@ -1,0 +1,4 @@
+;; ownpurse's notebooks (Clerk). Not a brick and not in the server: a REPL puts them on its classpath beside
+;; ownpurse (this repository's :dev alias, or a private workspace's deps.edn) and says which record they read.
+{:paths ["src"]
+ :deps {io.github.nextjournal/clerk {:mvn/version "0.18.1158"}}}

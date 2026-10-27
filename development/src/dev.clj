@@ -116,6 +116,24 @@
   ([dir sql-port]
    (store/start {:mode :disk :dir dir :sql (when sql-port {:host "127.0.0.1" :read-only-port sql-port})})))
 
+(defn notebooks
+  "Starts Clerk on http://127.0.0.1:7777 with the notebooks reading the running system's record, and opens the tour.
+  Saving a notebook shows it; saving a brick's file loads it and shows the last notebook again. Then
+  (show :profit-and-loss {:org \"Tallowmere\" :date \"2026-03-31\"}) shows a report of a book in it."
+  ([] (notebooks {}))
+  ([opts]
+   (let [use-record! (requiring-resolve 'ownpurse.notebook/use-record!)
+         serve! (requiring-resolve 'ownpurse.notebook/serve!)]
+     (use-record! node)
+     (let [served (serve! (merge {:watch-paths ["notebooks/src"] :code-paths ["components" "bases"] :browse true} opts))]
+       ((requiring-resolve 'ownpurse.notebook/show!) :tour)
+       served))))
+
+(defn show
+  "Shows a notebook in Clerk (see ownpurse.notebook/show!): (show :balance-sheet {:org \"Tallowmere\"})."
+  ([notebook] (show notebook {}))
+  ([notebook params] ((requiring-resolve 'ownpurse.notebook/show!) notebook params)))
+
 (defn tests
   "Loads every test namespace in the bricks and runs them in this REPL. The shell run (clojure -M:dev:test:kaocha)
   is still the truth before a commit."

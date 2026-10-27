@@ -4,6 +4,7 @@
    [clojure.java.io :as io]
    [malli.error :as me]
    [malli.util :as mu]
+   [ownpurse.api.books :as books]
    [ownpurse.api.json :as api.json]
    [ownpurse.close.interface :as close]
    [ownpurse.compare.interface :as cmp]
@@ -12,7 +13,6 @@
    [ownpurse.intercompany.interface :as ic]
    [ownpurse.json.interface :as json]
    [ownpurse.mercury.interface :as mercury]
-   [ownpurse.payees.interface :as payees]
    [ownpurse.plaid.interface :as plaid]
    [ownpurse.schema.interface :as schema]
    [ownpurse.statement.interface :as statement]
@@ -267,20 +267,10 @@
                       [:candidate :boolean] [:supplier {:optional true} :boolean]
                       [:tax-number {:optional true} :string]]]]])
 
-(defn- xero-payees*
-  "A Xero org's payees: its bank and credit card accounts are the payment accounts, its contacts the parties."
-  [node {:keys [org from to threshold]}]
-  (let [accounts (into {} (for [a (entity/source-accounts node {:source "xero"})
-                                :when (and (= org (:org a)) (#{"bank" "credit-card"} (:kind a)))]
-                            [(:id a) (:kind a)]))]
-    (payees/payees node (cond-> {:book (xero/book-id org) :from from :to to :accounts accounts
-                                 :parties (xero/parties node org)}
-                          threshold (assoc :threshold threshold)))))
-
 (defn- xero-payees
   "A Xero org's payees as the API returns them."
   [node {:keys [org] :as query}]
-  (let [result (xero-payees* node query)]
+  (let [result (books/xero-payees node query)]
     (-> result
         (dissoc :book)
         (assoc :org org)
@@ -302,19 +292,9 @@
 
 (defn- xero-export!
   "The accountant's export of a Xero org's book for the financial year ending `date`."
-  [node {:keys [org date dir pro-forma opening]}]
-  (let [book (xero/book-id org)
-        basis (or pro-forma "approved")
-        tb (xero/check-trial-balance node org date {:opening (keyword (or opening "balance-sheet"))
-                                                    :adjustments #(close/balances node book (assoc % :basis (keyword basis)))})
-        name (or (some #(when (and (= org (:org %)) (= "org" (:kind %))) (:name %))
-                       (entity/source-accounts node {:source "xero"}))
-                 org)
-        result (export/export! node {:dir dir :name name :book book :from (:year-start tb) :to date :basis basis
-                                     :trial-balance tb :accounts (xero/chart node org) :parties (xero/parties node org)
-                                     :links (xero/document-links node org)
-                                     :payees (xero-payees* node {:org org :from (:year-start tb) :to date})})]
-    (assoc result :tied (:tied? tb))))
+  [node {:keys [dir] :as body}]
+  (let [opts (books/xero-book node body)]
+    (assoc (export/export! node (assoc opts :dir dir)) :tied (:tied? (:trial-balance opts)))))
 
 (defn- close-item-out [node item]
   (cond-> (-> item
