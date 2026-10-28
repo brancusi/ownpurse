@@ -89,11 +89,12 @@
   (sha256 (slurp (io/resource (str "classify/eval/" name ".edn")))))
 
 (defn- source
-  "The code the run ran: the commit checked out, and whether the working tree differed from it."
+  "The code the run ran: the commit checked out, and whether a tracked file differed from it (a new file, such as the
+  run's own progress, does not count)."
   []
   (let [git #(let [{:keys [exit out]} (apply shell/sh "git" %&)] (when (zero? exit) (str/trim out)))]
     {:commit (git "rev-parse" "HEAD")
-     :dirty (boolean (seq (git "status" "--porcelain")))}))
+     :dirty (boolean (seq (git "status" "--porcelain" "--untracked-files=no")))}))
 
 (defn- lift
   "A run whose requests are the same on every result keeps them once, under :sent: each request kind's questions,
