@@ -330,6 +330,15 @@
           (is (= 200 status))
           (is (str/starts-with? (get headers "Content-Type") "application/transit+json"))
           (is (every? keyword? (keys (:codes world))))))
+      (testing "one item of a receipt, its id with a slash"
+        (let [run (-> (request app :get "/sandbox/scenarios") :body :scenarios
+                      (->> (some #(when (= "atlas" (:name %)) %))) :runs first :id)
+              item (->> (request app :get (str "/sandbox/scenarios/atlas/runs/" run)) :body :lines
+                        (map :id) (some #(when (str/includes? % "/") %)))
+              {:keys [status body]} (request app :get (str "/sandbox/scenarios/atlas/runs/" run "/lines/" item))]
+          (is (some? item))
+          (is (= 200 status))
+          (is (= item (:id body)))))
       (testing "a run that is not there"
         (is (= {:status 404 :type "ownpurse/not-found"}
                (let [{:keys [status body]} (request app :get "/sandbox/scenarios/harbour/runs/harbour-nope")]

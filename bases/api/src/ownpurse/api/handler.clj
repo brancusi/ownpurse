@@ -438,9 +438,11 @@
              :responses {200 {:body :any} 404 {:body ApiError}}
              :handler (fn [{{:keys [path]} :parameters}]
                         (answer #(sandbox/run-lines sb (:scenario path) (:run path))))}}]
-     ["/sandbox/scenarios/{scenario}/runs/{run}/lines/{line}"
+     ;; A catch-all: one item of a receipt is a unit whose id has a slash (d88/1).
+     ["/sandbox/scenarios/{scenario}/runs/{run}/lines/{*line}"
       {:get {:summary (str "One unit of a run all the way through: its facts, the requests exactly as sent, what came "
-                           "back, how each rule held, each strategy's decision, and the commentary on it.")
+                           "back, how each rule held, each strategy's decision, and the commentary on it. An item of "
+                           "a receipt is addressed as its line and number: lines/d88/1.")
              :parameters {:path (mu/merge Run [:map [:line [:string {:min 1}]]])}
              :responses {200 {:body :any} 404 {:body ApiError}}
              :handler (fn [{{:keys [path]} :parameters}]
