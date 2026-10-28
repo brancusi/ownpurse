@@ -12,6 +12,10 @@
                      poly/close {:local/root "components/close"}
                      poly/intercompany {:local/root "components/intercompany"}
                      poly/payees {:local/root "components/payees"}
+                     poly/sandbox {:local/root "components/sandbox"}
+
+                     ;; The admin's built files (admin/resources), served at /admin: bin/admin build
+                     ownpurse/admin {:local/root "admin"}
                      poly/statement {:local/root "components/statement"}
                      poly/export {:local/root "components/export"}
                      poly/compare {:local/root "components/compare"}
@@ -38,6 +42,7 @@
                        "components/close/test"
                        "components/intercompany/test"
                        "components/payees/test"
+                       "components/sandbox/test"
                        "components/statement/test"
                        "components/export/test"
                        "components/compare/test"

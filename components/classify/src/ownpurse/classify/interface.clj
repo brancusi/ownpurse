@@ -33,6 +33,16 @@
   [scenario facts]
   (facts/state scenario facts))
 
+(defn requests
+  "The two requests a line's facts make to Jev: :rules and :plain, each {:state :questions}."
+  [scenario facts]
+  (core/requests scenario facts))
+
+(defn enrichment
+  "The enrichment request a line needs before its rules can run (its category judged from the merchant's name), or nil."
+  [scenario line]
+  (core/enrichment scenario line))
+
 (defn fuzzy-questions
   "Every fuzzy block's question in `rules`, once each, in the order they are asked."
   [rules]
@@ -50,9 +60,9 @@
   (fn [state questions] (jev/ask jev-config state questions)))
 
 (defn scenario
-  "Reads and checks the eval scenario `name` (classify/eval/<name>.edn on the classpath)."
-  [name]
-  (eval/scenario name))
+  "Reads and checks a scenario: `source` is its name on the classpath (classify/eval/<name>.edn), or a file."
+  [source]
+  (eval/scenario source))
 
 (defn run-eval
   "Classifies every case of `scenario` with `ask` and returns the run, raw answers and the requests as sent included.
@@ -101,6 +111,11 @@
   before runs kept them."
   [run result]
   (eval/sent run result))
+
+(defn scenario-hash
+  "The hash of a scenario's file as it is now (`source` as for `scenario`); a run keeps the one it ran against."
+  [source]
+  (eval/scenario-hash source))
 
 (defn load-run
   "Reads a saved run."

@@ -1,0 +1,13 @@
+;; bin/admin dev builds on save into resources/ownpurse/admin/js; ownpurse serves it at /admin. Components keep their
+;; state across a save (React Fast Refresh, through uix.preload). The REPL into the browser: shadow-cljs's nREPL on
+;; 9631, then (shadow/repl :app).
+{:deps {:aliases [:cljs]}
+ :nrepl {:port 9631}
+ :builds {:app {:target :browser
+                :output-dir "resources/ownpurse/admin/js"
+                :asset-path "/admin/js"
+                :modules {:main {:init-fn ownpurse.admin.main/init}}
+                :devtools {:preloads [uix.preload]
+                           :watch-dir "resources/ownpurse/admin"
+                           :watch-path "/admin"}
+                :release {:compiler-options {:optimizations :advanced}}}}}

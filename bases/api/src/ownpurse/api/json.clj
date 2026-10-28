@@ -1,11 +1,19 @@
 (ns ownpurse.api.json
-  "Content negotiation for the API: JSON only, through ownpurse's one mapper."
+  "Content negotiation for the API: JSON through ownpurse's one mapper, and Transit for the admin, which reads the
+  components' data as they hold it (keywords, sets, decimals)."
   (:require
+   [cognitect.transit :as transit]
    [muuntaja.core :as m]
    [ownpurse.json.interface :as json]))
 
+(def ^:private transit-handlers
+  "Times as their ISO strings: the admin reads them as text."
+  {java.time.Instant (transit/write-handler "instant" str)
+   java.time.LocalDate (transit/write-handler "date" str)})
+
 (def muuntaja
-  "Muuntaja for reitit: JSON only, BigDecimal-safe."
+  "Muuntaja for reitit: JSON (BigDecimal-safe, the default) and Transit JSON."
   (m/create (-> m/default-options
-                (update :formats select-keys ["application/json"])
-                (assoc-in [:formats "application/json" :opts] {:mapper json/mapper}))))
+                (update :formats select-keys ["application/json" "application/transit+json"])
+                (assoc-in [:formats "application/json" :opts] {:mapper json/mapper})
+                (assoc-in [:formats "application/transit+json" :encoder-opts] {:handlers transit-handlers}))))

@@ -1,0 +1,13 @@
+;; The admin: a UIx app over the ownpurse API, served by ownpurse itself at /admin.
+;;
+;; As a dependency (the server project, the REPL) it is its built files alone: resources/ownpurse/admin. The
+;; :cljs alias is what shadow-cljs builds it with; it shares the bricks' .cljc namespaces (ownpurse.classify.outcome),
+;; so the browser and the server score a line with the same function.
+{:paths ["resources"]
+ :aliases
+ {:cljs {:extra-paths ["src"]
+         :extra-deps {com.pitch/uix.core {:mvn/version "1.4.9"}
+                      com.pitch/uix.dom {:mvn/version "1.4.9"}
+                      com.cognitect/transit-cljs {:mvn/version "0.8.280"}
+                      thheller/shadow-cljs {:mvn/version "3.5.8"}
+                      poly/classify {:local/root "../components/classify"}}}}}

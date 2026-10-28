@@ -1,0 +1,55 @@
+/* The admin's styles: Tailwind, themed by ownpurse's design tokens (brand/tokens.css, generated from tokens.json).
+   Change a token there and every screen follows, in both themes: the utilities below read the tokens through CSS
+   variables (bg-surface-1, text-ink-3, border-line-1, bg-coin-tint, font-mono, ...). Utilities are written in the
+   .cljs files; the few patterns used everywhere are components in src/ownpurse/admin/ui.cljs, not CSS classes. */
+@import "tailwindcss";
+@import "../../brand/tokens.css";
+
+@source "./ownpurse";
+
+@theme inline {
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-inverse: var(--surface-inverse);
+  --color-line-1: var(--line-1);
+  --color-line-2: var(--line-2);
+  --color-ink-1: var(--ink-1);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-inverse: var(--ink-inverse);
+  --color-coin: var(--coin);
+  --color-coin-text: var(--coin-text);
+  --color-coin-tint: var(--coin-tint);
+  --color-on-coin: var(--on-coin);
+  --color-gilt: var(--gilt);
+  --color-gilt-text: var(--gilt-text);
+  --color-gilt-tint: var(--gilt-tint);
+  --color-verdigris: var(--verdigris);
+  --color-verdigris-tint: var(--verdigris-tint);
+  --color-lapis: var(--lapis);
+  --color-lapis-tint: var(--lapis-tint);
+  --color-focus: var(--focus);
+}
+
+@theme {
+  --font-sans: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, Menlo, Consolas, monospace;
+  --radius-1: 2px;
+  --radius-2: 4px;
+  /* An admin reads dense: 13px body, small print for labels and sources. */
+  --text-2xs: 10.5px;
+  --text-xs: 11.5px;
+  --text-sm: 12.5px;
+  --text-base: 13.5px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 26px;
+}
+
+@layer base {
+  html { background: var(--surface-0); color: var(--ink-1); }
+  body { font-size: var(--text-base); line-height: 1.4; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+}

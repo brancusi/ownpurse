@@ -36,6 +36,10 @@
        :model #or [#env OWNPURSE_JEV_MODEL "jev-latest"]
        :api-key #profile {:test nil
                           :default #or [#env TYPESAFE_API_KEY #keychain "ownpurse-typesafe"]}}
+ ;; The admin's sandbox: classify runs from :dir (the eval writes them there), and a workspace's own scenarios from
+ ;; :scenarios, beside ownpurse's invented ones. A workspace points both at folders of its own.
+ :sandbox {:dir #or [#env OWNPURSE_RUNS_DIR "components/classify/runs"]
+           :scenarios #or [#env OWNPURSE_SCENARIOS_DIR nil]}
  :http {:host "127.0.0.1"
         :port #profile {:test 0
                         :default #long #or [#env OWNPURSE_PORT 7070]}}}

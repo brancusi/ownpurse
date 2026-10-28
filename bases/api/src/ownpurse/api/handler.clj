@@ -14,6 +14,7 @@
    [ownpurse.json.interface :as json]
    [ownpurse.mercury.interface :as mercury]
    [ownpurse.plaid.interface :as plaid]
+   [ownpurse.sandbox.interface :as sandbox]
    [ownpurse.schema.interface :as schema]
    [ownpurse.statement.interface :as statement]
    [ownpurse.store.interface :as store]
@@ -414,8 +415,41 @@
           (error status (error-type t) (ex-message e))
           (throw e))))))
 
+(defn- sandbox-routes
+  "The sandbox: scenarios of bank lines, the world they happened in, and the runs that classified them, for the admin.
+  Answers are data as the components hold them; ask for application/transit+json to keep keywords, sets and decimals."
+  [{:keys [sandbox]}]
+  (let [sb (sandbox/open sandbox)
+        Scenario [:map [:scenario [:string {:min 1}]]]
+        Run (mu/merge Scenario [:map [:run [:re #"^[A-Za-z0-9._-]+$"]]])]
+    [["/sandbox/scenarios"
+      {:get {:summary "Every scenario of bank lines, its size and its runs, newest first."
+             :responses {200 {:body :any}}
+             :handler (fn [_] (answer #(hash-map :scenarios (sandbox/scenarios sb))))}}]
+     ["/sandbox/scenarios/{scenario}"
+      {:get {:summary "A scenario's world: its people, cards, trips, projects, buckets, categories and rules."
+             :parameters {:path Scenario}
+             :responses {200 {:body :any} 404 {:body ApiError}}
+             :handler (fn [{{:keys [path]} :parameters}]
+                        (answer #(hash-map :world (sandbox/world sb (:scenario path)))))}}]
+     ["/sandbox/scenarios/{scenario}/runs/{run}"
+      {:get {:summary "A run of a scenario: one row a unit, with each strategy's coding and confidence."
+             :parameters {:path Run}
+             :responses {200 {:body :any} 404 {:body ApiError}}
+             :handler (fn [{{:keys [path]} :parameters}]
+                        (answer #(sandbox/run-lines sb (:scenario path) (:run path))))}}]
+     ["/sandbox/scenarios/{scenario}/runs/{run}/lines/{line}"
+      {:get {:summary (str "One unit of a run all the way through: its facts, the requests exactly as sent, what came "
+                           "back, how each rule held, each strategy's decision, and the commentary on it.")
+             :parameters {:path (mu/merge Run [:map [:line [:string {:min 1}]]])}
+             :responses {200 {:body :any} 404 {:body ApiError}}
+             :handler (fn [{{:keys [path]} :parameters}]
+                        (answer #(sandbox/line sb (:scenario path) (:run path) (:line path))))}}]]))
+
 (defn- routes [{:keys [node] :as config}]
-  [["/openapi.json"
+  [["/admin" {:no-doc true :get {:handler (fn [_] {:status 302 :headers {"Location" "/admin/"} :body ""})}}]
+   (sandbox-routes config)
+   ["/openapi.json"
     {:get {:no-doc true
            :openapi {:info {:title "ownpurse" :version "0.0.0"
                             :description "The local ledger. Every endpoint, its parameters and its responses."}}
@@ -676,7 +710,7 @@
    :body (json/write-str body)})
 
 (defn handler
-  "The Ring handler over `node`. `local` is the config file naming the orgs to pull; `xero`, `mercury` and `plaid` are {:cli}:
+  "The Ring handler over `node`, and the admin's built files at /admin. `local` is the config file naming the orgs to pull; `xero`, `mercury` and `plaid` are {:cli}:
   the program that reads each source; `store` is the store's config, which says where the record is kept."
   [config]
   (ring/ring-handler
@@ -693,7 +727,9 @@
                          muuntaja/format-request-middleware
                          coercion/coerce-response-middleware
                          coercion/coerce-request-middleware]}})
-   (ring/create-default-handler
-    {:not-found (constantly (json-response (error 404 "not-found" "No such endpoint. GET /openapi.json lists them.")))
+   (ring/routes
+    (ring/create-resource-handler {:path "/admin" :root "ownpurse/admin"})
+    (ring/create-default-handler
+     {:not-found (constantly (json-response (error 404 "not-found" "No such endpoint. GET /openapi.json lists them.")))
      :method-not-allowed (constantly (json-response (error 405 "method-not-allowed" "That method is not allowed here. GET /openapi.json lists the methods.")))
-     :not-acceptable (constantly (json-response (error 406 "not-acceptable" "ownpurse answers in JSON only.")))})))
+     :not-acceptable (constantly (json-response (error 406 "not-acceptable" "ownpurse answers in JSON, or in Transit for the admin.")))}))))

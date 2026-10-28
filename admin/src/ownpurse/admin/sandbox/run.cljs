@@ -1,0 +1,268 @@
+(ns ownpurse.admin.sandbox.run
+  "One run of a scenario: the world its lines happened in, the strategy and threshold to code them by, what that
+  gives across every threshold, the buckets, and every line, each opening to its way through. The threshold and the
+  strategy are the sandbox's levers: moving them scores every line again here, with the eval's own function
+  (ownpurse.classify.outcome), without asking Jev anything."
+  (:require
+   [clojure.string :as str]
+   [ownpurse.admin.api :as api]
+   [ownpurse.admin.route :as route]
+   [ownpurse.admin.sandbox.line :as line]
+   [ownpurse.admin.ui :as ui :refer [cx]]
+   [ownpurse.classify.outcome :as outcome]
+   [uix.core :as uix :refer [$ defui]]))
+
+(def strategies
+  "The ways of coding a line the run compared (ownpurse.classify.core), in words."
+  [[:choice "Jev, with the rules" "Jev picks the bucket, given the facts and every rule as text (call 1)."]
+   [:checked "Jev, stopped by checks" "Jev's pick, unless a check rule holds by its blocks: then a person looks."]
+   [:reversed "Jev, options reversed" "The same Choice with its options in reverse order: Jev can lean to the first option."]
+   [:no-rules "Jev, without the rules" "Jev picks from the facts alone (call 2): what the rules add."]
+   [:rule-nouls "Jev, rule by rule" "Jev says whether each rule applies; code combines them."]
+   [:blocks "The rule blocks" "Each rule's building blocks decide; Jev answers only the fuzzy ones."]
+   [:hybrid "Blocks, else Jev" "The blocks where one rule decides; where none or several disagree, Jev's pick."]])
+
+(def ^:private filters
+  [[:all "All"] [:wrong nil] [:unsafe nil] [:review nil] [:stopped nil] [:right nil] [:hard "marked hard"]
+   [:noted "with commentary"]])
+
+(defn- score
+  "Each line with its outcome under `strategy` at threshold `t`."
+  [lines strategy t]
+  (mapv #(assoc % :outcome (outcome/outcome (:unit %) (get-in % [:decisions strategy]) t)) lines))
+
+(defn- sweep
+  "At every threshold from 50% to 99%: the lines coded wrong or unsafely, and the lines sent to a person."
+  [lines strategy]
+  (vec (for [i (range 50 100)
+             :let [fs (frequencies (map #(outcome/outcome (:unit %) (get-in % [:decisions strategy]) (/ i 100)) lines))]]
+         {:t (/ i 100)
+          :bad (+ (fs :wrong 0) (fs :unsafe 0))
+          :person (+ (fs :stopped 0) (fs :review 0))})))
+
+;; ----------------------------------------------------------------------------------------------- the world
+
+(defui world-strip [{:keys [world]}]
+  (let [{:keys [projects trips entities cards home]} world
+        person #(get-in entities [% :name] (some-> % name))]
+    ($ :div {:class "mt-4 grid gap-px border border-line-1 bg-line-1 md:grid-cols-[repeat(auto-fit,minmax(260px,1fr))]"}
+       (for [[id {:keys [name place from to work travellers]}] projects]
+         ($ :div {:key (str id) :class "bg-surface-0 px-3 py-2.5 text-sm"}
+            ($ ui/eyebrow {} name)
+            ($ :div {} place " · " ($ ui/mono {} from " → " to))
+            (when work ($ :div {:class "mt-0.5 text-ink-3"} work))
+            ($ :div {:class "mt-1"}
+               (str/join " · " (for [{:keys [person city place from to project]} trips :when (= id project)]
+                                 (str (get-in entities [person :name]) " in " (or city place) " "
+                                      (subs from 5) "–" (subs to 5)))))
+            ($ :div {:class "text-ink-3"} "Travellers: " (str/join ", " (map person travellers)))))
+       ($ :div {:class "bg-surface-0 px-3 py-2.5 text-sm"}
+          ($ ui/eyebrow {} "Home and cards")
+          ($ :div {} "At home in " (if (map? home) (str (:city home) ", " (:country home)) home) " on any other day.")
+          (for [[id {:keys [name holder]}] cards]
+            ($ :div {:key id} ($ ui/mono {} id) " "
+               ($ ui/muted {} name (when-not (str/includes? name "held by") (str ", held by " (person holder))))))))))
+
+;; ----------------------------------------------------------------------------------------------- the levers
+
+(defui sweep-chart
+  "Lines coded wrong or unsafely, and lines sent to a person, at every threshold: one count axis, the threshold
+  marked. Hover reads a threshold's counts; a click moves the threshold there."
+  [{:keys [points t on-pick]}]
+  (let [[hover set-hover!] (uix/use-state nil)
+        w 560 h 150 l 34 r 12 top 10 b 24
+        ymax (max 1 (apply max (mapcat (juxt :bad :person) points)))
+        x #(+ l (* (- w l r) (/ (- % 0.5) 0.49)))
+        y #(- h b (* (- h top b) (/ % ymax)))
+        path (fn [k] (str/join " " (map-indexed (fn [i p] (str (if (zero? i) "M" "L") (x (:t p)) "," (y (k p)))) points)))
+        at (fn [e] (let [rect (.getBoundingClientRect (.-currentTarget e))
+                         px (* w (/ (- (.-clientX e) (.-left rect)) (.-width rect)))
+                         i (js/Math.round (* 49 (/ (- px l) (- w l r))))]
+                     (nth points (max 0 (min 49 i)))))
+        shown (or hover (some #(when (= (:t %) t) %) points))
+        ticks (let [step (cond (> ymax 200) 100 (> ymax 80) 50 (> ymax 40) 20 :else 10)] (range 0 (inc ymax) step))]
+    ($ :div
+       ($ :div {:class "flex flex-wrap items-center gap-4 text-xs text-ink-2"}
+          ($ :span {:class "inline-flex items-center gap-1.5"} ($ :span {:class "inline-block h-0.5 w-4 bg-coin"}) "coded wrong or unsafely")
+          ($ :span {:class "inline-flex items-center gap-1.5"} ($ :span {:class "inline-block h-0.5 w-4 bg-ink-2"}) "sent to a person")
+          (when shown
+            ($ :span {:class "ml-auto font-mono text-ink-1"}
+               "at " (ui/pct (:t shown)) ": " (:bad shown) " bad · " (:person shown) " to a person")))
+       ($ :svg {:view-box (str "0 0 " w " " h) :class "mt-1 w-full cursor-crosshair select-none" :role "img"
+                :aria-label "Lines coded wrong or unsafely, and lines sent to a person, by threshold"
+                :on-mouse-move #(set-hover! (at %)) :on-mouse-leave #(set-hover! nil)
+                :on-click #(on-pick (:t (at %)))}
+          (for [v ticks]
+            ($ :g {:key v}
+               ($ :line {:x1 l :x2 (- w r) :y1 (y v) :y2 (y v) :stroke "var(--line-1)" :stroke-width 1})
+               ($ :text {:x (- l 6) :y (+ (y v) 3) :text-anchor "end" :font-size 9 :fill "var(--ink-3)" :font-family "var(--font-mono)"} v)))
+          (for [v [0.5 0.6 0.7 0.8 0.9]]
+            ($ :text {:key v :x (x v) :y (- h 8) :text-anchor "middle" :font-size 9 :fill "var(--ink-3)" :font-family "var(--font-mono)"} (ui/pct v)))
+          ($ :line {:x1 (x t) :x2 (x t) :y1 top :y2 (- h b) :stroke "var(--ink-1)" :stroke-width 1.5})
+          (when hover
+            ($ :line {:x1 (x (:t hover)) :x2 (x (:t hover)) :y1 top :y2 (- h b) :stroke "var(--line-2)" :stroke-dasharray "2 2"}))
+          ($ :path {:d (path :person) :fill "none" :stroke "var(--ink-2)" :stroke-width 2 :stroke-linejoin "round"})
+          ($ :path {:d (path :bad) :fill "none" :stroke "var(--coin)" :stroke-width 2 :stroke-linejoin "round"})
+          (when shown
+            ($ :g {}
+               ($ :circle {:cx (x (:t shown)) :cy (y (:person shown)) :r 4 :fill "var(--ink-2)" :stroke "var(--surface-0)" :stroke-width 2})
+               ($ :circle {:cx (x (:t shown)) :cy (y (:bad shown)) :r 4 :fill "var(--coin)" :stroke "var(--surface-0)" :stroke-width 2})))))))
+
+(defui levers [{:keys [scored lines strategy t on-strategy on-threshold]}]
+  (let [counts (frequencies (map :outcome scored))
+        points (uix/use-memo #(sweep lines strategy) [lines strategy])]
+    ($ ui/panel {:class "mt-4 grid gap-6 p-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]"}
+       ($ :div
+          ($ ui/eyebrow {} "Code lines by")
+          ($ :select {:value (name strategy) :on-change #(on-strategy (keyword (.. % -target -value)))
+                      :class "mt-1 w-full rounded-1 border border-line-2 bg-surface-0 px-2 py-1.5 text-sm"}
+             (for [[k title] strategies] ($ :option {:key (name k) :value (name k)} title)))
+          ($ ui/say {} (some (fn [[k _ about]] (when (= k strategy) about)) strategies))
+          ($ ui/eyebrow {:class "mt-4"} "Coded automatically at or above")
+          ($ :div {:class "mt-1 flex items-center gap-3"}
+             ($ :input {:type "range" :min 50 :max 99 :value (js/Math.round (* 100 t))
+                        :on-change #(on-threshold (/ (js/Number (.. % -target -value)) 100))
+                        :class "w-full accent-[var(--ink-1)]"})
+             ($ :span {:class "w-12 text-right font-display text-xl font-bold"} (ui/pct t)))
+          ($ :div {:class "mt-4 flex flex-wrap items-baseline gap-x-5 gap-y-2"}
+             (for [o outcome/outcomes]
+               ($ :span {:key (name o) :class "inline-flex items-baseline gap-1.5 text-sm"}
+                  ($ :b {:class "font-display text-2xl leading-none"} (counts o 0))
+                  ($ ui/dot {:outcome o}) ($ :span {:class "text-ink-2"} (ui/outcome-words o))))))
+       ($ :div
+          ($ ui/eyebrow {} "What each threshold gives")
+          ($ sweep-chart {:points points :t t :on-pick on-threshold})
+          ($ ui/say {} "Raising the threshold sends more lines to a person and codes fewer wrongly. Click the chart to move it.")))))
+
+;; ----------------------------------------------------------------------------------------------- the buckets
+
+(defui board [{:keys [world scored line-href]}]
+  (let [expected (frequencies (map #(get-in % [:unit :expect]) scored))
+        placed (group-by :code scored)]
+    ($ :div {:class "grid gap-4 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))]"}
+       (for [{:keys [project title codes]} (:buckets world)]
+         ($ :div {:key (or (some-> project name) title)}
+            ($ :div {:class "mb-1 text-sm font-bold"} (or (get-in world [:projects project :name]) title))
+            (for [[code label] codes]
+              ($ :div {:key (name code) :class "grid grid-cols-[110px_1fr] gap-2 border-t border-line-1 py-1.5"}
+                 ($ :div
+                    ($ :div {:class "text-sm" :title (get-in world [:codes code])} label)
+                    ($ ui/mono {:class "text-2xs text-ink-3"} (get expected code 0) " belong · " (count (placed code)) " put"))
+                 ($ :div {:class "flex flex-wrap content-start gap-0.5"}
+                    (for [{:keys [id outcome]} (sort-by :id (placed code))]
+                      ($ ui/chip {:key id :outcome outcome :href (line-href id)} id))))))))))
+
+;; ----------------------------------------------------------------------------------------------- the lines
+
+(def ^:private cols
+  "The row's columns, shared by the header and every row."
+  "grid items-center gap-2.5 grid-cols-[12px_52px_78px_minmax(160px,1fr)_104px_minmax(140px,200px)_minmax(180px,260px)_84px_14px]")
+
+(defui line-row [{:keys [row strategy t open on-toggle children]}]
+  (let [{:keys [id unit decisions outcome noted]} row
+        {:keys [code confidence]} (get decisions strategy)
+        acceptable (conj (set (:ok unit)) (:expect unit))
+        blk (get-in decisions [:blocks :code])]
+    ($ :div {:id id :class "border-b border-line-1"}
+       ($ :button {:on-click on-toggle :aria-expanded open
+                   :class (cx cols "min-h-[30px] w-full px-2 py-1.5 text-left hover:bg-surface-1"
+                              (when open "bg-surface-1")
+                              (when (ui/bad? outcome) "shadow-[inset_3px_0_0_var(--coin)]"))}
+          ($ ui/dot {:outcome outcome})
+          ($ :span {:class "font-mono text-xs text-ink-2"} id
+             (when noted ($ :span {:class "ml-1.5 font-mono text-2xs text-gilt-text" :title "Commentary on why it failed"} "✎")))
+          ($ ui/mono {:class "text-ink-3"} (:date unit))
+          ($ :span {:class "min-w-0 truncate"} (:merchant unit)
+             (when (:item unit) ($ :span {:class "text-ink-2"} " · " (:item unit)))
+             (when-let [n (:note unit)] ($ :span {:class "text-xs text-ink-3"} "  " n)))
+          ($ ui/amount {:amount (:amount unit) :currency (:currency unit)})
+          ($ :span {:class "min-w-0"} ($ ui/tag {:code (:expect unit)}))
+          ($ :span {:class "flex min-w-0 items-center gap-1.5"}
+             ($ ui/tag {:code code :miss (not (acceptable code))})
+             ($ :span {:class "inline-flex flex-none items-center gap-1 font-mono text-2xs text-ink-2"}
+                ($ ui/bar {:p confidence :threshold t}) (ui/pct confidence)))
+          ($ :span {:class (cx "truncate font-mono text-2xs" (if (= blk code) "text-ink-3" "text-gilt-text"))
+                    :title (str "The rule blocks said " (name blk))}
+             (if (= blk code) "same" (str/replace (name blk) #"^[a-z]+-(?=[a-z])|^needs-" "")))
+          ($ :span {:class (cx "text-2xs text-ink-3 transition-transform" (when open "rotate-90"))} "▶"))
+       (when open children))))
+
+(defui lines-table [{:keys [scored strategy t open show on-filter on-open line-view]}]
+  (let [counts (frequencies (map :outcome scored))
+        shown (case show
+                :all scored
+                :hard (filterv #(get-in % [:unit :hard]) scored)
+                :noted (filterv :noted scored)
+                (filterv #(= show (:outcome %)) scored))]
+    ($ :div
+       ($ :div {:class "sticky top-[45px] z-10 flex flex-wrap gap-1 bg-surface-0 py-1.5"}
+          (for [[k words] filters
+                :let [n (case k :all (count scored) :hard (count (filter #(get-in % [:unit :hard]) scored))
+                              :noted (count (filter :noted scored)) (counts k 0))
+                      on? (= k show)]]
+            ($ :button {:key (name k) :on-click #(on-filter k)
+                        :class (cx "inline-flex items-center gap-1.5 rounded-1 border px-2.5 py-1 text-sm"
+                                   (if on? "border-ink-1 bg-ink-1 text-ink-inverse" "border-line-2 hover:bg-surface-1"))}
+               (when-not words ($ ui/dot {:outcome k}))
+               (or words (ui/outcome-words k))
+               ($ :b {:class (cx "font-mono font-medium" (if on? "text-ink-inverse" "text-ink-3"))} n))))
+       ($ :div {:class "border-t-2 border-ink-1"}
+          ($ :div {:class (cx cols "border-b border-line-1 bg-surface-1 px-2 py-1.5 font-mono text-2xs uppercase tracking-[0.08em] text-ink-3")}
+             ($ :span) ($ :span "line") ($ :span "date") ($ :span "merchant · item · note") ($ :span {:class "text-right"} "amount")
+             ($ :span "belongs in") ($ :span "chosen") ($ :span "blocks") ($ :span))
+          (for [row (sort-by #(case (:outcome %) :wrong 0 :unsafe 1 :review 2 :stopped 3 4) shown)]
+            ($ line-row {:key (:id row) :row row :strategy strategy :t t :open (= open (:id row))
+                         :on-toggle #(on-open (when-not (= open (:id row)) (:id row)))}
+               (line-view row)))))))
+
+;; ----------------------------------------------------------------------------------------------- the page
+
+(defui page [{:keys [scenario run query]}]
+  (let [scenarios (api/use-get "/sandbox/scenarios")
+        world-state (api/use-get (str "/sandbox/scenarios/" scenario))
+        world (get-in world-state [:data :world])
+        newest (some #(when (= scenario (:name %)) (:id (first (:runs %)))) (get-in scenarios [:data :scenarios]))
+        run-state (api/use-get (when run (str "/sandbox/scenarios/" scenario "/runs/" run)))
+        t (/ (js/Number (or (:t query) 85)) 100)
+        strategy (keyword (or (:s query) "choice"))
+        show (keyword (or (:f query) "all"))
+        open (:line query)
+        go! (fn [changes replace?] (route/go! ["sandbox" scenario run] (merge query changes) replace?))
+        lines (get-in run-state [:data :lines])
+        scored (uix/use-memo #(mapv (fn [r] (assoc r :code (get-in r [:decisions strategy :code])))
+                                    (score lines strategy t))
+                             [lines strategy t])]
+    (uix/use-effect
+     (fn [] (when (and (not run) newest) (route/go! ["sandbox" scenario newest] query true)))
+     [run newest scenario query])
+    ($ ui/world-context {:value world}
+       ($ :div
+          ($ :div {:class "flex flex-wrap items-baseline justify-between gap-3"}
+             ($ :div
+                ($ :div {:class "text-sm text-ink-3"} ($ :a {:href "#/sandbox" :class "hover:underline"} "Sandbox") " / " scenario)
+                ($ :h1 {:class "font-display text-2xl font-extrabold tracking-tight"} "Bank lines into buckets"))
+             ($ :label {:class "flex items-center gap-2 text-sm text-ink-3"} "Run"
+                ($ :select {:value (or run "") :on-change #(route/go! ["sandbox" scenario (.. % -target -value)] query)
+                            :class "rounded-1 border border-line-2 bg-surface-0 px-2 py-1 font-mono text-xs text-ink-1"}
+                   (for [{:keys [id at]} (some #(when (= scenario (:name %)) (:runs %)) (get-in scenarios [:data :scenarios]))]
+                     ($ :option {:key id :value id} at)))))
+          ($ ui/loading {:state world-state}
+             ($ world-strip {:world world}))
+          ($ ui/loading {:state (if run run-state {:loading true})}
+             (let [{:keys [stale] info :run} (:data run-state)]
+               ($ :<>
+                  (when stale ($ ui/notice {:tone :bad} stale))
+                  ($ :div {:class "mt-2 text-xs text-ink-3"}
+                     ($ ui/mono {} (:model info)) " · " (:results info) " lines and items"
+                     (when-let [{:keys [requests input-tokens]} (:usage info)] (str " · " requests " requests, " input-tokens " tokens in"))
+                     (when-let [{:keys [commit dirty]} (:source info)] (str " · code " (subs (str commit) 0 7) (when dirty ", with changes"))))
+                  ($ levers {:scored scored :lines lines :strategy strategy :t t
+                             :on-strategy #(go! {:s (name %)} true) :on-threshold #(go! {:t (js/Math.round (* 100 %))} true)})
+                  ($ ui/section-title {:aside "Each bucket's lines, coloured by how they fared"} "The buckets")
+                  ($ board {:world world :scored scored
+                            :line-href #(route/href ["sandbox" scenario run] (assoc query :line % :f nil))})
+                  ($ ui/section-title {:aside "Open a line to walk it through"} "Every line")
+                  ($ lines-table {:scored scored :strategy strategy :t t :open open :show show
+                                  :on-filter #(go! {:f (when-not (= :all %) (name %))} true)
+                                  :on-open #(go! {:line %} true)
+                                  :line-view (fn [row] ($ line/walk {:scenario scenario :run run :row row :strategy strategy :t t}))}))))))))

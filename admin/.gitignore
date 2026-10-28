@@ -1,0 +1,7 @@
+node_modules/
+.shadow-cljs/
+.cpcache/
+# Built by bin/admin build or bin/admin dev
+resources/ownpurse/admin/js/
+resources/ownpurse/admin/admin.css
+.clj-kondo/.cache/

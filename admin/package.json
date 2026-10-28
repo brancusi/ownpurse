@@ -1,0 +1,20 @@
+{
+  "name": "ownpurse-admin",
+  "private": true,
+  "description": "The ownpurse admin: a UIx app over the ownpurse API, served by ownpurse at /admin.",
+  "scripts": {
+    "dev": "concurrently -k -n cljs,css -c blue,magenta \"shadow-cljs watch app\" \"tailwindcss -i src/admin.css -o resources/ownpurse/admin/admin.css --watch=always\"",
+    "build": "tailwindcss -i src/admin.css -o resources/ownpurse/admin/admin.css --minify && shadow-cljs release app"
+  },
+  "dependencies": {
+    "react": "19.2.9",
+    "react-dom": "19.2.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.1.18",
+    "concurrently": "9.2.1",
+    "react-refresh": "0.17.0",
+    "shadow-cljs": "3.5.8",
+    "tailwindcss": "4.1.18"
+  }
+}

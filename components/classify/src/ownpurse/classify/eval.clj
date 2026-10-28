@@ -18,6 +18,7 @@
    [ownpurse.classify.core :as core]
    [ownpurse.classify.facts :as facts]
    [ownpurse.classify.jev :as jev]
+   [ownpurse.classify.outcome :as outcome]
    [ownpurse.config.interface :as config])
   (:import
    (java.security MessageDigest)
@@ -27,7 +28,7 @@
 
 (def outcomes
   "How a coding fares, in the order the reports list them."
-  [:right :wrong :unsafe :stopped :review])
+  outcome/outcomes)
 
 (defn units
   "Every unit the eval codes in `scenario`: each case, or each item of a case whose receipt or order lists them."
@@ -60,11 +61,17 @@
            :when (and (>= (blocks/rule-holds r line-facts {}) 0.5M) (not= :required review))]
        [:case id :check-holds-but-not-required rule]))))
 
+(defn- scenario-text
+  "A scenario's file as text: `source` is its name on the classpath (classify/eval/<name>.edn), or a file."
+  [source]
+  (slurp (if (instance? java.io.File source) source (io/resource (str "classify/eval/" source ".edn")))))
+
 (defn scenario
-  "Reads the scenario `name` from the classpath (classify/eval/<name>.edn) and checks it."
-  [name]
-  (let [{:keys [codes rules cases categories cards] :as s}
-        (edn/read-string (slurp (io/resource (str "classify/eval/" name ".edn"))))
+  "Reads a scenario and checks it: `source` is its name on the classpath (classify/eval/<name>.edn), or a file
+  (a workspace's own scenario, kept outside this repository)."
+  [source]
+  (let [name (if (instance? java.io.File source) (.getName ^java.io.File source) source)
+        {:keys [codes rules cases categories cards] :as s} (edn/read-string (scenario-text source))
         rule-ids (set (map :id rules))
         problems (concat
                   (for [{:keys [id code]} rules :when (not (contains? codes code))] [:rule id :unknown-code code])
@@ -84,9 +91,9 @@
     (apply str (map #(format "%02x" %) d))))
 
 (defn scenario-hash
-  "The SHA-256 of the scenario `name`'s file as it is on the classpath now."
-  [name]
-  (sha256 (slurp (io/resource (str "classify/eval/" name ".edn")))))
+  "The SHA-256 of a scenario's file as it is now: `source` as for `scenario`."
+  [source]
+  (sha256 (scenario-text source)))
 
 (defn- source
   "The code the run ran: the commit checked out, and whether a tracked file differed from it (a new file, such as the
@@ -158,18 +165,9 @@
             :results results}))))
 
 (defn outcome
-  "How one coding fares at `threshold`. Coded automatically: :wrong when its bucket is not an acceptable one, else
-  :unsafe when a person had to look, else :right. Sent to a person: :stopped when a person had to or may look,
-  :review when it was needless."
-  [{:keys [expect ok review]} {:keys [code confidence]} threshold]
-  (let [acceptable (conj (set ok) expect)
-        auto? (and (not= :needs-person code) (>= confidence threshold))]
-    (cond
-      (and auto? (not (acceptable code))) :wrong
-      (and auto? (= :required review)) :unsafe
-      auto? :right
-      review :stopped
-      :else :review)))
+  "How one coding fares at `threshold` (see ownpurse.classify.outcome)."
+  [case coding threshold]
+  (outcome/outcome case coding threshold))
 
 (defn- check-complete
   "Throws unless `results` hold every unit of `scenario` once and nothing else."

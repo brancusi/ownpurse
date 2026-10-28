@@ -4,6 +4,7 @@
                        "components/close/test"
                        "components/intercompany/test"
                        "components/payees/test"
+                       "components/sandbox/test"
                        "components/statement/test"
                        "components/export/test"
                        "components/compare/test"

@@ -60,6 +60,8 @@ A Polylith workspace (top namespace `ownpurse`):
 - `projects/`: what gets built (the server uberjar).
 - `development/`: the REPL project. `user.clj` stays tiny; `dev.clj` holds the REPL system.
 - `notebooks/`: Clerk notebooks over a record, not a brick and not in the server (docs/NOTEBOOKS.md).
+- `admin/`: the web admin (ClojureScript, UIx, Tailwind over the design tokens), not a brick; the server serves its
+  built files at /admin. `bin/admin dev` while changing it; how it is built and styled is in admin/README.md.
 - `samples/`: synthetic source files, used as test input. `docs/`, `brand/`, `site/` as before.
 
 ## The REPL

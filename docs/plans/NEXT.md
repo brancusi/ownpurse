@@ -558,6 +558,31 @@ A run keeps every raw answer (`components/classify/runs/`), so a threshold is re
   whereabouts derived from the lines (runs of in-person spend abroad) instead of written trips; then the per diem
   itself, generated from trip days, not from purchases.
 
+## The admin and its sandbox (spike, 2026-10-28)
+
+The cards notebook outgrew Clerk: every line's walk-through in one page was 30MB, and interaction (a threshold, a
+filter, opening one line) fought Clerk's render functions. The admin is the answer: `admin/`, ClojureScript with UIx
+(React 19), Tailwind themed by the design tokens, served by ownpurse itself at /admin (admin/README.md).
+
+- `components/sandbox`: scenarios, the world they happened in, runs and one line all the way through, as data. A
+  workspace adds its own scenarios and runs from its own folders (`:sandbox {:dir :scenarios}`, OWNPURSE_RUNS_DIR and
+  OWNPURSE_SCENARIOS_DIR).
+- `bases/api`: `GET /sandbox/scenarios`, `/sandbox/scenarios/{scenario}`, `…/runs/{run}`, `…/runs/{run}/lines/{line}`,
+  in JSON or Transit; the built admin at /admin.
+- `ownpurse.classify.outcome` is `.cljc`: the eval and the browser score a line with the same function, so the
+  sandbox moves the threshold and the strategy over 391 lines without asking anything.
+- The page: the world (projects, trips, cards), the levers (strategy, threshold, and what every threshold gives:
+  lines coded wrong or unsafely against lines sent to a person), the buckets, every line, and one line's seven steps.
+  A run is 240KB in Transit, a line 30KB, fetched when it opens. The cards notebook stays for now.
+- Next, in order:
+  1. Lines from a book: the sandbox's lines read from the record (a book's bank lines, its cards and their holders)
+     instead of a scenario file, with the world a workspace writes (trips, projects, buckets, rules). Then a
+     workspace's admin shows its own live lines with no file to write.
+  2. Editing the rule set in the sandbox: a rule changed or added, and the lines it touches classified again (one
+     line costs two or three Jev calls), compared with the run.
+  3. The review screen: a person codes a line sent to them and says why, in words; the reasons become proposed rules.
+  4. The admin's other sections over the API that exists: books and accounts, the close register, intercompany.
+
 ## After 3b
 
 Steps 4 to 8 as in SPIKE.md. Step 5 (time) can use pull-1 and pull-2: what the books said on 2026-03-31, as we knew

@@ -3,6 +3,7 @@
    [clojure.java.io :as io]
    [clojure.string :as str]
    [clojure.test :refer [deftest is testing]]
+   [cognitect.transit]
    [ownpurse.api.handler :as handler]
    [ownpurse.json.interface :as json]
    [ownpurse.ledger.interface :as ledger]
@@ -313,3 +314,26 @@
       (finally
         (store/stop node)
         (doseq [^File f (reverse (file-seq (io/file dir)))] (.delete f))))))
+
+(deftest sandbox-test
+  (let [node (store/start {:mode :in-memory})
+        app (handler/handler {:node node :sandbox {:dir "components/classify/runs"}})]
+    (try
+      (testing "the scenarios, in JSON"
+        (let [{:keys [status body]} (request app :get "/sandbox/scenarios")]
+          (is (= 200 status))
+          (is (some #(= "harbour" (:name %)) (:scenarios body)))))
+      (testing "in Transit, keywords stay keywords"
+        (let [{:keys [status headers body]} (app {:request-method :get :uri "/sandbox/scenarios/harbour"
+                                                  :headers {"accept" "application/transit+json"}})
+              world (:world (cognitect.transit/read (cognitect.transit/reader body :json)))]
+          (is (= 200 status))
+          (is (str/starts-with? (get headers "Content-Type") "application/transit+json"))
+          (is (every? keyword? (keys (:codes world))))))
+      (testing "a run that is not there"
+        (is (= {:status 404 :type "ownpurse/not-found"}
+               (let [{:keys [status body]} (request app :get "/sandbox/scenarios/harbour/runs/harbour-nope")]
+                 {:status status :type (get-in body [:error :type])}))))
+      (testing "the admin: /admin goes to its page"
+        (is (= "/admin/" (get-in (app {:request-method :get :uri "/admin"}) [:headers "Location"]))))
+      (finally (store/stop node)))))
