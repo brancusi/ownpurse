@@ -5,6 +5,7 @@
    [ownpurse.admin.route :as route]
    [ownpurse.admin.sandbox.home :as sandbox.home]
    [ownpurse.admin.sandbox.run :as sandbox.run]
+   [ownpurse.admin.theme :as theme]
    [ownpurse.admin.ui :as ui]
    [uix.core :refer [$ defui]]
    [uix.dom]))
@@ -23,7 +24,8 @@
                ($ :a {:key id :href (route/href [id]) :title about
                       :class (ui/cx "rounded-1 px-2.5 py-1 text-sm"
                                     (if (= id (or here "sandbox")) "bg-ink-1 text-ink-inverse" "text-ink-2 hover:bg-surface-1"))}
-                  title))))
+                  title)))
+          ($ :div {:class "ml-auto"} ($ theme/switch)))
        ($ :main {:class "mx-auto max-w-[1440px] px-6 pt-5 pb-16"} children))))
 
 (defui app []
@@ -36,19 +38,11 @@
                      ($ sandbox.home/page))
          ($ ui/notice {} "No such page. Pick a section above.")))))
 
-(defn- follow-theme!
-  "The tokens' theme (data-theme) follows the system's light or dark setting, now and as it changes."
-  []
-  (let [mq (js/matchMedia "(prefers-color-scheme: dark)")
-        apply! #(.setAttribute js/document.documentElement "data-theme" (if (.-matches mq) "dark" "light"))]
-    (apply!)
-    (.addEventListener mq "change" apply!)))
-
 (defonce ^:private root (delay (uix.dom/create-root (js/document.getElementById "app"))))
 
 (defn ^:dev/after-load render []
   (uix.dom/render-root ($ app) @root))
 
 (defn init []
-  (follow-theme!)
+  (theme/follow!)
   (render))

@@ -48,7 +48,8 @@ browser ── /admin/ ───────────▶ ownpurse server ─�
 
 | Namespace | What |
 |---|---|
-| `ownpurse.admin.main` | the shell (the bar of sections), the router's switch, the theme following the system's |
+| `ownpurse.admin.main` | the shell (the bar of sections), the router's switch |
+| `ownpurse.admin.theme` | light or dark: the system's, or one picked in the bar and kept in the browser |
 | `ownpurse.admin.route` | the hash route: parse, `href`, `go!`, `use-route` |
 | `ownpurse.admin.api` | `use-get`: an API answer, read from Transit, kept for the page's life |
 | `ownpurse.admin.ui` | the building blocks: tag, pill, dot, chip, bar, amount, eyebrow, panel, disclosure, notice |
@@ -63,7 +64,8 @@ builds markup, and the admin never recomputes what a component decides.
 All colour, type and radius come from ownpurse's design tokens (`brand/tokens.json` → `brand/tokens.css`), which
 `src/admin.css` maps into Tailwind's theme. Change a token there and every screen follows, in both themes.
 
-- **Two themes, following the system's.** Light is the brand's; dark is the admin's own softer slate (set in
+- **Two themes, following the system's** unless one is picked with Auto · Light · Dark in the bar (kept in that
+  browser; `ownpurse.admin.theme`). Light is the brand's; dark is the admin's own softer slate (set in
   `src/admin.css`, the same roles with pastel values). Text is JetBrains Mono; page titles keep the brand's display
   face.
 - **Use the token utilities**: `bg-surface-1`, `text-ink-3`, `border-line-1`, `bg-coin-tint`, `text-verdigris`,

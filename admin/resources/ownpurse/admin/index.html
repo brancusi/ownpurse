@@ -7,8 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="/admin/admin.css">
-  <!-- The theme before the first paint, so a dark system never flashes light; main.cljs keeps it following. -->
-  <script>document.documentElement.dataset.theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"</script>
+  <!-- The theme before the first paint (the kept choice, else the system's), so a dark page never flashes light;
+       ownpurse.admin.theme keeps it after. -->
+  <script>
+    var kept; try { kept = localStorage.getItem("ownpurse.admin.theme") } catch (e) {}
+    document.documentElement.dataset.theme = kept === "light" || kept === "dark" ? kept
+      : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  </script>
 </head>
 <body>
   <div id="app">
