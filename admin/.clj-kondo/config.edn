@@ -1,3 +1,0 @@
-{:lint-as {uix.core/defui clojure.core/defn
-           uix.core/defhook clojure.core/defn}
- :linters {:unresolved-var {:exclude [cognitect.transit]}}}

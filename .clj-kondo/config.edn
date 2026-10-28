@@ -3,4 +3,9 @@
                              clojure.core/float {:message "Money is BigDecimal: use bigdec, never a float."}
                              clojure.core/doubles {:message "Money is BigDecimal: never doubles."}
                              clojure.core/floats {:message "Money is BigDecimal: never floats."}}}
+ ;; The admin (admin/src): UIx's own clj-kondo config, vendored in .clj-kondo/com.pitch/uix.core (defui, $ and
+ ;; the hooks' rules). clj-kondo knows transit by its JVM library (transit-clj), whose vars and arities are not
+ ;; transit-cljs's.
+ :config-in-ns {ownpurse.admin.api {:linters {:unresolved-var {:exclude [cognitect.transit]}
+                                              :invalid-arity {:level :off}}}}
  :output {:exclude-files ["vendor/"]}}

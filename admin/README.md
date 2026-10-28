@@ -23,7 +23,7 @@ While `bin/admin dev` runs:
   REPL", shadow-cljs, build `:app`), or run `npx shadow-cljs cljs-repl app` in `admin/`. Evaluate in a `.cljs` file
   and it runs in the open page.
 - **The hooks are linted as you build**: UIx's linter warns about a missing dependency of an effect or a list item
-  without a `:key`, at compile time. `clj-kondo` knows UIx through `admin/.clj-kondo`.
+  without a `:key`, at compile time. `clj-kondo` knows UIx through its own config, vendored at `.clj-kondo/com.pitch/uix.core`.
 
 ## How it fits together
 
