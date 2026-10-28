@@ -1,7 +1,7 @@
 (ns ownpurse.notebooks.cards
   "Bank lines into buckets: every line of an eval scenario as one row, with the bucket it belongs in and the bucket
   Jev chose with its confidence. A row opens to the line's way through, in seven steps: the bank line; what code works
-  out; what Jev reads (the state exactly as sent, field by field, with how code made each field and where to change
+  out (only the open row's, worked out when it opens); what Jev reads (the state exactly as sent, field by field, with how code made each field and where to change
   it, and what Jev is not sent); what Jev is asked (the questions word for word, every option as Jev reads it, with
   its probability); the rules applied; the decision; and where to change it, with the levers this line points to
   marked. Filters at the top pick the wrong lines, those sent to a person, or the hard ones. Every name, number and
@@ -717,13 +717,18 @@
      (step 7 "Where to change it" "the levers, by what you see"
            (levers u decisions o))]))
 
-(defn- row [{:keys [id decisions] :as result}]
+(defn- row
+  "One line's summary row. Only the open line carries its walk-through: the page stays small, and opening a row asks
+  the server for that line's."
+  [{:keys [id decisions] :as result} open]
   (let [u (units id)
         {:keys [code confidence]} (:choice decisions)
         o (outcome result)
         acceptable (conj (set (:ok u)) (:expect u))
         blk (:code (:blocks decisions))]
-    [:details {:id id :class (str "row " (name o) (when (:hard u) " hard") (when (get-in notes [:lines id]) " noted"))}
+    {:id id
+     :class (str "row " (name o) (when (:hard u) " hard") (when (get-in notes [:lines id]) " noted"))
+     :summary
      [:summary
       [:span.dot {:title (outcome-words o)}]
       [:span.id id (when (get-in notes [:lines id]) [:span.has-note {:title "Commentary on why it failed"} "✎"])]
@@ -737,24 +742,52 @@
       [:span {:class (str "blk" (when (not= blk code) " differs")) :title (str "The rule blocks said " (name blk))}
        (if (= blk code) "same" (str/replace (name blk) #"^(harbour|skyline)-|^needs-" ""))]
       [:span.chev "▶"]]
-     (open-body result)]))
+     :body (when (= id open) (open-body result))}))
+
+(defonce ^:private !open
+  ;; The line whose row is open: a row that opens asks the server, through open!, for its walk-through.
+  (atom nil))
+
+(defn open!
+  "Opens line `id`'s row; the page is worked out again with that line's walk-through."
+  [id]
+  (reset! !open id))
+
+(def ^:private page-viewer
+  {:transform-fn clerk/mark-presented
+   :render-fn
+   '(fn [{:keys [before cols rows open]}]
+      (into before
+            [(into [:div.rows cols]
+                   (for [{:keys [id class summary body]} rows]
+                     ^{:key id}
+                     [:details {:id id :class class :open (= id open)
+                                :on-toggle (fn [e]
+                                             (when (and (.. e -target -open) (not= id open))
+                                               (nextjournal.clerk.viewer/clerk-eval {:recompute? true}
+                                                                                    (list 'ownpurse.notebooks.cards/open! id))))}
+                      summary
+                      (or body [:div.body {:style {:padding "14px 8px" :color "var(--ink-3)"}} "Working out this line…"])]))]))})
 
 (defn- every-line []
-  [:div
-   [:h2 "Every line"]
-   [:div.filters
-    (for [[k words n] (concat [[:all "All" (count results)]]
-                              (for [o [:wrong :unsafe :review :stopped :right]] [o (outcome-words o) (count (by-outcome o))])
-                              [[:hard "marked hard" (count (filter #(:hard (units (:id %))) results))]]
-                              (when notes [[:noted "with commentary" (count (:lines notes))]]))]
-      (list [:input {:type "radio" :name "f" :id (str "f-" (name k)) :default-checked (= :all k)}]
-            [:label {:for (str "f-" (name k))} (when-not (#{:all :hard :noted} k) [:span {:class (str "dot " (name k))}])
-             words [:b n]]))]
-   [:div.rows
-    [:div.cols [:span] [:span "line"] [:span "date"] [:span "merchant · item · note"] [:span {:style {:text-align "right"}} "amount"]
-     [:span "belongs in"] [:span "Jev chose"] [:span "blocks"] [:span]]
-    (map row (sort-by #(case (outcome %) :wrong 0 :unsafe 1 :review 2 :stopped 3 4) results))]])
+  (let [open @!open]
+    {:before
+     [:div
+      [:h2 "Every line"]
+      [:p.muted {:style {:font-size "12.5px"}} "Open a row to walk its line through, one line at a time."]
+      [:div.filters
+       (for [[k words n] (concat [[:all "All" (count results)]]
+                                 (for [o [:wrong :unsafe :review :stopped :right]] [o (outcome-words o) (count (by-outcome o))])
+                                 [[:hard "marked hard" (count (filter #(:hard (units (:id %))) results))]]
+                                 (when notes [[:noted "with commentary" (count (:lines notes))]]))]
+         (list [:input {:type "radio" :name "f" :id (str "f-" (name k)) :default-checked (= :all k)}]
+               [:label {:for (str "f-" (name k))} (when-not (#{:all :hard :noted} k) [:span {:class (str "dot " (name k))}])
+                words [:b n]]))]]
+     :cols [:div.cols [:span] [:span "line"] [:span "date"] [:span "merchant · item · note"] [:span {:style {:text-align "right"}} "amount"]
+            [:span "belongs in"] [:span "Jev chose"] [:span "blocks"] [:span]]
+     :open open
+     :rows (mapv #(row % open) (sort-by #(case (outcome %) :wrong 0 :unsafe 1 :review 2 :stopped 3 4) results))}))
 
 ^{:nextjournal.clerk/visibility {:result :show}}
-(clerk/html {:nextjournal.clerk/width :full}
-            [:div.opx [:style css] (head) (board) (every-line)])
+(clerk/with-viewer page-viewer {:nextjournal.clerk/width :full}
+  (update (every-line) :before #(vector :div.opx [:style css] (head) (board) %)))
