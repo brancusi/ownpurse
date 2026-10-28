@@ -63,6 +63,9 @@ builds markup, and the admin never recomputes what a component decides.
 All colour, type and radius come from ownpurse's design tokens (`brand/tokens.json` → `brand/tokens.css`), which
 `src/admin.css` maps into Tailwind's theme. Change a token there and every screen follows, in both themes.
 
+- **Two themes, following the system's.** Light is the brand's; dark is the admin's own softer slate (set in
+  `src/admin.css`, the same roles with pastel values). Text is JetBrains Mono; page titles keep the brand's display
+  face.
 - **Use the token utilities**: `bg-surface-1`, `text-ink-3`, `border-line-1`, `bg-coin-tint`, `text-verdigris`,
   `font-mono`, `font-display`, `rounded-1`, and the admin's type scale `text-2xs` … `text-2xl`. Never a hex value, never
   a Tailwind palette colour (`text-gray-500`).

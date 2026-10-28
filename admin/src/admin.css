@@ -7,6 +7,39 @@
 
 @source "./ownpurse";
 
+/* The admin's dark theme: softer than the brand's near-black, a Dracula-like slate with pastel outcome colours, for
+   reading long lists. The roles are the brand's (coin wrong, gilt needlessly to a person, verdigris right, lapis
+   links), only the values differ. Every text pair is at least 4.5:1 (ink-3 on surface-2 the lowest, 4.7); main
+   text is 11.9:1, under the brand's 16, on purpose. The light theme is the brand's. */
+:root {
+  /* The brand's tokens name DM Mono outside Tailwind's layers, so the admin's face is set here too. */
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+[data-theme="dark"] {
+  --surface-0: #282A36;
+  --surface-1: #30323F;
+  --surface-2: #3B3E4E;
+  --surface-inverse: #ECEBE4;
+  --line-1: #3D4052;
+  --line-2: #6C7194;
+  --ink-1: #ECEBE4;
+  --ink-2: #C8C8D6;
+  --ink-3: #A8ACCA;
+  --ink-inverse: #282A36;
+  --coin: #FF7A85;
+  --coin-text: #FFA0A7;
+  --coin-tint: #4A2F3B;
+  --on-coin: #282A36;
+  --gilt: #F2C27C;
+  --gilt-text: #F2C27C;
+  --gilt-tint: #463E33;
+  --verdigris: #7EDCA0;
+  --verdigris-tint: #2C4639;
+  --lapis: #BFA2F7;
+  --lapis-tint: #3A3756;
+  --focus: var(--lapis);
+}
+
 @theme inline {
   --color-surface-0: var(--surface-0);
   --color-surface-1: var(--surface-1);
@@ -33,12 +66,14 @@
 }
 
 @theme {
-  --font-sans: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  /* One monospace for reading and for figures (JetBrains Mono: tall, open letters, clear 0/O and 1/l); the brand's
+     display face for page titles only. */
+  --font-sans: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
   --font-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "DM Mono", ui-monospace, Menlo, Consolas, monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
   --radius-1: 2px;
   --radius-2: 4px;
-  /* An admin reads dense: 13px body, small print for labels and sources. */
+  /* An admin reads dense: 13.5px body, small print for labels and sources. */
   --text-2xs: 10.5px;
   --text-xs: 11.5px;
   --text-sm: 12.5px;
@@ -49,7 +84,7 @@
 }
 
 @layer base {
-  html { background: var(--surface-0); color: var(--ink-1); }
-  body { font-size: var(--text-base); line-height: 1.4; }
+  html { background: var(--surface-0); color: var(--ink-1); font-family: var(--font-sans); }
+  body { font-size: var(--text-base); line-height: 1.5; font-feature-settings: "calt" 0; }
   :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 }
