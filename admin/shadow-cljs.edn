@@ -10,4 +10,12 @@
                 :devtools {:preloads [uix.preload]
                            :watch-dir "resources/ownpurse/admin"
                            :watch-path "/admin"}
-                :release {:compiler-options {:optimizations :advanced}}}}}
+                :release {:compiler-options {:optimizations :advanced}}}
+          ;; The static copy for ownpurse.com/sandbox (bin/admin site): the same app, reading answers from files.
+          :site {:target :browser
+                 :output-dir "../site/public/sandbox/js"
+                 :asset-path "/sandbox/js"
+                 :modules {:main {:init-fn ownpurse.admin.main/init}}
+                 :closure-defines {ownpurse.admin.api/base "/sandbox/data"
+                                   ownpurse.admin.api/suffix ".json"}
+                 :compiler-options {:optimizations :advanced}}}}

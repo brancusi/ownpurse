@@ -2,6 +2,7 @@
   "The admin: one page, its sections by the URL's hash. ownpurse serves it at /admin over whatever record it runs on,
   so a workspace's admin shows that workspace's books."
   (:require
+   [ownpurse.admin.api :as api]
    [ownpurse.admin.docs.guide :as docs.guide]
    [ownpurse.admin.docs.vocabulary :as docs.vocabulary]
    [ownpurse.admin.route :as route]
@@ -29,6 +30,13 @@
                                     (if (= id (or here "sandbox")) "bg-ink-1 text-ink-inverse" "text-ink-2 hover:bg-surface-1"))}
                   title)))
           ($ :div {:class "ml-auto"} ($ theme/switch)))
+       (when api/static?
+         ($ :div {:class "border-b border-line-1 bg-gilt-tint px-6 py-1.5 text-xs text-gilt-text"}
+            "A live copy on ownpurse.com, over an invented studio: every name, card, trip and amount is made up. "
+            "The lines were coded by Jev for real, in one of ownpurse's test runs. "
+            ($ :a {:class "underline" :href "/docs/guides/classifying/"} "How it works")
+            " · "
+            ($ :a {:class "underline" :href "https://github.com/brancusi/ownpurse"} "Run it yourself")))
        ($ :main {:class "mx-auto max-w-[1440px] px-6 pt-5 pb-16"} children))))
 
 (defui app []

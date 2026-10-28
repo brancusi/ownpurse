@@ -574,6 +574,31 @@ filter, opening one line) fought Clerk's render functions. The admin is the answ
 - The page: the world (projects, trips, cards), the levers (strategy, threshold, and what every threshold gives:
   lines coded wrong or unsafely against lines sent to a person), the buckets, every line, and one line's seven steps.
   A run is 240KB in Transit, a line 30KB, fetched when it opens. The cards notebook stays for now.
+- **Since the spike (2026-10-28):**
+  - **Docs in the admin.** `#/docs` is a guide from a bank line to a bucket in ten steps, each beside what that step
+    did to one real line of the run (six picked lines, one per path: a judgment call, a missing merchant code, a
+    receipt's items, a refund, a check rule, a note that tries to dictate). It reads the line through the API, so a
+    step that stops matching the code shows wrong data, not stale prose. `#/docs/terms` is the vocabulary: 46 words,
+    each with where it comes from (an accountant's, a bank's, machine learning's, TypeSafe's, or ours). `term` puts a
+    dotted word with its meaning on hover anywhere in the admin (`ownpurse.admin.terms`).
+  - **Online.** `bin/admin site` builds a static copy for ownpurse.com/sandbox: the same app, reading the API's own
+    answers written as files (`development/src/sandbox_site.clj` calls the handler for each), ownpurse's invented
+    scenarios only, each with its newest run (461 answers, about 13MB), checked by `bin/privacy-check --dir`. The
+    site's deploy builds it first. `bin/admin demo` runs the whole thing locally on an empty record.
+  - Settings: Auto, Light or Dark in the bar; a softer dark theme for the admin; JetBrains Mono for text.
+- **Learnt building it:**
+  - A long-lived REPL can serve a handler built from an older function after many reloads ("wrong number of args"
+    from code that is right on disk). `(dev/halt)` then `(dev/go)` rebuilds it. The shell run before a commit is
+    the check that trusts nothing in memory.
+  - The guide found a real bug: a receipt item's id has a slash (d88/1), and the line route took one path segment,
+    so no item could be opened. The route is a catch-all now, with a test.
+  - Editors lint with the repository root's clj-kondo config, not a subproject's: UIx's exported config lives in
+    `.clj-kondo/com.pitch/uix.core` at the root, committed.
+  - An invisible tooltip still widens the page (an absolutely placed element counts toward overflow): hide it with
+    `display: none` until shown.
+  - Writing the vocabulary forced each word to be pinned down. "Block" is ours: bookkeeping tools call a bank rule's
+    parts *conditions*. The sandbox's "Blocks" column, "same" or a short code, read as noise until the word had a
+    definition one hover away.
 - Next, in order:
   1. Lines from a book: the sandbox's lines read from the record (a book's bank lines, its cards and their holders)
      instead of a scenario file, with the world a workspace writes (trips, projects, buckets, rules). Then a

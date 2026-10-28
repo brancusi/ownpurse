@@ -3,3 +3,5 @@ dist/
 .astro/
 .wrangler/
 .DS_Store
+# The sandbox's static copy, built by bin/admin site before each deploy
+public/sandbox/

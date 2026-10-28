@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "astro build && npx --yes wrangler@4.139.0 deploy"
+    "deploy": "bash ../bin/admin site && astro build && ../bin/privacy-check --dir dist/sandbox && npx --yes wrangler@4.139.0 deploy"
   },
   "dependencies": {
     "@astrojs/react": "7.0.0",

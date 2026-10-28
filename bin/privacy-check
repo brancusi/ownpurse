@@ -5,6 +5,8 @@
 ;;   bin/privacy-check            the staged change: the denylist, then an agent's review
 ;;   bin/privacy-check --all      every tracked file against the denylist (no agent)
 ;;   bin/privacy-check --denylist the staged change against the denylist only
+;;   bin/privacy-check --dir DIR  every file under DIR against the denylist, tracked or not (a build about to be
+;;                                published: site/dist before a deploy)
 ;;
 ;; The denylist is private and never in this repository: one term per line (# starts a comment), at
 ;; $OWNPURSE_DENYLIST or ~/.config/ownpurse/denylist.txt. A term like 1234.56 is an amount and also matches 1,234.56;
@@ -93,6 +95,13 @@
         [i l] (cons [0 f] (map-indexed (fn [i l] [(inc i) l]) (str/split-lines (slurp file))))]
     [f i l]))
 
+(defn- dir-lines [dir]
+  (for [file (file-seq (io/file dir))
+        :when (.isFile file)
+        :let [f (str file)]
+        [i l] (cons [0 f] (map-indexed (fn [i l] [(inc i) l]) (str/split-lines (slurp file))))]
+    [f i l]))
+
 (defn- denylist-check [lines]
   (if-not (.exists (io/file denylist-path))
     (do (println (str "privacy-check: no denylist at " denylist-path "; set OWNPURSE_DENYLIST to check against one."))
@@ -177,5 +186,6 @@ The staged change:
       ok (case mode
            "--all" (denylist-check (tracked-lines))
            "--denylist" (denylist-check (staged-lines))
+           "--dir" (denylist-check (dir-lines (second *command-line-args*)))
            (and (denylist-check (staged-lines)) (agent-review)))]
   (System/exit (if ok 0 1)))

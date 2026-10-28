@@ -4,6 +4,8 @@
 #   bin/admin dev      builds on save (ClojureScript and Tailwind); a save shows in the open page, state kept
 #   bin/admin build    a release build, once: what a workspace needs before (go) serves /admin
 #   bin/admin check    compiles it, warnings as errors
+#   bin/admin demo     builds it and runs ownpurse on an empty record: the sandbox and the docs, nothing of yours
+#   bin/admin site     the static copy for ownpurse.com/sandbox, into site/public/sandbox (invented data only)
 #
 # Then open http://127.0.0.1:7070/admin/ (or the workspace's own port). The first run installs its npm packages.
 set -euo pipefail
@@ -13,5 +15,25 @@ case "${1:-}" in
   dev) exec npm run dev ;;
   build) exec npm run build ;;
   check) exec npx shadow-cljs compile app --config-merge '{:compiler-options {:warnings-as-errors true}}' ;;
-  *) sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
+  demo)
+    npm run build
+    cd ..
+    data=$(mktemp -d)
+    port=${OWNPURSE_PORT:-7070}
+    echo "Open http://127.0.0.1:$port/admin/ once ownpurse is listening (a minute the first time). Ctrl-C stops it."
+    OWNPURSE_DATA_DIR="$data" OWNPURSE_PORT="$port" OWNPURSE_LOCAL_CONFIG="$data/none.edn" \
+      OWNPURSE_SCENARIOS_DIR= exec clojure -M:dev -m ownpurse.api.main ;;
+  site)
+    out=../site/public/sandbox
+    rm -rf "$out"
+    mkdir -p "$out"
+    npx tailwindcss -i src/admin.css -o "$out/admin.css" --minify
+    npx shadow-cljs release site
+    sed -e 's#/admin/#/sandbox/#g' -e 's#<title>ownpurse admin</title>#<title>ownpurse sandbox</title>#' \
+      -e 's#</title>#</title>\n  <link rel="icon" href="/favicon.svg">#' \
+      resources/ownpurse/admin/index.html > "$out/index.html"
+    cd ..
+    clojure -M:dev -m sandbox-site site/public/sandbox/data
+    bin/privacy-check --dir site/public/sandbox ;;
+  *) sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
 esac

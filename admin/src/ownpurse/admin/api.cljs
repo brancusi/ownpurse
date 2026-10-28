@@ -10,6 +10,17 @@
                                     "instant" identity
                                     "date" identity}}))
 
+(goog-define ^{:doc "Where the answers come from. Empty: the ownpurse server this page came from. On ownpurse.com the
+  sandbox is a static copy: the answers written as files under this path (bin/admin site)."}
+  base "")
+
+(goog-define ^{:doc "Appended to each path in the static copy: an answer is a file, sandbox/scenarios.json."}
+  suffix "")
+
+(def static?
+  "Whether this is the static copy on ownpurse.com, with invented data and no server."
+  (not= "" suffix))
+
 (defonce ^:private cache
   ;; Answers by path, kept for the page's life: runs are files that do not change once written.
   (atom {}))
@@ -19,7 +30,7 @@
   [path]
   (if-let [hit (get @cache path)]
     (js/Promise.resolve hit)
-    (-> (js/fetch path #js {:headers #js {"Accept" "application/transit+json"}})
+    (-> (js/fetch (str base path suffix) #js {:headers #js {"Accept" "application/transit+json"}})
         (.then (fn [res]
                  (-> (.text res)
                      (.then (fn [text]
