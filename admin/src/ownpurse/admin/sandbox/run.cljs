@@ -195,21 +195,23 @@
                 :noted (filterv :noted scored)
                 (filterv #(= show (:outcome %)) scored))]
     ($ :div
-       ($ :div {:class "sticky top-[45px] z-10 flex flex-wrap gap-1 bg-surface-0 py-1.5"}
-          (for [[k words] filters
-                :let [n (case k :all (count scored) :hard (count (filter #(get-in % [:unit :hard]) scored))
-                              :noted (count (filter :noted scored)) (counts k 0))
-                      on? (= k show)]]
-            ($ :button {:key (name k) :on-click #(on-filter k)
-                        :class (cx "inline-flex items-center gap-1.5 rounded-1 border px-2.5 py-1 text-sm"
-                                   (if on? "border-ink-1 bg-ink-1 text-ink-inverse" "border-line-2 hover:bg-surface-1"))}
-               (when-not words ($ ui/dot {:outcome k}))
-               (or words (ui/outcome-words k))
-               ($ :b {:class (cx "font-mono font-medium" (if on? "text-ink-inverse" "text-ink-3"))} n))))
-       ($ :div {:class "border-t-2 border-ink-1"}
-          ($ :div {:class (cx cols "border-b border-line-1 bg-surface-1 px-2 py-1.5 font-mono text-2xs uppercase tracking-[0.08em] text-ink-3")}
+       ;; The filters and the column headers stay under the page's bar as the lines scroll.
+       ($ :div {:class "sticky top-[45px] z-10 bg-surface-0"}
+          ($ :div {:class "flex flex-wrap gap-1 py-1.5"}
+             (for [[k words] filters
+                   :let [n (case k :all (count scored) :hard (count (filter #(get-in % [:unit :hard]) scored))
+                                 :noted (count (filter :noted scored)) (counts k 0))
+                         on? (= k show)]]
+               ($ :button {:key (name k) :on-click #(on-filter k)
+                           :class (cx "inline-flex items-center gap-1.5 rounded-1 border px-2.5 py-1 text-sm"
+                                      (if on? "border-ink-1 bg-ink-1 text-ink-inverse" "border-line-2 hover:bg-surface-1"))}
+                  (when-not words ($ ui/dot {:outcome k}))
+                  (or words (ui/outcome-words k))
+                  ($ :b {:class (cx "font-mono font-medium" (if on? "text-ink-inverse" "text-ink-3"))} n))))
+          ($ :div {:class (cx cols "border-t-2 border-b border-t-ink-1 border-b-line-1 bg-surface-1 px-2 py-1.5 font-mono text-2xs uppercase tracking-[0.08em] text-ink-3")}
              ($ :span) ($ :span "line") ($ :span "date") ($ :span "merchant · item · note") ($ :span {:class "text-right"} "amount")
-             ($ :span "belongs in") ($ :span "chosen") ($ :span "blocks") ($ :span))
+             ($ :span "belongs in") ($ :span "chosen") ($ :span "blocks") ($ :span)))
+       ($ :div
           (for [row (sort-by #(case (:outcome %) :wrong 0 :unsafe 1 :review 2 :stopped 3 4) shown)]
             ($ line-row {:key (:id row) :row row :strategy strategy :t t :open (= open (:id row))
                          :on-toggle #(on-open (when-not (= open (:id row)) (:id row)))}
