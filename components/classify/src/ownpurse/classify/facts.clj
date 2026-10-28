@@ -2,6 +2,8 @@
   "Enrichment: the facts about a bank line that code can know for certain (its category from the merchant code, who
   held the card, where they were that day, which project was running), computed before any judgment. Dates are
   compared here, never by a model."
+  (:require
+   [clojure.string :as str])
   (:import
    (java.time LocalDate)
    (java.time.temporal ChronoUnit)))
@@ -43,15 +45,37 @@
          vec)))
 
 (defn refund-of
-  "The purchase a refund (a line with a negative amount) returns: the latest earlier purchase in the scenario's
-  :cases on the same card at the same merchant, or nil. Matched in code, so the refund can follow it."
-  [{:keys [cases]} {:keys [amount card merchant] d :date}]
+  "The purchase a refund (a line with a negative amount) returns, among the earlier purchases in the scenario's
+  :cases on the same card at the same merchant in the same currency: one of exactly the refund's amount, else the
+  latest at least as large, else the latest; nil when there is none. Matched in code, so the refund can follow it."
+  [{:keys [cases]} {:keys [amount card merchant currency] d :date}]
   (when (and amount (neg? amount))
-    (->> cases
-         (filter #(and (= card (:card %)) (= merchant (:merchant %)) (pos? (:amount %))
-                       (.isBefore (date (:date %)) (date d))))
-         (sort-by :date)
-         last)))
+    (let [back (- amount)
+          earlier (->> cases
+                       (filter #(and (= card (:card %)) (= merchant (:merchant %)) (pos? (:amount %))
+                                     (or (nil? currency) (= currency (:currency %)))
+                                     (.isBefore (date (:date %)) (date d))))
+                       (sort-by :date))]
+      (or (last (filter #(== back (:amount %)) earlier))
+          (last (filter #(>= (:amount %) back) earlier))
+          (last earlier)))))
+
+(defn earlier-here
+  "The latest other charge on the same card at the same merchant in the week up to a purchase (a line with a
+  positive amount), or nil: a tip or a charge posted after the meal or stay it belongs to can be read beside it. A
+  charge the same day counts when it comes first in the scenario's :cases."
+  [{:keys [cases]} {:keys [amount card merchant] d :date :as line}]
+  (when (and amount (pos? amount))
+    (let [own (or (:line line) (:id line))
+          order (into {} (map-indexed (fn [i c] [(:id c) i])) cases)
+          day (date d)]
+      (->> cases
+           (filter #(let [cd (date (:date %))]
+                      (and (= card (:card %)) (= merchant (:merchant %)) (pos? (:amount %)) (not= own (:id %))
+                           (not (.isAfter cd day)) (not (.isBefore cd (.minusDays day 7)))
+                           (or (.isBefore cd day) (< (order (:id %)) (order own))))))
+           (sort-by (juxt :date (comp order :id)))
+           last))))
 
 (defn running-projects
   "The ids of the projects running on day `d`."
@@ -82,7 +106,8 @@
          mcc (or mcc category)
          where (whereabouts scenario holder date)
          running (running-projects scenario date)
-         refunded (refund-of scenario line)]
+         refunded (refund-of scenario line)
+         before (earlier-here scenario line)]
      (cond-> (merge (select-keys line [:id :line :date :merchant :amount :currency :country :city :channel :note
                                        :item :line-amount :items-from :other-items])
                     {:card card :card-name (:name card-info) :holder holder :card-entity entity
@@ -96,6 +121,7 @@
                                                               (not= (:city line) (:city where))))))})
        refunded (assoc :refund-of (assoc (select-keys refunded [:id :date :amount :currency :note])
                                          :whereabouts (whereabouts scenario holder (:date refunded))))
+       before (assoc :earlier-here (select-keys before [:id :date :amount :currency :note]))
        mcc (assoc :mcc mcc :category (get categories mcc))
        (and mcc (not (:mcc line))) (assoc :category-from :enrichment)))))
 
@@ -130,7 +156,13 @@
                      :cardholder_was (where-text scenario whereabouts)
                      :projects_running (vec (for [p (:projects facts)
                                                   :let [{:keys [name place work]} (get projects p)]]
-                                              (str name ", in " place (some->> work (str ": ")))))}
+                                              (str name ", in " place (some->> work (str ": ")))))
+                     :travellers_of_running_projects
+                     (vec (for [p (:projects facts)
+                                :let [{:keys [name travellers]} (get projects p)]
+                                :when (seq travellers)]
+                            (str (str/join " and " (map #(get-in entities [% :name]) travellers)) " travel for " name
+                                 "; anyone else is not one of its travellers")))}
               (:traveller facts) (assoc :cardholder_travels_for_a_running_project true)
               (seq (:upcoming facts))
               (assoc :cardholder_upcoming_trips
@@ -138,6 +170,11 @@
                             (str (if city (str city ", " place) place) ", " from " to " to ": "
                                  (if project (str "for " (get-in projects [project :name])) "a personal trip, no project")))))
               (= :in-store channel) (assoc :shop_is_where_cardholder_was (not country-mismatch))
+              (:earlier-here facts)
+              (assoc :earlier_charge_here
+                     (let [{:keys [date amount currency note]} (:earlier-here facts)]
+                       (str "another charge at this merchant on this card on " date ", " currency " "
+                            (.toPlainString ^BigDecimal amount) (some->> note (str ", note: ")))))
               (:refund-of facts)
               (assoc :refund_of
                      (let [{:keys [date amount currency note whereabouts]} (:refund-of facts)]

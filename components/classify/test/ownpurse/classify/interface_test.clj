@@ -114,6 +114,18 @@
       (is (= "skyline" (get-in (facts "d60") [:refund-of :whereabouts :project])))
       (is (nil? (:refund-of (facts "d73"))) "a credit with no purchase on record has nothing to follow")
       (is (nil? (:refund-of (facts "d39")))))
+    (testing "a refund of exactly one earlier charge's amount follows that charge, not a later one"
+      (is (= "d108" (get-in (facts "d109") [:refund-of :id])) "a hotel hold's release, not the minibar after it")
+      (is (= "d152" (get-in (facts "d153") [:refund-of :id])) "a partial refund still finds its purchase"))
+    (testing "a charge at the same merchant on the same card in the week before is put beside a purchase"
+      (is (= "d163" (get-in (facts "d164") [:earlier-here :id])) "a tip two days after the dinner")
+      (is (str/includes? (get-in (classify/state atlas (facts "d164")) [:context :earlier_charge_here])
+                         "dinner w/ architect"))
+      (is (nil? (:earlier-here (facts "d163"))))
+      (is (nil? (:earlier-here (facts "d109"))) "a refund is matched as a refund"))
+    (testing "the state names each running project's travellers, so anyone else named is a guest"
+      (is (some #{"Robin and Sol travel for Harbour Exhibition; anyone else is not one of its travellers"}
+                (get-in (classify/state atlas (facts "d78")) [:context :travellers_of_running_projects]))))
     (testing "a check that needs a note does not apply to a line without one"
       (is (= 0M (blocks/holds [:present :note] (facts "d02") {})))
       (is (= 1M (blocks/holds [:present :note] (facts "d74") {}))))

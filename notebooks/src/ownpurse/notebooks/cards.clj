@@ -470,7 +470,12 @@
             (when-let [r (:refund-of facts)]
               (list [:span.k "refunds"] [:span [:a.mono {:href (str "#" (:id r))} (:id r)] ", " (:date r) ", when the cardholder was "
                                          (where-text {:whereabouts (:whereabouts r)})]
-                    [:span.src "an earlier purchase, same card and merchant"]))]
+                    [:span.src "an earlier purchase, same card and merchant"]))
+            (when-let [e (:earlier-here facts)]
+              (list [:span.k "just before"] [:span [:a.mono {:href (str "#" (:id e))} (:id e)] ", " (:date e) ", "
+                                             (:currency e) " " (.toPlainString ^BigDecimal (:amount e))
+                                             (some->> (:note e) (str ", note: "))]
+                    [:span.src "a charge in the week before, same card and merchant"]))]
            [:details.payload [:summary "The facts as Jev reads them (the state sent in both calls)"]
             rebuilt
             (json (:state (:plain requests)))
