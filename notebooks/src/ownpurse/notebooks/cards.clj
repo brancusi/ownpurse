@@ -1,8 +1,11 @@
 (ns ownpurse.notebooks.cards
   "Bank lines into buckets: every line of an eval scenario as one row, with the bucket it belongs in and the bucket
-  Jev chose with its confidence. A row opens to the raw line, its receipt, what code worked out, Jev's probabilities,
-  and each payload sent to Jev with what came back. Filters at the top pick the wrong lines, those sent to a person,
-  or the hard ones. Every name, number and place is invented.
+  Jev chose with its confidence. A row opens to the line's way through, in seven steps: the bank line; what code works
+  out; what Jev reads (the state exactly as sent, field by field, with how code made each field and where to change
+  it, and what Jev is not sent); what Jev is asked (the questions word for word, every option as Jev reads it, with
+  its probability); the rules applied; the decision; and where to change it, with the levers this line points to
+  marked. Filters at the top pick the wrong lines, those sent to a person, or the hard ones. Every name, number and
+  place is invented.
 
   Params: `:scenario` (\"atlas\" when absent), `:run` (a run's file; the scenario's latest when absent),
   `:threshold` (0.85 when absent): `(show :cards {:scenario \"harbour\"})`."
@@ -229,6 +232,39 @@
 .opx .has-note { font:500 10px/1 var(--mono); color:var(--gilt-text); margin-left:6px }
 .opx pre { font:11px/1.45 var(--mono); background:var(--surface-0); border:1px solid var(--line-1); border-radius:2px;
   padding:8px; white-space:pre-wrap; margin:3px 0 0; max-height:420px; overflow:auto; color:var(--ink-2) }
+/* what Jev reads: the state, field by field */
+.opx .reads { display:grid; grid-template-columns:minmax(150px,240px) minmax(0,1.3fr) minmax(180px,1fr); gap:0;
+  font-size:12px; border:1px solid var(--line-1); background:var(--surface-0) }
+.opx .reads > div { padding:3px 8px; border-top:1px solid var(--line-1); min-width:0; overflow-wrap:anywhere }
+.opx .reads .sec { grid-column:1 / -1; font:500 10.5px/1.4 var(--mono); letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-3); background:var(--surface-1) }
+.opx .reads .path { font-family:var(--mono); font-size:11px; color:var(--ink-2) }
+.opx .reads .val { color:var(--ink-1) }
+.opx .reads .val ul { padding-left:16px }
+.opx .reads .how { font-size:11px; color:var(--ink-3) }
+.opx .reads .how code { font-size:10.5px; color:var(--lapis) }
+.opx .reads .new { box-shadow:inset 3px 0 0 var(--gilt) }
+.opx .unsent { margin-top:8px; font-size:12px; color:var(--ink-2); border-left:2px solid var(--line-2); padding-left:8px }
+.opx .unsent li { margin-left:16px }
+/* what Jev is asked */
+.opx .ask { background:var(--surface-0); border:1px solid var(--line-1); padding:8px 10px; margin-bottom:10px }
+.opx .ask .q { font-size:12.5px; line-height:1.5; margin:4px 0 8px; padding-left:8px; border-left:2px solid var(--ink-1) }
+.opx .opts { display:grid; grid-template-columns:minmax(160px,200px) minmax(0,1fr) 90px 38px; gap:3px 10px; font-size:12px;
+  align-items:center }
+.opx .opts .h { font:500 10px/1.4 var(--mono); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3) }
+.opx .opts .desc { color:var(--ink-2); font-size:11.5px }
+.opx .opts .p { font-family:var(--mono); font-size:11px; text-align:right }
+.opx .opts .exp { font:500 9.5px/1 var(--mono); color:var(--verdigris); margin-left:4px; text-transform:uppercase }
+.opx .opts .top { font-weight:700 }
+.opx .opts .bar { width:90px }
+/* where to change it */
+.opx .levers { display:grid; grid-template-columns:minmax(200px,1fr) minmax(200px,1.2fr) minmax(160px,.8fr); gap:0;
+  font-size:12px; border:1px solid var(--line-1); background:var(--surface-0) }
+.opx .levers > div { padding:6px 8px; border-top:1px solid var(--line-1) }
+.opx .levers .h { font:500 10px/1.4 var(--mono); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3);
+  border-top:0; background:var(--surface-1) }
+.opx .levers code { font-size:11px; color:var(--lapis) }
+.opx .levers .hit { background:var(--gilt-tint) }
 @media (max-width: 900px) {
   .opx { padding:16px }
   .opx .cols { display:none }
@@ -241,6 +277,9 @@
   .opx .facts .src { display:none }
   .opx .rules { grid-template-columns:14px 34px minmax(0,1fr) 44px }
   .opx .rules .c-code, .opx .rules .c-jev { display:none }
+  .opx .reads, .opx .levers { grid-template-columns:1fr }
+  .opx .opts { grid-template-columns:minmax(0,1fr) 60px 38px }
+  .opx .opts .desc { display:none }
 }
 ")
 
@@ -393,6 +432,124 @@
    [:div.step-h [:span.n n] [:span.t title] [:span.where where]]
    (into [:div] body)])
 
+(def ^:private facts-clj "facts.clj")
+(def ^:private core-clj "core.clj")
+(def ^:private scenario-edn (str scenario-name ".edn"))
+
+(def ^:private paths
+  "Each file a lever names, by its short name: where it is in the repository."
+  {"facts.clj" "components/classify/src/ownpurse/classify/facts.clj"
+   "core.clj" "components/classify/src/ownpurse/classify/core.clj"
+   (str scenario-name ".edn") (str "components/classify/resources/classify/eval/" scenario-name ".edn")})
+
+(defn- where-code
+  "A lever's place, its files by short name, the full path on hover."
+  [where]
+  [:code {:title (str/join "\n" (keep #(paths (re-find #"^[^ ,;]+" (str/trim %))) (str/split where #"[,;]")))} where])
+
+(def ^:private field-sources
+  "How code made each field of the state Jev reads, and where to change it: [how, where]."
+  {[:transaction :merchant] ["the bank line's merchant, as the bank sends it" "the bank's data"]
+   [:transaction :amount] ["the bank line's amount and currency; for an item, the whole line's" "the bank's data"]
+   [:transaction :how] ["the bank line's channel, in words" (str facts-clj " · state")]
+   [:transaction :category] ["the bank's merchant code turned into its name by the scenario's list of categories; with no code, Jev's guess from the merchant's name (the enrichment call)" (str scenario-edn " · :categories")]
+   [:transaction :merchant_country] ["the bank line's country" "the bank's data"]
+   [:transaction :merchant_city] ["the bank line's city" "the bank's data"]
+   [:transaction :note] ["the note the cardholder typed on the line" "the bank's data"]
+   [:transaction :item] ["one item of the receipt or order, scanned apart from the bank line; the rest of it beside" (str scenario-edn " · the case's :items")]
+   [:context :paid_with] ["the card's name, from the list of cards" (str scenario-edn " · :cards")]
+   [:context :cardholder] ["who holds the card" (str scenario-edn " · :cards")]
+   [:context :cardholder_was] ["where the cardholder was that day: the trips, by date (none on record: at home)" (str scenario-edn " · :trips; " facts-clj " · whereabouts")]
+   [:context :projects_running] ["the projects whose dates include the day, with what each makes" (str scenario-edn " · :projects")]
+   [:context :travellers_of_running_projects] ["each running project's travellers" (str scenario-edn " · :projects :travellers")]
+   [:context :cardholder_travels_for_a_running_project] ["whether the cardholder is one of those travellers" (str facts-clj " · enrich")]
+   [:context :cardholder_upcoming_trips] ["the cardholder's trips starting in the next 90 days" (str facts-clj " · upcoming-trips")]
+   [:context :shop_is_where_cardholder_was] ["for a purchase in person: the shop's city and country against where the cardholder was" (str facts-clj " · enrich")]
+   [:context :refund_of] ["for a refund: the earlier purchase it returns, same card, merchant and currency, by amount" (str facts-clj " · refund-of")]
+   [:context :earlier_charge_here] ["the latest other charge on the same card at the same merchant in the week before" (str facts-clj " · earlier-here")]
+   [:rules] ["every rule's id and text; not its exceptions (:over) nor its conditions (:when). Sent in call 1 only" (str scenario-edn " · :rules")]})
+
+(defn- value [v]
+  (cond (map? v) [:ul (for [[k x] v] [:li [:span.mono.muted (name k) ": "] (value x)])]
+        (sequential? v) (if (every? map? v)
+                          [:ul (for [x v] [:li (if (:id x) (list [:b.mono (:id x)] " " (:rule x)) (value x))])]
+                          [:ul (for [x v] [:li (value x)])])
+        (boolean? v) [:span.mono (str v)]
+        :else (str v)))
+
+(defn- reads
+  "The state as Jev reads it: each field, its value exactly as sent, how code made it and where to change it."
+  [state]
+  [:div.reads
+   (for [sec [:transaction :context]]
+     (list [:div.sec (str (name sec) " — " (if (= :transaction sec) "the line itself" "what code adds about it"))]
+           (for [[k v] (get state sec)
+                 :let [[how where] (field-sources [sec k] ["" ""])]]
+             (list [:div.path (str (name sec) "." (name k))] [:div.val (value v)]
+                   [:div.how how (when (seq where) (list " · " (where-code where)))]))))
+   (when-let [rules (:rules state)]
+     (let [[how where] (field-sources [:rules])]
+       (list [:div.sec "rules — sent with call 1 only"]
+             [:div.path "rules"]
+             [:div.val [:details [:summary {:style {:cursor "pointer"}} (count rules) " rules, each its id and text"]
+                        (value rules)]]
+             [:div.how how " · " (where-code where)])))])
+
+(defn- options
+  "A Choice's options as Jev reads them, each with its description and the probability Jev gave it; the buckets the
+  answer key accepts are marked."
+  [criteria probabilities u]
+  (let [ok (conj (set (:ok u)) (:expect u))
+        top (key (apply max-key val probabilities))]
+    [:div.opts
+     [:span.h "option"] [:span.h "what Jev reads it as"] [:span.h "probability"] [:span]
+     (for [[option desc] (sort-by #(- (get probabilities (key %) 0M)) criteria)
+           :let [p (get probabilities option 0M)
+                 c (keyword (str/replace option "_" "-"))]]
+       (list [:span {:class (when (= option top) "top")} (tag c)
+              (when (ok c) [:span.exp (if (= c (:expect u)) "should be" "also fine")])]
+             [:span.desc desc] (bar p) [:span.p (pct p)]))]))
+
+(defn- levers
+  "Where to change what this line shows: each kind of failure, what to change and where. The rows this line's
+  answers point to are marked."
+  [u decisions o]
+  (let [ok (conj (set (:ok u)) (:expect u))
+        good? #(ok (get-in decisions [% :code]))
+        conf (get-in decisions [:choice :confidence])
+        signs {:no-rules (and (not (good? :choice)) (not (good? :no-rules)))
+               :rules (and (not (good? :choice)) (good? :no-rules))
+               :blocks (and (not (good? :choice)) (good? :blocks) (not= :needs-person (get-in decisions [:blocks :code])))
+               :check (= :unsafe o)
+               :close (< (abs (- conf threshold)) 0.1M)}
+        rows [[:fact "A field in step 3 is missing, wrong, or points the wrong way"
+               "How code makes that field, or the scenario's data it comes from (trips, cards, projects)"
+               (str facts-clj ", " scenario-edn)]
+              [:no-rules "Jev picks a wrong bucket even without the rules (call 2, step 4)"
+               "What Jev reads the buckets as (the option descriptions in step 4), or a fact it needs and is not given"
+               (str scenario-edn " · :codes")]
+              [:rules "Jev is wrong with the rules, right without them"
+               "The text of the rule Jev leaned on (step 3, rules; step 5, the Jev column)"
+               (str scenario-edn " · :rules")]
+              [:blocks "The rule blocks (step 5) are right and the Choice is wrong"
+               "The Choice does not see a rule's exceptions or conditions: say them in the rule's text, or send such disagreements to a person"
+               (str scenario-edn " · :rules; " core-clj " · decide")]
+              [:check "A person had to look, but Jev was sure of a bucket"
+               "A check rule (:check true): exact blocks where code can tell, or one narrow yes/no question; the :checked strategy lets it stop the line"
+               (str scenario-edn " · :rules")]
+              [:close "Confidence within 10 points of the threshold"
+               "It moves a few points between runs of the same questions (up to 25 seen): the threshold, or a rule that settles it"
+               "the page's :threshold"]
+              [:key "The answer key itself looks wrong"
+               "The case's :expect, :ok and :review"
+               (str scenario-edn " · :cases")]]]
+    [:div.levers
+     [:div.h "When you see"] [:div.h "What to change"] [:div.h "Where"]
+     (for [[k see change where] rows
+           :let [cls (when (signs k) "hit")]]
+       (list [:div {:class cls} see (when cls [:b " — this line"])] [:div {:class cls} change]
+             [:div {:class cls} (where-code where)]))]))
+
 (defn- open-body [{:keys [id facts decisions responses] :as result}]
   (let [u (units id)
         line (lines (or (:line u) id))
@@ -476,13 +633,44 @@
                                              (:currency e) " " (.toPlainString ^BigDecimal (:amount e))
                                              (some->> (:note e) (str ", note: "))]
                     [:span.src "a charge in the week before, same card and merchant"]))]
-           [:details.payload [:summary "The facts as Jev reads them (the state sent in both calls)"]
-            rebuilt
-            (json (:state (:plain requests)))
-            (when enrich [:div [:div.label "The enrichment call, which came first"] (json (assoc enrich :model (:model run)))
-                          (json (get-in responses [:enrich :answers]))])])
+           (when enrich
+             [:details.payload [:summary "The enrichment call, which came first: Jev guessed the category from the name"]
+              [:div.grid [:div [:div.label "Sent"] (json (assoc enrich :model (:model run)))]
+               [:div [:div.label "Came back"] (json (get-in responses [:enrich :answers]))]]]))
 
-     (step 3 "The rules, applied" "blocks/holds: each block checked"
+     (step 3 "What Jev reads" "facts/state: the state, exactly as sent"
+           [:p.say {:style {:margin "0 0 8px"}}
+            "This is everything Jev knows about the line: no other line, no answer key, nothing else. Both calls send "
+            "the same state; call 1 adds the rules. Read it as Jev would: is anything missing, wrong, or worded so it "
+            "points the wrong way?"]
+           rebuilt
+           (reads (:state (:rules requests)))
+           [:div.unsent [:b "Not sent to Jev"]
+            [:ul [:li "the answer key, and why the line is hard"]
+             [:li "each rule's exceptions (" [:code ":over"] ") and its conditions (" [:code ":when"] "): those are applied by code, in step 5"]
+             [:li "the other lines on the card, except a refund's purchase or a charge in the week before, when found"]
+             [:li "trips more than 90 days ahead, and anything about the cardholder beyond their trips"]]]
+           [:details.payload [:summary "The raw state, as JSON"] (json (:state (:rules requests)))])
+
+     (step 4 "What Jev is asked, and what it said" "core/requests: the questions, exactly as sent"
+           (let [{:keys [questions]} (:rules requests)
+                 code-q (:code questions)
+                 plain-q (get-in (:plain requests) [:questions :code])]
+             (list
+              [:div.ask
+               [:div.label "Call 1, the Choice that decides: given the state and the rules"]
+               [:div.q (:instructions code-q)]
+               (options (:criteria code-q) (get-in responses [:rules :answers :code :probabilities]) u)
+               [:p.say "Asked again with the options in reverse order, it chose " (tag (get-in decisions [:reversed :code]))
+                " " [:span.mono (pct (get-in decisions [:reversed :confidence]))] ". In the same call, one yes/no question per "
+                "rule (\"does this rule apply?\"): its answers are the Jev column in step 5."]]
+              [:details.ask {:style {:padding "8px 10px"}}
+               [:summary.label {:style {:cursor "pointer"}} "Call 2, the same Choice without the rules: what the rules add"]
+               [:div.q (:instructions plain-q)]
+               (options (:criteria plain-q) (get-in responses [:plain :answers :code :probabilities]) u)
+               [:p.say "Call 2 also asks the yes/no question in each dashed block of step 5, with the state alone."]])))
+
+     (step 5 "The rules, applied" "blocks/holds: each block checked"
            [:div.rules
             [:span] [:span.h "rule"] [:span.h.c-code "codes to"] [:span.h "its blocks, and whether each holds"]
             [:span.h.num "holds"] [:span.h.num.c-jev {:title "Jev's reading of the whole rule, given every rule (call 1)"} "Jev"]
@@ -494,11 +682,11 @@
            (let [rest-rules (remove (set (concat applying near)) explained)]
              [:details.more [:summary (count rest-rules) " rules did not apply"]
               [:div.rules (rule-rows facts rest-rules overruled-by)]])
-           [:details.payload [:summary "Call 2: the yes/no questions in the dashed blocks, sent without the rules"]
+           [:details.payload [:summary "Call 2, raw: the yes/no questions in the dashed blocks, sent without the rules"]
             [:div.grid [:div [:div.label "Sent"] (json (update (assoc (:plain requests) :model (:model run)) :state (constantly "… the state above")))]
              [:div [:div.label "Came back"] (json (get-in responses [:plain :answers]))]]])
 
-     (step 4 "The decision" "core/combine · the Choice · the threshold"
+     (step 6 "The decision" "core/combine · the Choice · the threshold"
            [:div.decide
             [:div [:div.label "The rule blocks conclude"]
              [:p.say (tag (:code blocks)) " "
@@ -522,9 +710,12 @@
              [:p.say "Confidence " [:span.mono (pct confidence)] (if (>= confidence threshold) " ≥ " " < ") [:span.mono (pct threshold)]
               (if (and (not= :needs-person code) (>= confidence threshold)) ": coded automatically." ": sent to a person.")]
              [:p.say [:span {:class (str "pill " (name o))} (outcome-words o)]]]]
-           [:details.payload [:summary "Call 1: the payload with the rules (the state is the same as in step 2), and what came back"]
+           [:details.payload [:summary "Call 1, raw: the payload with the rules (the state is in step 3), and what came back"]
             [:div.grid [:div [:div.label "Sent"] (json (update (assoc (:rules requests) :model (:model run)) :state dissoc :transaction :context))]
-             [:div [:div.label "Came back"] (json (get-in responses [:rules :answers]))]]])]))
+             [:div [:div.label "Came back"] (json (get-in responses [:rules :answers]))]]])
+
+     (step 7 "Where to change it" "the levers, by what you see"
+           (levers u decisions o))]))
 
 (defn- row [{:keys [id decisions] :as result}]
   (let [u (units id)
