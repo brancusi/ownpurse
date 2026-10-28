@@ -31,7 +31,7 @@
 (def run-file
   (or (some-> (:run params) io/file)
       (->> (.listFiles (io/file root "components/classify/runs"))
-           (filter #(str/ends-with? (.getName ^java.io.File %) ".edn"))
+           (filter #(let [n (.getName ^java.io.File %)] (and (str/ends-with? n ".edn") (not (str/ends-with? n ".notes.edn")))))
            (sort-by #(.getName ^java.io.File %))
            last)))
 

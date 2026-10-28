@@ -1,0 +1,68 @@
+;; Commentary on the run of the same name: why each line that failed at 0.7 failed, read from its facts, its rules
+;; and Jev's answers in the run. The cards notebook shows a line's note at the top of the line when it is opened.
+{:run "Round 3b of the atlas stress test, with hospitality buckets, refunds matched in code and the note check."
+ :lines
+ {"d72/2"
+  {:why "The narrow yes/no questions got this right and both Choices got it wrong. Without any rules (call 2) the
+         Choice already said Skyline cost of goods at 77%; with the rules (call 1) it said the same at 81%. So the rules
+         did not cause the mistake: they failed to correct it. A glass shop, and glass sample cuts for the commission on
+         the same receipt, decide it. Asked narrowly, Jev gave only 47% that a bathroom mirror is material for the
+         installation and 64% that it is the person's own purchase, so the blocks said personal (A14). Given the rules,
+         Jev read A8 as applying (82%): its words \"wherever they were bought and whoever's card paid\" let it."
+   :fix "Trust the blocks' narrow questions where they disagree with the Choice, or send such disagreements to a person:
+         here that would have caught it. Softening A8 to \"wherever bought, when it is for the installation\" may help."}
+
+  "d78"
+  {:why "The blocks got this right: A15 (hospitality, 64%) applied and, as the exception to A1, set per diem aside. Both
+         Choices said per diem: 74% without the rules, 80% with them. The Choice saw A15's text but not that it overrides
+         A1 (the payload sends each rule's text, not its :over), and took the meal on a project trip as per diem. The
+         note is terse Portuguese (\"almoço equipa - Sol + 2 moldadores\"), and the meal is honestly mixed: Sol's own
+         share is per diem."
+   :fix "Send each rule's exceptions with it in the Choice's payload, then measure; or let a disagreement between the
+         blocks and the Choice go to a person. Whether a shared meal is split is a bookkeeping question."}
+
+  "d20/1"
+  {:why "Right bucket, confidence 69%, just under the 70% threshold. The plaster bandage on the same receipt pulled 23%
+         toward Harbour cost of goods. The blocks found a conflict: A1 (per diem) and A14 (a person's own purchase on a
+         personal card, 63%) both applied, because food on a project trip is both."
+   :fix "A14 should say it does not cover what per diem covers. A threshold a point lower would also code it, but
+         thresholds tuned to one line do not carry."}
+
+  "d62/3"
+  {:why "Potting mix, bought at home, on a hardware receipt with plaster and mixing buckets. Asked on its own, Jev gave
+         70% that potting mix is material for plaster sculptures: the receipt beside it decided. The Choice split
+         48% Harbour cost of goods, 33% personal, and went to a person, which is the safe outcome."
+   :fix "None worth a rule. Telling Jev the other items on a receipt helps more often than it hurts (it codes paper
+         towels next to plaster); this is the price. The threshold caught it."}
+
+  "d63/3"
+  {:why "Bin bags on Sol's grocery receipt in Lisbon. The answer key says per diem (or cost of goods), and the Choice
+         agreed at only 54%: a dual-use item, rightly uncertain. The blocks said per diem at 82%."
+   :fix "None. A dual-use item going to a person is the system working; the answer key could accept needs-person."}
+
+  "d73"
+  {:why "A credit from a steel stockist, on the business card, with the note \"returned unused angle, Skyline job\". No
+         purchase from that merchant is on record, so nothing matched the refund. Here the rules hurt: without them the
+         Choice said Skyline cost of goods at 88%; with them, 54%. In call 1 Jev read A17, the note check, as applying
+         (90%), though its blocks keep it off (Robin was at home, not on a trip), so needs_person rose to 42%. Asked
+         narrowly whether a credit is \"a material, tool, fabrication service or shipping\", Jev said 28%: a return is
+         not a purchase."
+   :fix "Ask the cost-of-goods question of what a credit returns (\"a purchase, or the return of one\"). And a check's
+         conditions should be in its text too (A17: \"while on a trip for the other project\"), so the Choice reads it as
+         the blocks do."}
+
+  "d89/2"
+  {:why "An extra checked bag for tools, on the Lisbon flight's order. Both Harbour travel and Harbour cost of goods
+         are acceptable, and Jev split between them (37% and 29%), so no one bucket reached 70%. The blocks said
+         travel (A3, A5)."
+   :fix "Confidence spread across two acceptable answers is harmless. Scoring could add the probabilities of every
+         acceptable bucket, or the scenario could pick one."}
+
+  "d90/1"
+  {:why "A glass cutter, ordered online while Robin was in Lisbon, on the same order as a plaster rasp and running
+         shoes. Without the rules the Choice said Harbour cost of goods at 75%, which would have been a silent error;
+         the rules brought it down to 42% and it went to a person. Asked narrowly, Jev gave only 11% that a carbide
+         glass cutter is a tool for the steel and glass installation, and read A7 (plaster, Harbour) as applying at
+         83%. Where Robin was and the plaster rasp beside it say Harbour; the item says Skyline, and lost."
+   :fix "A genuine miss on what the item is. A rule naming each project's tools would fix it, and no one would keep it up.
+         The threshold caught it."}}}
