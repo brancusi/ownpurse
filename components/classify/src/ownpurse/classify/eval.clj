@@ -129,13 +129,15 @@
 
 (defn run
   "Classifies every unit of `scenario` (each case, or each item of one) with `ask`, four at a time. Returns the run:
-  each case's facts, requests, raw responses and codings, with the model, the tokens used, the code that ran and the
-  scenario's hash. opts: :done, results already classified (a resumed run: their units are not asked again);
+  each case's facts, requests, raw responses and codings, with the model, the tokens used, and the code and the
+  scenario's hash as they were when it started. opts: :done, results already classified (a resumed run: their units are not asked again);
   :on-result, called with each new result as it returns (to save progress); :at, the run's time (a resumed run keeps
   its own)."
   ([scenario ask] (run scenario ask {}))
   ([scenario ask {:keys [done on-result at]}]
    (let [done-ids (set (map :id done))
+         ran (source)
+         hash (scenario-hash (:scenario scenario))
          fresh (->> (units scenario)
                     (remove #(done-ids (:id %)))
                     (partition-all 4)
@@ -149,8 +151,8 @@
      (lift {:scenario (:scenario scenario)
             :at (or at (str (Instant/now)))
             :model (some #(get-in % [:responses :rules :model]) results)
-            :source (source)
-            :scenario-hash (scenario-hash (:scenario scenario))
+            :source ran
+            :scenario-hash hash
             :usage (usage results)
             :results results}))))
 
