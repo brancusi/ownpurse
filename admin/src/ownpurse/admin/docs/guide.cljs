@@ -222,8 +222,11 @@
         show (fn [m] ($ :dl {:class "font-mono text-xs"}
                         (for [[k v] m]
                           ($ :div {:key (name k) :class "grid grid-cols-[minmax(120px,190px)_minmax(0,1fr)] gap-x-3 border-t border-line-1 py-1"}
-                             ($ :dt {:class "text-ink-3"} (name k))
-                             ($ :dd {:class "text-ink-1"}
+                             ($ :dt {:class "min-w-0 text-ink-3 [overflow-wrap:anywhere]"}
+                                ;; A long field name wraps after its underscores, not over the value.
+                                (for [[i part] (map-indexed vector (str/split (name k) #"(?<=_)"))]
+                                  ($ :<> {:key i} part ($ :wbr))))
+                             ($ :dd {:class "min-w-0 text-ink-1"}
                                 (cond (sequential? v) ($ :ul {} (for [[i x] (map-indexed vector v)] ($ :li {:key i} "· " x)))
                                       (boolean? v) (str v)
                                       (map? v) (pr-str v)
