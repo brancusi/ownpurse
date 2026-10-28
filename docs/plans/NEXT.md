@@ -529,6 +529,24 @@ A run keeps every raw answer (`components/classify/runs/`), so a threshold is re
   carries on from one, and the score refuses a run that misses a unit, holds one twice or holds one the scenario does
   not. A score says when the run's rules or questions differ from today's (`:stale-rules`). The cards page shows the
   run's own payloads, and says so when an older run has to rebuild them from today's code.
+- **Run-to-run variation, and three context fixes (2026-10-28).** The frozen 300 lines run three times (round 4 and
+  two repeats, the same questions): at 0.85 the Choice made 13, 14 and 14 bad automatic codings (wrong or unsafe), so
+  the totals are steady, but single lines move: 23 of 391 change outcome between runs, 14 change bucket, and the
+  Choice's confidence moves by a median of 0.02, 0.11 at the 90th percentile and up to 0.25. 126 units come within
+  0.10 of 0.85 in some run. 16 units are bad in at least one run; 11 are bad in all three. Then three fixes in code
+  (refunds match on amount; a purchase is given the charge at the same merchant on the same card in the week before;
+  the state names each running project's travellers), and one run with them (the first run with its commit, clean
+  tree and exact payloads kept): 4 wrong and 10 unsafe, no better overall.
+  - Fixed: the hotel hold's release now follows the hold (personal at 0.57, to a person, became Skyline travel at
+    0.99). The lunch with two mould-makers fell from per diem at 0.79-0.86 to 0.45, so it goes to a person.
+  - Not fixed: the lunch with the foundryman is still per diem at 0.99, and the tip, now shown beside its client
+    dinner, fell only from 0.98 to 0.89. Context the Choice can read does not move a strong prior that a meal on a
+    trip is per diem. Two hospitality lines lost confidence (0.71 to 0.60, 0.72 to 0.47), still to a person.
+  - Most of what is left is unsafe, not wrong: a sensible bucket at 0.87 to 0.97 where the policy says a person must
+    look (a note telling the bookkeeper what to do, a guest no one names, a booking for a trip not on record, a note
+    naming the other project, a refund in a shop where the cardholder was not). A threshold cannot catch those; a
+    check can, and `:checked` catches only the one with an exact check that applies. The next lever is narrow check
+    questions for each condition that requires a person.
   - Still wrong: a team lunch for local mould-makers went to per diem at 0.78 (a meal shared by a traveller and
     others is half each); a bathroom mirror bought at home, on the receipt beside glass for the commission, went
     to Skyline cost of goods at 0.81. A rule declared the exception to another (`:over`) wins whenever Jev reads
