@@ -514,6 +514,21 @@ A run keeps every raw answer (`components/classify/runs/`), so a threshold is re
   - Held up: false friends (drogaria, cola, limas), wrong categories, processor names, a note telling the bookkeeper
     to ignore the rules (coded personal, as the facts say), refunds of one item of a mixed order, and every case of
     a card used where its holder was not.
+- **A stricter answer key and a stricter run (2026-10-28), after an independent review of round 4.** The review's
+  main finding held: the key let "a person may look" and "this bucket is fine" both count as right, so a confident
+  bucket passed where a person had to look. Each unit's key now says two things apart: the right buckets (`:expect`,
+  `:ok`, never `:needs-person`) and `:review` (`:required`: coding it automatically is **unsafe**, a new outcome,
+  however right the bucket; `:allowed`: a person looking is not needless). `:expect :needs-person` requires a person.
+  The scenario refuses a key where a check that code alone decides (cash, transfers, a shop where the cardholder was
+  not) holds without `:review :required`; that found seven atlas units, all set to required. Round 4 re-scored, no
+  new calls: at 0.85 the Choice coded 239 rightly, 4 wrongly and **9 unsafely** (13 of 252, 5.2%; the review's own
+  count), and sent 139 to a person. `:checked` catches one of the nine (a note naming the other project).
+  The run itself: each result keeps its requests exactly as sent (the questions and rules shared by every line once,
+  under `:sent`; `eval/sent` puts them back together), the run keeps the code's commit (and whether the tree was
+  dirty) and the scenario file's hash, results are written to a `.partial.edn` as they return and `--resume FILE`
+  carries on from one, and the score refuses a run that misses a unit, holds one twice or holds one the scenario does
+  not. A score says when the run's rules or questions differ from today's (`:stale-rules`). The cards page shows the
+  run's own payloads, and says so when an older run has to rebuild them from today's code.
   - Still wrong: a team lunch for local mould-makers went to per diem at 0.78 (a meal shared by a traveller and
     others is half each); a bathroom mirror bought at home, on the receipt beside glass for the commission, went
     to Skyline cost of goods at 0.81. A rule declared the exception to another (`:over`) wins whenever Jev reads

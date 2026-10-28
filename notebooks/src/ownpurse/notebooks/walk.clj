@@ -29,7 +29,7 @@
 ^{:nextjournal.clerk/visibility {:code :hide :result :hide}}
 (def run-file
   (->> (.listFiles (io/file root "components/classify/runs"))
-       (filter #(let [n (.getName ^java.io.File %)] (and (str/ends-with? n ".edn") (not (str/ends-with? n ".notes.edn")))))
+       (filter #(let [n (.getName ^java.io.File %)] (and (str/ends-with? n ".edn") (not (re-find #"\.(notes|partial)\.edn$" n)))))
        (sort-by #(.getName ^java.io.File %))
        last))
 
@@ -451,8 +451,10 @@
 (clerk/html
  (let [{:keys [expect ok]} line
        style {:right {:background "#dcfce7" :color "#14532d"} :wrong {:background "#fee2e2" :color "#7f1d1d"}
+              :unsafe {:background "#fff1f2" :color "#7f1d1d" :box-shadow "inset 0 0 0 1px #7f1d1d"}
               :stopped {:background "#e0e7ff" :color "#312e81"} :review {:background "#fef3c7" :color "#78350f"}}
        words {:right "coded automatically, right" :wrong "coded automatically, WRONG"
+              :unsafe "coded automatically, but a person had to look"
               :stopped "sent to a person, rightly" :review "sent to a person, needlessly"}
        names {:choice "Choice, with rules" :reversed "Same, options reversed" :no-rules "Choice, no rules"
               :rule-nouls "Jev judges each rule" :blocks "Building blocks" :hybrid "Blocks, Choice as fallback"}]

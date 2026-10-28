@@ -4,6 +4,7 @@
    [clojure.test :refer [deftest is testing]]
    [ownpurse.classify.blocks :as blocks]
    [ownpurse.classify.core :as core]
+   [ownpurse.classify.eval :as eval]
    [ownpurse.classify.interface :as classify]))
 
 (def ^:private s (classify/scenario "harbour"))
@@ -184,9 +185,72 @@
       meeting), and paper towels on a grocery receipt, which pass as per diem unseen"
       (is (= 62 (get-in score [:strategies :blocks :accurate])))
       (is (= [["c34" :project-cost] ["c40" :per-diem] ["c44/4" :per-diem]] (get-in score [:strategies :blocks :wrong 0M]))))
+    (testing "and two it codes in an acceptable bucket where a person had to look: groceries nine times a day's per
+      diem, and a shop whose name says nothing"
+      (is (= [["c35" :per-diem] ["c39" :per-diem]] (get-in score [:strategies :blocks :unsafe 0M]))))
     (testing "a Choice that always says needs_person codes nothing automatically, so it is never silently wrong"
       (is (= 0 (get-in score [:strategies :choice :by-threshold 0M :right])
              (get-in score [:strategies :choice :by-threshold 0M :wrong]))))
     (testing "the run keeps every raw response and counts its requests: two per line, one more to enrich"
       (is (= 132 (get-in run [:usage :requests])))
       (is (= :enrichment (get-in (first (filter #(= "c31" (:id %)) (:results run))) [:facts :category-from]))))))
+
+(deftest answer-key-test
+  (testing "a right bucket and whether a person must look are scored apart"
+    (let [coded {:code :per-diem :confidence 0.9M}]
+      (is (= :right (classify/outcome {:expect :per-diem} coded 0.85M)))
+      (is (= :unsafe (classify/outcome {:expect :per-diem :review :required} coded 0.85M))
+          "the right bucket, coded automatically when a person had to look")
+      (is (= :right (classify/outcome {:expect :per-diem :review :allowed} coded 0.85M)))
+      (is (= :stopped (classify/outcome {:expect :per-diem :review :allowed} coded 0.95M)))
+      (is (= :review (classify/outcome {:expect :per-diem} coded 0.95M)) "sent to a person, needlessly")
+      (is (= :stopped (classify/outcome {:expect :needs-person :review :required} {:code :needs-person :confidence 1M} 0.85M)))))
+  (testing "the scenario refuses a key that says a person looks among its buckets, or does not require one where a
+    check that code decides holds"
+    (let [problems #(set (map (juxt first last) (#'eval/key-problems %)))
+          with (fn [id f] (update s :cases (partial mapv #(if (= id (:id %)) (f %) %))))]
+      (is (empty? (#'eval/key-problems s)))
+      (is (contains? (problems (with "c01" #(assoc % :ok #{:needs-person}))) [:case :needs-person-in-ok]))
+      (is (contains? (problems (with "c01" #(assoc % :expect :needs-person))) [:case :needs-person-not-required]))
+      (is (some #(= :check-holds-but-not-required (nth % 2))
+                (#'eval/key-problems (with "c27" #(dissoc % :review))))
+          "c27 is a transfer: a check holds by code alone"))))
+
+(deftest run-record-test
+  (let [asked (atom [])
+        ask (fn [state questions] (swap! asked conj [state questions]) ((stub-ask "needs_person") state questions))
+        run (classify/run-eval s ask)
+        score (classify/score s run)]
+    (testing "a run keeps each request as it was sent, the shared parts once"
+      (is (= (set @asked)
+             (set (for [r (:results run) req (vals (classify/sent run r))] [(:state req) (:questions req)]))))
+      (is (contains? (:sent run) :rules))
+      (is (not (contains? (get-in (first (:results run)) [:requests :rules :state]) :rules))))
+    (testing "a run says which code ran and the scenario's hash"
+      (is (contains? (:source run) :commit))
+      (is (= (eval/scenario-hash "harbour") (:scenario-hash run))))
+    (testing "the run's own rules are today's, so its score is not stale"
+      (is (false? (:stale-rules score)))
+      (is (true? (:stale-rules (classify/score (update s :rules (partial mapv #(update % :rule str " Changed."))) run))))))
+  (testing "a run that misses a unit, holds one twice or holds one the scenario does not, is not scored"
+    (let [run (classify/run-eval s (stub-ask "needs_person"))
+          refused #(try (classify/score s %) nil (catch clojure.lang.ExceptionInfo e (ex-data e)))]
+      (is (= ["c01"] (:missing (refused (update run :results (partial filterv #(not= "c01" (:id %))))))))
+      (is (= ["c01"] (:duplicate (refused (update run :results #(conj % (first (filter (comp #{"c01"} :id) %))))))))
+      (is (= ["zz"] (:extra (refused (update run :results conj {:id "zz"}))))))))
+
+(deftest progress-test
+  (testing "results kept as they return let a run carry on without asking again"
+    (let [dir (str (System/getProperty "java.io.tmpdir") "/ownpurse-progress-" (System/nanoTime))
+          head {:scenario "harbour" :at "2026-01-01T00:00:00Z"}
+          {:keys [file add!]} (eval/progress dir head)
+          first-run (classify/run-eval s (stub-ask "needs_person") {:on-result add!})
+          kept (take 10 (:results (eval/read-progress file)))
+          asked (atom 0)
+          resumed (classify/run-eval s (fn [st q] (swap! asked inc) ((stub-ask "needs_person") st q))
+                                     {:done kept :at (:at head)})]
+      (is (= head (:head (eval/read-progress file))))
+      (is (= (count (:results first-run)) (count (:results (eval/read-progress file)))))
+      (is (= (map :id (:results first-run)) (map :id (:results resumed))) "in the scenario's order")
+      (is (= (- (get-in first-run [:usage :requests]) (count (mapcat (comp vals :responses) kept))) @asked))
+      (is (= "2026-01-01T00:00:00Z" (:at resumed))))))

@@ -55,9 +55,10 @@
   (eval/scenario name))
 
 (defn run-eval
-  "Classifies every case of `scenario` with `ask` and returns the run, raw answers included."
-  [scenario ask]
-  (eval/run scenario ask))
+  "Classifies every case of `scenario` with `ask` and returns the run, raw answers and the requests as sent included.
+  opts: :done (results of a run being resumed), :on-result (called with each result as it returns), :at."
+  ([scenario ask] (eval/run scenario ask))
+  ([scenario ask opts] (eval/run scenario ask opts)))
 
 (defn score
   "Scores a run against its scenario: each strategy's accuracy and, at each confidence threshold, its automatic
@@ -84,11 +85,22 @@
   [scenario result]
   (core/explain scenario result))
 
+(def outcomes
+  "How a coding can fare, in the order the reports list them."
+  eval/outcomes)
+
 (defn outcome
-  "How a strategy's coding of a case fares at a threshold: :right, :wrong, :stopped (sent to a person, rightly) or
-  :review (sent to a person needlessly)."
+  "How a strategy's coding of a case fares at a threshold: :right or :wrong (coded automatically, by its bucket),
+  :unsafe (coded automatically when a person had to look), :stopped (sent to a person, rightly) or :review (sent to
+  a person needlessly)."
   [case coding threshold]
   (eval/outcome case coding threshold))
+
+(defn sent
+  "The requests a result of `run` sent to Jev, exactly as sent: {kind {:state :questions}}. Nil for a run saved
+  before runs kept them."
+  [run result]
+  (eval/sent run result))
 
 (defn load-run
   "Reads a saved run."

@@ -146,8 +146,8 @@
 
 (defn classify
   "Classifies `line` in `scenario`, calling `ask` (state, questions → a System One response) for every judgment:
-  enrichment first when the line needs it, then its two requests. Returns the facts, the raw responses and each
-  strategy's coding."
+  enrichment first when the line needs it, then its two requests. Returns the facts, the requests exactly as sent,
+  the raw responses and each strategy's coding."
   [scenario ask line]
   (let [enrich-request (enrichment scenario line)
         enrich-response (when enrich-request (ask (:state enrich-request) (:questions enrich-request)))
@@ -158,6 +158,8 @@
         plain-response (ask (:state plain) (:questions plain))]
     {:id (:id line)
      :facts line-facts
+     :requests (cond-> {:rules rules :plain plain}
+                 enrich-request (assoc :enrich enrich-request))
      :responses (cond-> {:rules rules-response :plain plain-response}
                   enrich-response (assoc :enrich enrich-response))
      :decisions (decide scenario line-facts {:rules-answers (:answers rules-response)

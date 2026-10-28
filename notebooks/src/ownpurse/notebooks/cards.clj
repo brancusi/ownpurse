@@ -32,7 +32,7 @@
       (->> (.listFiles (io/file root "components/classify/runs"))
            (filter #(let [n (.getName ^java.io.File %)]
                       (and (str/starts-with? n (str scenario-name "-")) (str/ends-with? n ".edn")
-                           (not (str/ends-with? n ".notes.edn")))))
+                           (not (re-find #"\.(notes|partial)\.edn$" n)))))
            (sort-by #(.getName ^java.io.File %))
            last)))
 
@@ -95,6 +95,7 @@
 .opx .dot { width:9px; height:9px; border-radius:50%; display:inline-block; flex:none }
 .opx .right .dot, .opx .dot.right { background:var(--verdigris) }
 .opx .wrong .dot, .opx .dot.wrong { background:var(--coin) }
+.opx .unsafe .dot, .opx .dot.unsafe { background:var(--coin-tint); box-shadow:inset 0 0 0 2px var(--coin) }
 .opx .review .dot, .opx .dot.review { background:var(--gilt) }
 .opx .stopped .dot, .opx .dot.stopped { background:transparent; box-shadow:inset 0 0 0 2px var(--ink-3) }
 /* bucket tags: neutral; the project is the quiet prefix */
@@ -112,6 +113,7 @@
 .opx .chip { font:500 10.5px/1 var(--mono); padding:3px 4px; border-radius:2px; background:var(--surface-1); color:var(--ink-2) }
 .opx .chip.right { background:var(--verdigris-tint); color:var(--verdigris) }
 .opx .chip.wrong { background:var(--coin); color:#fff }
+.opx .chip.unsafe { background:var(--coin-tint); color:var(--coin-text); box-shadow:inset 0 0 0 1px var(--coin) }
 .opx .chip.review { background:var(--gilt-tint); color:var(--gilt-text) }
 /* filters: radio buttons and :has(), no script */
 .opx .filters { display:flex; gap:4px; flex-wrap:wrap; margin:0 0 8px; position:sticky; top:0; z-index:2;
@@ -123,7 +125,7 @@
 .opx .filters input:checked + label { background:var(--ink-1); color:var(--surface-0); border-color:var(--ink-1) }
 .opx .filters input:checked + label b { color:var(--surface-0) }
 .opx .filters input:focus-visible + label { outline:2px solid var(--lapis); outline-offset:2px }
-.opx:has(#f-wrong:checked) .row:not(.wrong), .opx:has(#f-review:checked) .row:not(.review),
+.opx:has(#f-wrong:checked) .row:not(.wrong), .opx:has(#f-unsafe:checked) .row:not(.unsafe), .opx:has(#f-review:checked) .row:not(.review),
 .opx:has(#f-stopped:checked) .row:not(.stopped), .opx:has(#f-right:checked) .row:not(.right),
 .opx:has(#f-hard:checked) .row:not(.hard), .opx:has(#f-noted:checked) .row:not(.noted) { display:none }
 /* the rows */
@@ -137,7 +139,7 @@
 .opx .row > summary::-webkit-details-marker { display:none }
 .opx .row > summary:hover { background:var(--surface-1) }
 .opx .row[open] > summary { background:var(--surface-1) }
-.opx .row.wrong > summary { box-shadow:inset 3px 0 0 var(--coin) }
+.opx .row.wrong > summary, .opx .row.unsafe > summary { box-shadow:inset 3px 0 0 var(--coin) }
 .opx .row .id { font-family:var(--mono); font-size:12px; color:var(--ink-2) }
 .opx .row .what { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
 .opx .row .what .item { color:var(--ink-2) }
@@ -162,12 +164,13 @@
 .opx .pill { font:500 11px/1 var(--mono); padding:4px 7px; border-radius:2px; white-space:nowrap }
 .opx .pill.right { background:var(--verdigris-tint); color:var(--verdigris) }
 .opx .pill.wrong { background:var(--coin); color:#fff }
+.opx .pill.unsafe { background:var(--coin-tint); color:var(--coin-text); box-shadow:inset 0 0 0 1px var(--coin) }
 .opx .pill.review { background:var(--gilt-tint); color:var(--gilt-text) }
 .opx .pill.stopped { background:var(--surface-2); color:var(--ink-2) }
 .opx .comment { display:grid; grid-template-columns:110px 1fr; gap:4px 12px; background:var(--surface-0);
   border:1px solid var(--line-1); border-left:3px solid var(--gilt); padding:10px 12px; margin-bottom:12px; font-size:12.5px;
   line-height:1.5 }
-.opx .row.wrong .comment { border-left-color:var(--coin) }
+.opx .row.wrong .comment, .opx .row.unsafe .comment { border-left-color:var(--coin) }
 .opx .comment .label { padding-top:2px }
 /* the steps */
 .opx .step { display:grid; grid-template-columns:170px minmax(0,1fr); gap:14px; padding:10px 0; border-top:1px solid var(--line-1) }
@@ -268,7 +271,8 @@
   (classify/outcome (units id) (:choice decisions) threshold))
 
 (def outcome-words
-  {:right "coded, right" :wrong "coded, wrong" :stopped "to a person, rightly" :review "to a person, needlessly"})
+  {:right "coded, right" :wrong "coded, wrong" :unsafe "coded, but a person had to look" :stopped "to a person, rightly"
+   :review "to a person, needlessly"})
 
 (defn- json [x]
   [:pre (j/write-value-as-string x (j/object-mapper {:pretty true}))])
@@ -309,7 +313,7 @@
       [:div
        [:div.label "This run, automatic at " (pct threshold)]
        [:div.score {:style {:margin-top 4}}
-        (for [o [:right :wrong :stopped :review]]
+        (for [o classify/outcomes]
           [:span {:class (name o)} [:b (count (by-outcome o))] [:span.dot] " " (outcome-words o)])]
        [:div.muted {:style {:margin-top 6}}
         [:span.mono (.getName ^java.io.File run-file)] " · " [:span.mono (:model run)] " · " (count results)
@@ -396,8 +400,10 @@
         blocks (:blocks decisions)
         checked (:checked decisions)
         o (outcome result)
-        requests (core/requests scenario facts)
-        enrich (core/enrichment scenario u)
+        kept (classify/sent run result)
+        requests (or kept (core/requests scenario facts))
+        enrich (if kept (:enrich kept) (core/enrichment scenario u))
+        rebuilt (when-not kept [:p.muted "This run did not keep its requests: these are rebuilt from today's code and scenario."])
         explained (classify/explain scenario result)
         applying (filter #(>= (:holds %) 0.5M) explained)
         near (filter #(and (< (:holds %) 0.5M) (or (>= (or (:jev %) 0M) 0.5M) (>= (:holds %) 0.25M))) explained)
@@ -410,6 +416,10 @@
      [:div.verdict
       [:span.label "Should be"] (tag (:expect u))
       (when (seq (:ok u)) [:span.muted "also fine " (interpose " " (map tag (:ok u)))])
+      (case (:review u)
+        :required [:span.label "· a person must look"]
+        :allowed [:span.muted "· a person may look"]
+        nil)
       [:span.arrow "·"] [:span.label "Jev chose"] (tag code) [:span.mono (pct confidence)]
       [:span.arrow "·"] [:span.muted "automatic at " (pct threshold) " →"] [:span {:class (str "pill " (name o))} (outcome-words o)]]
      (when-let [w (or (:hard u) (:why u))]
@@ -462,6 +472,7 @@
                                          (where-text {:whereabouts (:whereabouts r)})]
                     [:span.src "an earlier purchase, same card and merchant"]))]
            [:details.payload [:summary "The facts as Jev reads them (the state sent in both calls)"]
+            rebuilt
             (json (:state (:plain requests)))
             (when enrich [:div [:div.label "The enrichment call, which came first"] (json (assoc enrich :model (:model run)))
                           (json (get-in responses [:enrich :answers]))])])
@@ -537,7 +548,7 @@
    [:h2 "Every line"]
    [:div.filters
     (for [[k words n] (concat [[:all "All" (count results)]]
-                              (for [o [:wrong :review :stopped :right]] [o (outcome-words o) (count (by-outcome o))])
+                              (for [o [:wrong :unsafe :review :stopped :right]] [o (outcome-words o) (count (by-outcome o))])
                               [[:hard "marked hard" (count (filter #(:hard (units (:id %))) results))]]
                               (when notes [[:noted "with commentary" (count (:lines notes))]]))]
       (list [:input {:type "radio" :name "f" :id (str "f-" (name k)) :default-checked (= :all k)}]
@@ -546,7 +557,7 @@
    [:div.rows
     [:div.cols [:span] [:span "line"] [:span "date"] [:span "merchant · item · note"] [:span {:style {:text-align "right"}} "amount"]
      [:span "belongs in"] [:span "Jev chose"] [:span "blocks"] [:span]]
-    (map row (sort-by #(case (outcome %) :wrong 0 :review 1 :stopped 2 3) results))]])
+    (map row (sort-by #(case (outcome %) :wrong 0 :unsafe 1 :review 2 :stopped 3 4) results))]])
 
 ^{:nextjournal.clerk/visibility {:result :show}}
 (clerk/html {:nextjournal.clerk/width :full}

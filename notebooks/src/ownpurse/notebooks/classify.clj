@@ -31,7 +31,7 @@
 (def run-file
   (or (some-> (:run params) io/file)
       (->> (.listFiles (io/file root "components/classify/runs"))
-           (filter #(let [n (.getName ^java.io.File %)] (and (str/ends-with? n ".edn") (not (str/ends-with? n ".notes.edn")))))
+           (filter #(let [n (.getName ^java.io.File %)] (and (str/ends-with? n ".edn") (not (re-find #"\.(notes|partial)\.edn$" n)))))
            (sort-by #(.getName ^java.io.File %))
            last)))
 
@@ -56,12 +56,14 @@
 (def outcome-style
   {:right {:background "#dcfce7" :color "#14532d"}
    :wrong {:background "#fee2e2" :color "#7f1d1d" :font-weight 700}
+   :unsafe {:background "#fff1f2" :color "#7f1d1d" :font-weight 700 :box-shadow "inset 0 0 0 1px #7f1d1d"}
    :stopped {:background "#e0e7ff" :color "#312e81"}
    :review {:background "#fef3c7" :color "#78350f"}})
 
 ^{:nextjournal.clerk/visibility {:result :hide}}
 (def outcome-words
-  {:right "coded, right" :wrong "coded, WRONG" :stopped "to a person, rightly" :review "to a person, needlessly"})
+  {:right "coded, right" :wrong "coded, WRONG" :unsafe "coded, but a person had to look" :stopped "to a person, rightly"
+   :review "to a person, needlessly"})
 
 ^{:nextjournal.clerk/visibility {:result :hide}}
 (defn- code-name [code] (some-> code name (str/replace "-" " ")))
@@ -98,8 +100,8 @@
    (get-in run [:usage :input-tokens]) " tokens in, " (get-in run [:usage :output-tokens]) " out."]
   [:p "A coding is automatic when it is not " [:i "needs person"] " and its confidence is at least "
    [:b (pct threshold)] ". Each is then one of: "
-   (interpose " " (for [o [:right :wrong :stopped :review]] (pill o (outcome-words o))))
-   ". A wrong automatic coding is the silent error that matters most."]])
+   (interpose " " (for [o classify/outcomes] (pill o (outcome-words o))))
+   ". A wrong or unsafe automatic coding is the silent error that matters most."]])
 
 ;; ## How each strategy did
 
@@ -114,9 +116,10 @@
             :let [{:keys [accurate by-threshold]} (strategies s)]]
         [:tr [:td (strategy-names s)] [:td (str accurate " of " (count (:results run)))]
          (for [t classify/thresholds
-               :let [{:keys [right wrong stopped review]} (by-threshold t)]]
+               :let [{:keys [right wrong unsafe stopped review]} (by-threshold t)]]
            [:td {:style {:text-align "right" :white-space "nowrap"}}
-            (pill :right right) " " (pill :wrong wrong) " " (pill :stopped stopped) " " (pill :review review)])])]]
+            (pill :right right) " " (pill :wrong wrong) " " (pill :unsafe unsafe) " " (pill :stopped stopped) " "
+            (pill :review review)])])]]
     [:p "The Choice kept its answer with its options reversed on " choice-stable " of " (count (:results run))
      " cases."]]))
 

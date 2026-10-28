@@ -60,14 +60,14 @@
 
 (defn units
   "What is coded about `line`: the line itself, or, when a receipt or an order lists its items, each item, as the
-  line narrowed to it (its own :id, :expect and :ok; :amount the item's, :line-amount the line's, :other-items the
-  rest of the receipt)."
+  line narrowed to it (its own :id, :expect and :ok, and its :review or else the line's; :amount the item's,
+  :line-amount the line's, :other-items the rest of the receipt)."
   [{:keys [id items amount] :as line}]
   (if (seq items)
     (vec (map-indexed
           (fn [i it]
             (merge (dissoc line :items :expect :ok :why)
-                   (select-keys it [:item :amount :expect :ok :why])
+                   (select-keys it [:item :amount :expect :ok :review :why])
                    {:id (str id "/" (inc i)) :line id :line-amount amount
                     :other-items (vec (keep-indexed #(when (not= i %1) (:item %2)) items))}))
           items))
