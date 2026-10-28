@@ -8,6 +8,7 @@
    [ownpurse.admin.api :as api]
    [ownpurse.admin.route :as route]
    [ownpurse.admin.sandbox.line :as line]
+   [ownpurse.admin.terms :refer [term]]
    [ownpurse.admin.ui :as ui :refer [cx]]
    [ownpurse.classify.outcome :as outcome]
    [uix.core :as uix :refer [$ defui]]))
@@ -113,12 +114,12 @@
         points (uix/use-memo #(sweep lines strategy) [lines strategy])]
     ($ ui/panel {:class "mt-4 grid gap-6 p-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]"}
        ($ :div
-          ($ ui/eyebrow {} "Code lines by")
+          ($ ui/eyebrow {} ($ term {:id :strategy} "Code lines by"))
           ($ :select {:value (name strategy) :on-change #(on-strategy (keyword (.. % -target -value)))
                       :class "mt-1 w-full rounded-1 border border-line-2 bg-surface-0 px-2 py-1.5 text-sm"}
              (for [[k title] strategies] ($ :option {:key (name k) :value (name k)} title)))
           ($ ui/say {} (some (fn [[k _ about]] (when (= k strategy) about)) strategies))
-          ($ ui/eyebrow {:class "mt-4"} "Coded automatically at or above")
+          ($ ui/eyebrow {:class "mt-4"} ($ term {:id :threshold} "Coded automatically at or above"))
           ($ :div {:class "mt-1 flex items-center gap-3"}
              ($ :input {:type "range" :min 50 :max 99 :value (js/Math.round (* 100 t))
                         :on-change #(on-threshold (/ (js/Number (.. % -target -value)) 100))
@@ -210,7 +211,8 @@
                   ($ :b {:class (cx "font-mono font-medium" (if on? "text-ink-inverse" "text-ink-3"))} n))))
           ($ :div {:class (cx cols "border-t-2 border-b border-t-ink-1 border-b-line-1 bg-surface-1 px-2 py-1.5 font-mono text-2xs uppercase tracking-[0.08em] text-ink-3")}
              ($ :span) ($ :span "line") ($ :span "date") ($ :span "merchant · item · note") ($ :span {:class "text-right"} "amount")
-             ($ :span "belongs in") ($ :span "chosen") ($ :span "blocks") ($ :span)))
+             ($ :span ($ term {:id :answer-key} "belongs in")) ($ :span ($ term {:id :strategy} "chosen"))
+             ($ :span ($ term {:id :block} "blocks")) ($ :span)))
        ($ :div
           (for [row (sort-by #(case (:outcome %) :wrong 0 :unsafe 1 :review 2 :stopped 3 4) shown)]
             ($ line-row {:key (:id row) :row row :strategy strategy :t t :open (= open (:id row))
@@ -260,7 +262,7 @@
                      (when-let [{:keys [commit dirty]} (:source info)] (str " · code " (subs (str commit) 0 7) (when dirty ", with changes"))))
                   ($ levers {:scored scored :lines lines :strategy strategy :t t
                              :on-strategy #(go! {:s (name %)} true) :on-threshold #(go! {:t (js/Math.round (* 100 %))} true)})
-                  ($ ui/section-title {:aside "Each bucket's lines, coloured by how they fared"} "The buckets")
+                  ($ ui/section-title {:aside ($ :<> "Each bucket's lines, coloured by their " ($ term {:id :outcome}))} ($ term {:id :bucket} "The buckets"))
                   ($ board {:world world :scored scored
                             :line-href #(route/href ["sandbox" scenario run] (assoc query :line % :f nil))})
                   ($ ui/section-title {:aside "Open a line to walk it through"} "Every line")

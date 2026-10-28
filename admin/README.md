@@ -53,11 +53,22 @@ browser ── /admin/ ───────────▶ ownpurse server ─�
 | `ownpurse.admin.route` | the hash route: parse, `href`, `go!`, `use-route` |
 | `ownpurse.admin.api` | `use-get`: an API answer, read from Transit, kept for the page's life |
 | `ownpurse.admin.ui` | the building blocks: tag, pill, dot, chip, bar, amount, eyebrow, panel, disclosure, notice |
+| `ownpurse.admin.terms` | the vocabulary as data (each word's meaning and where it comes from), and `term`: a dotted word that shows its meaning on hover and links to its entry |
+| `ownpurse.admin.docs.*` | the docs: `guide` (a bank line to a bucket in ten steps, on a real line of the sandbox) and `vocabulary` (every word) |
 | `ownpurse.admin.sandbox.*` | the sandbox: `home` (scenarios and runs), `run` (levers, buckets, lines), `line` (a line's seven steps) |
 
 A new section is a namespace under `ownpurse.admin.<section>` with a `page`, an entry in `main/sections`, and a case
 in `main/app`. Its data come from a route in `bases/api` over a component's interface, as data: the component never
 builds markup, and the admin never recomputes what a component decides.
+
+## Words
+
+The admin is read by people new to bookkeeping and to models alike. A word a newcomer may not know (bucket, block,
+threshold, per diem) goes through `term`: `($ term {:id :block} "blocks")`. A new word is an entry in
+`ownpurse.admin.terms`: what it means in a sentence, more if needed, where it comes from (an accountant's, a bank's,
+machine learning's, TypeSafe's, or ownpurse's own), and the guide's step where it happens. When the pipeline changes,
+the guide (`ownpurse.admin.docs.guide`) changes with it: it reads a real line through the API, so a step that no
+longer matches the code shows wrong data, not stale prose.
 
 ## Styles
 

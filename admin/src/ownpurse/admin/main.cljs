@@ -2,6 +2,8 @@
   "The admin: one page, its sections by the URL's hash. ownpurse serves it at /admin over whatever record it runs on,
   so a workspace's admin shows that workspace's books."
   (:require
+   [ownpurse.admin.docs.guide :as docs.guide]
+   [ownpurse.admin.docs.vocabulary :as docs.vocabulary]
    [ownpurse.admin.route :as route]
    [ownpurse.admin.sandbox.home :as sandbox.home]
    [ownpurse.admin.sandbox.run :as sandbox.run]
@@ -12,7 +14,8 @@
 
 (def sections
   "The admin's sections, in the order the bar lists them."
-  [{:id "sandbox" :title "Sandbox" :about "Build a rule set over bank lines, and see how each line is coded"}])
+  [{:id "sandbox" :title "Sandbox" :about "Build a rule set over bank lines, and see how each line is coded"}
+   {:id "docs" :title "Docs" :about "How a bank line is coded, step by step, and every word explained"}])
 
 (defui shell [{:keys [route children]}]
   (let [here (first (:path route))]
@@ -36,6 +39,9 @@
          "sandbox" (if scenario
                      ($ sandbox.run/page {:scenario scenario :run run :query (:query r) :key (str scenario "/" run)})
                      ($ sandbox.home/page))
+         "docs" (if (= "terms" scenario)
+                  ($ docs.vocabulary/page {:query (:query r)})
+                  ($ docs.guide/page {:query (:query r)}))
          ($ ui/notice {} "No such page. Pick a section above.")))))
 
 (defonce ^:private root (delay (uix.dom/create-root (js/document.getElementById "app"))))
