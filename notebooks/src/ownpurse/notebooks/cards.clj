@@ -5,7 +5,7 @@
   or the hard ones. Every name, number and place is invented.
 
   Params: `:scenario` (\"atlas\" when absent), `:run` (a run's file; the scenario's latest when absent),
-  `:threshold` (0.7 when absent): `(show :cards {:scenario \"harbour\"})`."
+  `:threshold` (0.85 when absent): `(show :cards {:scenario \"harbour\"})`."
   {:nextjournal.clerk/no-cache true
    :nextjournal.clerk/visibility {:code :hide :result :hide}}
   (:require
@@ -40,7 +40,7 @@
 
 (def scenario (classify/scenario scenario-name))
 
-(def threshold (bigdec (or (:threshold params) 0.7M)))
+(def threshold (bigdec (or (:threshold params) 0.85M)))
 
 (def units (into {} (map (juxt :id identity)) (mapcat classify/units (:cases scenario))))
 

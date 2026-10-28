@@ -459,16 +459,16 @@
    [:div
     (if expect
       [:p "A bookkeeper would code it " [:b (name expect)]
-       (when (seq ok) (str " (also acceptable: " (str/join ", " (map name ok)) ")")) ". Scored at 70% confidence."]
+       (when (seq ok) (str " (also acceptable: " (str/join ", " (map name ok)) ")")) ". Scored at 85% confidence."]
       [:p "Choose what it should be in the form to score it."])
     [:table
-     [:thead [:tr [:th "Strategy"] [:th "Code"] [:th "Confidence"] [:th "Why"] [:th "Who bears it"] [:th "At 70%"]]]
+     [:thead [:tr [:th "Strategy"] [:th "Code"] [:th "Confidence"] [:th "Why"] [:th "Who bears it"] [:th "At 85%"]]]
      [:tbody
       (for [s classify/strategies
             :let [{:keys [code confidence reason fallback by overruled] :as d} (decisions s)
                   {:keys [bears paid-by on-behalf]} (classify/attribute scenario line-facts code)
                   entity #(get-in scenario [:entities % :name])
-                  o (when expect (classify/outcome line d 0.7M))]]
+                  o (when expect (classify/outcome line d 0.85M))]]
         [:tr [:td (names s)] [:td [:b (name code)]] [:td (pct confidence)]
          [:td (str (some-> (or fallback reason) name) (when (seq by) (str " " (str/join ", " by)))
                    (when (seq overruled) (str " (over " (str/join ", " overruled) ")")))]

@@ -498,6 +498,22 @@ A run keeps every raw answer (`components/classify/runs/`), so a threshold is re
   - The dual-use check (cleaning products, gloves, bags) added nothing: the Choice's own confidence already
     stopped every item it caught rightly, and the check also fired on bread and on plaster bandage. It was
     dropped. Dual-use items are best left to the threshold.
+- **Round 4 (2026-10-28): 300 lines, 391 units, scored at 0.85.** 200 new edge cases (d101 to d300), written by
+  four agents from the bookkeeping policy alone, one theme each: time and place, money, words (merchants,
+  categories, notes), what was bought. 799 requests, about 2.1 million input tokens. At 0.85 the Choice coded 248
+  rightly and 4 wrongly, and sent 139 to a person (108 rightly, 31 needlessly); at 0.7, 281 rightly and 7 wrongly.
+  `:checked` and "disagreement goes to a person" also had 4 wrong. What it found:
+  - 0.85 did not hold on the old 129: round 3's mirror (d72/2) rose from 0.81 to 0.88 between runs of the same
+    questions. Confidence moves a few points run to run; a threshold needs that margin.
+  - A meal with a collaborator named by a trade word ("o fundidor", "2 moldadores") is read as per diem, at up to
+    0.99. Jev is not told who the travellers are.
+  - A tip posted days after a client dinner, with no note, is per diem: the line alone does not say whose dinner it
+    was. Code could link it to the earlier charge, as it links refunds.
+  - Refund matching ignores the amount: a hotel hold's release matched the minibar charge posted after checkout (it
+    went to a person at 0.57).
+  - Held up: false friends (drogaria, cola, limas), wrong categories, processor names, a note telling the bookkeeper
+    to ignore the rules (coded personal, as the facts say), refunds of one item of a mixed order, and every case of
+    a card used where its holder was not.
   - Still wrong: a team lunch for local mould-makers went to per diem at 0.78 (a meal shared by a traveller and
     others is half each); a bathroom mirror bought at home, on the receipt beside glass for the commission, went
     to Skyline cost of goods at 0.81. A rule declared the exception to another (`:over`) wins whenever Jev reads

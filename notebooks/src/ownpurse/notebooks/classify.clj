@@ -5,7 +5,7 @@
 ;; different threshold is only a different reading of it. Every name, number and place here is invented.
 ;;
 ;; Params: `:run` (a run's file; the latest in components/classify/runs when absent), `:threshold` (the confidence
-;; a coding needs to be automatic; 0.7 when absent), `:cases` (case ids to show; all when absent):
+;; a coding needs to be automatic; 0.85 when absent), `:cases` (case ids to show; all when absent):
 ;; `(show :classify {:threshold 0.9M :cases ["c12" "c25"]})`.
 (ns ownpurse.notebooks.classify
   {:nextjournal.clerk/no-cache true
@@ -42,7 +42,7 @@
 (def scenario (classify/scenario (:scenario run)))
 
 ^{:nextjournal.clerk/visibility {:result :hide}}
-(def threshold (bigdec (or (:threshold params) 0.7M)))
+(def threshold (bigdec (or (:threshold params) 0.85M)))
 
 ^{:nextjournal.clerk/visibility {:result :hide}}
 (def cases (into {} (map (juxt :id identity)) (mapcat classify/units (:cases scenario))))

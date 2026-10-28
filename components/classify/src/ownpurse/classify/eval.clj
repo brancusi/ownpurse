@@ -13,7 +13,7 @@
   (:import
    (java.time Instant)))
 
-(def thresholds [0M 0.5M 0.7M 0.9M])
+(def thresholds [0M 0.5M 0.7M 0.85M 0.9M])
 
 (defn units
   "Every unit the eval codes in `scenario`: each case, or each item of a case whose receipt or order lists them."

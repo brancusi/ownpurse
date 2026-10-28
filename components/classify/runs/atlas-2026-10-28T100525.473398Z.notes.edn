@@ -1,0 +1,36 @@
+;; Commentary on the run of the same name: why each line that was coded wrongly at 0.85 went wrong, read from its
+;; facts, its rules and Jev's answers in the run. The cards notebook shows a line's note at the top of the line when
+;; it is opened.
+{:run "Round 4 of the atlas stress test: 300 lines (391 units), 200 of them new edge cases written from the policy alone."
+ :lines
+ {"d72/2"
+  {:why "The same bathroom mirror as round 3, now at 88% Skyline cost of goods (81% last time), and this time the
+         narrow question agreed (A8 held), so the blocks said the same. Nothing changed but the run: Jev's confidence
+         on one line moved seven points between two runs of the same questions. A threshold tuned on one run does not
+         hold on the next."
+   :fix "Ask what the item is for apart from where it was bought (a bathroom mirror is for a home). Or keep in mind that
+         confidence moves a few points run to run, and choose the threshold with that margin."}
+
+  "d164"
+  {:why "A tip with no note, posted two days after a client dinner at the same restaurant (d163, \"dinner w/ architect +
+         structural eng\"). On its own the line is Robin's meal in New York on a Skyline trip, and every strategy said
+         per diem at 99%. Jev was not wrong about what it was shown: the line alone does not say it was the dinner's
+         tip."
+   :fix "Code can link it, as it links refunds: an earlier charge at the same merchant on the same card a few days
+         before, with its note, put in the line's context. Then the Choice can see whose dinner it was."}
+
+  "d211"
+  {:why "\"almoco c/ o fundidor\": lunch with the foundryman, a collaborator. Per diem at 99%, with and without rules.
+         The same pattern as d78 (lunch with two mould-makers): a meal with a local collaborator named by a Portuguese
+         trade word is read as the traveller's own meal. Jev is never told who the travellers are, so it cannot see
+         that the foundryman is not one. A15 (hospitality) did not hold; the blocks found a conflict between per diem
+         and a personal card's own purchase."
+   :fix "Put each project's travellers in the state (Robin and Sol), so anyone else named in a note is a guest. Both
+         this line and d78 should test it."}
+
+  "d285/2"
+  {:why "Eye wash refills, beside a 100-person workshop first-aid cabinet, at a pharmacy in Los Angeles on the studio
+         card. Personal at 96%: a pharmacy at home is personal (A9), and the category won over the item. The cabinet on
+         the same receipt went to a person (personal at 77%); the refills did not."
+   :fix "A pharmacy at home is personal for a person's own health items, not for the workshop's safety kit. A9 could
+         say so, or overhead could name workshop safety supplies."}}}
