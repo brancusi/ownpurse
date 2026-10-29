@@ -327,89 +327,95 @@
          (when-let [text (:rule (some #(when (= (:id rule) (:id %)) %) (:rules world)))]
            ($ :span {:class "text-ink-3"} " (" (:id rule) ": " text ")"))))))
 
-(defui decision-step
-  "One step of the decision: its number, the question, the answer, and why."
-  [{:keys [n q a why last]}]
-  ($ :li {:class "relative grid grid-cols-[22px_minmax(0,1fr)] gap-x-3 pb-3"}
-     (when-not last ($ :span {:class "absolute top-6 bottom-0 left-[10px] w-px bg-line-2"}))
-     ($ :span {:class (cx "relative flex size-[22px] items-center justify-center rounded-full font-mono text-2xs"
-                         (if last "bg-ink-1 text-ink-inverse" "border border-line-2 bg-surface-0 text-ink-2"))} n)
-     ($ :div {:class "min-w-0 pt-0.5"}
-        ($ :div {:class "text-ink-3"} q)
-        ($ :div {:class "mt-0.5 font-medium text-ink-1"} a)
-        (when why ($ :div {:class "mt-0.5 text-ink-2"} why)))))
+(defn- end-text
+  "Where a line ends, in words: coded to `code` with no one looking, or a person looks (with `code` suggested)."
+  [code coded?]
+  (cond (= :needs-person code) "A person looks"
+        coded? ($ :<> "Coded " ($ ui/tag {:code code}))
+        :else ($ :<> "A person looks, " ($ ui/tag {:code code}) " suggested")))
 
-(defn- rules-apply
-  "The step that says which rules apply by their blocks, and what that makes them say."
-  [{:keys [reason by overruled code]} explained]
-  {:q "Which rules apply to this line, by their blocks?"
-   :a (case reason
-        :no-rule "None."
-        :conflict ($ :<> (and-list by) ", and they disagree: the rules don't decide.")
-        :check ($ :<> "Check " (and-list by) ": a person must look.")
-        ($ :<> (and-list by) ", so the rules say " ($ ui/tag {:code code}) "."))
-   :why (when (seq overruled) (str (and-list overruled) " applies too, but is set aside: "
-                                   (and-list by) " is its exception."))})
+(defn- flow
+  "The way `strategy` went for this line, as nodes left to right, each {:kind :ask|:get|:end :label :body :edge :alt
+  :why}: a question (:ask) and the answer on the edge it took (:edge), with where the other answer would have led
+  (:alt {:edge :to}); a value worked out (:get); the end. `why` says more under the diagram."
+  [{:keys [blocks checked choice reversed no-rules rule-nouls]} strategy explained code confidence t o]
+  (let [coded? (and (not= :needs-person code) (>= confidence t))
+        jev (fn [label {:keys [code confidence]}]
+              {:kind :get :label label :body ($ :<> ($ ui/tag {:code code}) " " (ui/pct confidence) " sure")})
+        rules (fn [{:keys [reason by code]}]
+                {:kind :get :label "Rules that apply, by their blocks"
+                 :body (case reason
+                         :no-rule "none"
+                         :conflict ($ :<> (and-list by) ": they disagree")
+                         :check ($ :<> "check " (and-list by))
+                         ($ :<> (and-list by) " → " ($ ui/tag {:code code})))})
+        decide? (fn [{:keys [reason]}]
+                  {:kind :ask :label "Do the rules settle one bucket?"
+                   :edge (if (#{:no-rule :conflict :check} reason) "no" "yes")
+                   :alt (if (#{:no-rule :conflict :check} reason)
+                          {:edge "yes" :to "their bucket"}
+                          {:edge "no" :to (if (= :hybrid strategy) "Jev's pick" "a person looks")})})
+        sure (fn [p k]
+               {:kind :get :label "How sure the rules are" :body (ui/pct p)
+                :why ($ why-sure {:rule (least-certain explained k) :k k})})
+        bar (when-not (= :needs-person code)
+              {:kind :ask :label ($ :<> "At least " (ui/pct t) " sure?")
+               :body (str (ui/pct confidence))
+               :edge (if coded? "yes" "no")
+               :alt (if coded? {:edge "no" :to "a person looks"} {:edge "yes" :to "coded, no one looking"})})
+        steps (case strategy
+                :checked (if (= :check (:reason checked))
+                           [{:kind :ask :label "Does a check rule apply?" :body (and-list (:by checked)) :edge "yes"
+                             :alt {:edge "no" :to "Jev's pick"}}]
+                           [{:kind :ask :label "Does a check rule apply?" :edge "no"
+                             :alt {:edge "yes" :to "a person looks"}}
+                            (jev "Jev's pick, with the rules" choice)])
+                :choice [(jev "Jev's pick, with the rules" choice)]
+                :reversed [(jev "Jev's pick, options asked last first" reversed)]
+                :no-rules [(jev "Jev's pick, from the facts alone" no-rules)]
+                :rule-nouls [{:kind :get :label "Rules Jev says apply"
+                              :body (if (seq (:by rule-nouls)) (and-list (:by rule-nouls)) "none")}
+                             (decide? rule-nouls)
+                             (when-not (= :needs-person code) (sure (:confidence rule-nouls) :jev))]
+                :blocks [(rules blocks) (decide? blocks)
+                         (when-not (= :needs-person code) (sure (:confidence blocks) :holds))]
+                :hybrid (if (#{:no-rule :conflict} (:reason blocks))
+                          [(rules blocks) (decide? blocks) (jev "Jev's pick, with the rules" choice)]
+                          [(rules blocks) (decide? blocks) (sure (:confidence blocks) :holds)])
+                [])]
+    (conj (vec (remove nil? (conj steps bar)))
+          {:kind :end :body (end-text code coded?) :o o})))
 
-(defn- jev-pick [{:keys [code confidence]} q]
-  {:q q :a ($ :<> ($ ui/tag {:code code}) ", " ($ ui/mono {} (ui/pct confidence)) " sure.")})
+(defui flow-node [{:keys [kind label body o]}]
+  ($ :div {:class (cx "w-44 rounded-1 border px-2.5 py-2 text-sm"
+                      (case kind
+                        :ask "border-ink-2 bg-surface-0"
+                        :get "border-line-2 bg-surface-1"
+                        :end "border-ink-1 bg-surface-0 ring-1 ring-ink-1"))}
+     ($ :div {:class "font-mono text-2xs uppercase tracking-[0.06em] text-ink-3"}
+        (case kind :ask "question" :get "worked out" :end "result"))
+     (when label ($ :div {:class "mt-0.5 leading-snug text-ink-2"} label))
+     (when body ($ :div {:class "mt-1 font-medium leading-snug text-ink-1"} body))
+     (when o ($ :div {:class "mt-1.5"} ($ ui/pill {:outcome o})))))
 
-(defn- decision-steps
-  "The steps `strategy` takes to its coding of the line, in its own order, each {:q :a :why}."
-  [{:keys [blocks checked choice reversed no-rules rule-nouls] :as decisions} strategy explained]
-  (let [with-rules "Which bucket does Jev pick, given the facts and the rules that could apply?"
-        rules-sure {:q "How sure are the rules?"
-                    :a ($ ui/mono {} (ui/pct (:confidence blocks)))
-                    :why ($ why-sure {:rule (least-certain explained :holds) :k :holds})}]
-    (case strategy
-      :checked (into [{:q "Does a check rule stop the line?"
-                       :a (if (= :check (:reason checked)) ($ :<> "Yes: " (and-list (:by checked)) ".") "No.")
-                       :why (if (= :check (:reason checked))
-                              "A check means a person looks, whatever Jev picks."
-                              "No check rule applies, so Jev's pick goes on.")}]
-                     (when-not (= :check (:reason checked)) [(jev-pick choice with-rules)]))
-      :choice [(jev-pick choice with-rules)]
-      :reversed [(jev-pick reversed "Which bucket does Jev pick, given the rules, with the options asked last first?")]
-      :no-rules [(jev-pick no-rules "Which bucket does Jev pick from the facts alone, without the rules?")]
-      :rule-nouls [{:q "Which rules does Jev say apply, asked one by one?"
-                    :a (if (seq (:by rule-nouls)) ($ :<> (and-list (:by rule-nouls)) ".") "None.")}
-                   {:q "What do they make the line?"
-                    :a (case (:reason rule-nouls)
-                         :no-rule "Nothing: no rule applies."
-                         :conflict "Nothing: they disagree."
-                         ($ :<> ($ ui/tag {:code (:code rule-nouls)}) "."))}
-                   {:q "How sure are they?" :a ($ ui/mono {} (ui/pct (:confidence rule-nouls)))
-                    :why ($ why-sure {:rule (least-certain explained :jev) :k :jev})}]
-      :blocks (cond-> [(rules-apply blocks explained)]
-                (not= :needs-person (:code blocks)) (conj rules-sure))
-      :hybrid (if (#{:no-rule :conflict} (:reason blocks))
-                [(rules-apply blocks explained)
-                 (assoc (jev-pick choice with-rules) :q (str "The rules don't decide, so: " with-rules))]
-                (cond-> [(rules-apply blocks explained)]
-                  (not= :needs-person (:code blocks)) (conj rules-sure)))
-      [])))
+(defui flow-edge
+  "The arrow from one node to the next, with the answer it stands for."
+  [{:keys [label]}]
+  ($ :div {:class "mt-7 flex w-14 flex-none flex-col items-center"}
+     ($ :span {:class "font-mono text-2xs font-medium text-ink-1"} (or label " "))
+     ($ :span {:class "flex w-full items-center"}
+        ($ :span {:class "h-0.5 flex-1 bg-ink-1"})
+        ($ :span {:class "-ml-0.5 text-xs leading-none text-ink-1"} "▶"))))
 
-(defui decision-story
-  "How the line's coding was decided, step by step in the chosen strategy's order: each step a question, its answer
-  and why; then the bar it must clear, and the result. What the other answers said, beside it."
+(defui decision-flow
+  "How the line's coding was decided, as a flow left to right (wrapping): each question and the answer it took, the
+  other answer in grey below it and where it would have led, what was worked out, and the end."
   [{:keys [decisions strategy code confidence t o stale explained]}]
   (let [confidence (or confidence 0)
         {:keys [blocks choice no-rules]} decisions
-        steps (decision-steps decisions strategy explained)
-        person? (= :needs-person code)
-        bar (when-not person?
-              {:q (str "Is that sure enough to code the line with no one looking? The bar is " (ui/pct t) ".")
-               :a (if (>= confidence t)
-                    ($ :<> "Yes: " (ui/pct confidence) " clears " (ui/pct t) ".")
-                    ($ :<> "No: " (ui/pct confidence) " is under " (ui/pct t) "."))})
-        result {:q "So"
-                :a ($ :span {:class "inline-flex flex-wrap items-center gap-2"}
-                      (cond person? "A person looks."
-                            (>= confidence t) ($ :<> "Coded " ($ ui/tag {:code code}) ", no one looking.")
-                            :else ($ :<> "A person looks, with " ($ ui/tag {:code code}) " suggested."))
-                      ($ ui/pill {:outcome o}))}
-        all (cond-> steps bar (conj bar) true (conj result))
-        others (remove nil? [(when (not= strategy :blocks)
+        nodes (flow decisions strategy explained code confidence t o)
+        whys (keep :why nodes)
+        others (remove nil? [(when-not (#{:blocks :hybrid} strategy)
                                ($ :<> "the rules' blocks say " ($ ui/tag {:code (:code blocks)})))
                              (when-not (#{:choice :checked :hybrid} strategy)
                                ($ :<> "Jev with the rules picks " ($ ui/tag {:code (:code choice)}) " " (ui/pct (:confidence choice))))
@@ -420,14 +426,25 @@
        (when stale
          ($ ui/notice {} "This is the last run's decision, made before the rules changed. Run the scenario to decide it as "
             "they stand now."))
-       ($ ui/panel {:class "px-3 pt-3 pb-1 text-sm leading-relaxed"}
-          ($ :div {:class "mb-2.5 text-ink-2"}
+       ($ ui/panel {:class "px-3 py-3"}
+          ($ :div {:class "mb-3 text-sm text-ink-2"}
              "This view codes by " ($ :b {:class "text-ink-1"} (some (fn [[k n]] (when (= k strategy) n)) strategies))
-             ($ :span {:class "text-ink-3"} " — " (some (fn [[k _ about]] (when (= k strategy) about)) strategies)))
-          ($ :ol {}
-             (for [[i s] (map-indexed vector all)
-                   :let [last? (= i (dec (count all)))]]
-               ($ decision-step (assoc s :key i :n (if last? "→" (inc i)) :last last?)))))
+             ($ :span {:class "text-ink-3"} ": " (some (fn [[k _ about]] (when (= k strategy) about)) strategies)))
+          ($ :div {:class "flex flex-wrap items-start gap-y-5"}
+             (for [[i {:keys [edge alt] :as node}] (map-indexed vector nodes)
+                   :let [last? (= i (dec (count nodes)))]]
+               ($ :div {:key i :class "flex items-start"}
+                  ($ :div {:class "flex flex-col items-start"}
+                     ($ flow-node node)
+                     (when alt
+                       ($ :div {:class "ml-4 flex flex-col items-start text-ink-3"}
+                          ($ :span {:class "ml-[-0.5px] h-3 border-l border-dashed border-line-2"})
+                          ($ :span {:class "font-mono text-2xs"} "if " (:edge alt) " ↓")
+                          ($ :span {:class "mt-0.5 max-w-40 rounded-1 border border-dashed border-line-2 px-2 py-0.5 text-xs"}
+                             (:to alt)))))
+                  (when-not last? ($ flow-edge {:label edge}))))
+             )
+          (for [[i w] (map-indexed vector whys)] ($ ui/say {:key i :class "mt-3"} w)))
        (when (seq others)
          ($ ui/say {} ($ :span {:class "text-ink-3"} "Beside it, from the same answers: ")
             (interpose "; " (map-indexed (fn [i x] ($ :span {:key i} x)) others)) ".")))))
@@ -569,7 +586,7 @@
                 ($ :div ($ ui/eyebrow {} "Came back") ($ came-back {:response (:plain responses)})))))
 
        ($ step {:n 6 :title "The decision" :where "core/combine · the Choice · the threshold"}
-          ($ decision-story {:decisions decisions :strategy strategy :code code :confidence confidence :t t :o o
+          ($ decision-flow {:decisions decisions :strategy strategy :code code :confidence confidence :t t :o o
                              :stale (seq (:unanswered data)) :explained explained})
           ($ ui/disclosure {:summary "Call 1, raw: the payload with the rules (the state is in step 3), and what came back"}
              ($ :div {:class "grid gap-2.5 md:grid-cols-2"}
