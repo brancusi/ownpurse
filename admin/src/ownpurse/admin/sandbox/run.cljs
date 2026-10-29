@@ -15,14 +15,8 @@
    [uix.core :as uix :refer [$ defui]]))
 
 (def strategies
-  "The ways of coding a line the run compared (ownpurse.classify.core), in words."
-  [[:choice "Jev, with the rules" "Jev picks the bucket, given the facts and, as text, every rule that could apply to the line (call 1)."]
-   [:checked "Jev, stopped by checks" "Jev's pick, unless a check rule holds by its blocks: then a person looks."]
-   [:reversed "Jev, options reversed" "The same Choice with its options in reverse order: Jev can lean to the first option."]
-   [:no-rules "Jev, without the rules" "Jev picks from the facts alone (call 2): what the rules add."]
-   [:rule-nouls "Jev, rule by rule" "Jev says whether each rule applies; code combines them."]
-   [:blocks "The rule blocks" "Each rule's building blocks decide; Jev answers only the fuzzy ones."]
-   [:hybrid "Blocks, else Jev" "The blocks where one rule decides; where none or several disagree, Jev's pick."]])
+  "The ways of coding a line the run compared, in words (kept with the line's walk, which tells them)."
+  line/strategies)
 
 (defn keyed?
   "Whether any of a run's lines carries an answer key (every invented one does; a book's own, once a person keys it)."
