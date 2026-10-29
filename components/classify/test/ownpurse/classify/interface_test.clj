@@ -154,7 +154,9 @@
       (is (= 1M (blocks/holds [:amount :between 300.00M 400.00M] f {})))
       (is (= 0M (blocks/holds [:amount :over 500.00M] f {})))
       (is (= 1M (blocks/holds [:trip :project] f {})))
-      (is (= 0M (blocks/holds [:at-home] f {}))))
+      (is (= 0M (blocks/holds [:at-home] f {})))
+      (is (= 0M (blocks/holds [:per-diem-trip] f {})) "the project pays no per diem")
+      (is (= 1M (blocks/holds [:per-diem-trip] (assoc-in f [:whereabouts :per-diem] true) {}))))
     (testing "a fuzzy block is its answer; :not and :any combine; a rule is its weakest block"
       (is (= 0.25M (blocks/holds [:not [:jev "q"]] f {"q" 0.75M})))
       (is (= 0.75M (blocks/holds [:any [:jev "q"] [:at-home]] f {"q" 0.75M})))

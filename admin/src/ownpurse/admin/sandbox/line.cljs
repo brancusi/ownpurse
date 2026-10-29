@@ -118,6 +118,7 @@
                   (> (count names) 2) (str "category is one of " (count codes) ": " (first names) ", …")
                   :else (str "category is " (str/join " or " names))))
     :on-trip-for (str "on a trip for " (get-in projects [(first args) :name]))
+    :per-diem-trip "on a trip for a project that pays a per diem"
     :trip (case (first args) :personal "on a personal trip" :project "on a project trip" "on a trip")
     :at-home "at home"
     :card (str "card is " (str/join " or " (sort (second args))))

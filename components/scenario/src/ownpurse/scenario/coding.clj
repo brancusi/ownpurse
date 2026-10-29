@@ -47,12 +47,16 @@
     (contains? r :over) (update :over vec)))
 
 (defn world-in
-  "A world layer's data, checked: dates are dates, names are named."
+  "A world layer's data, checked: dates are dates, names are named. A project given without its name and dates
+  amends the project of that id in a layer below (its :per-diem, say); the scenario checks there is one."
   [{:keys [projects trips] :as world}]
-  (doseq [[id {:keys [name from to]}] projects]
-    (when (str/blank? name) (fail! (str "Project " id " needs a name.") {:project id}))
-    (date! (str "Project " id) from)
-    (date! (str "Project " id) to))
+  (doseq [[id {:keys [name from to per-diem] :as p}] projects]
+    (when (or name from to)
+      (when (str/blank? name) (fail! (str "Project " id " needs a name.") {:project id}))
+      (date! (str "Project " id) from)
+      (date! (str "Project " id) to))
+    (when (and (contains? p :per-diem) (not (boolean? per-diem)))
+      (fail! (str "Project " id ": :per-diem is true (the project pays one) or false.") {:project id})))
   (doseq [{:keys [person from to]} trips]
     (when (str/blank? person) (fail! "A trip says whose it is (:person)." {:trip from}))
     (date! (str "A trip of " person) from)
@@ -136,8 +140,11 @@
   [layers]
   (reduce (fn [acc {:keys [kind] :as l}]
             (case kind
-              "world" (let [w (:world l)]
-                        (-> (merge-with (fn [a b] (if (and (map? a) (map? b)) (merge a b) b))
+              ;; An entry of an id-keyed map (a project, a card) is merged field by field: a layer above can amend
+              ;; one without restating it.
+              "world" (let [w (:world l)
+                            entry (fn [a b] (if (and (map? a) (map? b)) (merge a b) b))]
+                        (-> (merge-with (fn [a b] (if (and (map? a) (map? b)) (merge-with entry a b) b))
                                         acc (dissoc w :trips))
                             (update :trips (fnil into []) (:trips w))))
               "coding" (let [{:keys [codes rules buckets threshold strategy]} (:coding l)]

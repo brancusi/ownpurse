@@ -23,6 +23,7 @@
       "channel" (str "paid by " (vals (second args)))
       "trip" (str "on a " (n (first args)) " trip")
       "on-trip-for" (str "on a trip for " (first args))
+      "per-diem-trip" "on a trip for a project that pays a per diem"
       "at-home" "at home"
       "jev" (str "Jev says yes: “" (first args) "”")
       "not" (str "not (" (block-text (first args) categories) ")")
@@ -102,7 +103,7 @@
        ($ ui/field {:label "When: its building blocks, as JSON (every one must hold)"}
           ($ ui/text-area {:value blocks :on-change set-blocks! :rows 4 :aria-label "Blocks as JSON"}))
        ($ ui/say {}
-          "Blocks: [\"category\",\"in\",[\"5411\"]] · [\"trip\",\"project\"] · [\"on-trip-for\",\"venice\"] · [\"at-home\"] · "
+          "Blocks: [\"category\",\"in\",[\"5411\"]] · [\"trip\",\"project\"] · [\"on-trip-for\",\"venice\"] · [\"per-diem-trip\"] · [\"at-home\"] · "
           "[\"jev\",\"a yes-or-no question\"] · [\"not\",block] · [\"any\",block,block] · [\"channel\",\"in\",[\"transfer\"]] · "
           "[\"contains\",\"merchant\",\"text\"] · [\"amount\",\"over\",100]")
        ($ :div {:class "grid gap-3 md:grid-cols-[1fr_auto]"}

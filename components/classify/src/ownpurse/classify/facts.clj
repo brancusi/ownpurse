@@ -19,14 +19,15 @@
   (inc (.between ChronoUnit/DAYS (date from) (date to))))
 
 (defn whereabouts
-  "Where `person` was on day `d`: on one of their trips (with its project, if any, and which day of it), else at home.
-  :place is the country; :city is there when the trip or the home names one. A scenario's :home is a country, or
-  {:country :city}."
-  [{:keys [trips home]} person d]
+  "Where `person` was on day `d`: on one of their trips (with its project, if any, whether that project pays a per
+  diem, and which day of it), else at home. :place is the country; :city is there when the trip or the home names
+  one. A scenario's :home is a country, or {:country :city}."
+  [{:keys [trips home projects]} person d]
   (if-let [{:keys [place city project from to]} (first (filter #(and (= person (:person %)) (within? d %)) trips))]
     (cond-> {:place place :trip (if project :project :personal) :project project
              :day (days-between from d) :days (days-between from to)}
-      city (assoc :city city))
+      city (assoc :city city)
+      (get-in projects [project :per-diem]) (assoc :per-diem true))
     (let [{:keys [country city]} (if (map? home) home {:country home})]
       (cond-> {:place country :trip nil}
         city (assoc :city city)))))
@@ -129,7 +130,10 @@
   (let [place (if city (str city ", " (:place where)) (:place where))]
     (case trip
       :project (str "in " place ", on a project trip for " (get-in projects [project :name])
-                    " (day " day " of " days ")")
+                    " (day " day " of " days ")"
+                    ;; Said only in a world that sets per diem on its projects: elsewhere the rules say it.
+                    (when (some #(contains? % :per-diem) (vals projects))
+                      (if (:per-diem where) "; the project pays a per diem" "; the project pays no per diem")))
       :personal (str "in " place ", on a personal trip (no project)")
       (str "at home in " place))))
 

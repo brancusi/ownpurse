@@ -1,6 +1,8 @@
 (ns ownpurse.scenario.coding-test
   (:require
+   [clojure.string :as str]
    [clojure.test :refer [deftest is testing]]
+   [ownpurse.classify.interface :as classify]
    [ownpurse.scenario.interface :as scenario]
    [ownpurse.store.interface :as store])
   (:import
@@ -107,6 +109,29 @@
                                                         (assoc (get-in coding [:rules 1]) :rule "Taxis are travel.")]}}]})
         (is (= [["R1" nil] ["R2" "Taxis are travel."] ["R3" nil] ["R4" nil]]
                (map (juxt :id #(when (= "R2" (:id %)) (:rule %))) (:rules (scenario/composed node "in-place"))))))
+      (testing "a scenario standing on it amends a project field by field: the trip now pays a per diem"
+        (scenario/put! node {:ref "per-diem" :name "Harbour pays a per diem" :base "harbour-coding"
+                             :layers [{:id "pays" :kind "world" :world {:projects {"harbour" {:per-diem true}}}}]})
+        (let [s (scenario/classifier-scenario node "per-diem")
+              f (classify/enrich s (first (:cases s)))]
+          (is (= ["Harbour Exhibition" true] ((juxt :name :per-diem) (get-in s [:projects "harbour"]))))
+          (is (get-in f [:whereabouts :per-diem]))
+          (is (str/includes? (get-in (classify/state s f) [:context :cardholder_was]) "pays a per diem")))
+        (is (nil? (let [s (scenario/classifier-scenario node "harbour-coding")]
+                    (get-in (classify/enrich s (first (:cases s))) [:whereabouts :per-diem])))
+            "the scenario under it is unchanged")
+        (is (not (str/includes? (let [s (scenario/classifier-scenario node "harbour-coding")]
+                                  (get-in (classify/state s (classify/enrich s (first (:cases s)))) [:context :cardholder_was]))
+                                "per diem"))
+            "a world that sets no per diem on its projects says nothing of it to Jev")
+        (is (= :ownpurse/invalid
+               (:type (error #(scenario/put! node {:ref "nowhere" :name "Amends nothing" :base "harbour-coding"
+                                                   :layers [{:id "w" :kind "world"
+                                                             :world {:projects {"atlantis" {:per-diem true}}}}]})))))
+        (is (= :ownpurse/invalid
+               (:type (error #(scenario/put! node {:ref "nowhere" :name "Not a yes or no" :base "harbour-coding"
+                                                   :layers [{:id "w" :kind "world"
+                                                             :world {:projects {"harbour" {:per-diem "yes"}}}}]}))))))
       (testing "a rule that codes to no bucket, or a trip with no dates, is refused"
         (is (= :ownpurse/invalid
                (:type (error #(scenario/put! node (assoc-in trial [:layers 1 :coding :threshold] 1.5M))))))

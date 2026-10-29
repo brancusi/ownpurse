@@ -30,6 +30,7 @@
             (yes (if (= :any kind) (some? trip) (= kind trip))))
     :at-home (yes (nil? (get-in facts [:whereabouts :trip])))
     :on-trip-for (yes (= (first args) (get-in facts [:whereabouts :project])))
+    :per-diem-trip (yes (get-in facts [:whereabouts :per-diem]))
     :during-project (yes (seq (:projects facts)))
     :traveller (yes (:traveller facts))
     :country-mismatch (yes (:country-mismatch facts))

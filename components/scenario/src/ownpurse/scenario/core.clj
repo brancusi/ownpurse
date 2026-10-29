@@ -154,6 +154,10 @@
         (fail! :ownpurse/not-found (str "Scenario " ref " stands on " base ", which there is not.") {:ref ref :base base}))
       (when (or (= base ref) (some #{ref} (bases-of node base)))
         (fail! :ownpurse/invalid (str "Scenario " ref " cannot stand on " base ", which stands on it.") {:ref ref :base base})))
+    (let [world (coding/compose (concat (when base (stack-layers node base)) layers))]
+      (doseq [[id p] (:projects world) :when (str/blank? (:name p))]
+        (fail! :ownpurse/invalid (str "Scenario " ref " amends project " id ", which no layer of it or under it names.")
+               {:ref ref :project id})))
     (let [layers (mapv coding/stored (check-codings node base layers))]
       (store/put-changed! node {:scenarios [(cond-> {:xt/id (scenario-id ref) :ref ref :name name :layers layers}
                                               note (assoc :note note)
