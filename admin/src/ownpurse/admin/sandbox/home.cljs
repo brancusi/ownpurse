@@ -20,9 +20,10 @@
   ($ ui/section-title {:aside aside} ($ :span {} n " · " children)))
 
 (defn- card-edge
-  "A row's border: the one picked heavy, in ink; the rest light."
+  "A row's border, 1px either way so nothing inside moves: the one picked in ink, with a ring outside it (a shadow,
+  which takes no room); the rest light."
   [picked]
-  (if picked "border-2 border-ink-1" "border border-line-2"))
+  (if picked "border border-ink-1 ring-1 ring-ink-1" "border border-line-2"))
 
 (defui kind-label
   "What a row is, in its top line: LINES or SCENARIO, with a mark of its shape."
@@ -70,11 +71,36 @@
               :class "mt-2 font-mono text-2xs uppercase tracking-[0.06em] text-lapis hover:underline"}
      (if open "▴ Less" ($ :<> "▾ " children))))
 
-(defui glance-row [{:keys [date merchant amount currency items]}]
-  ($ :div {:class "grid grid-cols-[5.5rem_1fr_auto] gap-2 border-b border-dashed border-line-1 py-0.5 font-mono text-2xs"}
+(def ^:private line-cols
+  "The preview's columns: when, where, what kind of merchant, how it was paid, its receipt's items, how much."
+  "grid grid-cols-[6rem_minmax(10rem,2fr)_minmax(8rem,1.4fr)_5.5rem_3.5rem_7rem_2.5rem] gap-x-3")
+
+(defui lines-head []
+  ($ :div {:class (ui/cx line-cols "sticky top-0 border-b border-line-2 bg-surface-0 py-1 font-mono text-2xs uppercase tracking-[0.06em] text-ink-3")}
+     ($ :span {} "Date") ($ :span {} "Merchant") ($ :span {} "Category") ($ :span {} "Paid by")
+     ($ :span {:class "text-right"} "Items") ($ :span {:class "text-right"} "Amount") ($ :span {} "")))
+
+(defui glance-row
+  "One line of a preview. Money out is a plain amount; money in (a refund, a transfer in) is marked in."
+  [{:keys [date merchant amount currency items mcc category channel]}]
+  ($ :div {:class (ui/cx line-cols "border-b border-dashed border-line-1 py-1 font-mono text-xs")}
      ($ :span {:class "text-ink-3"} date)
-     ($ :span {:class "truncate text-ink-2"} merchant (when items ($ :span {:class "text-ink-3"} " · " items " items")))
-     ($ :span {:class "text-right tabular-nums text-ink-2"} ($ :span {:class "mr-1 text-ink-3"} currency) (ui/money amount))))
+     ($ :span {:class "truncate text-ink-1" :title merchant} merchant)
+     ($ :span {:class "truncate text-ink-2" :title (when mcc (str "Merchant code " mcc))}
+        (or category (when mcc ($ :span {:class "text-ink-3"} mcc)) ($ :span {:class "text-ink-3"} "—")))
+     ($ :span {:class "text-ink-2"} (or channel "—"))
+     ($ :span {:class "text-right text-ink-2"} (or items ""))
+     ($ :span {:class "text-right tabular-nums text-ink-1"}
+        (ui/money (js/Math.abs amount)) (when (neg? amount) ($ :span {:class "ml-1 text-2xs text-ink-3"} "in")))
+     ($ :span {:class "text-ink-3"} (or currency "—"))))
+
+(defui lines-table
+  "Lines as a table across the row, with its headers; `tall` scrolls it under its headers."
+  [{:keys [rows tall]}]
+  ($ :div {:class (ui/cx "mt-2 overflow-x-auto" (when tall "max-h-[28rem] overflow-y-auto"))}
+     ($ :div {:class "min-w-[44rem]"}
+        ($ lines-head)
+        (for [l rows] ($ glance-row (assoc l :key (:id l)))))))
 
 (defui lines-full
   "Every line of a set (up to two hundred), the days they span and their currencies."
@@ -87,8 +113,7 @@
              (ui/count-of lines "line") " from " ($ :b {:class "text-ink-1"} from) " to " ($ :b {:class "text-ink-1"} to)
              (when (seq currencies)
                (str ", in " (str/join ", " (for [[c k] currencies] (str k " " c))))) ".")
-          ($ :div {:class "mt-2 max-h-[28rem] max-w-3xl overflow-y-auto border-t border-line-1"}
-             (for [l first] ($ glance-row (assoc l :key (:id l)))))
+          ($ lines-table {:rows first :tall true})
           (when (> lines (count first))
             ($ ui/say {} "The first " (count first) " of " lines ", oldest first. A run codes them all."))))))
 
@@ -105,8 +130,7 @@
           (when note ($ :div {:class "mt-0.5 text-xs text-ink-3"} note))
           (if open
             ($ lines-full {:s s})
-            ($ :div {:class "mt-2 max-w-3xl border-t border-line-1"}
-               (for [l peek] ($ glance-row (assoc l :key (:id l))))))
+            ($ lines-table {:rows peek}))
           ($ more-button {:open open :on-toggle #(set-open! not)}
              (if (> lines (count peek)) (str "All " lines " lines") "More"))))))
 

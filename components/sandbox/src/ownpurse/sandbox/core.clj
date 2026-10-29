@@ -86,9 +86,13 @@
                        {:id (run-id f) :at (second (re-find #"-(\d{4}-.+)$" (run-id f)))}))})))
 
 (defn- glance
-  "A line as a preview shows it: when, where, how much; and how many items its receipt lists."
-  [{:keys [id date merchant amount currency items]}]
+  "A line as a preview shows it: when, where, how much, what kind of merchant (its code, and its name where
+  `categories` has it), how it was paid, and how many items its receipt lists."
+  [categories {:keys [id date merchant amount currency items mcc channel]}]
   (cond-> {:id id :date date :merchant merchant :amount amount :currency currency}
+    mcc (assoc :mcc mcc)
+    (get categories mcc) (assoc :category (get categories mcc))
+    channel (assoc :channel (name channel))
     (seq items) (assoc :items (count items))))
 
 (defn line-sets
@@ -97,12 +101,12 @@
   workspace runs over them too."
   [sandbox]
   (vec (for [name (sort (keys (sources sandbox)))
-             :let [{:keys [cases business entities]} (scenario sandbox name)]]
+             :let [{:keys [cases business entities categories]} (scenario sandbox name)]]
          (cond-> {:id (str "sample~" name) :kind "sample" :title (str/capitalize name)
                   :where [["made up" (str "the " name " set, each line with the coding a bookkeeper would give it")]]
                   :lines (count cases) :units (count (mapcat classify/units cases)) :scenarios [name]}
            (get-in entities [business :name]) (assoc :note (str (get-in entities [business :name]) " and its people, invented"))
-           true (assoc :peek (mapv glance (take 3 (sort-by :date cases))))))))
+           true (assoc :peek (mapv (partial glance categories) (take 3 (sort-by :date cases))))))))
 
 (defn over
   "Sample set `id` as a workspace's scenario runs over it: {:id :title :cases}, each line keyed as it says (its
@@ -118,9 +122,10 @@
   (let [name (second (re-matches #"sample~(.+)" id))
         s (some #(when (= id (:id %)) %) (line-sets sandbox))]
     (when-not s (throw (ex-info (str "No set of lines " id ".") {:type :ownpurse/not-found})))
-    (let [cases (sort-by :date (:cases (scenario sandbox name)))]
+    (let [{:keys [cases categories]} (scenario sandbox name)
+          cases (sort-by :date cases)]
       (assoc s
-             :first (mapv glance (take 200 cases))
+             :first (mapv (partial glance categories) (take 200 cases))
              :from (:date (first cases)) :to (:date (last cases))
              :currencies (into (sorted-map) (frequencies (keep :currency cases)))))))
 

@@ -186,13 +186,26 @@
     [["given" (str (count cases) " lines, as they are")]]))
 
 (defn glance
-  "A line as a preview shows it: when, where, how much; and how many items its receipt lists."
-  [{:keys [id date merchant amount currency items]}]
+  "A line as a preview shows it: when, where, how much, what kind of merchant (its code, and its name where
+  `categories` has it), how it was paid, and how many items its receipt lists."
+  [categories {:keys [id date merchant amount currency items mcc channel]}]
   (cond-> {:id id :date date :merchant merchant :amount amount :currency currency}
+    mcc (assoc :mcc mcc)
+    (get categories mcc) (assoc :category (get categories mcc))
+    channel (assoc :channel (name channel))
     (seq items) (assoc :items (count items))))
+
+(defn- category-names
+  "Every merchant category's name the workspace's coding scenarios know, by code."
+  [node]
+  (into {} (for [{:keys [ref]} (core/scenarios node)
+                 :when (coding-scenario? node ref)
+                 c (:categories (core/composed node ref))]
+             c)))
 
 (defn- sets-with-cases [node]
   (let [names (account-names node)
+        glance (partial glance (category-names node))
         coding (filter #(coding-scenario? node %) (map :ref (core/scenarios node)))
         reading (for [ref coding [owner id l] (core/lines-layers node ref)] [[owner id l] ref])
         read (fn [lines] (sort-by :date (if-let [select (:select lines)] (coding/read-lines node {} select) (:cases lines))))]
@@ -225,17 +238,17 @@
   (mapv first (sets-with-cases node)))
 
 (defn preview
-  "A set's preview, as `preview` makes one, from its lines oldest first."
-  [s cases]
+  "A set's preview, from its lines oldest first: its first two hundred, the days they span, their currencies."
+  [s cases categories]
   (assoc s
-         :first (mapv glance (take 200 cases))
+         :first (mapv (partial glance categories) (take 200 cases))
          :from (:date (first cases)) :to (:date (last cases))
          :currencies (into (sorted-map) (frequencies (keep :currency cases)))))
 
 (defn line-set
   "Set `id` of the books' lines with a preview: its first two hundred lines, the days they span, and their currencies."
   [node id]
-  (or (some (fn [[s cases]] (when (= id (:id s)) (preview s cases))) (sets-with-cases node))
+  (or (some (fn [[s cases]] (when (= id (:id s)) (preview s cases (category-names node)))) (sets-with-cases node))
       (throw (ex-info (str "No set of lines " id ".") {:type :ownpurse/not-found}))))
 
 ;; ----------------------------------------------------------------------------------------------- the trace
