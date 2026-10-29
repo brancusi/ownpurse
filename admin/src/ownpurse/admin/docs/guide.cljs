@@ -565,6 +565,11 @@
                      ($ :span {:class "font-display text-4xl font-extrabold text-ink-3"} at)
                      ($ :h2 {:class "font-display text-xl font-bold"} title)
                      ($ actor-chip {:actor (:actor (nth steps (dec at)))}))
+                  (when (seq (:unanswered data))
+                    ($ ui/notice {:tone :bad}
+                       "This scenario changed since the line was coded, and the record keeps no answer to its new "
+                       "requests: Jev's answers below are missing until the scenario is run again. Pick another "
+                       "scenario above, or run this one from the sandbox."))
                   ($ :div {:class (cx "mt-2 grid gap-8"
                                       ;; Jev's answers and the rules are wide tables: they go under the words, full width.
                                       (if (#{7 8} at) "[&>div:first-child]:max-w-[72ch]" "lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]"))}

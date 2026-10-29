@@ -83,7 +83,7 @@
   answer key accepts are marked."
   [{:keys [criteria probabilities unit]}]
   (let [ok (conj (set (:ok unit)) (:expect unit))
-        top (key (apply max-key val probabilities))]
+        top (some-> (seq probabilities) (->> (apply max-key val)) key)]
     ($ :div {:class "grid grid-cols-[minmax(150px,200px)_minmax(0,1fr)_96px_38px] items-center gap-x-2.5 gap-y-1 text-sm"}
        (for [h ["option" "what Jev reads it as" "probability" ""]] ($ ui/eyebrow {:key h} h))
        (for [[option desc] (sort-by #(- (get probabilities (key %) 0)) criteria)
@@ -302,6 +302,11 @@
              "the same state; call 1 adds the rules. Read it as Jev would: is anything missing, wrong, or worded so it "
              "points the wrong way?")
           (cond
+            (seq (:unanswered data))
+            ($ ui/notice {:tone :bad}
+               "The record keeps no answer to " (str/join " and " (map #(str "the " (name %) " request") (:unanswered data)))
+               " as the scenario stands now: it changed since this line was coded (a rule, or the order of the rules). "
+               "The coding shown is the last run's. Run the scenario again to ask; its page says what that costs.")
             (:record data) ($ ui/notice {} "Rebuilt from the line's facts as the scenario stands; Jev's answers are the ones the record kept for exactly these requests.")
             rebuilt ($ ui/notice {} "This run did not keep its requests: these are rebuilt from today's code and scenario."))
           (let [state (get-in requests [:rules :state])]

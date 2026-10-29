@@ -124,6 +124,8 @@
      :enrich enrich
      :record true
      :rebuilt true
+     ;; Asked for when the line was coded, but under rules that have changed since: nothing kept for them as they are.
+     :unanswered (vec (remove responses (keys requests)))
      :responses responses
      :decisions decisions
      :explained (classify/explain s result)}))

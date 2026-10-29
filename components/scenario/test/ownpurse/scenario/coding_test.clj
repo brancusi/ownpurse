@@ -154,8 +154,9 @@
             (is (= ["L1" "L2" "L3" "L4"] (map :short lines)))
             (is (= :per-diem (get-in (first lines) [:decisions :checked :code])))))
         (testing "one line all the way through: the requests rebuilt from its facts find the answers the record kept"
-          (let [{:keys [responses explained record]} (scenario/sandbox-line node "harbour-coding" "line:test:1")]
+          (let [{:keys [responses explained record unanswered]} (scenario/sandbox-line node "harbour-coding" "line:test:1")]
             (is record)
+            (is (= [] unanswered))
             (is (= #{:rules :plain} (set (keys responses))))
             (is (= ["R1" "R2" "R3"] (map :id explained)))))
         (testing "a line a person keys is scored against it; a scenario standing on it can key it otherwise"
@@ -173,6 +174,16 @@
           (is (= "harbour-coding" (:in (get (scenario/answer-key node "child-key") "line:test:1"))) "removed: the base's stands")
           (is (= :ownpurse/invalid (:type (error #(scenario/confirm! node "harbour-coding" {:unit "line:test:3" :expect "nowhere"})))))
           (scenario/drop! node "child-key"))
+        (testing "a rule changed since the run: the line still opens, and says which request has no answer kept"
+          (scenario/put! node {:ref "reworded" :name "R1 reworded" :base "harbour-coding"
+                               :layers [{:id "changes" :kind "coding"
+                                         :coding {:rules [(assoc (get-in coding [:rules 0]) :rule "Food on the trip is per diem.")]}}]})
+          (scenario/code! node "reworded" (stub (atom 0)) {:model "stub" :limit 1})
+          (scenario/put! node {:ref "reworded" :name "R1 reworded again" :base "harbour-coding"
+                               :layers [{:id "changes" :kind "coding"
+                                         :coding {:rules [(assoc (get-in coding [:rules 0]) :rule "Groceries away are per diem.")]}}]})
+          (is (= [:rules] (:unanswered (scenario/sandbox-line node "reworded" "line:test:1"))))
+          (scenario/drop! node "reworded"))
         (testing "coding again asks nothing: every answer is in the record"
           (is (= {:asked 0 :kept 9} (select-keys (scenario/code! node "harbour-coding" (stub calls) {:model "stub"})
                                                  [:asked :kept])))
