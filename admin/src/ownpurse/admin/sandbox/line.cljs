@@ -302,57 +302,135 @@
        "Not asked yet. The record has no answer to this request as it is sent now: the rules (or which of them "
        "could apply) changed since the line was coded. Run the scenario to ask it.")))
 
+(defn- certainty [p] (js/Math.abs (- (* 2 p) 1)))
+
+(defn- least-certain
+  "Of the rules sent for the line, the one whose probability (`k`: :holds by blocks, :jev by Jev's yes/no) is
+  nearest a coin toss: it sets how sure the rules are, whether it applies or not."
+  [explained k]
+  (first (sort-by #(certainty (k %)) (filter #(and (not (false? (:sent %))) (number? (k %))) explained))))
+
+(defui why-sure
+  "Why the rules are as sure as they are: the least certain rule, how much it holds, and what that means."
+  [{:keys [rule k]}]
+  (let [world (ui/use-world)
+        p (k rule)
+        question (some (fn [{:keys [block holds]}] (when (and (= :jev (first block)) (= holds p)) (second block)))
+                       (:blocks rule))]
+    (when rule
+      ($ :<> "The rules are only as sure as their least certain one: " ($ :b {} (:id rule)) " "
+         (if (>= p 0.5) "applies" "does not apply") " at " ($ ui/mono {} (ui/pct p))
+         (cond question ($ :<> ", because Jev answered its question “" question "” " ($ ui/mono {} (ui/pct p)) " yes")
+               (= k :jev) ", by Jev's yes or no on the whole rule")
+         ". " ($ ui/mono {} (ui/pct p)) " is " ($ ui/mono {} (ui/pct (certainty p))) " sure: "
+         "50% would be a coin toss, 0% or 100% certain."
+         (when-let [text (:rule (some #(when (= (:id rule) (:id %)) %) (:rules world)))]
+           ($ :span {:class "text-ink-3"} " (" (:id rule) ": " text ")"))))))
+
+(defui decision-step
+  "One step of the decision: its number, the question, the answer, and why."
+  [{:keys [n q a why last]}]
+  ($ :li {:class "relative grid grid-cols-[22px_minmax(0,1fr)] gap-x-3 pb-3"}
+     (when-not last ($ :span {:class "absolute top-6 bottom-0 left-[10px] w-px bg-line-2"}))
+     ($ :span {:class (cx "relative flex size-[22px] items-center justify-center rounded-full font-mono text-2xs"
+                         (if last "bg-ink-1 text-ink-inverse" "border border-line-2 bg-surface-0 text-ink-2"))} n)
+     ($ :div {:class "min-w-0 pt-0.5"}
+        ($ :div {:class "text-ink-3"} q)
+        ($ :div {:class "mt-0.5 font-medium text-ink-1"} a)
+        (when why ($ :div {:class "mt-0.5 text-ink-2"} why)))))
+
+(defn- rules-apply
+  "The step that says which rules apply by their blocks, and what that makes them say."
+  [{:keys [reason by overruled code]} explained]
+  {:q "Which rules apply to this line, by their blocks?"
+   :a (case reason
+        :no-rule "None."
+        :conflict ($ :<> (and-list by) ", and they disagree: the rules don't decide.")
+        :check ($ :<> "Check " (and-list by) ": a person must look.")
+        ($ :<> (and-list by) ", so the rules say " ($ ui/tag {:code code}) "."))
+   :why (when (seq overruled) (str (and-list overruled) " applies too, but is set aside: "
+                                   (and-list by) " is its exception."))})
+
+(defn- jev-pick [{:keys [code confidence]} q]
+  {:q q :a ($ :<> ($ ui/tag {:code code}) ", " ($ ui/mono {} (ui/pct confidence)) " sure.")})
+
+(defn- decision-steps
+  "The steps `strategy` takes to its coding of the line, in its own order, each {:q :a :why}."
+  [{:keys [blocks checked choice reversed no-rules rule-nouls] :as decisions} strategy explained]
+  (let [with-rules "Which bucket does Jev pick, given the facts and the rules that could apply?"
+        rules-sure {:q "How sure are the rules?"
+                    :a ($ ui/mono {} (ui/pct (:confidence blocks)))
+                    :why ($ why-sure {:rule (least-certain explained :holds) :k :holds})}]
+    (case strategy
+      :checked (into [{:q "Does a check rule stop the line?"
+                       :a (if (= :check (:reason checked)) ($ :<> "Yes: " (and-list (:by checked)) ".") "No.")
+                       :why (if (= :check (:reason checked))
+                              "A check means a person looks, whatever Jev picks."
+                              "No check rule applies, so Jev's pick goes on.")}]
+                     (when-not (= :check (:reason checked)) [(jev-pick choice with-rules)]))
+      :choice [(jev-pick choice with-rules)]
+      :reversed [(jev-pick reversed "Which bucket does Jev pick, given the rules, with the options asked last first?")]
+      :no-rules [(jev-pick no-rules "Which bucket does Jev pick from the facts alone, without the rules?")]
+      :rule-nouls [{:q "Which rules does Jev say apply, asked one by one?"
+                    :a (if (seq (:by rule-nouls)) ($ :<> (and-list (:by rule-nouls)) ".") "None.")}
+                   {:q "What do they make the line?"
+                    :a (case (:reason rule-nouls)
+                         :no-rule "Nothing: no rule applies."
+                         :conflict "Nothing: they disagree."
+                         ($ :<> ($ ui/tag {:code (:code rule-nouls)}) "."))}
+                   {:q "How sure are they?" :a ($ ui/mono {} (ui/pct (:confidence rule-nouls)))
+                    :why ($ why-sure {:rule (least-certain explained :jev) :k :jev})}]
+      :blocks (cond-> [(rules-apply blocks explained)]
+                (not= :needs-person (:code blocks)) (conj rules-sure))
+      :hybrid (if (#{:no-rule :conflict} (:reason blocks))
+                [(rules-apply blocks explained)
+                 (assoc (jev-pick choice with-rules) :q (str "The rules don't decide, so: " with-rules))]
+                (cond-> [(rules-apply blocks explained)]
+                  (not= :needs-person (:code blocks)) (conj rules-sure)))
+      [])))
+
 (defui decision-story
-  "How the line's coding was decided, in three sentences: what the rules say, what Jev says, and what the chosen
-  strategy and the threshold make of them."
-  [{:keys [decisions strategy code confidence t o stale]}]
-  (let [{:keys [blocks checked choice no-rules]} decisions
-        confidence (or confidence 0)
-        one? (= 1 (count (:by blocks)))
-        rules-say (case (:reason blocks)
-                    :no-rule "No rule applies, so the rules alone don't decide this line."
-                    :conflict (str "Rules " (and-list (:by blocks)) " apply but disagree, so the rules alone don't decide.")
-                    :check (str (if one? "Check " "Checks ") (and-list (:by blocks)) (if one? " applies" " apply")
-                                ": the rules say a person must look.")
-                    ($ :<> (if one? "Rule " "Rules ") (and-list (:by blocks)) (if one? " applies" " apply")
-                       (when (seq (:overruled blocks)) (str " (setting aside " (and-list (:overruled blocks)) ", its exception)"))
-                       ", so the rules say " ($ ui/tag {:code (:code blocks)}) ", " ($ ui/mono {} (ui/pct (:confidence blocks)))
-                       " sure: as sure as the least certain block they rest on."))
-        jev-say ($ :<> "Given the facts and those rules, Jev picks " ($ ui/tag {:code (:code choice)}) " ("
-                   ($ ui/mono {} (ui/pct (:confidence choice))) ")."
-                   (if (= (:code choice) (:code no-rules))
-                     " From the facts alone it picks the same."
-                     ($ :<> " From the facts alone it would pick " ($ ui/tag {:code (:code no-rules)}) " ("
-                        ($ ui/mono {} (ui/pct (:confidence no-rules))) "): the rules changed its mind.")))
-        how (case strategy
-              :checked (if (= :check (:reason checked))
-                         (str "check " (and-list (:by checked)) " applies, so a person looks whatever Jev picks")
-                         "no check applies, so Jev's pick stands")
-              :choice "it takes Jev's pick"
-              :reversed "it takes Jev's pick with the options asked in reverse order"
-              :no-rules "it takes Jev's pick from the facts alone"
-              :rule-nouls "it combines Jev's yes or no on each rule"
-              :blocks "it takes what the rules say"
-              :hybrid (if (#{:no-rule :conflict} (:reason blocks))
-                        "the rules don't decide, so it takes Jev's pick"
-                        "the rules decide, so it takes what they say")
-              "it decides")
-        so (cond
-             (= :needs-person code) " That means a person looks."
-             (>= confidence t) ($ :<> " At " ($ ui/mono {} (ui/pct confidence)) " it clears the " ($ ui/mono {} (ui/pct t))
-                                  " bar, so the line is coded " ($ ui/tag {:code code}) " with no one looking.")
-             :else ($ :<> " At " ($ ui/mono {} (ui/pct confidence)) " it is under the " ($ ui/mono {} (ui/pct t))
-                      " bar to code a line alone, so a person looks, with " ($ ui/tag {:code code}) " as the suggestion."))]
+  "How the line's coding was decided, step by step in the chosen strategy's order: each step a question, its answer
+  and why; then the bar it must clear, and the result. What the other answers said, beside it."
+  [{:keys [decisions strategy code confidence t o stale explained]}]
+  (let [confidence (or confidence 0)
+        {:keys [blocks choice no-rules]} decisions
+        steps (decision-steps decisions strategy explained)
+        person? (= :needs-person code)
+        bar (when-not person?
+              {:q (str "Is that sure enough to code the line with no one looking? The bar is " (ui/pct t) ".")
+               :a (if (>= confidence t)
+                    ($ :<> "Yes: " (ui/pct confidence) " clears " (ui/pct t) ".")
+                    ($ :<> "No: " (ui/pct confidence) " is under " (ui/pct t) "."))})
+        result {:q "So"
+                :a ($ :span {:class "inline-flex flex-wrap items-center gap-2"}
+                      (cond person? "A person looks."
+                            (>= confidence t) ($ :<> "Coded " ($ ui/tag {:code code}) ", no one looking.")
+                            :else ($ :<> "A person looks, with " ($ ui/tag {:code code}) " suggested."))
+                      ($ ui/pill {:outcome o}))}
+        all (cond-> steps bar (conj bar) true (conj result))
+        others (remove nil? [(when (not= strategy :blocks)
+                               ($ :<> "the rules' blocks say " ($ ui/tag {:code (:code blocks)})))
+                             (when-not (#{:choice :checked :hybrid} strategy)
+                               ($ :<> "Jev with the rules picks " ($ ui/tag {:code (:code choice)}) " " (ui/pct (:confidence choice))))
+                             (when (not= strategy :no-rules)
+                               ($ :<> "Jev from the facts alone picks " ($ ui/tag {:code (:code no-rules)}) " "
+                                  (ui/pct (:confidence no-rules))))])]
     ($ :div
        (when stale
          ($ ui/notice {} "This is the last run's decision, made before the rules changed. Run the scenario to decide it as "
             "they stand now."))
-       ($ ui/panel {:class "grid grid-cols-[64px_minmax(0,1fr)] gap-x-3 gap-y-2.5 px-3 py-2.5 text-sm leading-relaxed"}
-          ($ ui/eyebrow {:class "pt-0.5"} "The rules") ($ :p {} rules-say)
-          ($ ui/eyebrow {:class "pt-0.5"} "Jev") ($ :p {} jev-say)
-          ($ ui/eyebrow {:class "pt-0.5"} "So")
-          ($ :p {} "This view codes by " ($ :b {} (some (fn [[k n]] (when (= k strategy) n)) strategies)) ": " how "." so
-             " " ($ ui/pill {:outcome o}))))))
+       ($ ui/panel {:class "px-3 pt-3 pb-1 text-sm leading-relaxed"}
+          ($ :div {:class "mb-2.5 text-ink-2"}
+             "This view codes by " ($ :b {:class "text-ink-1"} (some (fn [[k n]] (when (= k strategy) n)) strategies))
+             ($ :span {:class "text-ink-3"} " — " (some (fn [[k _ about]] (when (= k strategy) about)) strategies)))
+          ($ :ol {}
+             (for [[i s] (map-indexed vector all)
+                   :let [last? (= i (dec (count all)))]]
+               ($ decision-step (assoc s :key i :n (if last? "→" (inc i)) :last last?)))))
+       (when (seq others)
+         ($ ui/say {} ($ :span {:class "text-ink-3"} "Beside it, from the same answers: ")
+            (interpose "; " (map-indexed (fn [i x] ($ :span {:key i} x)) others)) ".")))))
 
 (defui walk-body [{:keys [scenario row strategy t data]}]
   (let [world (ui/use-world)
@@ -492,7 +570,7 @@
 
        ($ step {:n 6 :title "The decision" :where "core/combine · the Choice · the threshold"}
           ($ decision-story {:decisions decisions :strategy strategy :code code :confidence confidence :t t :o o
-                             :stale (seq (:unanswered data))})
+                             :stale (seq (:unanswered data)) :explained explained})
           ($ ui/disclosure {:summary "Call 1, raw: the payload with the rules (the state is in step 3), and what came back"}
              ($ :div {:class "grid gap-2.5 md:grid-cols-2"}
                 ($ :div ($ ui/eyebrow {} "Sent") ($ ui/code-block {:value (update (get requests :rules) :state dissoc :transaction :context)}))
