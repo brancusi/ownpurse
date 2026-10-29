@@ -17,14 +17,10 @@ it when a step lands. The plans: [SPIKE.md](SPIKE.md) (the ledger in Clojure on 
   `over` on the coding endpoints and `?run=` on the trace. The Sandbox offers every workspace scenario for any set;
   the Lines page saves a set; a line of the books can be run on its own. Learnt: a set changes a line's context (a
   refund is matched to purchases in the same set), so a smaller set can ask Jev again for a few lines.
-- Step 2 (2026-10-29) is in the archive's sense done: the front is Lines → Scenario → Run, rows that open in place.
-
-- Step 2 done (2026-10-29): `GET /sandbox/lines` lists the sets of lines, a workspace's (one per scenario's lines
-  layer, with every scenario that reads it) and the samples (each read by its own rules). The Sandbox front is three
-  steps, Lines, Scenario, Run, picked in the URL (`#/sandbox?lines=<set>&scenario=<name>`): a book's set offers the
-  estimate and Run, a sample its kept runs. A new Lines section lists the sets; a scenario's coding tab opens its
-  coding in the sandbox. What step 3 lifts: a set offers only the scenarios that read it, and samples run only
-  through the eval.
+- Step 2 done (2026-10-29): `GET /sandbox/lines` lists the sets, `GET /sandbox/lines/{set}` previews one. The
+  Sandbox front is Lines → Scenario → Run, picked in the URL (`#/sandbox?lines=<set>&scenario=<name>`): one list a
+  step, each row saying what it holds as a query, with a peek, opening in place. A Lines section lists the sets; a
+  scenario's coding tab opens its coding in the sandbox.
 
 - Step 1 done (2026-10-29): `GET /workspace` says where ownpurse runs (`{:workspace {:name}}` in the local config,
   the books in the record, the sources the config names; "demo" with none), and the admin's bar shows it on every
