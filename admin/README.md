@@ -99,5 +99,5 @@ own port. Two steps:
    `OWNPURSE_SCENARIOS_DIR` for its own scenarios (`<name>.edn`, the same shape as
    `components/classify/resources/classify/eval/atlas.edn`). They are listed beside ownpurse's invented ones.
 
-The sandbox's lines are scenarios today: invented ones here, a workspace's own in its folder. Lines read straight from
-a book in the record are the next step (docs/plans/NEXT.md).
+A workspace's own scenarios in its record (Scenarios section) code its books' lines and show in the Sandbox beside the
+made-up ones. How the Sandbox, Scenarios and lines fit together next is [docs/plans/SANDBOX.md](../docs/plans/SANDBOX.md).

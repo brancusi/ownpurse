@@ -1,6 +1,9 @@
 # Scenarios: the books as layers over facts
 
-Started 2026-10-29: step 1 is done, step 2 is mostly done (docs/plans/NEXT.md, "Scenarios"). Asked for by a workspace's owner: run scenarios of the books (classifications,
+Started 2026-10-29: step 1 is done, step 2 is mostly done (NEXT.md, "Where things stand"). The sandbox's words
+(workspace, books, lines, key, evidence, run, in use) and how its sections fit around scenarios are in
+[SANDBOX.md](SANDBOX.md): there a scenario says how to code, and the lines it runs over are apart from it. Asked for by
+a workspace's owner: run scenarios of the books (classifications,
 intercompany, adjustments), see every report as that scenario would make it, throw it away or adjust it, and publish
 one when it is right. Nothing about it is destructive.
 
