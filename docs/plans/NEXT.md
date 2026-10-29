@@ -646,9 +646,28 @@ steps 2 and 3.
 - Not yet: the admin's screens for scenarios (with step 2); a scenario's layers as separate documents shared until
   edited (they are copied on duplicate for now: the same result, simpler); reports other than the trial balance and
   the export reading a scenario directly (they read the export's opts, which take it).
-- Next: step 2, world and coding as layers. The sandbox's `/sandbox/scenarios` (classify scenario files) and these
-  `/scenarios` are two things called scenarios until step 2 joins them: a classify scenario becomes a scenario's
-  world and coding layers, its lines read from a book.
+- **Step 2 mostly done (2026-10-29): world, coding and lines layers, coding runs, and the admin's Scenarios
+  section.** A `world` layer (entities, cards, projects, trips, categories), a `coding` layer (buckets, rules by id:
+  a rule of the same id replaces the one below where it stands, `enabled false` takes it out; threshold, strategy)
+  and a `lines` layer (accounts and dates read from the record's bank lines, or lines given) compose into the
+  classifier's scenario (`composed`, `classifier-scenario`). Mercury card lines now carry the day the card was used,
+  the merchant code and the original currency and amount. `code!` runs it through Jev four at a time, keeping every
+  answer by its exact request (`judgments`), each unit's coding per scenario (`codings`) and each run
+  (`coding_runs`): a rerun asks only what a change touched. API: `GET/POST /scenarios/{ref}/coding` (plan, progress,
+  a run in the background, `limit` for a trial), `.../codings`, `.../codings/{unit}`, `.../compare/{other}`,
+  `.../composed`, and `POST /scenarios` (create only, never replaces). The admin's **Scenarios** section
+  (`admin/src/ownpurse/admin/scenarios/`): list and create; a scenario's layers (on/off, reorder, edit as JSON, add,
+  remove) with the ones under it read only; the rules and world they compose to, a rule changed, added, turned off
+  or on into one of its own coding layers; coding with progress, codings by bucket, one line's way through;
+  compare (bucket proposed changed, apart from sureness changed); a book's evaluation; versions with restore.
+  An agent walked it as a user on a real record (2026-10-29) and its bugs are fixed (7cd5712).
+- Not yet in step 2: each bucket naming its account in each book (so a coding adds to a book's evaluation); a run
+  of chosen lines (only those a rule touches, or a bucket's) rather than the first N; the plan saying how many
+  answers the record already holds; a child turning off or shortening what a world layer under it says (SCENARIOS.md,
+  open questions); rule blocks edited as fields rather than JSON; versions showing what changed.
+- The sandbox's `/sandbox/scenarios` (classify scenario files) are still the other thing called scenarios: they
+  stay for the invented demo until a scenario of layers can be exported to the static site.
+- Next: the rest of step 2 above, then step 3 (overrides and labels).
 
 ## After 3b
 

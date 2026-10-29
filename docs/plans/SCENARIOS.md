@@ -1,6 +1,6 @@
 # Scenarios: the books as layers over facts
 
-Started 2026-10-29: step 1 is done (docs/plans/NEXT.md, "Scenarios"). Asked for by a workspace's owner: run scenarios of the books (classifications,
+Started 2026-10-29: step 1 is done, step 2 is mostly done (docs/plans/NEXT.md, "Scenarios"). Asked for by a workspace's owner: run scenarios of the books (classifications,
 intercompany, adjustments), see every report as that scenario would make it, throw it away or adjust it, and publish
 one when it is right. Nothing about it is destructive.
 
@@ -92,3 +92,10 @@ facts (sources, as pulled; never edited)
   one layer need a person; no automatic merge of rules.
 - Evaluation cost for a whole group's year: the ledger already rebuilds a book offline in seconds; caching per layer
   version should keep reports interactive. Measure in step 1.
+- A child cannot take away what a world layer under it says: trips concatenate and projects merge, so a child can
+  add a trip but not shorten or drop one, and cannot turn a base's layer off. Either a layer that turns off a layer
+  below by id, or trips keyed by id like rules.
+- Comparing two scenarios' codings mixes two things: the bucket proposed changes, or only how sure the classifier
+  is (so a line crosses the threshold). The admin shows them apart; a rule's wording alone can move the second a
+  lot (found 2026-10-29: a rule with a `not` made Jev less sure of the lines the rule did not touch).
+
