@@ -25,7 +25,7 @@
                           [:id :kind :lines :units :scenarios])))
       (let [{:keys [peek first from to currencies]} (sandbox/line-set sb "sample/harbour")]
         (is (= 3 (count peek)))
-        (is (= 12 (count first)))
+        (is (= 51 (count first)) "every line, up to two hundred")
         (is (= (sort (map :date first)) (map :date first)) "oldest first")
         (is (= from (:date (clojure.core/first first))))
         (is (string? to))

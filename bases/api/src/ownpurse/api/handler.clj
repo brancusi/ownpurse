@@ -532,7 +532,7 @@
              :handler (fn [_] (answer #(hash-map :lines (into (if node (scenario/line-sets node) [])
                                                               (sandbox/line-sets sb)))))}}]
      ["/sandbox/lines/{*set}"
-      {:get {:summary "One set of lines, with a preview: its first twelve lines, the days they span, their currencies."
+      {:get {:summary "One set of lines, with a preview: its first two hundred lines, the days they span, their currencies."
              :parameters {:path [:map [:set [:string {:min 1}]]]}
              :responses {200 {:body :any} 404 {:body ApiError}}
              :handler (fn [{{:keys [path]} :parameters}]

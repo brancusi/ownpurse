@@ -98,19 +98,20 @@
   (vec (for [name (sort (keys (sources sandbox)))
              :let [{:keys [cases business entities]} (scenario sandbox name)]]
          (cond-> {:id (str "sample/" name) :kind "sample" :title (str/capitalize name)
+                  :where [["made up" (str "the " name " set, each line with the coding a bookkeeper would give it")]]
                   :lines (count cases) :units (count (mapcat classify/units cases)) :scenarios [name]}
            (get-in entities [business :name]) (assoc :note (str (get-in entities [business :name]) " and its people, invented"))
            true (assoc :peek (mapv glance (take 3 (sort-by :date cases))))))))
 
 (defn line-set
-  "Sample set `id` with a preview: its first twelve lines, the days they span, and their currencies."
+  "Sample set `id` with a preview: its first two hundred lines, the days they span, and their currencies."
   [sandbox id]
   (let [name (second (re-matches #"sample/(.+)" id))
         s (some #(when (= id (:id %)) %) (line-sets sandbox))]
     (when-not s (throw (ex-info (str "No set of lines " id ".") {:type :ownpurse/not-found})))
     (let [cases (sort-by :date (:cases (scenario sandbox name)))]
       (assoc s
-             :first (mapv glance (take 12 cases))
+             :first (mapv glance (take 200 cases))
              :from (:date (first cases)) :to (:date (last cases))
              :currencies (into (sorted-map) (frequencies (keep :currency cases)))))))
 
