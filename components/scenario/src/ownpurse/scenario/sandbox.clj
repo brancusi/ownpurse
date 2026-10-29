@@ -8,6 +8,7 @@
    [clojure.string :as str]
    [clojure.walk :as walk]
    [ownpurse.classify.interface :as classify]
+   [ownpurse.scenario.coding :as coding]
    [ownpurse.scenario.core :as core]
    [ownpurse.scenario.run :as run]
    [ownpurse.store.interface :as store]))
@@ -130,6 +131,44 @@
      :responses responses
      :decisions decisions
      :explained (classify/explain s result)}))
+
+;; ----------------------------------------------------------------------------------------------- lines
+
+(defn- lines-layers
+  "The lines layers scenario `ref` reads, as [the scenario that holds it, its id, the layer]: its bases' first."
+  [node ref]
+  (vec (for [r (concat (reverse (core/bases-of node ref)) [ref])
+             l (:layers (core/scenario node r))
+             :when (and (:enabled l) (= "lines" (:kind l)))]
+         [r (:id l) l])))
+
+(defn- account-names [node]
+  (if (store/table-exists? node :source-accounts)
+    (into {} (map (juxt :xt/id :name)) (store/q node ["SELECT _id, name FROM source_accounts"]))
+    {}))
+
+(defn- lines-title [names {:keys [select cases]}]
+  (if select
+    (let [{:keys [accounts from to]} select]
+      (str (str/join ", " (map #(get names % %) accounts))
+           (cond (and from to) (str ", " from " to " to) from (str ", from " from) to (str ", to " to))))
+    (str (count cases) " lines given as they are")))
+
+(defn line-sets
+  "The sets of this workspace's own lines the sandbox picks from: one a lines layer of a scenario that codes lines,
+  {:id \"<scenario>/<layer>\" :kind \"books\" :title :note :lines :scenarios}, its :scenarios every scenario that reads
+  it (the one that holds it first). A scenario reads the lines layers of its stack, its bases' included."
+  [node]
+  (let [names (account-names node)
+        coding (filter #(coding-scenario? node %) (map :ref (core/scenarios node)))
+        reading (for [ref coding [owner id l] (lines-layers node ref)] [[owner id l] ref])]
+    (vec (for [[[owner id {:keys [lines note]}] refs] (group-by first reading)
+               :let [n (if-let [select (:select lines)]
+                         (count (coding/read-lines node {} select))
+                         (count (:cases lines)))]]
+           (cond-> {:id (str owner "/" id) :kind "books" :title (lines-title names lines) :lines n
+                    :scenarios (vec (distinct (cons owner (sort (map second refs)))))}
+             note (assoc :note note))))))
 
 ;; ----------------------------------------------------------------------------------------------- the trace
 

@@ -141,6 +141,11 @@
   [node]
   (sandbox/scenarios node))
 
+(defn line-sets
+  "The sets of the record's own lines the sandbox picks from, each with the scenarios that read it."
+  [node]
+  (sandbox/line-sets node))
+
 (defn coding-scenario?
   "Whether scenario `ref` is in the record and codes lines."
   [node ref]

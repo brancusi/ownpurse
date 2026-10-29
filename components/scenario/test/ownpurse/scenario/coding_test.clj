@@ -192,6 +192,9 @@
           (is (= [:per-diem "harbour-coding"]
                  ((juxt :expect :keyed-in) (:unit (first (:lines (scenario/sandbox-run node "harbour-coding")))))))
           (scenario/put! node {:ref "child-key" :name "Keyed otherwise" :base "harbour-coding" :layers []})
+          (testing "the lines a scenario selects are one set, read by it and every scenario standing on it"
+            (is (= [{:id "harbour-coding/lines" :kind "books" :lines 4 :scenarios ["harbour-coding" "child-key"]}]
+                   (map #(select-keys % [:id :kind :lines :scenarios]) (scenario/line-sets node)))))
           (scenario/confirm! node "child-key" {:unit "line:test:1" :expect "personal"})
           (is (= [:personal "child-key"] ((juxt :expect :in) (get (scenario/answer-key node "child-key") "line:test:1"))))
           (is (= :per-diem (:expect (get (scenario/answer-key node "harbour-coding") "line:test:1"))) "the base keeps its own")

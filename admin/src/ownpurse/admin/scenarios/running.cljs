@@ -4,6 +4,7 @@
   the record has no run yet."
   (:require
    [ownpurse.admin.api :as api]
+   [ownpurse.admin.route :as route]
    [ownpurse.admin.scenarios.common :refer [path]]
    [ownpurse.admin.ui :as ui]
    [uix.core :as uix :refer [$ defui]]))
@@ -119,6 +120,9 @@
           (when going ($ progress {:running running}))
           (when (:failed running) ($ ui/notice {:tone :bad} "The last run failed: " (:failed running)))
           (when error ($ ui/notice {:tone :bad} error))
+          (when (seq runs)
+            ($ :a {:class "mt-3 inline-block text-sm text-lapis hover:underline" :href (route/href ["sandbox" (:ref s) "latest"])}
+               "Open its coding in the sandbox →"))
           (when (seq runs)
             ($ ui/disclosure {:summary (str (count runs) " runs so far; the last " (some-> (:at (first runs)) (subs 0 16)))}
                ($ ui/table {:head ["At" "Lines" "Coded" "Asked Jev" "Answered from those kept" "Took" "Model"]}

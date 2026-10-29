@@ -523,7 +523,14 @@
         record? #(and node (scenario/coding-scenario? node %))
         Scenario [:map [:scenario [:string {:min 1}]]]
         Run (mu/merge Scenario [:map [:run [:re #"^[A-Za-z0-9._-]+$"]]])]
-    [["/sandbox/scenarios"
+    [["/sandbox/lines"
+      {:get {:summary (str "The sets of lines the sandbox picks from: this workspace's books' (:kind \"books\", one a "
+                           "scenario's lines layer) and the made-up samples (:kind \"sample\"), each with the scenarios "
+                           "that read it.")
+             :responses {200 {:body :any}}
+             :handler (fn [_] (answer #(hash-map :lines (into (if node (scenario/line-sets node) [])
+                                                              (sandbox/line-sets sb)))))}}]
+     ["/sandbox/scenarios"
       {:get {:summary (str "Every scenario of bank lines, its size and its runs, newest first: the record's own "
                            "(:record true, real lines with no answer key), then the invented ones.")
              :responses {200 {:body :any}}

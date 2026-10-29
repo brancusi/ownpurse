@@ -75,11 +75,22 @@
   (vec (for [name (sort (keys (sources sandbox)))
              :let [s (scenario sandbox name)]]
          {:name name
+          :title (str (str/capitalize name) "'s own rules")
           :lines (count (:cases s))
           :units (count (mapcat classify/units (:cases s)))
           :rules (count (:rules s))
           :runs (vec (for [f (reverse (run-files sandbox name))]
                        {:id (run-id f) :at (second (re-find #"-(\d{4}-.+)$" (run-id f)))}))})))
+
+(defn line-sets
+  "Every scenario's made-up lines as a set of lines to pick: {:id \"sample/<name>\" :kind \"sample\" :title :note
+  :lines :units :scenarios}. A sample's lines are read by its own rules only, for now."
+  [sandbox]
+  (vec (for [name (sort (keys (sources sandbox)))
+             :let [{:keys [cases business entities]} (scenario sandbox name)]]
+         (cond-> {:id (str "sample/" name) :kind "sample" :title (str/capitalize name)
+                  :lines (count cases) :units (count (mapcat classify/units cases)) :scenarios [name]}
+           (get-in entities [business :name]) (assoc :note (str (get-in entities [business :name]) " and its people, invented"))))))
 
 (defn world
   "What a scenario's lines happened in: its people, cards, trips and projects, the buckets and their words, the

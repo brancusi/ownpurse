@@ -8,7 +8,14 @@ it when a step lands. The plans: [SPIKE.md](SPIKE.md) (the ledger in Clojure on 
 
 ## Now
 
-**SANDBOX.md step 2: the Sandbox front as lines × scenario.** Then steps 3 to 5.
+**SANDBOX.md step 3: lines out of scenarios.** Then steps 4 and 5.
+
+- Step 2 done (2026-10-29): `GET /sandbox/lines` lists the sets of lines, a workspace's (one per scenario's lines
+  layer, with every scenario that reads it) and the samples (each read by its own rules). The Sandbox front is three
+  steps, Lines, Scenario, Run, picked in the URL (`#/sandbox?lines=<set>&scenario=<name>`): a book's set offers the
+  estimate and Run, a sample its kept runs. A new Lines section lists the sets; a scenario's coding tab opens its
+  coding in the sandbox. What step 3 lifts: a set offers only the scenarios that read it, and samples run only
+  through the eval.
 
 - Step 1 done (2026-10-29): `GET /workspace` says where ownpurse runs (`{:workspace {:name}}` in the local config,
   the books in the record, the sources the config names; "demo" with none), and the admin's bar shows it on every

@@ -19,6 +19,10 @@
       (is (= {:lines 51 :units 65} (select-keys harbour [:lines :units])))
       (is (seq (:runs harbour)))
       (is (= (:runs harbour) (sort-by :id #(compare %2 %1) (:runs harbour)))))
+    (testing "each scenario's made-up lines are a set of lines to pick, read by its own rules"
+      (is (= {:id "sample/harbour" :kind "sample" :lines 51 :units 65 :scenarios ["harbour"]}
+             (select-keys (some #(when (= "sample/harbour" (:id %)) %) (sandbox/line-sets sb))
+                          [:id :kind :lines :units :scenarios]))))
     (testing "a scenario's world is everything but its lines"
       (let [w (sandbox/world sb "harbour")]
         (is (nil? (:cases w)))

@@ -5,6 +5,7 @@
    [ownpurse.admin.api :as api]
    [ownpurse.admin.docs.guide :as docs.guide]
    [ownpurse.admin.docs.vocabulary :as docs.vocabulary]
+   [ownpurse.admin.lines.page :as lines.page]
    [ownpurse.admin.route :as route]
    [ownpurse.admin.sandbox.home :as sandbox.home]
    [ownpurse.admin.sandbox.run :as sandbox.run]
@@ -18,8 +19,9 @@
 
 (def sections
   "The admin's sections, in the order the bar lists them."
-  [{:id "sandbox" :title "Sandbox" :about "Run scenarios over lines, from your books or made up, and see how each line is coded"}
+  [{:id "sandbox" :title "Sandbox" :about "Pick lines and a scenario, run it, and see how each line is coded"}
    {:id "scenarios" :title "Scenarios" :about "The books read through layers: create, duplicate, change and code them, and compare"}
+   {:id "lines" :title "Lines" :about "The sets of lines to code: selections over your books, and made-up samples"}
    {:id "docs" :title "Docs" :about "How a bank line is coded, step by step, and every word explained"}])
 
 (defui workspace
@@ -75,10 +77,11 @@
        (case (or section "sandbox")
          "sandbox" (if scenario
                      ($ sandbox.run/page {:scenario scenario :run run :query (:query r) :key (str scenario "/" run)})
-                     ($ sandbox.home/page))
+                     ($ sandbox.home/page {:query (:query r)}))
          "scenarios" (if scenario
                        ($ scenarios.page/page {:ref scenario :query (:query r) :key scenario})
                        ($ scenarios.home/page))
+         "lines" ($ lines.page/page)
          "docs" (if (= "terms" scenario)
                   ($ docs.vocabulary/page {:query (:query r)})
                   ($ docs.guide/page {:query (:query r)}))

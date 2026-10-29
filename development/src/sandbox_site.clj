@@ -54,6 +54,10 @@
             sizes (atom {})
             put! (fn [path bytes] (swap! sizes assoc path (write! out path bytes)))]
         (put! "/sandbox/scenarios" (bytes-of (m/encode json/muuntaja transit-type {:scenarios scenarios})))
+        (put! "/sandbox/lines"
+              (bytes-of (m/encode json/muuntaja transit-type
+                                  {:lines (filterv #(some (set (map :name scenarios)) (:scenarios %))
+                                                   (:lines (:data (answer app "/sandbox/lines"))))})))
         (doseq [{:keys [name runs]} scenarios
                 :let [world (str "/sandbox/scenarios/" name)
                       run (str world "/runs/" (:id (first runs)))

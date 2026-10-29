@@ -46,7 +46,7 @@ of the group" cannot be asked. This plan pulls the pieces apart so each is one t
    saying "the record": the Sandbox front shows "Your books" and "Sample lines (made up)"; the terms page gains
    Workspace, Books, Lines, Key, Evidence, Run and In use, and "record" is defined as storage. Done when every page
    says which workspace it is, no screen text says "record" for the data, and the static site says it is the demo.
-2. **The Sandbox front as lines × scenario.** Pick a set of lines (the samples among them) and a scenario, see what a
+2. **The Sandbox front as lines × scenario.** *Done 2026-10-29: only the scenarios that read a set of lines are offered for it, and samples are not run from the admin; both lift in step 3.* Pick a set of lines (the samples among them) and a scenario, see what a
    run would cost, run it. The samples move under Lines. Done when a sample and a book's lines are picked the same
    way, and a scenario's runs open from either section.
 3. **Lines out of scenarios.** A run is a scenario over a set of lines; a scenario's `lines` layer becomes a saved set

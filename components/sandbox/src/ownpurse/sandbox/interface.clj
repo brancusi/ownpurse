@@ -15,6 +15,11 @@
   [sandbox]
   (core/scenarios sandbox))
 
+(defn line-sets
+  "Every scenario's made-up lines as a set of lines to pick, with the scenario that reads them."
+  [sandbox]
+  (core/line-sets sandbox))
+
 (defn world
   "Everything about scenario `name` but its lines: people, cards, trips, projects, buckets, categories and rules."
   [sandbox name]
