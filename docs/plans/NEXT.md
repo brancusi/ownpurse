@@ -599,6 +599,24 @@ filter, opening one line) fought Clerk's render functions. The admin is the answ
   - Writing the vocabulary forced each word to be pinned down. "Block" is ours: bookkeeping tools call a bank rule's
     parts *conditions*. The sandbox's "Blocks" column, "same" or a short code, read as noise until the word had a
     definition one hover away.
+- **Published (2026-10-29).** ownpurse.com/sandbox is live (the static copy), with two docs pages (Classifying bank
+  lines; the Clojure workspace) and two posts (Starting again, in Clojure; A sandbox for coding bank lines). The
+  demo command is pinned at 24e3dff, tag `demo/2026-10-28-sandbox`. `cd site && npm run deploy` rebuilds the
+  sandbox (`bin/admin site`), builds the site, checks `dist/sandbox` against the denylist, then deploys. Only the
+  sandbox is checked at deploy: the rest of the site is committed and passed the commit hook (a whole-`dist` scan
+  flags Pagefind's vendored script and the 2026-10-06 sample month, both false positives).
+- **Learnt publishing it:**
+  - Blog posts now argue a position, distilled from the sessions; not a transcript (docs/BLOG.md, Aram 2026-10-29).
+  - The private denylist, regenerated 2026-10-27, holds the owner's name, so the byline failed the hook. The
+    workspace's allow list has the full name (Aram's decision), and `bin/privacy-check` now blanks allowed phrases
+    out of a line before matching: a surname inside the allowed full name passes, the surname alone still fails.
+    Agents may not change the checker or the allow list without the owner's say (the permission system refuses).
+  - The hook's agent review can fail to start (`claude exited 1`); retrying worked. Never skip it.
+  - **The eval's `-main` is not for a workspace.** It reads scenarios from ownpurse's classpath only and always
+    writes runs to `components/classify/runs` in this repository. A workspace's real lines must run through
+    `eval/scenario` (given a `java.io.File`), `eval/run`, `eval/progress` and `eval/save!` with the workspace's own
+    runs folder, from the workspace's REPL. Next small change: `-main` takes a scenario file and `--runs DIR`, and
+    refuses to write a scenario from outside the classpath into this repository.
 - Next, in order:
   1. Lines from a book: the sandbox's lines read from the record (a book's bank lines, its cards and their holders)
      instead of a scenario file, with the world a workspace writes (trips, projects, buckets, rules). Then a
