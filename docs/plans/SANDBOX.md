@@ -41,7 +41,7 @@ of the group" cannot be asked. This plan pulls the pieces apart so each is one t
 
 ## Steps
 
-1. **Say where you are, in plain words.** The admin's bar names the workspace on every page (a workspace's name and
+1. **Say where you are, in plain words.** *Done 2026-10-29.* The admin's bar names the workspace on every page (a workspace's name and
    kind from its config: a group's books, the demo, the public site), with how many books it holds. The screens stop
    saying "the record": the Sandbox front shows "Your books" and "Sample lines (made up)"; the terms page gains
    Workspace, Books, Lines, Key, Evidence, Run and In use, and "record" is defined as storage. Done when every page

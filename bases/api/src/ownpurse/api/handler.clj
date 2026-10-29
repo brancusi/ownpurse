@@ -1,6 +1,7 @@
 (ns ownpurse.api.handler
   "The HTTP API: routes, schemas and the Ring handler. Thin: it turns requests into interface calls and back."
   (:require
+   [clojure.edn :as edn]
    [clojure.java.io :as io]
    [malli.error :as me]
    [malli.util :as mu]
@@ -50,6 +51,16 @@
   [:map
    [:status [:enum "ok" "unavailable"]]
    [:last-snapshot {:optional true} (mu/select-keys Snapshot [:dir :taken-at :block :transactions])]])
+
+(def Workspace
+  "What GET /workspace returns: where this ownpurse runs. A workspace's books (a group's record, with the sources its
+  config names), or the demo (no books: the sandbox's made-up lines only). Its name comes from the config's
+  {:workspace {:name}}."
+  [:map
+   [:name [:maybe :string]]
+   [:kind [:enum "books" "demo"]]
+   [:books :int]
+   [:sources [:vector :string]]])
 
 (def BackupBody
   "POST /backup: the folder to put the snapshot in, as an absolute path."
@@ -411,6 +422,21 @@
 (defn- error [status type message]
   {:status status :body {:error {:type type :message message}}})
 
+(defn- workspace
+  "Where this ownpurse runs, from the local config (`local`, a file that may not exist) and the record's entities."
+  [node {:keys [local]}]
+  (let [f (some-> local str io/file)
+        cfg (when (and f (.exists f)) (edn/read-string {:default tagged-literal} (slurp f)))
+        sources (cond-> []
+                  (seq (get-in cfg [:xero :orgs])) (conj "Xero")
+                  (seq (get-in cfg [:mercury :orgs])) (conj "Mercury")
+                  (seq (get-in cfg [:plaid :items])) (conj "Plaid"))
+        books (count (entity/entities node))]
+    {:name (get-in cfg [:workspace :name])
+     :kind (if (or (seq sources) (pos? books)) "books" "demo")
+     :books books
+     :sources sources}))
+
 (defn- health [node]
   (fn [_]
     (if (:ok? (store/health node))
@@ -670,6 +696,10 @@
            :openapi {:info {:title "ownpurse" :version "0.0.0"
                             :description "The local ledger. Every endpoint, its parameters and its responses."}}
            :handler (openapi/create-openapi-handler)}}]
+   ["/workspace"
+    {:get {:summary "Where this ownpurse runs: a workspace's books (its name, how many, from which sources) or the demo."
+           :responses {200 {:body Workspace}}
+           :handler (fn [_] (answer #(workspace node config)))}}]
    ["/health"
     {:get {:summary "Whether ownpurse and its record are up."
            :responses {200 {:body Health} 503 {:body Health}}

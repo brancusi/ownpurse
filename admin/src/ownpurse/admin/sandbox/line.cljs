@@ -52,7 +52,7 @@
      [:transaction :item] ["one item of the receipt or order, scanned apart from the bank line; the rest of it beside" (str scenario " · the case's :items")]
      [:context :paid_with] ["the card's name, from the list of cards" (str scenario " · :cards")]
      [:context :cardholder] ["who holds the card" (str scenario " · :cards")]
-     [:context :cardholder_was] ["where the cardholder was that day: the trips, by date (none on record: at home)" (str scenario " · :trips; " facts " · whereabouts")]
+     [:context :cardholder_was] ["where the cardholder was that day: the trips, by date (none that day: at home)" (str scenario " · :trips; " facts " · whereabouts")]
      [:context :projects_running] ["the projects whose dates include the day, with what each makes" (str scenario " · :projects")]
      [:context :travellers_of_running_projects] ["each running project's travellers" (str scenario " · :projects :travellers")]
      [:context :cardholder_travels_for_a_running_project] ["whether the cardholder is one of those travellers" (str facts " · enrich")]
@@ -297,7 +297,7 @@
   (if response
     ($ ui/code-block {:value (:answers response)})
     ($ ui/notice {}
-       "Not asked yet. The record has no answer to this request as it is sent now: the rules (or which of them "
+       "Not asked yet. No answer is kept for this request as it is sent now: the rules (or which of them "
        "could apply) changed since the line was coded. Run the scenario to ask it.")))
 
 (defn- certainty [p] (js/Math.abs (- (* 2 p) 1)))
@@ -562,10 +562,10 @@
           (cond
             (seq (:unanswered data))
             ($ ui/notice {:tone :bad}
-               "The record keeps no answer to " (str/join " and " (map #(str "the " (name %) " request") (:unanswered data)))
+               "No answer is kept for " (str/join " and " (map #(str "the " (name %) " request") (:unanswered data)))
                " as the scenario stands now: it changed since this line was coded (a rule, or the order of the rules). "
                "The coding shown is the last run's. Run the scenario again to ask; its page says what that costs.")
-            (:record data) ($ ui/notice {} "Rebuilt from the line's facts as the scenario stands; Jev's answers are the ones the record kept for exactly these requests.")
+            (:record data) ($ ui/notice {} "Rebuilt from the line's facts as the scenario stands; Jev's answers are the ones kept for exactly these requests.")
             rebuilt ($ ui/notice {} "This run did not keep its requests: these are rebuilt from today's code and scenario."))
           (let [state (get-in requests [:rules :state])]
             ($ :div {:class "grid border border-line-1 bg-surface-0 text-sm md:grid-cols-[minmax(150px,240px)_minmax(0,1.3fr)_minmax(180px,1fr)]"}

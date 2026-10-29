@@ -8,8 +8,13 @@ it when a step lands. The plans: [SPIKE.md](SPIKE.md) (the ledger in Clojure on 
 
 ## Now
 
-**SANDBOX.md step 1: say where you are, in plain words.** The admin's bar names the workspace; the screens stop saying
-"the record" for the data; the terms page gains the new words. Then steps 2 to 5 of SANDBOX.md.
+**SANDBOX.md step 2: the Sandbox front as lines × scenario.** Then steps 3 to 5.
+
+- Step 1 done (2026-10-29): `GET /workspace` says where ownpurse runs (`{:workspace {:name}}` in the local config,
+  the books in the record, the sources the config names; "demo" with none), and the admin's bar shows it on every
+  page and in the tab's title ("Demo on ownpurse.com" on the static copy). The screens say "your books" and "sample
+  lines (made up)" instead of "the record"; the terms page gains Workspace, Books, Record (storage), Lines, Key,
+  Evidence and In use, and Sandbox, Scenario and Run read as SANDBOX.md defines them.
 
 ## Decisions that hold
 

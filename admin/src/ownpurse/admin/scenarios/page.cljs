@@ -97,7 +97,7 @@
     ($ :span {:class "inline-flex items-center gap-2"}
        (if asking
          ($ :<>
-            ($ :span {:class "text-xs text-coin-text"} "Drop " (:ref s) "? Its versions stay in the record.")
+            ($ :span {:class "text-xs text-coin-text"} "Drop " (:ref s) "? Its versions are kept.")
             ($ ui/button {:tone :danger :disabled busy
                           :on-click #(-> (send! "DELETE" (path (:ref s)) nil)
                                          (.then (fn [r] (when r (route/go! ["scenarios"] nil)))))}

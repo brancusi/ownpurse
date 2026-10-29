@@ -12,20 +12,46 @@
    [ownpurse.admin.scenarios.page :as scenarios.page]
    [ownpurse.admin.theme :as theme]
    [ownpurse.admin.ui :as ui]
-   [uix.core :refer [$ defui]]
+   [clojure.string :as str]
+   [uix.core :as uix :refer [$ defui]]
    [uix.dom]))
 
 (def sections
   "The admin's sections, in the order the bar lists them."
-  [{:id "sandbox" :title "Sandbox" :about "Build a rule set over bank lines, and see how each line is coded"}
+  [{:id "sandbox" :title "Sandbox" :about "Run scenarios over lines, from your books or made up, and see how each line is coded"}
    {:id "scenarios" :title "Scenarios" :about "The books read through layers: create, duplicate, change and code them, and compare"}
    {:id "docs" :title "Docs" :about "How a bank line is coded, step by step, and every word explained"}])
+
+(defui workspace
+  "Where this admin runs, in the bar on every page: a workspace's books by name, with how many and from where; or the
+  demo, made-up lines only."
+  []
+  (let [state (api/use-get (when-not api/static? "/workspace"))
+        {:keys [name kind books sources]} (:data state)
+        chip "inline-flex items-baseline gap-1.5 rounded-1 border px-2 py-0.5 text-xs"]
+    (uix/use-effect
+     (fn [] (set! (.-title js/document) (str (or name (when (= "demo" kind) "Demo") "ownpurse") " · ownpurse admin")))
+     [name kind])
+    (cond
+      api/static? ($ :span {:class (ui/cx chip "border-gilt text-gilt-text") :title "The public copy: no server, no books"}
+                     "Demo on ownpurse.com")
+      (nil? kind) nil
+      (= "demo" kind) ($ :span {:class (ui/cx chip "border-gilt text-gilt-text")
+                                :title "No books here: the sandbox's made-up lines only"}
+                         "Demo · made-up lines only")
+      :else ($ :span {:class (ui/cx chip "border-ink-2 text-ink-1")
+                      :title "The workspace this admin reads and writes: its books and its scenarios"}
+               ($ :span {:class "font-mono text-2xs uppercase tracking-[0.06em] text-ink-3"} "Workspace")
+               ($ :b {} (or name "Your books"))
+               ($ :span {:class "text-ink-3"}
+                  (ui/count-of books "book") (when (seq sources) (str " · " (str/join ", " sources))))))))
 
 (defui shell [{:keys [route children]}]
   (let [here (first (:path route))]
     ($ :div {:class "min-h-screen"}
        ($ :header {:class "sticky top-0 z-20 flex items-center gap-6 border-b border-line-1 bg-surface-0/95 px-6 py-2 backdrop-blur"}
           ($ :a {:href "#/" :class "font-display text-lg font-extrabold tracking-tight"} "ownpurse")
+          ($ workspace)
           ($ :nav {:class "flex gap-1"}
              (for [{:keys [id title about]} sections]
                ($ :a {:key id :href (route/href [id]) :title about

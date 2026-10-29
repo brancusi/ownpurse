@@ -1,5 +1,5 @@
 (ns ownpurse.admin.sandbox.home
-  "The sandbox's front: the record's scenarios that code its own bank lines, then the invented ones, and their runs."
+  "The sandbox's front: the scenarios over this workspace's books, then the sample lines (made up), and their runs."
   (:require
    [ownpurse.admin.api :as api]
    [ownpurse.admin.route :as route]
@@ -31,17 +31,17 @@
     ($ :div
        ($ :h1 {:class "font-display text-2xl font-extrabold tracking-tight"} "Sandbox")
        ($ :p {:class "mt-1 max-w-3xl text-ink-3"}
-          "Bank lines, the world they happened in (people, cards, trips, projects), and a rule set. Each run "
-          "classified every line; open one to see how each line was coded, why, and what would change it.")
+          "Run a scenario (how to code: the world, the buckets and rules) over lines, from your books or made up, and "
+          "see how each line is coded, why, what it cost, and, where a person keyed it, whether it was right.")
        ($ ui/loading {:state state}
           ($ :<>
              (when (seq record)
                ($ :<>
-                  ($ ui/section-title {:aside "Real lines from the record, with no answer key: coded, or sent to a person"}
-                     "The record's scenarios")
+                  ($ ui/section-title {:aside "This workspace's own bank lines: coded, or sent to a person; scored where a person keyed them"}
+                     "Your books")
                   ($ :div {:class "grid gap-4 md:grid-cols-2"}
                      (for [s record] ($ card (assoc s :key (:name s)))))))
-             ($ ui/section-title {:aside "Made-up lines with an answer key, for building and testing rules"}
-                "Samples")
+             ($ ui/section-title {:aside "Invented lines with an answer key, for building and testing rules"}
+                "Sample lines (made up)")
              ($ :div {:class "grid gap-4 md:grid-cols-2"}
                 (for [s invented] ($ card (assoc s :key (:name s))))))))))

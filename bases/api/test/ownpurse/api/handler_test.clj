@@ -33,6 +33,21 @@
       (is (= {:status 503 :body {:status "unavailable"}}
              (request (handler/handler {:node node}) :get "/health"))))))
 
+(deftest workspace-test
+  (let [node (store/start {:mode :in-memory})
+        local (doto (java.io.File/createTempFile "ownpurse-local" ".edn") .deleteOnExit)]
+    (try
+      (testing "with no config and no books, it is the demo"
+        (is (= {:status 200 :body {:name nil :kind "demo" :books 0 :sources []}}
+               (request (handler/handler {:node node :local "no-such-file.edn"}) :get "/workspace"))))
+      (testing "a config that names its sources is a workspace's books, by the name it gives"
+        (spit local (pr-str {:workspace {:name "Tallowmere Group"}
+                             :xero {:orgs [{:tenant "t-1" :name "Tallowmere"}]}
+                             :mercury {:orgs [{:alias "tm" :name "Tallowmere"}]}}))
+        (is (= {:name "Tallowmere Group" :kind "books" :books 0 :sources ["Xero" "Mercury"]}
+               (:body (request (handler/handler {:node node :local (str local)}) :get "/workspace")))))
+      (finally (store/stop node)))))
+
 (deftest backup-test
   (let [tmp (.toFile (java.nio.file.Files/createTempDirectory "ownpurse-api-backup"
                                                               (make-array java.nio.file.attribute.FileAttribute 0)))

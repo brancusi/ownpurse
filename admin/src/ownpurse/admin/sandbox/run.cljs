@@ -292,7 +292,7 @@
                 ($ :div {:class "text-sm text-ink-3"} ($ :a {:href "#/sandbox" :class "hover:underline"} "Sandbox") " / " scenario
                    (when record
                      ($ :<> " · " ($ :a {:href (route/href ["scenarios" scenario]) :class "text-lapis hover:underline"}
-                                     "the record's lines; change its rules on the scenario's page →"))))
+                                     "lines from your books; change its rules on the scenario's page →"))))
                 ($ :h1 {:class "font-display text-2xl font-extrabold tracking-tight"} (or (:title this) "Bank lines into buckets")))
              ($ :label {:class "flex items-center gap-2 text-sm text-ink-3"} "Run"
                 ($ :select {:value (or run "") :on-change #(route/go! ["sandbox" scenario (.. % -target -value)] query)
@@ -307,8 +307,8 @@
 
             (and (not run) (:data scenarios) world (not newest))
             ($ ui/notice {}
-               "This sample of made-up lines has no run kept in this server's runs folder. To code the record's own bank lines, "
-               ($ :a {:href (route/href ["sandbox"]) :class "underline"} "pick one of the record's scenarios") ".")
+               "These sample lines (made up) have no run kept in this server's runs folder. To code your books' own bank lines, "
+               ($ :a {:href (route/href ["sandbox"]) :class "underline"} "pick a scenario over your books") ".")
 
             :else
           ($ ui/loading {:state (if run run-state {:loading true})}

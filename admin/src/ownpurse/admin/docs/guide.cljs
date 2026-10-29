@@ -167,12 +167,12 @@
              "in the books. Deciding which is called " ($ term {:id :coding}) ", and it is what the rest of this guide is about.")
           (if (:record world)
             ($ aside {:label "Your own books"}
-               "This is a real line, from the record's bank lines, as the " ($ term {:id :scenario}) " "
+               "This is a real line, from your books' bank lines, as the " ($ term {:id :scenario}) " "
                ($ :b {} (:name world)) " reads it. The scenario adds what the bank does not know: who holds each card, "
                "who was where and when, the projects, and the rules. Change those on the scenario's page and code again.")
             ($ aside {:label "In the sandbox"}
                "These lines are invented, for testing: a made-up studio with two projects, Harbour in Lisbon and Skyline in "
-               "New York. That is a " ($ term {:id :scenario}) ". With a record, this guide follows its own lines instead.")))
+               "New York. That is a " ($ term {:id :scenario}) ". In a workspace with books, this guide follows their lines instead.")))
        ($ panel {:title "Your line, as the bank sends it"}
           ($ :div {:class "border border-dashed border-line-2 bg-surface-0 p-4 font-mono"}
              ($ :div {:class "flex items-baseline justify-between gap-3 text-xs text-ink-3"}
@@ -592,7 +592,7 @@
                      ($ actor-chip {:actor (:actor (nth steps (dec at)))}))
                   (when (seq (:unanswered data))
                     ($ ui/notice {:tone :bad}
-                       "This scenario changed since the line was coded, and the record keeps no answer to its new "
+                       "This scenario changed since the line was coded, and no answer is kept yet for its new "
                        "requests: Jev's answers below are missing until the scenario is run again. Pick another "
                        "scenario above, or run this one from the sandbox."))
                   ($ :div {:class (cx "mt-2 grid gap-8"
@@ -613,7 +613,7 @@
                      (case at
                        1 (if rec
                            "The line: a bank_lines row of the record, chosen by the scenario's lines layer (ownpurse.scenario.coding/read-lines)."
-                           "The line: a scenario's :cases (components/classify/resources/classify/eval/<name>.edn). With a record, a book's bank lines.")
+                           "The line: a scenario's :cases (components/classify/resources/classify/eval/<name>.edn). In a workspace with books, a book's bank lines.")
                        2 "ownpurse.classify.facts/units"
                        3 "ownpurse.classify.facts/enrich: whereabouts, running-projects, refund-of, earlier-here"
                        4 "ownpurse.classify.core/enrichment and enriched-category (used at 50% or more)"

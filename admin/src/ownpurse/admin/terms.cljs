@@ -25,7 +25,7 @@
    [:jev "Asking Jev"]
    [:rules "Rules"]
    [:deciding "Deciding"]
-   [:testing "Testing it: the sandbox"]])
+   [:testing "Where you are, and testing it: the sandbox"]])
 
 (def terms
   "Each term: :id, :term, :group, :short (the hover's one sentence), :long (paragraphs), :origin, :origin-note (where
@@ -293,23 +293,53 @@
     :see [:needs-a-person :rule]}
 
    ;; ----------------------------------------------------------------------------------- testing
+   {:id :workspace :term "Workspace" :group :testing :origin :ownpurse
+    :short "Where this ownpurse runs: a group's books, or the demo. The bar at the top always says which."
+    :long ["A workspace is one group's private place: its books, the config naming its sources (Xero, Mercury, a bank through Plaid), its scenarios and its runs. Nothing in one workspace is seen from another. The demo is a workspace with no books, only the sample lines."]
+    :origin-note "ownpurse's word."
+    :see [:books :sandbox]}
+
+   {:id :books :term "Books" :group :testing :origin :accounting
+    :short "A workspace's data: its entities, and everything their sources sent, as pulled."
+    :long ["Each entity (a business, a household) has its book, kept in its own system (Xero, say); ownpurse keeps a copy of all of them, never changed, and reads them through scenarios. “Your books” in the sandbox means this workspace's real lines, not the made-up ones."]
+    :origin-note "The accountant's word."
+    :see [:workspace :lines :record]}
+
+   {:id :record :term "Record" :group :testing :origin :ownpurse
+    :short "Where a workspace's books are stored: the database on disk, and its backups."
+    :long ["A storage word, for developers: the screens say books. The record keeps every version of everything, so a scenario, a run or a line can be read as it was on any day."]
+    :origin-note "ownpurse's word for its XTDB database."
+    :see [:books]}
+
    {:id :sandbox :term "Sandbox" :group :testing :origin :ml
-    :short "A safe place to try rules on lines whose right answer is known, without touching any books."
-    :long ["Nothing in the sandbox is posted anywhere. It exists to see, before trusting it with real books, how each rule set and strategy would have coded a set of lines."]
+    :short "A safe place to run scenarios over lines and see how each line is coded, without touching any books."
+    :long ["Pick lines (from your books, or made up) and a scenario, and run it: each line's coding, why, what it cost, and where a person keyed the line, whether it was right. Nothing in the sandbox is posted anywhere."]
     :origin-note "Software term for an isolated place to experiment."
-    :see [:scenario :run :answer-key]}
+    :see [:lines :scenario :run :answer-key]}
+
+   {:id :lines :term "Lines" :group :testing :origin :ownpurse
+    :short "A set of bank lines to code: some of your books' lines, or made-up ones (the samples)."
+    :long ["Lines from your books are chosen by account and dates (soon also by entity, or one line on its own). Sample lines are invented, each with its right answer, for building and testing rules: “atlas” is a studio with two projects, two travellers and four cards, and a few hundred awkward lines."]
+    :origin-note "ownpurse's word."
+    :see [:scenario :answer-key :evidence]}
 
    {:id :scenario :term "Scenario" :group :testing :origin :ownpurse
-    :short "An invented world for testing: people, cards, trips, projects, rules, and a few hundred bank lines."
-    :long ["“atlas” is one: a studio with two projects, two travellers and four cards. Its lines are made up but realistic, including the awkward ones (tips posted days later, refunds, notes in Portuguese)."]
+    :short "How to code lines: the world they happened in (people, cards, trips, projects), the buckets and rules, the strategy and the threshold."
+    :long ["A scenario is a stack of layers, each one kind of thing, and can stand on another: a child changes one rule, or one project's per diem, and inherits the rest. Duplicate one to try something; throw it away, or keep it."]
     :origin-note "ownpurse's word."
-    :see [:answer-key :run]}
+    :see [:lines :run :answer-key]}
 
-   {:id :answer-key :term "Answer key" :group :testing :origin :ml
-    :short "The right bucket for every line in a scenario, written by a person, to mark the pipeline's work against."
-    :long ["Each line says where it belongs (“should be”), any other bucket that is also fine, and whether a person must look at it however sure the answer. It is what lets the sandbox say right or wrong."]
-    :origin-note "Machine learning calls it ground truth, or labels."
-    :see [:outcome :scenario]}
+   {:id :answer-key :term "Key" :group :testing :origin :ml
+    :short "Lines a person has coded: the right bucket for each, to mark the pipeline's work against."
+    :long ["Each keyed line says where it belongs (“should be”), any other bucket that is also fine, and whether a person must look at it however sure the answer. It is what lets the sandbox say right or wrong. The sample lines come keyed; a line of your books is keyed from its walk-through. A scenario can key a line otherwise when its policy differs. The key is never sent to Jev."]
+    :origin-note "Machine learning calls it ground truth, or labels; also called the answer key."
+    :see [:outcome :lines]}
+
+   {:id :evidence :term "Evidence" :group :testing :origin :accounting
+    :short "What is known about a line beyond the bank's fields: a receipt, an order, a note."
+    :long ["Evidence is input: it changes what Jev reads (a receipt's items, say), never what the right answer is. Today the sample lines carry receipts' and orders' items; hanging a receipt on a line of your books comes next."]
+    :origin-note "The accountant's word for what supports an entry."
+    :see [:lines :answer-key]}
 
    {:id :outcome :term "Outcome" :group :testing :origin :ownpurse :step 10
     :short "How a line fared at a threshold: coded right, coded wrong, coded unsafely, or sent to a person (rightly or needlessly)."
@@ -319,10 +349,16 @@
     :see [:answer-key :threshold]}
 
    {:id :run :term "Run" :group :testing :origin :ownpurse
-    :short "One pass of every line in a scenario through Jev, saved, so it can be studied without asking again."
+    :short "A scenario over a set of lines, once: every line through Jev, saved, so it can be studied without asking again."
     :long ["A run keeps every request, every answer and every strategy's coding. The sandbox scores it at any threshold instantly, because nothing needs asking twice."]
     :origin-note "ownpurse's word (machine learning would say an experiment)."
     :see [:eval :scenario]}
+
+   {:id :in-use :term "In use" :group :testing :origin :ownpurse
+    :short "The one scenario whose codings are proposed for the books; every other scenario is an experiment."
+    :long ["Coming: a workspace marks one scenario as in use, and only its codings go toward the books, as a package a person approves. Until then, every scenario only proposes."]
+    :origin-note "ownpurse's words."
+    :see [:scenario :workspace]}
 
    {:id :eval :term "Eval" :group :testing :origin :ml
     :short "Measuring how well the pipeline does, by running it on lines with known answers and counting."

@@ -28,15 +28,15 @@
              ($ :p {}
                 (ui/count-of units "line") " to code, " (ui/count-of requests "request") " to Jev: "
                 (if (zero? asked)
-                  ($ :<> ($ :b {} "nothing to ask") ", every answer is in the record already. ")
-                  ($ :<> ($ :b {} asked " to ask") (when (pos? kept) (str ", " kept " answered from the record")) ". "))
+                  ($ :<> ($ :b {} "nothing to ask") ", every answer is kept already. ")
+                  ($ :<> ($ :b {} asked " to ask") (when (pos? kept) (str ", " kept " answered from those kept")) ". "))
                 "It would cost " ($ :b {} (dollars cost-usd))
                 (when (pos? asked)
                   (str " (" (.toLocaleString (js/Number input-tokens)) " input tokens at $"
                        price-per-million-input-tokens " a million; output is free)"))
                 " and take " ($ :b {} (about-seconds seconds)) ".")
              ($ ui/say {}
-                "Counted by walking every line through the classifier with the answers the record holds. "
+                "Counted by walking every line through the classifier with the answers kept. "
                 (if timed "The time is from this scenario's runs so far. " "The time is a guess until a run has been timed. ")
                 "The price is TypeSafe's published one: the API reports tokens, not prices."))))))
 
@@ -121,7 +121,7 @@
           (when error ($ ui/notice {:tone :bad} error))
           (when (seq runs)
             ($ ui/disclosure {:summary (str (count runs) " runs so far; the last " (some-> (:at (first runs)) (subs 0 16)))}
-               ($ ui/table {:head ["At" "Lines" "Coded" "Asked Jev" "Answered from the record" "Took" "Model"]}
+               ($ ui/table {:head ["At" "Lines" "Coded" "Asked Jev" "Answered from those kept" "Took" "Model"]}
                   (for [{:keys [at units coded asked kept model took-ms]} runs]
                     ($ :tr {:key (str at)}
                        ($ ui/td {} ($ ui/mono {} (some-> at str (subs 0 19))))
