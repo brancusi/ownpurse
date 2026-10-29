@@ -157,6 +157,12 @@
                           metadata))
     (scenario node ref)))
 
+(defn create! [node {:keys [ref] :as s}]
+  (when (scenario node ref)
+    (fail! :ownpurse/scenario-conflict (str "There is already a scenario " ref ": pick another ref, or change that one.")
+           {:ref ref}))
+  (put! node s))
+
 (defn put-layer! [node ref layer]
   (let [s (or (scenario node ref) (fail! :ownpurse/not-found (str "There is no scenario " ref ".") {:ref ref}))
         layers (:layers s)

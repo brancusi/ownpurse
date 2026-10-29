@@ -7,8 +7,11 @@
    [ownpurse.json.interface :as json]))
 
 (def ^:private transit-handlers
-  "Times as their ISO strings: the admin reads them as text."
+  "Times as their ISO strings: the admin reads them as text. The store gives back an instant it kept as a
+  ZonedDateTime, so that is an instant too."
   {java.time.Instant (transit/write-handler "instant" str)
+   java.time.ZonedDateTime (transit/write-handler "instant" #(str (.toInstant ^java.time.ZonedDateTime %)))
+   java.time.OffsetDateTime (transit/write-handler "instant" #(str (.toInstant ^java.time.OffsetDateTime %)))
    java.time.LocalDate (transit/write-handler "date" str)})
 
 (def muuntaja

@@ -25,6 +25,12 @@
   [node scenario]
   (core/put! node scenario))
 
+(defn create!
+  "As put!, but refused (:ownpurse/scenario-conflict) when there is a scenario of that ref already: a new scenario
+  never replaces one."
+  [node scenario]
+  (core/create! node scenario))
+
 (defn put-layer!
   "Adds one layer to scenario `ref`, or replaces its layer of the same :id (to change it, or turn it on or off).
   Returns the scenario."

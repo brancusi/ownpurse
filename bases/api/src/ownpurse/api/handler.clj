@@ -769,7 +769,14 @@
                          "register's journals as approved and as proposed.")
            :responses {200 {:body [:map [:scenarios [:vector Scenario]] [:kinds [:map-of :string :string]]]}}
            :handler (fn [_] (answer #(hash-map :scenarios (mapv scenario-out (scenario/scenarios node))
-                                               :kinds scenario/kinds)))}}]
+                                               :kinds scenario/kinds)))}
+    :post {:summary (str "Adds a new scenario, as PUT /scenarios/{ref} with its ref in the body, but refused when "
+                         "there is one of that ref already: a new scenario never replaces one.")
+           :parameters {:body (mu/merge ScenarioBody [:map {:closed true} [:ref [:string {:min 1}]]])}
+           :responses {200 {:body [:map [:scenario Scenario]]} 400 {:body ApiError} 404 {:body ApiError}
+                       409 {:body ApiError}}
+           :handler (fn [{{:keys [body]} :parameters}]
+                      (answer #(hash-map :scenario (scenario-out (scenario/create! node body)))))}}]
    ["/scenarios/{ref}"
     {:get {:summary "One scenario as it stands."
            :parameters {:path [:map [:ref [:string {:min 1}]]]}

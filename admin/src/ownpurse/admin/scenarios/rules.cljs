@@ -86,7 +86,7 @@
                            (-> (write-rule! send! s layer r (when fresh? [new-code new-about]))
                                (.then #(when % (on-done)))))}
        ($ :div {:class "grid gap-3 md:grid-cols-[8rem_1fr_1fr]"}
-          ($ ui/field {:label "Id"} ($ ui/text-input {:value id :on-change set-id! :placeholder "R9" :name "rule-id"}))
+          ($ ui/field {:label "Id"} ($ ui/text-input {:value id :on-change set-id! :placeholder "R9" :name "rule-id" :aria-label "Rule id"}))
           ($ ui/field {:label "Codes to"}
              ($ ui/select {:value code :on-change set-code! :aria-label "Codes to"
                            :options (concat (for [c (sort (map n (keys codes)))] [c c]) [["__new" "a new bucket…"]])}))
@@ -151,13 +151,33 @@
          ($ :tr {} ($ ui/td {:col-span 4}
                       ($ rule-editor {:s s :composed composed :rule rule :on-done #(set-editing! false)})))))))
 
+(defui turned-off
+  "The rules this scenario's own coding layers turn off, each to turn on again (its entry taken out of the layer)."
+  [{:keys [s]}]
+  (let [{:keys [send! busy error]} (api/use-send)
+        off (for [l (own-coding-layers s) r (get-in l [:coding :rules]) :when (false? (:enabled r))] [l r])]
+    (when (seq off)
+      ($ :div
+         ($ ui/section-title {} (str (ui/count-of off "rule") " turned off here"))
+         (for [[l r] off]
+           ($ :div {:key (str (:id l) "/" (:id r)) :class "flex items-center gap-3 py-1 text-sm"}
+              ($ ui/mono {:class "font-medium"} (:id r)) ($ ui/muted {} "turned off in layer " (:id l))
+              (when-not (:built-in s)
+                ($ ui/button {:disabled busy
+                              :on-click #(send! "PUT" (path (:ref s) "layers" (:id l))
+                                                (update-in (layer-body l) [:coding :rules]
+                                                           (partial filterv (fn [x] (not= (:id r) (:id x))))))}
+                   "Turn on"))))
+         (when error ($ ui/notice {:tone :bad} error))))))
+
 (defui levers
   "The threshold a coding needs to stand without a person, and the strategy whose coding stands."
   [{:keys [s composed]}]
   (let [[t set-t!] (uix/use-state (str (:threshold composed)))
         [strategy set-strategy!] (uix/use-state (n (:strategy composed)))
         [layer set-layer!] (uix/use-state (default-layer s))
-        {:keys [send! busy error]} (api/use-send)]
+        {:keys [send! busy error]} (api/use-send)
+        bad-t (let [x (js/Number t)] (or (js/isNaN x) (< x 0) (> x 1)))]
     ($ :form {:class "flex flex-wrap items-end gap-3"
               :on-submit (fn [e]
                            (.preventDefault e)
@@ -171,7 +191,8 @@
        (when-not (:built-in s)
          ($ :<>
             ($ layer-picker {:s s :value layer :on-change set-layer!})
-            ($ ui/button {:type "submit" :disabled busy} "Save")))
+            ($ ui/button {:type "submit" :disabled (or busy bad-t)} "Save")))
+       (when bad-t ($ ui/notice {:tone :bad} "A threshold is how sure a coding must be, from 0 to 1, such as 0.85."))
        (when error ($ ui/notice {:tone :bad} error)))))
 
 (defui tab [{:keys [s]}]
@@ -189,12 +210,13 @@
             ($ levers {:s s :composed composed :key (str (:threshold composed) (:strategy composed))})
             ($ ui/section-title {:aside (when-not (:built-in s)
                                           ($ ui/button {:on-click #(set-adding! (not adding))} (if adding "Cancel" "Add a rule")))}
-               (str (count rules) " rules that stand"))
+               (str (ui/count-of rules "rule") " that stand"))
             (when adding
               ($ ui/panel {:class "mb-3"} ($ rule-editor {:s s :composed composed :rule nil :on-done #(set-adding! false)})))
             ($ ui/table {:head ["Rule" "Codes to" "Says, and when" ""]}
                (for [r rules] ($ rule-row {:key (:id r) :s s :composed composed :rule r :categories categories})))
-            ($ ui/section-title {} (str (count codes) " buckets"))
+            ($ turned-off {:s s})
+            ($ ui/section-title {} (ui/count-of codes "bucket"))
             ($ :dl {:class "grid gap-x-4 gap-y-1 text-sm md:grid-cols-[12rem_1fr]"}
                (for [[c about] (sort-by (comp n key) codes)]
                  ($ :<> {:key (n c)} ($ :dt {} ($ ui/mono {} (n c))) ($ :dd {:class "text-ink-2"} about))))

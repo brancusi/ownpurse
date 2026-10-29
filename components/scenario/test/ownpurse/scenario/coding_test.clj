@@ -99,7 +99,18 @@
           (is (= [{:accounts [checking] :from "2025-01-01" :to "2025-12-31"}] (:selects c)))
           (is (= [0.85M :checked] [(:threshold c) (:strategy c)]))
           (is (nil? (:cases c)))))
+      (testing "a rule changed by a scenario standing on it keeps its place; a new one comes last"
+        (scenario/put! node {:ref "in-place" :name "R2 changed" :base "harbour-coding"
+                             :layers [{:id "changes" :kind "coding"
+                                       :coding {:rules [{:id "R4" :code "travel" :rule "Rideshare is travel."
+                                                         :when [["contains" "merchant" "ride"]]}
+                                                        (assoc (get-in coding [:rules 1]) :rule "Taxis are travel.")]}}]})
+        (is (= [["R1" nil] ["R2" "Taxis are travel."] ["R3" nil] ["R4" nil]]
+               (map (juxt :id #(when (= "R2" (:id %)) (:rule %))) (:rules (scenario/composed node "in-place"))))))
       (testing "a rule that codes to no bucket, or a trip with no dates, is refused"
+        (is (= :ownpurse/invalid
+               (:type (error #(scenario/put! node (assoc-in trial [:layers 1 :coding :threshold] 1.5M))))))
+        (is (= :ownpurse/scenario-conflict (:type (error #(scenario/create! node trial)))))
         (is (= :ownpurse/invalid
                (:type (error #(scenario/put! node (assoc-in trial [:layers 1 :coding :rules 0 :code] "nowhere"))))))
         (is (= :ownpurse/invalid

@@ -71,7 +71,12 @@
         all (merge codes-below codes)]
     (cond-> (assoc coding :codes codes)
       ;; A threshold is a probability, not money: 0.85 from EDN or JSON is read as the decimal it says.
-      (:threshold coding) (update :threshold #(bigdec (str %)))
+      (:threshold coding) (update :threshold #(let [t (bigdec (str %))]
+                                                (when-not (<= 0M t 1M)
+                                                  (fail! (str "A threshold is how sure a coding must be, from 0 to 1, "
+                                                              "such as 0.85; not " % ".")
+                                                         {:threshold %}))
+                                                t))
       rules (assoc :rules (mapv (fn [r] (if (false? (:enabled r)) (update r :code kw) (rule-in all r))) rules))
       (:buckets coding) (update :buckets (partial mapv (fn [b] (update b :codes (partial mapv (fn [[c t]] [(kw c) t])))))))))
 
@@ -87,9 +92,13 @@
     (some->> (:to select) (date! "The lines' :to")))
   lines)
 
-(defn- merge-rules [below above]
-  (let [ids (set (map :id above))]
-    (->> (concat (remove (comp ids :id) below) above)
+(defn- merge-rules
+  "The rules of `below` with those of `above`: a rule of an id below is replaced where it stands, a new one comes
+  last, and one turned off (enabled false) leaves."
+  [below above]
+  (let [by-id (into {} (map (juxt :id identity)) above)
+        ids (set (map :id below))]
+    (->> (concat (map #(get by-id (:id %) %) below) (remove (comp ids :id) above))
          (remove #(false? (:enabled %)))
          vec)))
 

@@ -28,10 +28,11 @@
         [note set-note!] (uix/use-state "")
         {:keys [send! busy error]} (api/use-send)
         bad-ref (and (seq ref) (not (re-matches ref-pattern ref)))
+        taken (some #(= ref (:ref %)) scenarios)
         submit (fn [e]
                  (.preventDefault e)
-                 (-> (send! "PUT" (str "/scenarios/" (js/encodeURIComponent ref))
-                            (cond-> {:name nm
+                 (-> (send! "POST" "/scenarios"
+                            (cond-> {:ref ref :name nm
                                      :layers (if (seq base)
                                                [{:id "changes" :kind "coding" :coding {}
                                                  :note "What this scenario changes in the one it stands on."}]
@@ -51,9 +52,10 @@
        ($ ui/field {:label "Note (optional)" :class "md:col-span-2"}
           ($ ui/text-input {:value note :on-change set-note! :placeholder "Why it exists, what to look at" :name "note"}))
        ($ :div {:class "flex items-end gap-3"}
-          ($ ui/button {:tone :primary :type "submit" :disabled (or busy (str/blank? ref) (str/blank? nm) bad-ref)}
+          ($ ui/button {:tone :primary :type "submit" :disabled (or busy (str/blank? ref) (str/blank? nm) bad-ref taken)}
              (if busy "Creating…" "Create scenario")))
        (when bad-ref ($ ui/notice {:tone :bad} "A ref is letters, digits, dots, dashes and underscores, starting with a letter or digit."))
+       (when taken ($ ui/notice {:tone :bad} (str "There is a scenario " ref " already: pick another ref, or open it to change it.")))
        (when error ($ :div {:class "md:col-span-3"} ($ ui/notice {:tone :bad} error)))
        ($ ui/say {:class "md:col-span-3"}
           (if (seq base)

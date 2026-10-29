@@ -230,6 +230,15 @@
         (is (= {} (get-in (request app :get (str "/scenarios/try/evaluation?book=" book)) [:body :evaluation :balances])))
         (is (= {:6210 "400.00" :6200 "-400.00"}
                (get-in (request app :get (str "/scenarios/rent-split/evaluation?book=" book)) [:body :evaluation :balances]))))
+      (testing "a new scenario never replaces one"
+        (is (= 409 (:status (request app :post "/scenarios" (assoc body :ref "rent-split")))))
+        (is (= "fresh" (get-in (request app :post "/scenarios" (assoc body :ref "fresh")) [:body :scenario :ref]))))
+      (testing "a coding run's time, as the store gives it back, is written in Transit"
+        (store/put! node {:coding-runs [{:xt/id "coding-run:fresh:1" :scenario "fresh" :at (java.time.Instant/now)
+                                         :units 0 :coded 0 :asked 0 :kept 0 :model "stub"}]}
+                    {:source "test" :why "fixture"})
+        (is (= 200 (:status (app {:request-method :get :uri "/scenarios/fresh/coding"
+                                  :headers {"accept" "application/transit+json"}})))))
       (testing "every version is kept; a dropped scenario is gone, its versions stay"
         (is (= [1 2] (map :version (get-in (request app :get "/scenarios/try/versions") [:body :versions]))))
         (is (= {:ref "try" :dropped true} (:body (request app :delete "/scenarios/try"))))

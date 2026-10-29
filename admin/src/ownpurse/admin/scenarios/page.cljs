@@ -16,21 +16,22 @@
 (defn layer-summary [{:keys [kind world coding lines journals basis]}]
   (case kind
     "world" (let [{:keys [projects trips cards entities categories]} world]
-              (str (count projects) " projects (" (str/join ", " (map (comp :name val) projects)) "), " (count trips)
-                   " trips, " (count cards) " cards, " (count entities) " entities, " (count categories) " categories"))
+              (str (ui/count-of projects "project") " (" (str/join "; " (map (comp :name val) projects)) "), "
+                   (ui/count-of trips "trip") ", " (ui/count-of cards "card") ", " (ui/count-of entities "entity" "entities")
+                   ", " (ui/count-of categories "merchant category" "merchant categories")))
     "coding" (let [{:keys [rules codes threshold strategy]} coding
                    {off false on true} (group-by #(not (false? (:enabled %))) rules)]
                (str/join " · " (remove nil? [(when (seq on) (str "rules " (str/join " " (map :id on))))
                                              (when (seq off) (str "turns off " (str/join " " (map :id off))))
-                                             (when (seq codes) (str (count codes) " buckets"))
+                                             (when (seq codes) (ui/count-of codes "bucket"))
                                              (when threshold (str "threshold " threshold))
                                              (when strategy (str "strategy " (name strategy)))
                                              (when (and (empty? rules) (empty? codes) (not threshold) (not strategy))
                                                "empty: changes nothing yet")])))
     "lines" (let [{:keys [select cases]} lines]
-              (str (when select (str (count (:accounts select)) " account(s), " (or (:from select) "…") " → " (or (:to select) "…")))
+              (str (when select (str (ui/count-of (:accounts select) "account") ", " (or (:from select) "…") " → " (or (:to select) "…")))
                    (when cases (str (count cases) " lines given"))))
-    "journals" (str (count journals) " journals")
+    "journals" (ui/count-of journals "journal")
     "close" (str "the close register, " basis)
     ""))
 
@@ -61,15 +62,16 @@
 
 (defui copy-form
   "Duplicate (`child` false: the same base and layers) or a new scenario standing on this one (`child` true)."
-  [{:keys [s child on-done]}]
+  [{:keys [s child scenarios on-done]}]
   (let [[ref set-ref!] (uix/use-state (str (:ref s) (if child "-try" "-copy")))
         [nm set-name!] (uix/use-state (str (:name s) (if child ", a try" ", a copy")))
-        {:keys [send! busy error]} (api/use-send)]
+        {:keys [send! busy error]} (api/use-send)
+        taken (some #(= ref (:ref %)) scenarios)]
     ($ :form {:class "grid gap-3 p-4 md:grid-cols-[1fr_1.6fr_auto]"
               :on-submit (fn [e]
                            (.preventDefault e)
                            (-> (if child
-                                 (send! "PUT" (path ref) {:name nm :base (:ref s)
+                                 (send! "POST" "/scenarios" {:ref ref :name nm :base (:ref s)
                                                           :layers [{:id "changes" :kind "coding" :coding {}
                                                                     :note (str "What this scenario changes in " (:ref s) ".")}]})
                                  (send! "POST" (path (:ref s) "duplicate") {:ref ref :name nm}))
@@ -78,7 +80,7 @@
        ($ ui/field {:label "Name"} ($ ui/text-input {:value nm :on-change set-name! :name "name"}))
        ($ :div {:class "flex items-end gap-2"}
           ($ ui/button {:tone :primary :type "submit"
-                        :disabled (or busy (not (re-matches home/ref-pattern ref)) (str/blank? nm))}
+                        :disabled (or busy taken (not (re-matches home/ref-pattern ref)) (str/blank? nm))}
              (if child "Create it" "Duplicate"))
           ($ ui/button {:on-click on-done} "Cancel"))
        ($ ui/say {:class "md:col-span-3"}
@@ -86,9 +88,10 @@
             (str "A new scenario with " (:ref s) " under it, and one empty coding layer of its own to change rules in. "
                  "A change to " (:ref s) " shows through it.")
             (str "A new scenario with " (:ref s) "'s base and layers as they stand now. The two change apart from then on.")))
+       (when taken ($ :div {:class "md:col-span-3"} ($ ui/notice {:tone :bad} (str "There is a scenario " ref " already: pick another ref."))))
        (when error ($ :div {:class "md:col-span-3"} ($ ui/notice {:tone :bad} error))))))
 
-(defui drop-button [{:keys [s]}]
+(defui drop-button [{:keys [s stood-on-by]}]
   (let [[asking set-asking!] (uix/use-state false)
         {:keys [send! busy error]} (api/use-send)]
     ($ :span {:class "inline-flex items-center gap-2"}
@@ -100,7 +103,10 @@
                                          (.then (fn [r] (when r (route/go! ["scenarios"] nil)))))}
                "Drop it")
             ($ ui/button {:on-click #(set-asking! false)} "Keep it"))
-         ($ ui/button {:tone :danger :on-click #(set-asking! true)} "Drop"))
+         ($ ui/button {:tone :danger :on-click #(set-asking! true) :disabled (boolean (seq stood-on-by))
+                       :title (when (seq stood-on-by)
+                                (str "Scenarios stand on it (" (str/join ", " (map :ref stood-on-by)) "): drop or move them first."))}
+            "Drop"))
        (when error ($ :span {:class "text-xs text-coin-text"} error)))))
 
 (defui header [{:keys [s scenarios]}]
@@ -115,7 +121,7 @@
              (when-not built-in ($ ui/button {:on-click #(set-open! :edit)} "Edit"))
              ($ ui/button {:on-click #(set-open! :duplicate)} "Duplicate")
              ($ ui/button {:on-click #(set-open! :child)} "New scenario on this")
-             (when-not built-in ($ drop-button {:s s}))))
+             (when-not built-in ($ drop-button {:s s :stood-on-by stood-on-by}))))
        ($ :div {:class "mt-1 flex flex-wrap gap-x-4 text-xs text-ink-3"}
           ($ ui/mono {} r)
           (if base
@@ -132,8 +138,8 @@
          ($ ui/panel {:class "mt-3"}
             (case open
               :edit ($ edit-form {:s s :scenarios scenarios :on-done #(set-open! nil)})
-              :duplicate ($ copy-form {:s s :child false :on-done #(set-open! nil)})
-              :child ($ copy-form {:s s :child true :on-done #(set-open! nil)})))))))
+              :duplicate ($ copy-form {:s s :child false :scenarios scenarios :on-done #(set-open! nil)})
+              :child ($ copy-form {:s s :child true :scenarios scenarios :on-done #(set-open! nil)})))))))
 
 ;; ----------------------------------------------------------------------------------------------- layers
 
@@ -262,13 +268,23 @@
        ($ ui/section-title {:aside (when-not readonly
                                      ($ ui/button {:on-click #(set-adding! (not adding))} (if adding "Cancel" "Add a layer")))}
           "Its own layers, applied in this order")
-       (when adding ($ ui/panel {:class "mb-3"} ($ add-layer {:ref (:ref s) :s s :on-done #(set-adding! false)})))
        (if (empty? (:layers s))
          ($ ui/notice {} "No layers of its own yet.")
          (for [[i l] (map-indexed vector (:layers s))]
-           ($ layer-card {:key (:id l) :ref (:ref s) :s s :layer l :index i :readonly readonly}))))))
+           ($ layer-card {:key (:id l) :ref (:ref s) :s s :layer l :index i :readonly readonly})))
+       (when adding ($ ui/panel {:class "mt-3"} ($ add-layer {:ref (:ref s) :s s :on-done #(set-adding! false)}))))))
 
 ;; ----------------------------------------------------------------------------------------------- versions
+
+(defui restore-button [{:keys [busy v on-restore]}]
+  (let [[asking set-asking!] (uix/use-state false)]
+    (if asking
+      ($ :div {:class "flex flex-col items-end gap-1"}
+         ($ :span {:class "text-xs"} "Make version " (:version v) " the newest?")
+         ($ :div {:class "flex gap-1"}
+            ($ ui/button {:tone :primary :disabled busy :on-click #(do (set-asking! false) (on-restore))} "Restore it")
+            ($ ui/button {:on-click #(set-asking! false)} "Keep")))
+      ($ ui/button {:disabled busy :on-click #(set-asking! true)} "Restore"))))
 
 (defui versions-tab [{:keys [s]}]
   (let [state (api/use-get (path (:ref s) "versions"))
@@ -296,8 +312,7 @@
                      (if (= latest (:version v))
                        ($ ui/muted {:class "text-xs"} "as it stands")
                        (when-not (:built-in s)
-                         ($ ui/button {:disabled busy :on-click #(send! "PUT" (path (:ref s)) (scenario-body v))}
-                            "Restore")))))))))))
+                         ($ restore-button {:busy busy :v v :on-restore #(send! "PUT" (path (:ref s)) (scenario-body v))})))))))))))
 
 ;; ----------------------------------------------------------------------------------------------- books
 

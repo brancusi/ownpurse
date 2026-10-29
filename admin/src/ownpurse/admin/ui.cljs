@@ -20,6 +20,11 @@
 
 (defn pct [p] (str (js/Math.round (* 100 (or p 0))) "%"))
 
+(defn count-of
+  "\"1 card\", \"3 cards\": a count and its noun."
+  ([xs noun] (count-of xs noun (str noun "s")))
+  ([xs noun plural] (let [k (if (number? xs) xs (count xs))] (str k " " (if (= 1 k) noun plural)))))
+
 (defn money [x] (.toFixed (js/Number x) 2))
 
 ;; ----------------------------------------------------------------------------------------------- outcomes
@@ -170,7 +175,7 @@
 (defui text-input
   "A one-line text field; `on-change` gets the text."
   [{:keys [value on-change placeholder class name aria-label]}]
-  ($ :input {:type "text" :value (or value "") :placeholder placeholder :name name :aria-label (or aria-label placeholder)
+  ($ :input {:type "text" :value (or value "") :placeholder placeholder :name name :aria-label aria-label
              :on-change #(on-change (.. % -target -value)) :class (cx field-class class)}))
 
 (defui number-input
