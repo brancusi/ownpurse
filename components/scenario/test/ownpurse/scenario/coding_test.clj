@@ -174,6 +174,14 @@
           (is (= "harbour-coding" (:in (get (scenario/answer-key node "child-key") "line:test:1"))) "removed: the base's stands")
           (is (= :ownpurse/invalid (:type (error #(scenario/confirm! node "harbour-coding" {:unit "line:test:3" :expect "nowhere"})))))
           (scenario/drop! node "child-key"))
+        (testing "a line traced step by step: each step's call, what came out, and the queries it made"
+          (let [{:keys [steps]} (scenario/sandbox-trace node "harbour-coding" "line:test:1")]
+            (is (= (range 1 11) (map :step steps)))
+            (is (= ["SELECT * FROM scenarios WHERE _id = ?" 4]
+                   [(:sql (first (:db (first steps)))) (:rows (second (:db (first steps))))]))
+            (is (= "line:test:1" (get-in (first steps) [:db 1 :row :xt/id])) "the row shown is the line's")
+            (is (= [1 1] (map :rows (:db (nth steps 6)))) "both answers read from the record")
+            (is (= "per-diem" (name (:code (:out (nth steps 9))))))))
         (testing "a rule changed since the run: the line still opens, and says which request has no answer kept"
           (scenario/put! node {:ref "reworded" :name "R1 reworded" :base "harbour-coding"
                                :layers [{:id "changes" :kind "coding"

@@ -279,7 +279,9 @@
         (is (= {:name "coding" :record true :lines 1 :runs []}
                (select-keys (first (get-in (request app :get "/sandbox/scenarios") [:body :scenarios]))
                             [:name :record :lines :runs])))
-        (is (true? (get-in (request app :get "/sandbox/scenarios/coding") [:body :world :record]))))
+        (is (true? (get-in (request app :get "/sandbox/scenarios/coding") [:body :world :record])))
+        (is (= 10 (count (get-in (request app :get "/sandbox/scenarios/coding/trace/line:test:1") [:body :trace :steps]))))
+        (is (= 404 (:status (request app :get "/sandbox/scenarios/atlas/trace/d211")))))
       (testing "the routes are in the OpenAPI document"
         (is (every? (set (keys (:paths (:body (request app :get "/openapi.json")))))
                     (map keyword ["/scenarios" "/scenarios/{ref}" "/scenarios/{ref}/evaluation"

@@ -172,3 +172,9 @@
   {:unit :remove true} to take it out of this scenario's key. Returns the scenario."
   [node ref entry]
   (core/confirm! node ref entry))
+
+(defn sandbox-trace
+  "One unit of scenario `ref` through the pipeline step by step: each step's function called again on the record's
+  data, with what went in, what came out, and every query it made. Nothing is asked of Jev."
+  [node ref unit]
+  (sandbox/trace node ref unit))

@@ -88,10 +88,40 @@
      children))
 
 (defui dev-note
-  "Where a step lives in the code, for the developer reading along."
-  [{:keys [children]}]
-  ($ ui/disclosure {:summary "For developers: where this happens" :class "mt-5"}
-     ($ :div {:class "font-mono text-xs leading-relaxed text-ink-2"} children)))
+  "Where a step lives in the code, for the developer reading along; with a record, the step's call on this line:
+  what went in, what came out, and every query it made."
+  [{:keys [children step]}]
+  ($ ui/disclosure {:summary (if step "For developers: the call, what went in and came out, and the database"
+                                 "For developers: where this happens")
+                    :class "mt-5"}
+     ($ :div {:class "font-mono text-xs leading-relaxed text-ink-2"} children)
+     (when-let [{:keys [call about in out db]} step]
+       ($ :div {:class "mt-3 grid gap-3"}
+          ($ :div
+             ($ ui/eyebrow {} "The call, on this line")
+             ($ :code {:class "mt-1 block rounded-1 bg-surface-2 px-2 py-1 font-mono text-xs"} call)
+             ($ :p {:class "mt-1.5 max-w-[80ch] text-sm leading-relaxed text-ink-2"} about))
+          ($ :div {:class "grid gap-3 lg:grid-cols-2"}
+             ($ :div
+                ($ ui/eyebrow {} "In")
+                (for [[k v] in]
+                  ($ :div {:key (name k) :class "mt-1"}
+                     ($ ui/mono {:class "text-2xs text-ink-3"} (name k))
+                     ($ ui/code-block {:value v}))))
+             ($ :div
+                ($ ui/eyebrow {} "Out")
+                ($ ui/code-block {:value out})))
+          ($ :div
+             ($ ui/eyebrow {} (if (seq db) (str "The database: " (count db) (if (= 1 (count db)) " query" " queries"))
+                                  "The database: no query; this step only calculates"))
+             (for [[i {:keys [sql params rows row shown]}] (map-indexed vector db)]
+               ($ :div {:key i :class "mt-2 border-l-2 border-line-2 pl-2"}
+                  ($ :code {:class "block font-mono text-xs text-ink-1"} sql)
+                  ($ ui/mono {:class "text-2xs text-ink-3"}
+                     "params " (js/JSON.stringify (clj->js params)) " → " rows (if (= 1 rows) " row" " rows")
+                     (when shown (str "; " shown)))
+                  (when row
+                    ($ ui/disclosure {:summary "the row"} ($ ui/code-block {:value row}))))))))))
 
 (defui kv
   "Rows of label and value; a value may be anything renderable."
@@ -528,6 +558,7 @@
         to-step (uix/use-callback (fn [n] (go! {:step n :line id :scenario (:scenario query)})) [go! id query])
         world-state (api/use-get (str "/sandbox/scenarios/" scenario))
         line-state (api/use-get (when (and run-id id) (str "/sandbox/scenarios/" scenario "/runs/" run-id "/lines/" id)))
+        trace-state (api/use-get (when (and rec id) (str "/sandbox/scenarios/" scenario "/trace/" id)))
         world (get-in world-state [:data :world])
         {:keys [title]} (nth steps (dec at))]
     (uix/use-effect
@@ -584,15 +615,19 @@
                        8 ($ step-8 {:data data})
                        9 ($ step-9 {:data data})
                        ($ step-10 {:data data :t t :set-t! set-t! :strategy strategy :set-strategy! set-strategy!})))
-                  ($ dev-note {}
+                  ($ dev-note {:step (get-in trace-state [:data :trace :steps (dec at)])}
                      (case at
-                       1 "The line: a scenario's :cases (components/classify/resources/classify/eval/<name>.edn). Later, a book's bank lines in the record."
+                       1 (if rec
+                           "The line: a bank_lines row of the record, chosen by the scenario's lines layer (ownpurse.scenario.coding/read-lines)."
+                           "The line: a scenario's :cases (components/classify/resources/classify/eval/<name>.edn). With a record, a book's bank lines.")
                        2 "ownpurse.classify.facts/units"
                        3 "ownpurse.classify.facts/enrich: whereabouts, running-projects, refund-of, earlier-here"
                        4 "ownpurse.classify.core/enrichment and enriched-category (used at 50% or more)"
                        5 "ownpurse.classify.facts/state"
                        6 "ownpurse.classify.core/requests: :rules and :plain; ownpurse.classify.jev/ask sends them"
-                       7 "the responses kept in the run file, components/classify/runs/<run>.edn"
+                       7 (if rec
+                           "the answers kept in the record's judgments table, by each request's hash (ownpurse.scenario.run/caching-ask)"
+                           "the responses kept in the run file, components/classify/runs/<run>.edn")
                        8 "ownpurse.classify.blocks/holds and rule-holds; ownpurse.classify.core/combine and explain"
                        9 "ownpurse.classify.core/decide"
                        "ownpurse.classify.outcome/outcome (shared with the browser); the eval in ownpurse.classify.eval"))

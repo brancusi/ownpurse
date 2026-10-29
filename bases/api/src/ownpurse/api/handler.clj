@@ -519,6 +519,18 @@
                         (answer #(if (record? (:scenario path))
                                    (scenario/sandbox-run node (:scenario path))
                                    (sandbox/run-lines sb (:scenario path) (:run path)))))}}]
+     ["/sandbox/scenarios/{scenario}/trace/{*line}"
+      {:get {:summary (str "One line of a record scenario through the pipeline, step by step: each step's function "
+                           "called again on the record's data, its input and output, and every query it made, with "
+                           "parameters and the row that came back. Nothing is asked of Jev.")
+             :parameters {:path (mu/merge Scenario [:map [:line [:string {:min 1}]]])}
+             :responses {200 {:body :any} 404 {:body ApiError}}
+             :handler (fn [{{:keys [path]} :parameters}]
+                        (answer #(if (record? (:scenario path))
+                                   (hash-map :trace (scenario/sandbox-trace node (:scenario path) (:line path)))
+                                   (throw (ex-info (str "A trace follows a line of the record; " (:scenario path)
+                                                        " is an invented sample, read from its file.")
+                                                   {:type :ownpurse/not-found})))))}}]
      ;; A catch-all: one item of a receipt is a unit whose id has a slash (d88/1).
      ["/sandbox/scenarios/{scenario}/runs/{run}/lines/{*line}"
       {:get {:summary (str "One unit of a run all the way through: its facts, the requests exactly as sent, what came "

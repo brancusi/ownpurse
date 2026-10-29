@@ -33,6 +33,24 @@
   [scenario facts]
   (facts/state scenario facts))
 
+(defn facts
+  "What code works out about a line (or one unit of it): its category (the merchant code's, or `category`, the one an
+  enrichment judgment chose), the card's holder, where they were, the projects running, an earlier purchase a
+  refund returns."
+  [scenario line category]
+  (facts/enrich scenario line category))
+
+(defn enriched-category
+  "The merchant code an enrichment answer chose, or nil when it chose none or was unsure."
+  [scenario answer]
+  (core/enriched-category scenario answer))
+
+(defn decide
+  "Each strategy's coding of a line, from its facts and the answers to its two requests
+  ({:rules-answers :plain-answers})."
+  [scenario line-facts answers]
+  (core/decide scenario line-facts answers))
+
 (defn requests
   "The two requests a line's facts make to Jev: :rules and :plain, each {:state :questions}."
   [scenario facts]
