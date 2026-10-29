@@ -5,6 +5,7 @@
         poly/intercompany {:local/root "../../components/intercompany"}
         poly/payees {:local/root "../../components/payees"}
         poly/sandbox {:local/root "../../components/sandbox"}
+        poly/scenario {:local/root "../../components/scenario"}
 
         ;; The admin's built files (admin/resources), served at /admin: bin/admin build
         ownpurse/admin {:local/root "../../admin"}

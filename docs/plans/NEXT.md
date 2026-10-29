@@ -626,6 +626,30 @@ filter, opening one line) fought Clerk's render functions. The admin is the answ
   3. The review screen: a person codes a line sent to them and says why, in words; the reasons become proposed rules.
   4. The admin's other sections over the API that exists: books and accounts, the close register, intercompany.
 
+## Scenarios: the books as layers (started 2026-10-29)
+
+A workspace's owner asked for scenario planning over the whole book: classifications, intercompany and adjustments
+as layers over the facts, every report read through a scenario, each one cheap to try, duplicate and throw away,
+and one published when it is right, with a manifest of changes for the system of record. The design and its seven
+steps are [SCENARIOS.md](SCENARIOS.md). It replaces "Next, in order" 1 to 3 of the sandbox below: those become its
+steps 2 and 3.
+
+- **Step 1 done (2026-10-29): the evaluator, with two kinds of layer.** `components/scenario`: a scenario is a
+  named stack of layers (`journals`, its own journals in any book; `close`, the close register's journals as
+  approved or proposed), standing on another scenario if it names a `:base`. Layers turn on and off; a scenario is
+  duplicated (`:duplicated-from`) or dropped (its history stays); every version is kept (`versions`, from XTDB's
+  history). `evaluate` says what each layer adds to a book, bases first. "approved" and "proposed" are built in and
+  cannot change, so `pro-forma=x` is `scenario=x`: `GET /trial-balance` and `POST /export` take `scenario`
+  (`pro-forma` still works; both at once is refused). API: `GET /scenarios`, `GET/PUT/DELETE /scenarios/{ref}`,
+  `PUT /scenarios/{ref}/layers/{layer}`, `POST .../duplicate`, `GET .../versions`, `GET .../evaluation?book&from&to`.
+  On a real record, `scenario=proposed` gives the same trial balance as `pro-forma=proposed`.
+- Not yet: the admin's screens for scenarios (with step 2); a scenario's layers as separate documents shared until
+  edited (they are copied on duplicate for now: the same result, simpler); reports other than the trial balance and
+  the export reading a scenario directly (they read the export's opts, which take it).
+- Next: step 2, world and coding as layers. The sandbox's `/sandbox/scenarios` (classify scenario files) and these
+  `/scenarios` are two things called scenarios until step 2 joins them: a classify scenario becomes a scenario's
+  world and coding layers, its lines read from a book.
+
 ## After 3b
 
 Steps 4 to 8 as in SPIKE.md. Step 5 (time) can use pull-1 and pull-2: what the books said on 2026-03-31, as we knew

@@ -1,6 +1,6 @@
 # Scenarios: the books as layers over facts
 
-Draft, 2026-10-29. Not started. Asked for by a workspace's owner: run scenarios of the books (classifications,
+Started 2026-10-29: step 1 is done (docs/plans/NEXT.md, "Scenarios"). Asked for by a workspace's owner: run scenarios of the books (classifications,
 intercompany, adjustments), see every report as that scenario would make it, throw it away or adjust it, and publish
 one when it is right. Nothing about it is destructive.
 

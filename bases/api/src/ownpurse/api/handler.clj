@@ -15,6 +15,7 @@
    [ownpurse.mercury.interface :as mercury]
    [ownpurse.plaid.interface :as plaid]
    [ownpurse.sandbox.interface :as sandbox]
+   [ownpurse.scenario.interface :as scenario]
    [ownpurse.schema.interface :as schema]
    [ownpurse.statement.interface :as statement]
    [ownpurse.store.interface :as store]
@@ -123,6 +124,7 @@
   [:map
    [:org :string] [:date :string] [:year-start :string] [:opening :string] [:tied :boolean]
    [:pro-forma {:optional true} [:enum "approved" "proposed"]]
+   [:scenario {:optional true} :string]
    [:accounts [:vector [:map [:account :string] [:code {:optional true} :string] [:name :string]
                         [:xero :string] [:ownpurse :string] [:difference :string]
                         [:adjustments {:optional true} :string] [:pro-forma {:optional true} :string]]]]
@@ -133,12 +135,13 @@
 
 (defn- trial-balance-out
   "A trial balance check as the API returns it: dates and amounts as strings."
-  [org pro-forma {:keys [date year-start opening tied? accounts other]}]
+  [org scenario pro-forma {:keys [date year-start opening tied? accounts other]}]
   (let [amounts #(reduce (fn [m k] (cond-> m (contains? m k) (update k amount-out))) % [:xero :ownpurse :difference
                                                                                         :adjustments :pro-forma])]
     (cond-> {:org org :date (str date) :year-start (str year-start) :opening opening :tied tied?
              :accounts (mapv amounts accounts)
              :other (mapv #(update % :amount amount-out) other)}
+      scenario (assoc :scenario scenario)
       pro-forma (assoc :pro-forma pro-forma))))
 
 (def Posting
@@ -289,6 +292,7 @@
    [:date (schema/schema :ownpurse/date)]
    [:dir [:string {:min 1}]]
    [:pro-forma {:optional true} [:enum "approved" "proposed"]]
+   [:scenario {:optional true} [:string {:min 1}]]
    [:opening {:optional true} [:enum "balance-sheet" "ledger"]]])
 
 (defn- xero-export!
@@ -296,6 +300,68 @@
   [node {:keys [dir] :as body}]
   (let [opts (books/xero-book node body)]
     (assoc (export/export! node (assoc opts :dir dir)) :tied (:tied? (:trial-balance opts)))))
+
+(def Layer
+  "One layer of a scenario: its kind, whether it is on, and what the kind reads."
+  [:map {:closed true}
+   [:id [:string {:min 1}]]
+   [:kind (into [:enum] (keys scenario/kinds))]
+   [:enabled {:optional true} :boolean]
+   [:note {:optional true} :string]
+   [:basis {:optional true} [:enum "approved" "proposed"]]
+   [:journals {:optional true} [:vector Journal]]])
+
+(def ScenarioBody
+  "PUT /scenarios/{ref}: a scenario, a named stack of layers, standing on another scenario if it names a base."
+  [:map {:closed true}
+   [:name [:string {:min 1}]]
+   [:note {:optional true} :string]
+   [:base {:optional true} [:string {:min 1}]]
+   [:layers [:vector Layer]]])
+
+(def Scenario
+  "A scenario as the API returns it: amounts and dates as strings."
+  [:map
+   [:ref :string] [:name :string] [:note {:optional true} :string] [:base {:optional true} :string]
+   [:built-in {:optional true} :boolean] [:duplicated-from {:optional true} :string]
+   [:version {:optional true} :int] [:at {:optional true} :string]
+   [:layers [:vector [:map [:id :string] [:kind :string] [:enabled :boolean] [:note {:optional true} :string]
+                      [:basis {:optional true} :string]
+                      [:journals {:optional true}
+                       [:vector [:map [:ref :string] [:book :string] [:date :string] [:narration :string]
+                                 [:evidence {:optional true} [:vector :string]]
+                                 [:postings [:vector [:map [:account :string] [:amount :string] [:commodity :string]
+                                                      [:description {:optional true} :string]]]]]]]]]]])
+
+(def Evaluation
+  "What a scenario adds to a book over a period, layer by layer. Amounts are decimal strings, debits positive."
+  [:map
+   [:scenario :string] [:name :string] [:book :string] [:from {:optional true} :string] [:to {:optional true} :string]
+   [:stack [:vector :string]]
+   [:layers [:vector [:map [:scenario :string] [:layer :string] [:kind :string] [:enabled :boolean]
+                      [:balances [:map-of :string :string]]]]]
+   [:balances [:map-of :string :string]]])
+
+(defn- scenario-out [s]
+  (update s :layers (partial mapv (fn [l]
+                                    (cond-> l
+                                      (:journals l)
+                                      (update :journals (partial mapv (fn [j] (-> j
+                                                                                  (update :date str)
+                                                                                  (update :postings (partial mapv #(update % :amount amount-out))))))))))))
+
+(defn- evaluation-out [{:keys [from to] :as e}]
+  (let [amounts #(update-vals % amount-out)]
+    (cond-> (-> (dissoc e :from :to)
+                (update :balances amounts)
+                (update :layers (partial mapv #(update % :balances amounts))))
+      from (assoc :from (str from))
+      to (assoc :to (str to)))))
+
+(defn- adjustments
+  "The trial balance's :adjustments for `book`: what scenario `ref` adds, or nil for none."
+  [node book ref]
+  (when ref #(scenario/balances node ref book %)))
 
 (defn- close-item-out [node item]
   (cond-> (-> item
@@ -401,7 +467,7 @@
 
 (def ^:private entity-errors
   {:ownpurse/invalid 400 :ownpurse/invalid-link 400 :ownpurse/invalid-match 400 :ownpurse/not-found 404
-   :ownpurse/link-conflict 409 :ownpurse/match-conflict 409 :ownpurse/close-conflict 409 :ownpurse/export-exists 409 :ownpurse/no-disk 409 :ownpurse/backup-exists 409
+   :ownpurse/link-conflict 409 :ownpurse/match-conflict 409 :ownpurse/close-conflict 409 :ownpurse/scenario-conflict 409 :ownpurse/export-exists 409 :ownpurse/no-disk 409 :ownpurse/backup-exists 409
    :ownpurse/backup-timeout 503 :ownpurse/backup-invalid 500})
 
 (defn- answer
@@ -517,18 +583,24 @@
                                 [:org [:string {:min 1}]]
                                 [:date (schema/schema :ownpurse/date)]
                                 [:opening {:optional true} [:enum "balance-sheet" "ledger"]]
-                                [:pro-forma {:optional true} [:enum "approved" "proposed"]]]}
-           :responses {200 {:body [:map [:trial-balance TrialBalance]]} 404 {:body ApiError}}
-           :handler (fn [{{{:keys [org date opening pro-forma]} :query} :parameters}]
-                      (let [book (xero/book-id org)
-                            adjustments (when pro-forma
-                                          #(close/balances node book (assoc % :basis (keyword pro-forma))))]
-                        (answer #(hash-map :trial-balance
-                                           (trial-balance-out org pro-forma
-                                                              (xero/check-trial-balance
-                                                               node org date
-                                                               (cond-> {:opening (keyword (or opening "balance-sheet"))}
-                                                                 adjustments (assoc :adjustments adjustments))))))))}}]
+                                [:pro-forma {:optional true} [:enum "approved" "proposed"]]
+                                [:scenario {:optional true} [:string {:min 1}]]]}
+           :responses {200 {:body [:map [:trial-balance TrialBalance]]} 400 {:body ApiError} 404 {:body ApiError}}
+           :handler (fn [{{{:keys [org date opening pro-forma] :as query} :query} :parameters}]
+                      (answer #(let [ref (or (:scenario query) pro-forma)
+                                     adjust (adjustments node (xero/book-id org) ref)]
+                                 (when (and (:scenario query) pro-forma)
+                                   (throw (ex-info "Say scenario or pro-forma, not both: pro-forma=x is scenario=x."
+                                                   {:type :ownpurse/invalid})))
+                                 (when (and ref (not (scenario/scenario node ref)))
+                                   (throw (ex-info (str "There is no scenario " ref ". GET /scenarios lists them.")
+                                                   {:type :ownpurse/not-found :scenario ref})))
+                                 {:trial-balance
+                                  (trial-balance-out org (:scenario query) pro-forma
+                                                     (xero/check-trial-balance
+                                                      node org date
+                                                      (cond-> {:opening (keyword (or opening "balance-sheet"))}
+                                                        adjust (assoc :adjustments adjust))))})))}}]
    ["/export"
     {:post {:summary (str "Writes the accountant's export of a Xero org's book for the financial year ending `date` into "
                           "a new folder under `dir` (an absolute path): a workbook with a README (the record's "
@@ -602,6 +674,71 @@
            :responses {200 {:body [:map [:pairs [:vector PairReport]]]}}
            :handler (fn [{{:keys [query]} :parameters}]
                       (answer #(hash-map :pairs (mapv pair-report-out (ic/report node query)))))}}]
+   ["/scenarios"
+    {:get {:summary (str "Every scenario: a named stack of layers (journals of its own, the close register's) that "
+                         "the reports read the books through. \"approved\" and \"proposed\" are built in: the close "
+                         "register's journals as approved and as proposed.")
+           :responses {200 {:body [:map [:scenarios [:vector Scenario]] [:kinds [:map-of :string :string]]]}}
+           :handler (fn [_] (answer #(hash-map :scenarios (mapv scenario-out (scenario/scenarios node))
+                                               :kinds scenario/kinds)))}}]
+   ["/scenarios/{ref}"
+    {:get {:summary "One scenario as it stands."
+           :parameters {:path [:map [:ref [:string {:min 1}]]]}
+           :responses {200 {:body [:map [:scenario Scenario]]} 404 {:body ApiError}}
+           :handler (fn [{{:keys [path]} :parameters}]
+                      (answer #(hash-map :scenario
+                                         (scenario-out (or (scenario/scenario node (:ref path))
+                                                           (throw (ex-info (str "There is no scenario " (:ref path) ".")
+                                                                           {:type :ownpurse/not-found})))))))}
+     :put {:summary (str "Adds a scenario or changes it. Its layers apply in order, after those of its base, if it "
+                         "names one. A layer of kind journals holds journals in any book, each balancing in every "
+                         "commodity, accounts by the book's account id or code; a layer of kind close reads the close "
+                         "register (basis approved or proposed). `enabled` false keeps a layer but counts it nowhere. "
+                         "Every version is kept. Nothing posts anywhere.")
+           :parameters {:path [:map [:ref [:string {:min 1}]]] :body ScenarioBody}
+           :responses {200 {:body [:map [:scenario Scenario]]} 400 {:body ApiError} 404 {:body ApiError}
+                       409 {:body ApiError}}
+           :handler (fn [{{:keys [path body]} :parameters}]
+                      (answer #(hash-map :scenario (scenario-out (scenario/put! node (assoc body :ref (:ref path)))))))}
+     :delete {:summary (str "Drops a scenario: it counts nowhere from now on, and its versions stay. Refused while "
+                            "another scenario stands on it.")
+              :parameters {:path [:map [:ref [:string {:min 1}]]]}
+              :responses {200 {:body [:map [:ref :string] [:dropped :boolean]]} 404 {:body ApiError} 409 {:body ApiError}}
+              :handler (fn [{{:keys [path]} :parameters}] (answer #(scenario/drop! node (:ref path))))}}]
+   ["/scenarios/{ref}/layers/{layer}"
+    {:put {:summary "Adds one layer to a scenario, or replaces the layer of that id: to change it, or turn it on or off."
+           :parameters {:path [:map [:ref [:string {:min 1}]] [:layer [:string {:min 1}]]]
+                        :body (mu/dissoc Layer :id)}
+           :responses {200 {:body [:map [:scenario Scenario]]} 400 {:body ApiError} 404 {:body ApiError}
+                       409 {:body ApiError}}
+           :handler (fn [{{:keys [path body]} :parameters}]
+                      (answer #(hash-map :scenario (scenario-out (scenario/put-layer! node (:ref path)
+                                                                                     (assoc body :id (:layer path)))))))}}]
+   ["/scenarios/{ref}/duplicate"
+    {:post {:summary (str "A new scenario with this one's base and layers as they stand. The two change apart from "
+                          "then on; the new one says which it was duplicated from.")
+            :parameters {:path [:map [:ref [:string {:min 1}]]]
+                         :body [:map {:closed true} [:ref [:string {:min 1}]] [:name {:optional true} [:string {:min 1}]]]}
+            :responses {200 {:body [:map [:scenario Scenario]]} 400 {:body ApiError} 404 {:body ApiError}
+                        409 {:body ApiError}}
+            :handler (fn [{{:keys [path body]} :parameters}]
+                       (answer #(hash-map :scenario (scenario-out (scenario/duplicate! node (:ref path) body)))))}}]
+   ["/scenarios/{ref}/versions"
+    {:get {:summary "Every version of a scenario, oldest first, with when it was kept."
+           :parameters {:path [:map [:ref [:string {:min 1}]]]}
+           :responses {200 {:body [:map [:versions [:vector Scenario]]]}}
+           :handler (fn [{{:keys [path]} :parameters}]
+                      (answer #(hash-map :versions (mapv scenario-out (scenario/versions node (:ref path))))))}}]
+   ["/scenarios/{ref}/evaluation"
+    {:get {:summary (str "What a scenario adds to a book over a period, account by account, and what each layer of "
+                         "it (its bases' first) adds. GET /trial-balance?scenario= shows the book with it.")
+           :parameters {:path [:map [:ref [:string {:min 1}]]]
+                        :query [:map [:book [:string {:min 1}]] [:from {:optional true} (schema/schema :ownpurse/date)]
+                                [:to {:optional true} (schema/schema :ownpurse/date)]]}
+           :responses {200 {:body [:map [:evaluation Evaluation]]} 400 {:body ApiError} 404 {:body ApiError}}
+           :handler (fn [{{:keys [path query]} :parameters}]
+                      (answer #(hash-map :evaluation
+                                         (evaluation-out (scenario/evaluate node (:ref path) (:book query) query)))))}}]
    ["/close/items"
     {:get {:summary (str "The close register's items: the questions a close must decide, each with its workflow "
                          "status, evidence and the journals it proposes. `book` finds an item by its book or any of "

@@ -185,8 +185,59 @@
           (is (= "ownpurse/not-found" (get-in body [:error :type])))))
       (testing "an opening that is neither is refused"
         (is (= 400 (:status (request app :get (str "/trial-balance?org=" tenant "&date=2026-03-31&opening=x"))))))
+      (testing "a scenario it does not hold is not found; scenario and pro-forma together are refused"
+        (is (= 404 (:status (request app :get (str "/trial-balance?org=" tenant "&date=2026-03-31&scenario=nowhere")))))
+        (is (= 400 (:status (request app :get (str "/trial-balance?org=" tenant
+                                                   "&date=2026-03-31&scenario=approved&pro-forma=approved"))))))
       (testing "the route is in the OpenAPI document"
         (is (contains? (:paths (:body (request app :get "/openapi.json"))) (keyword "/trial-balance"))))
+      (finally (store/stop node)))))
+
+(deftest scenarios-test
+  (let [node (store/start {:mode :in-memory})
+        app (handler/handler {:node node})
+        book "book:test:tallowmere"
+        journal {:ref "J1" :book book :date "2025-12-31" :narration "A third of the rent is the studio's"
+                 :postings [{:account "6210" :amount "400.00" :commodity "USD"}
+                            {:account "6200" :amount "-400.00" :commodity "USD"}]}
+        body {:name "Rent split three ways" :base "proposed"
+              :layers [{:id "rent" :kind "journals" :journals [journal]}]}]
+    (try
+      (testing "the built-in scenarios are listed, with the kinds of layer"
+        (let [{:keys [scenarios kinds]} (:body (request app :get "/scenarios"))]
+          (is (= ["approved" "proposed"] (map :ref scenarios)))
+          (is (= #{:journals :close} (set (keys kinds))))))
+      (testing "a scenario is put with its layers, amounts as decimal strings"
+        (let [{:keys [status body]} (request app :put "/scenarios/rent-split" body)]
+          (is (= 200 status))
+          (is (= ["400.00" "-400.00"] (map :amount (get-in body [:scenario :layers 0 :journals 0 :postings]))))
+          (is (true? (get-in body [:scenario :layers 0 :enabled])))))
+      (testing "a journal that does not balance, or a built-in scenario, is refused"
+        (is (= 400 (:status (request app :put "/scenarios/bad"
+                                     (assoc-in body [:layers 0 :journals 0 :postings 0 :amount] "400.01")))))
+        (is (= 409 (:status (request app :put "/scenarios/approved" body)))))
+      (testing "its evaluation says what each layer adds"
+        (let [{:keys [stack layers balances]}
+              (:evaluation (:body (request app :get (str "/scenarios/rent-split/evaluation?book=" book "&to=2025-12-31"))))]
+          (is (= ["proposed" "rent-split"] stack))
+          (is (= [["proposed" "close"] ["rent-split" "rent"]] (map (juxt :scenario :layer) layers)))
+          (is (= {:6210 "400.00" :6200 "-400.00"} balances))))
+      (testing "a duplicate changes apart; a layer turned off counts nowhere"
+        (is (= "rent-split" (get-in (request app :post "/scenarios/rent-split/duplicate" {:ref "try"})
+                                    [:body :scenario :duplicated-from])))
+        (is (= 200 (:status (request app :put "/scenarios/try/layers/rent"
+                                     {:kind "journals" :enabled false :journals [journal]}))))
+        (is (= {} (get-in (request app :get (str "/scenarios/try/evaluation?book=" book)) [:body :evaluation :balances])))
+        (is (= {:6210 "400.00" :6200 "-400.00"}
+               (get-in (request app :get (str "/scenarios/rent-split/evaluation?book=" book)) [:body :evaluation :balances]))))
+      (testing "every version is kept; a dropped scenario is gone, its versions stay"
+        (is (= [1 2] (map :version (get-in (request app :get "/scenarios/try/versions") [:body :versions]))))
+        (is (= {:ref "try" :dropped true} (:body (request app :delete "/scenarios/try"))))
+        (is (= 404 (:status (request app :get "/scenarios/try"))))
+        (is (= 2 (count (get-in (request app :get "/scenarios/try/versions") [:body :versions])))))
+      (testing "the routes are in the OpenAPI document"
+        (is (every? (set (keys (:paths (:body (request app :get "/openapi.json")))))
+                    (map keyword ["/scenarios" "/scenarios/{ref}" "/scenarios/{ref}/evaluation"]))))
       (finally (store/stop node)))))
 
 (deftest close-test

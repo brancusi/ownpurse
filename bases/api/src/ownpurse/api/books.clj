@@ -2,9 +2,9 @@
   "What the reports of a Xero org's book are made from, gathered from the bricks: its trial balance check with the
   close's adjustments, its chart, parties, links and payees. The API's export and the notebooks both start here."
   (:require
-   [ownpurse.close.interface :as close]
    [ownpurse.entity.interface :as entity]
    [ownpurse.payees.interface :as payees]
+   [ownpurse.scenario.interface :as scenario]
    [ownpurse.xero.interface :as xero]))
 
 (defn xero-payees
@@ -28,13 +28,17 @@
 
 (defn xero-book
   "The opts of ownpurse.export.interface/reports (all but :dir) for Xero org `org`'s book, for the financial year
-  ending `date`. `pro-forma` is \"approved\" (the default) or \"proposed\"; `opening` is \"balance-sheet\" (the
+  ending `date`, read through scenario `scenario` (or `pro-forma`, the same thing: \"approved\", the default, or
+  \"proposed\"); `opening` is \"balance-sheet\" (the
   default) or \"ledger\"."
-  [node {:keys [org date pro-forma opening]}]
+  [node {:keys [org date pro-forma scenario opening]}]
   (let [book (xero/book-id org)
-        basis (or pro-forma "approved")
+        basis (or scenario pro-forma "approved")
+        _ (when-not (scenario/scenario node basis)
+            (throw (ex-info (str "There is no scenario " basis ". GET /scenarios lists them.")
+                            {:type :ownpurse/not-found :scenario basis})))
         tb (xero/check-trial-balance node org date {:opening (keyword (or opening "balance-sheet"))
-                                                    :adjustments #(close/balances node book (assoc % :basis (keyword basis)))})]
+                                                    :adjustments #(scenario/balances node basis book %)})]
     {:name (or (some #(when (= org (:org %)) (:name %)) (xero-orgs node)) org)
      :book book :from (:year-start tb) :to date :basis basis
      :trial-balance tb :accounts (xero/chart node org) :parties (xero/parties node org)

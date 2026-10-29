@@ -61,9 +61,10 @@
                     ["Record transaction" (str tx-id)]
                     ["Record transaction time" tx-time]
                     ["Generated" (str (Instant/now))]
-                    ["Adjustments counted" (str "the journals of close items " (if (= "proposed" basis)
-                                                                                 "not set aside (a draft)"
-                                                                                 "approved as they stand"))]
+                    ["Adjustments counted" (case basis
+                                             "proposed" "the journals of close items not set aside (a draft)"
+                                             (nil "approved") "the journals of close items approved as they stand"
+                                             (str "the layers of scenario " basis " (a draft)"))]
                     ["Amounts" "Exact decimals, debits positive and credits negative"]]
                    (for [{:keys [source org at]} freshness]
                      [(str "Last " (if (= "statement-files" source) "import" "fetch") ": " source
