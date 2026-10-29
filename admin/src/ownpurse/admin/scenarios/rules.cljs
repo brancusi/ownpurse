@@ -119,57 +119,68 @@
              (if busy "Saving…" (str "Save rule into " layer)))
           ($ ui/button {:on-click on-done} "Cancel")))))
 
-(defui rule-row [{:keys [s composed rule categories]}]
+(defn- where-text
+  "A layer as a rule's provenance says it: \"here, layer changes\" for this scenario's own, else the scenario and layer."
+  [s {:keys [scenario layer]}]
+  (if (= scenario (:ref s)) (str "here, layer " layer) (str scenario ", layer " layer)))
+
+(defui where
+  "Where a rule comes from, on two lines: the scenario (this one, or a link to the one under it), then its layer."
+  [{:keys [s at]}]
+  (let [{:keys [scenario layer]} at]
+    ($ :div {}
+       (if (= scenario (:ref s))
+         ($ :span {:class "text-ink-2"} "here")
+         ($ :a {:class "font-mono text-lapis hover:underline" :href (str "#/scenarios/" scenario "?tab=rules")} scenario))
+       ($ :div {:class "font-mono text-2xs"} "layer " layer))))
+
+(defui rule-row
+  "One rule in its place: a switch (on, or off and greyed), its id, the bucket it codes to, what it says and when it
+  holds, and where it comes from. Off or on is written into this scenario's own coding layer."
+  [{:keys [s composed entry categories labels]}]
   (let [[editing set-editing!] (uix/use-state false)
-        [off-asking set-off-asking!] (uix/use-state false)
-        [layer set-layer!] (uix/use-state (default-layer s))
         {:keys [send! busy error]} (api/use-send)
-        {:keys [id code over check]} rule]
+        {:keys [id on from off-in changed-in] rule :rule} entry
+        {:keys [code over check]} rule
+        layer (default-layer s)
+        own-off (and off-in (= (:scenario off-in) (:ref s)))
+        toggle! (fn [turn-on]
+                  (cond
+                    (not turn-on) (write-rule! send! s layer {:id id :code (n code) :enabled false} nil)
+                    ;; Turned off here: taking the entry out lets the rule under it stand again.
+                    own-off (let [l (some #(when (= (:layer off-in) (:id %)) %) (:layers s))]
+                              (send! "PUT" (path (:ref s) "layers" (:id l))
+                                     (update-in (layer-body l) [:coding :rules]
+                                                (partial filterv (fn [x] (not= id (:id x)))))))
+                    ;; Turned off in a scenario under it: this one says the rule again, on.
+                    :else (write-rule! send! s layer (dissoc rule :enabled) nil)))
+        dim (when-not on "text-ink-3")]
     ($ :<>
-       ($ :tr {:class "hover:bg-surface-1"}
-          ($ ui/td {} ($ ui/mono {:class "font-medium"} id))
-          ($ ui/td {} ($ ui/mono {} (n code)) (when check ($ :div {:class "text-2xs text-gilt-text"} "a check")))
+       ($ :tr {:class (cx "align-top" (if on "hover:bg-surface-1" "bg-surface-1/60"))}
+          ($ ui/td {:class "whitespace-nowrap"}
+             ($ ui/switch {:on on :label (if on "on" "off") :disabled (or busy (:built-in s)) :on-change toggle!}))
+          ($ ui/td {} ($ ui/mono {:class (cx "font-medium" dim)} id))
           ($ ui/td {}
-             ($ :div {} (:rule rule))
+             ($ :div {:class (cx "text-sm" (if on "text-ink-1" "text-ink-3"))} (get labels (n code) (n code)))
+             ($ ui/mono {:class "text-2xs text-ink-3"} (n code))
+             (when check ($ :div {:class "text-2xs text-gilt-text"} "a check: a person looks")))
+          ($ ui/td {}
+             ($ :div {:class (if on "text-ink-1" "text-ink-3 line-through decoration-ink-3/60")} (:rule rule))
              ($ :ul {:class "mt-0.5 text-xs text-ink-3"}
                 (for [[i b] (map-indexed vector (:when rule))] ($ :li {:key i} "· " (block-text b categories))))
              (when (seq over) ($ :div {:class "text-xs text-ink-3"} "wins over " (str/join ", " over))))
-          ($ ui/td {:class "whitespace-nowrap"}
+          ($ ui/td {:class "min-w-[11rem] text-xs text-ink-3"}
+             (when from ($ where {:s s :at from}))
+             (when (seq changed-in) ($ :div {} "changed in " (str/join "; " (map #(where-text s %) changed-in))))
+             (when off-in ($ :div {:class "text-ink-2"} "turned off " (if own-off (str "here, layer " (:layer off-in))
+                                                                          (str "in " (where-text s off-in))))))
+          ($ ui/td {:class "whitespace-nowrap text-right"}
              (when-not (:built-in s)
-               ($ :div {:class "flex flex-col items-end gap-1"}
-                  ($ ui/button {:on-click #(set-editing! (not editing))} (if editing "Close" "Change"))
-                  (if off-asking
-                    ($ :div {:class "flex flex-col items-end gap-1"}
-                       ($ layer-picker {:s s :value layer :on-change set-layer!})
-                       ($ :div {:class "flex gap-1"}
-                          ($ ui/button {:tone :danger :disabled busy
-                                        :on-click #(write-rule! send! s layer {:id id :code (n code) :enabled false} nil)}
-                             "Turn it off")
-                          ($ ui/button {:on-click #(set-off-asking! false)} "Keep")))
-                    ($ ui/button {:on-click #(set-off-asking! true)} "Turn off"))))))
-       (when error ($ :tr {} ($ ui/td {:col-span 4} ($ ui/notice {:tone :bad} error))))
+               ($ ui/button {:on-click #(set-editing! (not editing))} (if editing "Close" "Change")))))
+       (when error ($ :tr {} ($ ui/td {:col-span 6} ($ ui/notice {:tone :bad} error))))
        (when editing
-         ($ :tr {} ($ ui/td {:col-span 4}
+         ($ :tr {} ($ ui/td {:col-span 6}
                       ($ rule-editor {:s s :composed composed :rule rule :on-done #(set-editing! false)})))))))
-
-(defui turned-off
-  "The rules this scenario's own coding layers turn off, each to turn on again (its entry taken out of the layer)."
-  [{:keys [s]}]
-  (let [{:keys [send! busy error]} (api/use-send)
-        off (for [l (own-coding-layers s) r (get-in l [:coding :rules]) :when (false? (:enabled r))] [l r])]
-    (when (seq off)
-      ($ :div
-         ($ ui/section-title {} (str (ui/count-of off "rule") " turned off here"))
-         (for [[l r] off]
-           ($ :div {:key (str (:id l) "/" (:id r)) :class "flex items-center gap-3 py-1 text-sm"}
-              ($ ui/mono {:class "font-medium"} (:id r)) ($ ui/muted {} "turned off in layer " (:id l))
-              (when-not (:built-in s)
-                ($ ui/button {:disabled busy
-                              :on-click #(send! "PUT" (path (:ref s) "layers" (:id l))
-                                                (update-in (layer-body l) [:coding :rules]
-                                                           (partial filterv (fn [x] (not= (:id r) (:id x))))))}
-                   "Turn on"))))
-         (when error ($ ui/notice {:tone :bad} error))))))
 
 (defui levers
   "The threshold a coding needs to stand without a person, and the strategy whose coding stands."
@@ -196,51 +207,81 @@
        (when bad-t ($ ui/notice {:tone :bad} "A threshold is how sure a coding must be, from 0 to 1, such as 0.85."))
        (when error ($ ui/notice {:tone :bad} error)))))
 
+(defn- strategy-about [k] (some (fn [[s _ about]] (when (= (n s) (n k)) about)) sandbox.run/strategies))
+
 (defui tab [{:keys [s]}]
   (let [state (api/use-get (path (:ref s) "composed"))
         composed (get-in state [:data :composed])
+        ledger (get-in state [:data :rules])
         [adding set-adding!] (uix/use-state false)
-        {:keys [codes rules trips projects categories entities cards selects]} composed
-        categories (update-keys (or categories {}) n)]
+        account-names (into {} (map (juxt :id :name)) (get-in (api/use-get "/source-accounts") [:data :source-accounts]))
+        {:keys [codes buckets trips projects categories entities cards selects threshold strategy]} composed
+        categories (update-keys (or categories {}) n)
+        labels (into {} (for [{:keys [codes]} buckets [c l] codes] [(n c) l]))
+        on (count (filter :on ledger))
+        off (- (count ledger) on)]
     ($ ui/loading {:state state}
        (when composed
          ($ :div
-            ($ ui/say {} "What the scenario's layers that are on come to, its bases' first. A change here is written "
-               "into one of its own coding layers: the rule of the same id under it is replaced, not changed.")
-            ($ ui/section-title {} "Threshold and strategy")
-            ($ levers {:s s :composed composed :key (str (:threshold composed) (:strategy composed))})
+            ($ ui/section-title {:aside "Which strategy's pick stands, and how sure it must be"} "How it decides")
+            ($ :p {:class "mb-2 max-w-4xl text-sm text-ink-2"}
+               (strategy-about strategy) " A coding stands on its own when it is " (ui/pct threshold)
+               " sure or more; under that, or when a check rule holds, a person looks.")
+            ($ levers {:s s :composed composed :key (str threshold strategy)})
+
+            ($ ui/section-title {:aside "What a line can be coded to; Jev reads each one's description"}
+               (ui/count-of codes "bucket"))
+            ($ :div {:class "grid gap-3 md:grid-cols-2 xl:grid-cols-3"}
+               (for [{:keys [title] bcodes :codes}
+                     (let [grouped (set (for [{:keys [codes]} buckets [c] codes] (n c)))
+                           loose (for [[c _] codes :when (not (grouped (n c)))] [c (n c)])]
+                       (cond-> (vec buckets)
+                         (seq loose) (conj {:title (if (seq buckets) "In no group (shown by its code)" "Buckets") :codes loose})))]
+                 ($ :div {:key (or title "buckets") :class "border border-line-1 p-3"}
+                    (when title ($ ui/eyebrow {:class "mb-1"} title))
+                    (for [[c l] bcodes]
+                      ($ :div {:key (n c) :class "py-1"}
+                         ($ :div {:class "text-sm font-medium"} l " " ($ ui/mono {:class "text-2xs font-normal text-ink-3"} (n c)))
+                         ($ :div {:class "text-xs text-ink-2"} (get codes c (get codes (keyword (n c))))))))))
+
             ($ ui/section-title {:aside (when-not (:built-in s)
                                           ($ ui/button {:on-click #(set-adding! (not adding))} (if adding "Cancel" "Add a rule")))}
-               (str (ui/count-of rules "rule") " that stand"))
+               (str (ui/count-of ledger "rule") ": " on " on" (when (pos? off) (str ", " off " off"))))
+            ($ :p {:class "mb-2 max-w-4xl text-sm text-ink-2"}
+               "In the order they stand. A rule holds when every one of its blocks does; where two hold, the one that "
+               "wins over the other decides. A rule turned off stays in its place, greyed. Turning one off or on, or "
+               "changing it, is written into this scenario's own coding layer, "
+               ($ ui/mono {} (default-layer s)) ", so the scenario it stands on is not changed.")
             (when adding
               ($ ui/panel {:class "mb-3"} ($ rule-editor {:s s :composed composed :rule nil :on-done #(set-adding! false)})))
-            ($ ui/table {:head ["Rule" "Codes to" "Says, and when" ""]}
-               (for [r rules] ($ rule-row {:key (:id r) :s s :composed composed :rule r :categories categories})))
-            ($ turned-off {:s s})
-            ($ ui/section-title {} (ui/count-of codes "bucket"))
-            ($ :dl {:class "grid gap-x-4 gap-y-1 text-sm md:grid-cols-[12rem_1fr]"}
-               (for [[c about] (sort-by (comp n key) codes)]
-                 ($ :<> {:key (n c)} ($ :dt {} ($ ui/mono {} (n c))) ($ :dd {:class "text-ink-2"} about))))
-            ($ ui/section-title {} "Projects")
-            ($ ui/table {:head ["Project" "Name" "From" "To" "Place" "Borne by" "Travellers"]}
-               (for [[id {nm :name :keys [from to place bears travellers]}] (sort-by (comp n key) projects)]
+            ($ ui/table {:head ["" "Rule" "Codes to" "Says, and when it holds" "From" ""]}
+               (for [e ledger]
+                 ($ rule-row {:key (:id e) :s s :composed composed :entry e :categories categories :labels labels})))
+
+            ($ ui/section-title {:aside "What the classifier knows about where and when a line happened"} "The world")
+            ($ ui/eyebrow {:class "mt-2 mb-1"} "Projects")
+            ($ ui/table {:head ["Project" "Name" "From" "To" "Place" "Borne by" "Travellers" "Per diem"]}
+               (for [[id {nm :name :keys [from to place bears travellers per-diem]}] (sort-by (comp n key) projects)]
                  ($ :tr {:key (n id)}
                     ($ ui/td {} ($ ui/mono {} (n id))) ($ ui/td {} nm) ($ ui/td {} ($ ui/mono {} from))
                     ($ ui/td {} ($ ui/mono {} to)) ($ ui/td {} place) ($ ui/td {} ($ ui/mono {} bears))
-                    ($ ui/td {} (str/join ", " travellers)))))
-            ($ ui/section-title {:aside "trips of every world layer, gathered"} "Trips")
+                    ($ ui/td {} (str/join ", " travellers))
+                    ($ ui/td {} (case per-diem true "pays one" false "none" ($ ui/muted {} "not said"))))))
+            ($ ui/eyebrow {:class "mt-4 mb-1"} "Trips, from every world layer")
             ($ ui/table {:head ["Who" "Where" "From" "To" "For"]}
                (for [[i {:keys [person place city from to project]}] (map-indexed vector (sort-by :from trips))]
                  ($ :tr {:key i}
                     ($ ui/td {} person) ($ ui/td {} (str/join ", " (remove nil? [city place])))
                     ($ ui/td {} ($ ui/mono {} from)) ($ ui/td {} ($ ui/mono {} to)) ($ ui/td {} ($ ui/mono {} project)))))
-            ($ ui/section-title {} "Who, and which cards")
+            ($ ui/eyebrow {:class "mt-4 mb-1"} "Who, and which cards")
             ($ :div {:class "grid gap-1 text-sm"}
                (for [[id {nm :name kind :kind}] entities] ($ :div {:key (n id)} ($ ui/mono {} (n id)) " " nm " " ($ ui/muted {} kind)))
                (for [[id {nm :name :keys [holder]}] cards]
-                 ($ :div {:key (n id) :class (cx "text-xs")} nm ", held by " holder " " ($ ui/mono {:class "text-ink-3"} (n id)))))
-            ($ ui/section-title {} "Lines it reads")
+                 ($ :div {:key (n id) :class "text-xs"} nm ", held by " holder " " ($ ui/mono {:class "text-ink-3"} (n id)))))
+
+            ($ ui/section-title {:aside "Its own lines; the Sandbox runs it over any others"} "Lines it reads by default")
             (if (seq selects)
               (for [[i {:keys [accounts from to]}] (map-indexed vector selects)]
-                ($ :div {:key i :class "text-sm"} (str/join ", " accounts) ", " (or from "…") " → " (or to "…")))
-              ($ ui/notice {} "No lines layer: it codes nothing yet.")))))))
+                ($ :div {:key i :class "text-sm"} (str/join ", " (map #(get account-names % %) accounts)) ", "
+                   (or from "the first") " to " (or to "the last")))
+              ($ ui/notice {} "No lines layer: it reads no lines of its own. Run it over any set in the Sandbox.")))))))

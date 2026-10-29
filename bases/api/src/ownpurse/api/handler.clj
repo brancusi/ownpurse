@@ -736,7 +736,8 @@
              :parameters {:path Ref}
              :responses {200 {:body :any} 404 {:body ApiError}}
              :handler (fn [{{:keys [path]} :parameters}]
-                        (answer #(hash-map :composed (scenario/composed node (:ref path)))))}}]
+                        (answer #(hash-map :composed (scenario/composed node (:ref path))
+                                           :rules (scenario/rule-ledger node (:ref path)))))}}]
      ["/scenarios/{ref}/codings"
       {:get {:summary (str "A scenario's coding of each unit, as its last run left it: the bucket that stands, the "
                            "one proposed, how sure, and whether it stands without a person.")

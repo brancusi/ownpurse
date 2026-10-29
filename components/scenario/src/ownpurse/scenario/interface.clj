@@ -92,6 +92,12 @@
   [node ref]
   (merge {:threshold run/default-threshold :strategy run/default-strategy} (core/composed node ref)))
 
+(defn rule-ledger
+  "Every rule scenario `ref`'s coding layers name, in the order they stand, those turned off in their place: where
+  each is defined, where it was turned off, and which layers changed it."
+  [node ref]
+  (core/rule-ledger node ref))
+
 (defn plan
   "What coding scenario `ref` would take, before asking anything: {:lines :units :at-most-requests}. Over its own
   lines, or over set `over` (as set-over gives it)."

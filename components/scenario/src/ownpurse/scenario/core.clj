@@ -29,10 +29,10 @@
   "The kinds of layer a scenario holds, each with what it says."
   {"journals" "Journals of the scenario's own, in any book: each must balance in every commodity."
    "close" "The close register's journals not yet posted: those of approved items (basis approved) or of every item not set aside (basis proposed)."
-   "world" "Who and where, for coding bank lines: entities, cards and accounts with their holders, projects with their dates, trips, merchant categories."
-   "coding" "Buckets and rules for coding bank lines: each rule a sentence and its building blocks. A rule replaces the rule of its id under it; enabled false takes it out."
-   "lines" "Which bank lines the coding reads: a selection from the record (accounts, from, to), or lines given as they are."
-   "key" "Lines a person has coded: the answer key the scenario's codings are scored against (right, wrong, or sent to a person needlessly). Never sent to Jev. A line keyed here replaces its key under it."})
+   "world" "Who and where: the people and entities, whose cards and accounts, which projects ran when, who travelled where, and merchant categories' names."
+   "coding" "Buckets, and the rules that sort lines into them, each a sentence and its building blocks; how sure a coding must be, and which strategy decides. A rule here replaces the rule of the same id under it; a rule turned off here stops applying."
+   "lines" "Which bank lines it reads by default: a selection from the books (accounts, from, to), or lines given as they are."
+   "key" "Lines a person has coded, to score its codings against: right, wrong, or sent to a person needlessly. Never sent to Jev. A line keyed here replaces its key under it."})
 
 (def built-in
   "Scenarios ownpurse gives every record, which cannot be changed or dropped: the close register as approved, and as
@@ -245,6 +245,30 @@
 (defn composed [node ref]
   (-> (coding/compose (stack-layers node ref))
       (assoc :scenario ref)))
+
+(defn rule-ledger
+  "Every rule scenario `ref`'s coding layers that are on name, its bases' first, in the order the rules stand, those
+  turned off kept in their place: {:id :rule (its standing definition, or the last one before it was turned off)
+  :on :from {:scenario :layer} (where that definition is) :off-in {:scenario :layer} (where it was turned off)
+  :changed-in [{:scenario :layer}] (each later layer that redefined it)}."
+  [node ref]
+  (let [entries (for [r (concat (reverse (bases-of node ref)) [ref])
+                      l (:layers (scenario node r))
+                      :when (and (:enabled l) (= "coding" (:kind l)))
+                      x (get-in l [:coding :rules])]
+                  [{:scenario r :layer (:id l)} x])
+        step (fn [[order by-id] [where x]]
+               (let [id (:id x)
+                     had (by-id id)
+                     e (cond
+                         (false? (:enabled x)) (-> (or had {:id id :rule (dissoc x :enabled)})
+                                                   (assoc :on false :off-in where))
+                         had (-> had (assoc :rule x :on true :from where) (dissoc :off-in)
+                                 (update :changed-in (fnil conj []) where))
+                         :else {:id id :rule x :on true :from where})]
+                 [(if had order (conj order id)) (assoc by-id id e)]))
+        [order by-id] (reduce step [[] {}] entries)]
+    (mapv by-id order)))
 
 (defn classifier-scenario [node ref]
   (let [{:keys [selects] :as s} (coding/compose (stack-layers node ref))

@@ -171,7 +171,7 @@
           ($ ui/button {:tone :primary :type "submit" :disabled (or busy parse-error)} (if busy "Saving…" "Save layer"))
           ($ ui/button {:on-click on-done} "Cancel")))))
 
-(defui layer-card [{:keys [ref s layer index readonly]}]
+(defui layer-card [{:keys [ref s layer index readonly kinds]}]
   (let [[editing set-editing!] (uix/use-state false)
         [asking set-asking!] (uix/use-state false)
         {:keys [send! busy error]} (api/use-send)
@@ -181,7 +181,7 @@
                       moved (-> (vec (concat (subvec ls 0 index) (subvec ls (inc index))))
                                 (as-> v (vec (concat (subvec v 0 to) [layer] (subvec v to)))))]
                   (send! "PUT" (path ref) (scenario-body (assoc s :layers moved)))))]
-    ($ :div {:class (cx "border-l-2 px-3 py-2" (if enabled "border-ink-2" "border-line-1 opacity-70"))}
+    ($ :div {:class (cx "border-l-2 px-3 py-2" (if enabled "border-ink-2" "border-line-1 bg-surface-1/60 text-ink-3"))}
        ($ :div {:class "flex flex-wrap items-center gap-3"}
           ($ ui/mono {:class "font-medium text-ink-1"} id)
           ($ :span {:class "rounded-1 bg-surface-2 px-1.5 py-0.5 font-mono text-2xs text-ink-2"} kind)
@@ -200,7 +200,10 @@
                        "Remove it")
                     ($ ui/button {:on-click #(set-asking! false)} "Keep"))
                  ($ ui/button {:tone :danger :on-click #(set-asking! true)} "Remove")))))
-       ($ :div {:class "mt-1 text-xs text-ink-2"} (layer-summary layer))
+       (when-let [about (get kinds kind)] ($ :div {:class "mt-1 text-xs text-ink-3"} about))
+       ($ :div {:class (cx "mt-1 text-xs" (if enabled "text-ink-2" "text-ink-3"))}
+          (when-not enabled ($ :b {:class "font-medium"} "Off: the scenario reads as if it were not there. "))
+          (layer-summary layer))
        (when note ($ :div {:class "text-xs text-ink-3"} note))
        (when error ($ ui/notice {:tone :bad} error))
        (if editing
@@ -244,34 +247,34 @@
 
 (defui inherited
   "The layers of the scenario `ref` stands under, and of those under it, read only, nearest last."
-  [{:keys [ref]}]
+  [{:keys [ref kinds]}]
   (let [state (api/use-get (path ref))
         s (get-in state [:data :scenario])]
     ($ ui/loading {:state state}
        (when s
          ($ :<>
-            (when (:base s) ($ inherited {:ref (:base s)}))
+            (when (:base s) ($ inherited {:ref (:base s) :kinds kinds}))
             ($ :div {:class "mt-2"}
                ($ ui/eyebrow {} "From " ($ :a {:href (route/href ["scenarios" ref]) :class "text-lapis"} ref)
                   " (change them there)")
                (for [[i l] (map-indexed vector (:layers s))]
-                 ($ layer-card {:key (:id l) :ref ref :s s :layer l :index i :readonly true}))))))))
+                 ($ layer-card {:key (:id l) :ref ref :s s :layer l :index i :readonly true :kinds kinds}))))))))
 
-(defui layers-tab [{:keys [s]}]
+(defui layers-tab [{:keys [s kinds]}]
   (let [[adding set-adding!] (uix/use-state false)
         readonly (:built-in s)]
     ($ :div
        (when (:base s)
          ($ :<>
             ($ ui/section-title {:aside "applied first, in this order"} "Under it")
-            ($ inherited {:ref (:base s)})))
+            ($ inherited {:ref (:base s) :kinds kinds})))
        ($ ui/section-title {:aside (when-not readonly
                                      ($ ui/button {:on-click #(set-adding! (not adding))} (if adding "Cancel" "Add a layer")))}
           "Its own layers, applied in this order")
        (if (empty? (:layers s))
          ($ ui/notice {} "No layers of its own yet.")
          (for [[i l] (map-indexed vector (:layers s))]
-           ($ layer-card {:key (:id l) :ref (:ref s) :s s :layer l :index i :readonly readonly})))
+           ($ layer-card {:key (:id l) :ref (:ref s) :s s :layer l :index i :readonly readonly :kinds kinds})))
        (when adding ($ ui/panel {:class "mt-3"} ($ add-layer {:ref (:ref s) :s s :on-done #(set-adding! false)}))))))
 
 ;; ----------------------------------------------------------------------------------------------- versions
@@ -292,8 +295,6 @@
         versions (reverse (get-in state [:data :versions]))
         latest (:version (first versions))]
     ($ :div
-       ($ ui/say {} "Every change to a scenario is kept as a version. Restoring one keeps it as the newest version: "
-          "the versions after it stay, so a restore can be undone the same way.")
        (when error ($ ui/notice {:tone :bad} error))
        ($ ui/loading {:state state}
           ($ ui/table {:class "mt-3" :head ["Version" "Kept at" "Name" "Stands on" "Layers" ""]}
@@ -327,8 +328,7 @@
                                   (when (seq (:to query)) (str "&to=" (:to query))))))
         {:keys [layers balances]} (get-in state [:data :evaluation])]
     ($ :div
-       ($ ui/say {} "What the scenario's journals and close layers add to one book, account by account (debits "
-          "positive), and what each layer adds. Coding layers propose codes for bank lines; they add to no book yet.")
+       ($ ui/say {} "Amounts are debits positive.")
        ($ :form {:class "mt-3 flex flex-wrap items-end gap-3"
                  :on-submit (fn [e] (.preventDefault e)
                               (route/go! ["scenarios" (:ref s)] {:tab "books" :book book :from (not-empty from) :to (not-empty to)}))}
@@ -355,6 +355,55 @@
 
 ;; ----------------------------------------------------------------------------------------------- the page
 
+(def help
+  "Each tab in plain words: what it is, and how to use it."
+  {"layers"
+   {:what (str "How the scenario is built. A scenario is a stack of layers, each saying one kind of thing: the world "
+               "(who travelled where, which projects ran, whose cards), coding (buckets and the rules that sort lines "
+               "into them), the lines it reads, a key (lines a person coded, to score against), journals, or the close "
+               "register. It applies the layers of the scenario it stands on first, then its own, top to bottom.")
+    :how ["Switch a layer off to see the scenario without it. It stays in its place, greyed, and switches back on."
+          "Move a layer up or down: where two layers say the same thing, the later one wins."
+          "Edit a layer, or add one. The layers of the scenario it stands on are shown above, read only: change them there."]}
+   "rules"
+   {:what (str "What the layers come to, all in one place: how it decides (the strategy and the threshold), the buckets "
+               "a line can be coded to, every rule in the order it is tried, and the world the lines happened in.")
+    :how ["Switch a rule off or on, change one, or add one. The change goes into this scenario's own coding layer, so "
+          "the scenario it stands on stays as it was."
+          "Each rule says where it comes from: a layer of this scenario (here), or of the one it stands on."
+          "Change the threshold or the strategy to trade how many lines code themselves against how many a person sees."]}
+   "coding"
+   {:what (str "This scenario run over its own lines: the bucket each line stands in, how sure Jev was, and which lines "
+               "go to a person. Nothing posts anywhere; codings only propose.")
+    :how ["See what a run would ask of Jev and cost, then run it. Answers are kept, so a run after a change asks only "
+          "what the change touched."
+          "Open a line to see what the classifier knew about it and how each strategy decided."
+          "To run it over other lines (another month, one line, a sample), use the Sandbox."]}
+   "compare"
+   {:what "Where this scenario and another code the same line differently, side by side."
+    :how ["Pick the other scenario, usually the one it stands on: you see exactly what this one's changes changed."
+          "Both need a run over the same lines first."]}
+   "books"
+   {:what (str "What the scenario's journals and close layers would add to one entity's books, account by account. "
+               "Coding layers only propose codes for bank lines; they add nothing to a book yet.")
+    :how ["Pick a book and, if you like, a period; see the totals it adds and which layer adds what."]}
+   "versions"
+   {:what "Every saved change to the scenario, newest first: its name, what it stood on, and its layers then."
+    :how ["Restore an earlier version: it becomes the newest, and the ones after it stay, so a restore can be undone."]}})
+
+(defui explain
+  "A tab's explanation: what it is, and how to use it."
+  [{:keys [tab]}]
+  (when-let [{:keys [what how]} (help tab)]
+    ($ :div {:class "mb-4 grid max-w-5xl gap-x-8 gap-y-2 border-l-2 border-line-2 bg-surface-1 px-4 py-3 md:grid-cols-[1.1fr_1fr]"}
+       ($ :div {}
+          ($ ui/eyebrow {:class "mb-1"} "What this is")
+          ($ :p {:class "text-sm text-ink-2"} what))
+       ($ :div {}
+          ($ ui/eyebrow {:class "mb-1"} "How to use it")
+          ($ :ul {:class "list-disc space-y-0.5 pl-4 text-sm text-ink-2"}
+             (for [h how] ($ :li {:key h} h)))))))
+
 (def tab-items
   [["layers" "Layers"] ["rules" "Rules and world"] ["coding" "Coding"] ["compare" "Compare"] ["books" "Books"]
    ["versions" "Versions"]])
@@ -369,11 +418,16 @@
        (when s
          ($ :div
             ($ header {:s s :scenarios scenarios})
+            ($ :p {:class "mt-3 max-w-4xl text-sm text-ink-3"}
+               "A scenario is one way of reading the books, kept apart from them: what happened (the world), how to code "
+               "bank lines (buckets and rules), which lines, and journals it would add. It can stand on another and say "
+               "only what differs. Nothing in it changes the books or posts anywhere, and every change is kept as a version.")
             ($ ui/tabs {:current tab
                         :items (for [[id label] tab-items] [id label (route/href ["scenarios" ref] {:tab id})])})
             ($ :div {:class "mt-3"}
+               ($ explain {:tab tab})
                (case tab
-                 "layers" ($ layers-tab {:s s})
+                 "layers" ($ layers-tab {:s s :kinds (get-in all [:data :kinds])})
                  "rules" ($ rules/tab {:s s})
                  "coding" ($ coding/tab {:s s :query query})
                  "compare" ($ coding/compare-tab {:s s :scenarios scenarios :query query})

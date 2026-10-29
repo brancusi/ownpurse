@@ -311,3 +311,24 @@
                                :card "card-r" :mcc "5411" :expect :per-diem}]}]
             (code! over)
             (is (= :per-diem (get-in (first (:lines (scenario/sandbox-run node "harbour-coding" over))) [:unit :expect])))))))))
+
+(deftest rule-ledger-test
+  (with-node
+    (fn [node]
+      (scenario/put! node trial)
+      (scenario/put! node {:ref "child" :name "Changes" :base "harbour-coding"
+                           :layers [{:id "changes" :kind "coding"
+                                     :coding {:rules [{:id "R2" :code "travel" :enabled false}
+                                                      {:id "R3" :code "personal" :rule "Groceries at home are mine."
+                                                       :when [["at-home"] ["category" "in" ["5411"]]]}]}}]})
+      (let [ledger (scenario/rule-ledger node "child")]
+        (testing "every rule in its place, those turned off kept there with where they were turned off"
+          (is (= [["R1" true] ["R2" false] ["R3" true]] (map (juxt :id :on) ledger)))
+          (is (= {:scenario "child" :layer "changes"} (:off-in (second ledger))))
+          (is (= "Taxis on a project trip are travel." (get-in (second ledger) [:rule :rule])) "its last definition"))
+        (testing "where each standing definition comes from, and what changed it"
+          (is (= {:scenario "harbour-coding" :layer "coding"} (:from (first ledger))))
+          (is (= {:scenario "child" :layer "changes"} (:from (nth ledger 2))))
+          (is (= [{:scenario "child" :layer "changes"}] (:changed-in (nth ledger 2)))))
+        (testing "the ledger's rules that are on are the composed scenario's"
+          (is (= (map :id (:rules (scenario/composed node "child"))) (map :id (filter :on ledger)))))))))
