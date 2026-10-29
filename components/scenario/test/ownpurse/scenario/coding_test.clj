@@ -194,7 +194,12 @@
           (scenario/put! node {:ref "child-key" :name "Keyed otherwise" :base "harbour-coding" :layers []})
           (testing "the lines a scenario selects are one set, read by it and every scenario standing on it"
             (is (= [{:id "harbour-coding/lines" :kind "books" :lines 4 :scenarios ["harbour-coding" "child-key"]}]
-                   (map #(select-keys % [:id :kind :lines :scenarios]) (scenario/line-sets node)))))
+                   (map #(select-keys % [:id :kind :lines :scenarios]) (scenario/line-sets node))))
+            (let [{:keys [first peek from]} (scenario/line-set node "harbour-coding/lines")]
+              (is (= 4 (count first)))
+              (is (= 3 (count peek)))
+              (is (= from (:date (clojure.core/first first)))))
+            (is (= :ownpurse/not-found (:type (error #(scenario/line-set node "nowhere/lines"))))))
           (scenario/confirm! node "child-key" {:unit "line:test:1" :expect "personal"})
           (is (= [:personal "child-key"] ((juxt :expect :in) (get (scenario/answer-key node "child-key") "line:test:1"))))
           (is (= :per-diem (:expect (get (scenario/answer-key node "harbour-coding") "line:test:1"))) "the base keeps its own")

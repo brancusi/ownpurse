@@ -20,6 +20,11 @@
   [sandbox]
   (core/line-sets sandbox))
 
+(defn line-set
+  "Sample set `id`, with a preview of its lines."
+  [sandbox id]
+  (core/line-set sandbox id))
+
 (defn world
   "Everything about scenario `name` but its lines: people, cards, trips, projects, buckets, categories and rules."
   [sandbox name]

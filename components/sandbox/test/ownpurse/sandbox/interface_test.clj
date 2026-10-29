@@ -22,7 +22,14 @@
     (testing "each scenario's made-up lines are a set of lines to pick, read by its own rules"
       (is (= {:id "sample/harbour" :kind "sample" :lines 51 :units 65 :scenarios ["harbour"]}
              (select-keys (some #(when (= "sample/harbour" (:id %)) %) (sandbox/line-sets sb))
-                          [:id :kind :lines :units :scenarios]))))
+                          [:id :kind :lines :units :scenarios])))
+      (let [{:keys [peek first from to currencies]} (sandbox/line-set sb "sample/harbour")]
+        (is (= 3 (count peek)))
+        (is (= 12 (count first)))
+        (is (= (sort (map :date first)) (map :date first)) "oldest first")
+        (is (= from (:date (clojure.core/first first))))
+        (is (string? to))
+        (is (= 51 (reduce + (vals currencies))))))
     (testing "a scenario's world is everything but its lines"
       (let [w (sandbox/world sb "harbour")]
         (is (nil? (:cases w)))

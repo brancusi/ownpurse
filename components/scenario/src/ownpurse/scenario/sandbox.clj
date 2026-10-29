@@ -45,7 +45,8 @@
              :let [s (core/classifier-scenario node ref)
                    coded (seq (coded-rows node ref))
                    {:keys [at]} (first (run/runs node ref))]]
-         {:name ref :title (:name sc) :record true
+         {:name ref :title (:name sc) :record true :base (:base sc)
+          :buckets (vec (for [{:keys [codes]} (buckets s) [_ label] codes] label))
           :lines (count (:cases s))
           :units (count (mapcat classify/units (:cases s)))
           :rules (count (:rules s))
@@ -154,21 +155,46 @@
            (cond (and from to) (str ", " from " to " to) from (str ", from " from) to (str ", to " to))))
     (str (count cases) " lines given as they are")))
 
-(defn line-sets
-  "The sets of this workspace's own lines the sandbox picks from: one a lines layer of a scenario that codes lines,
-  {:id \"<scenario>/<layer>\" :kind \"books\" :title :note :lines :scenarios}, its :scenarios every scenario that reads
-  it (the one that holds it first). A scenario reads the lines layers of its stack, its bases' included."
-  [node]
+(defn glance
+  "A line as a preview shows it: when, where, how much; and how many items its receipt lists."
+  [{:keys [id date merchant amount currency items]}]
+  (cond-> {:id id :date date :merchant merchant :amount amount :currency currency}
+    (seq items) (assoc :items (count items))))
+
+(defn- sets-with-cases [node]
   (let [names (account-names node)
         coding (filter #(coding-scenario? node %) (map :ref (core/scenarios node)))
         reading (for [ref coding [owner id l] (lines-layers node ref)] [[owner id l] ref])]
-    (vec (for [[[owner id {:keys [lines note]}] refs] (group-by first reading)
-               :let [n (if-let [select (:select lines)]
-                         (count (coding/read-lines node {} select))
-                         (count (:cases lines)))]]
-           (cond-> {:id (str owner "/" id) :kind "books" :title (lines-title names lines) :lines n
-                    :scenarios (vec (distinct (cons owner (sort (map second refs)))))}
-             note (assoc :note note))))))
+    (for [[[owner id {:keys [lines note]}] refs] (group-by first reading)
+          :let [cases (sort-by :date (if-let [select (:select lines)] (coding/read-lines node {} select) (:cases lines)))]]
+      [(cond-> {:id (str owner "/" id) :kind "books" :title (lines-title names lines) :lines (count cases)
+                :units (count (mapcat classify/units cases))
+                :scenarios (vec (distinct (cons owner (sort (map second refs)))))
+                :peek (mapv glance (take 3 cases))}
+         note (assoc :note note))
+       cases])))
+
+(defn line-sets
+  "The sets of this workspace's own lines the sandbox picks from: one a lines layer of a scenario that codes lines,
+  {:id \"<scenario>/<layer>\" :kind \"books\" :title :note :lines :units :scenarios :peek}, its :scenarios every
+  scenario that reads it (the one that holds it first), :peek its first three lines. A scenario reads the lines layers
+  of its stack, its bases' included."
+  [node]
+  (mapv first (sets-with-cases node)))
+
+(defn preview
+  "A set's preview, as `preview` makes one, from its lines oldest first."
+  [s cases]
+  (assoc s
+         :first (mapv glance (take 12 cases))
+         :from (:date (first cases)) :to (:date (last cases))
+         :currencies (into (sorted-map) (frequencies (keep :currency cases)))))
+
+(defn line-set
+  "Set `id` of the books' lines with a preview: its first twelve lines, the days they span, and their currencies."
+  [node id]
+  (or (some (fn [[s cases]] (when (= id (:id s)) (preview s cases))) (sets-with-cases node))
+      (throw (ex-info (str "No set of lines " id ".") {:type :ownpurse/not-found}))))
 
 ;; ----------------------------------------------------------------------------------------------- the trace
 

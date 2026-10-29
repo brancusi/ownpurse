@@ -146,6 +146,11 @@
   [node]
   (sandbox/line-sets node))
 
+(defn line-set
+  "Set `id` of the record's own lines, with a preview of them."
+  [node id]
+  (sandbox/line-set node id))
+
 (defn coding-scenario?
   "Whether scenario `ref` is in the record and codes lines."
   [node ref]

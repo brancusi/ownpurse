@@ -76,11 +76,20 @@
              :let [s (scenario sandbox name)]]
          {:name name
           :title (str (str/capitalize name) "'s own rules")
+          :buckets (if (:buckets s)
+                     (vec (for [{:keys [codes]} (:buckets s) [_ label] codes] label))
+                     (mapv #(str/capitalize (str/replace (clojure.core/name %) "-" " ")) (keys (:codes s))))
           :lines (count (:cases s))
           :units (count (mapcat classify/units (:cases s)))
           :rules (count (:rules s))
           :runs (vec (for [f (reverse (run-files sandbox name))]
                        {:id (run-id f) :at (second (re-find #"-(\d{4}-.+)$" (run-id f)))}))})))
+
+(defn- glance
+  "A line as a preview shows it: when, where, how much; and how many items its receipt lists."
+  [{:keys [id date merchant amount currency items]}]
+  (cond-> {:id id :date date :merchant merchant :amount amount :currency currency}
+    (seq items) (assoc :items (count items))))
 
 (defn line-sets
   "Every scenario's made-up lines as a set of lines to pick: {:id \"sample/<name>\" :kind \"sample\" :title :note
@@ -90,7 +99,20 @@
              :let [{:keys [cases business entities]} (scenario sandbox name)]]
          (cond-> {:id (str "sample/" name) :kind "sample" :title (str/capitalize name)
                   :lines (count cases) :units (count (mapcat classify/units cases)) :scenarios [name]}
-           (get-in entities [business :name]) (assoc :note (str (get-in entities [business :name]) " and its people, invented"))))))
+           (get-in entities [business :name]) (assoc :note (str (get-in entities [business :name]) " and its people, invented"))
+           true (assoc :peek (mapv glance (take 3 (sort-by :date cases))))))))
+
+(defn line-set
+  "Sample set `id` with a preview: its first twelve lines, the days they span, and their currencies."
+  [sandbox id]
+  (let [name (second (re-matches #"sample/(.+)" id))
+        s (some #(when (= id (:id %)) %) (line-sets sandbox))]
+    (when-not s (throw (ex-info (str "No set of lines " id ".") {:type :ownpurse/not-found})))
+    (let [cases (sort-by :date (:cases (scenario sandbox name)))]
+      (assoc s
+             :first (mapv glance (take 12 cases))
+             :from (:date (first cases)) :to (:date (last cases))
+             :currencies (into (sorted-map) (frequencies (keep :currency cases)))))))
 
 (defn world
   "What a scenario's lines happened in: its people, cards, trips and projects, the buckets and their words, the

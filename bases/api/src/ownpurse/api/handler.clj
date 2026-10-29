@@ -2,6 +2,7 @@
   "The HTTP API: routes, schemas and the Ring handler. Thin: it turns requests into interface calls and back."
   (:require
    [clojure.edn :as edn]
+   [clojure.string :as str]
    [clojure.java.io :as io]
    [malli.error :as me]
    [malli.util :as mu]
@@ -530,6 +531,17 @@
              :responses {200 {:body :any}}
              :handler (fn [_] (answer #(hash-map :lines (into (if node (scenario/line-sets node) [])
                                                               (sandbox/line-sets sb)))))}}]
+     ["/sandbox/lines/{*set}"
+      {:get {:summary "One set of lines, with a preview: its first twelve lines, the days they span, their currencies."
+             :parameters {:path [:map [:set [:string {:min 1}]]]}
+             :responses {200 {:body :any} 404 {:body ApiError}}
+             :handler (fn [{{:keys [path]} :parameters}]
+                        (answer #(hash-map :lines (if (str/starts-with? (:set path) "sample/")
+                                                    (sandbox/line-set sb (:set path))
+                                                    (if node
+                                                      (scenario/line-set node (:set path))
+                                                      (throw (ex-info (str "No set of lines " (:set path) ".")
+                                                                      {:type :ownpurse/not-found})))))))}}]
      ["/sandbox/scenarios"
       {:get {:summary (str "Every scenario of bank lines, its size and its runs, newest first: the record's own "
                            "(:record true, real lines with no answer key), then the invented ones.")
