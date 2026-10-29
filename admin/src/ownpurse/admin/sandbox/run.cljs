@@ -290,10 +290,11 @@
                ($ :<>
                   (when stale ($ ui/notice {:tone :bad} stale))
                   (when record
-                    ($ ui/disclosure {:summary (str (:results info) " of " (:units this) " lines coded"
-                                                    (when (< (:results info) (:units this)) ": code the rest")
-                                                    " · run again, with the cost first")}
-                       ($ running/run-panel {:s {:ref scenario}})))
+                    ($ ui/panel {:class "mt-4 px-4 pb-3"}
+                       ($ running/run-bar {:ref scenario})
+                       ($ ui/disclosure {:summary (str (:results info) " of " (:units this) " lines coded"
+                                                       " · a trial of a few lines, and the runs so far")}
+                          ($ running/run-panel {:s {:ref scenario}}))))
                   ($ :div {:class "mt-2 text-xs text-ink-3"}
                      ($ ui/mono {} (:model info)) " · " (:results info) " lines and items"
                      (when-let [{:keys [requests input-tokens]} (:usage info)] (str " · " requests " requests, " input-tokens " tokens in"))

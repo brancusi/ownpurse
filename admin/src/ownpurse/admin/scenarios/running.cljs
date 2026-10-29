@@ -40,22 +40,62 @@
                 (if timed "The time is from this scenario's runs so far. " "The time is a guess until a run has been timed. ")
                 "The price is TypeSafe's published one: the API reports tokens, not prices."))))))
 
-(defui run-panel
-  "The plan, the run going on, and a button to code the lines (all, or at most `limit`)."
-  [{:keys [s]}]
+(defn use-run
+  "A scenario's coding runs, polled while one is going: {:state :plan :running :runs :going :start! :busy :error}.
+  `start!` codes every line, or at most `limit`. When a run ends, everything that reads codings asks again."
+  [ref]
   (let [[polling set-polling!] (uix/use-state false)
-        state (api/use-get (path (:ref s) "coding") {:every (when polling 1500)})
-        [limit set-limit!] (uix/use-state "")
+        state (api/use-get (path ref "coding") {:every (when polling 1500)})
         {:keys [send! busy error]} (api/use-send)
         {:keys [plan running runs]} (:data state)
-        going (and running (not (:failed running)))]
-    ;; Once the run is over, everything that reads its codings asks again.
+        going (boolean (and running (not (:failed running))))]
     (uix/use-effect
      (fn []
        (cond
          (and going (not polling)) (set-polling! true)
          (and polling (not going) (:data state)) (do (set-polling! false) (api/invalidate!))))
      [going polling state])
+    {:state state :plan plan :running running :runs runs :going going :busy busy :error error
+     :start! (fn [limit]
+               (-> (send! "POST" (path ref "coding") (if limit {:limit limit} {}))
+                   (.then #(when % (set-polling! true)))))}))
+
+(defui progress [{:keys [running]}]
+  ($ :div {:class "mt-3"}
+     ($ :div {:class "flex justify-between text-xs text-ink-2"}
+        ($ :span {} "Coding: " (:done running) " of " (:of running))
+        ($ ui/mono {:class "text-ink-3"} "started " (some-> (:started running) (subs 11 19))))
+     ($ :div {:class "mt-1 h-1.5 bg-surface-2"}
+        ($ :div {:class "h-full bg-ink-2 transition-all"
+                 :style {:width (str (* 100 (/ (:done running) (max 1 (:of running)))) "%")}}))))
+
+(defui run-bar
+  "One line and a button: what a run of every line would ask, cost and take now, and Run. Its progress while it
+  goes. For the sandbox's cards and the top of a scenario's lines."
+  [{:keys [ref]}]
+  (let [{:keys [runs running going start! busy error]} (use-run ref)
+        est (api/use-get (path ref "coding" "estimate"))
+        {:keys [asked kept cost-usd seconds]} (get-in est [:data :estimate])]
+    ($ :div {:class "mt-3"}
+       ($ :div {:class "flex flex-wrap items-center justify-between gap-3"}
+          ($ :span {:class "text-sm text-ink-2"}
+             (cond
+               going "Coding now…"
+               (nil? asked) "Working out what a run would take…"
+               (zero? asked) (str "A run now: nothing to ask (" kept " answers kept), costs nothing, " (about-seconds seconds) ".")
+               :else (str "A run now: " asked " requests to ask Jev"
+                          (when (pos? kept) (str ", " kept " kept")) ", " (dollars cost-usd) ", " (about-seconds seconds) ".")))
+          ($ ui/button {:tone :primary :disabled (or busy going (nil? asked)) :on-click #(start! nil)}
+             (cond going "Coding…" (seq runs) "Run again" :else "Run")))
+       (when going ($ progress {:running running}))
+       (when (:failed running) ($ ui/notice {:tone :bad} "The last run failed: " (:failed running)))
+       (when error ($ ui/notice {:tone :bad} error)))))
+
+(defui run-panel
+  "The plan, the run going on, and a button to code the lines (all, or at most `limit`)."
+  [{:keys [s]}]
+  (let [{:keys [state plan running runs going start! busy error]} (use-run (:ref s))
+        [limit set-limit!] (uix/use-state "")]
     ($ ui/loading {:state state}
        ($ :div
           (when (and (empty? runs) (not going))
@@ -71,21 +111,12 @@
              ($ :form {:class "ml-auto flex items-end gap-2"
                        :on-submit (fn [e]
                                     (.preventDefault e)
-                                    (-> (send! "POST" (path (:ref s) "coding")
-                                               (if (seq limit) {:limit (js/parseInt limit)} {}))
-                                        (.then #(when % (set-polling! true)))))}
+                                    (start! (when (seq limit) (js/parseInt limit))))}
                 ($ ui/field {:label "At most (blank: all)"}
                    ($ ui/number-input {:value limit :on-change set-limit! :min 1 :aria-label "At most this many lines"}))
                 ($ ui/button {:tone :primary :type "submit" :disabled (or busy going)}
                    (cond going "Coding…" (seq limit) (str "Code " limit " lines") :else "Code every line"))))
-          (when going
-            ($ :div {:class "mt-3"}
-               ($ :div {:class "flex justify-between text-xs text-ink-2"}
-                  ($ :span {} "Coding: " (:done running) " of " (:of running))
-                  ($ ui/mono {:class "text-ink-3"} "started " (some-> (:started running) (subs 11 19))))
-               ($ :div {:class "mt-1 h-1.5 bg-surface-2"}
-                  ($ :div {:class "h-full bg-ink-2 transition-all"
-                           :style {:width (str (* 100 (/ (:done running) (max 1 (:of running)))) "%")}}))))
+          (when going ($ progress {:running running}))
           (when (:failed running) ($ ui/notice {:tone :bad} "The last run failed: " (:failed running)))
           (when error ($ ui/notice {:tone :bad} error))
           (when (seq runs)

@@ -3,6 +3,7 @@
   (:require
    [ownpurse.admin.api :as api]
    [ownpurse.admin.route :as route]
+   [ownpurse.admin.scenarios.running :as running]
    [ownpurse.admin.ui :as ui]
    [uix.core :refer [$ defui]]))
 
@@ -21,8 +22,8 @@
                ($ :a {:href (route/href ["sandbox" name id]) :class "flex justify-between py-1 text-sm hover:bg-surface-1"}
                   ($ ui/mono {} (if record (str "last run " (subs at 0 16)) at))
                   ($ ui/muted {:class "text-xs"} "open →")))))
-       ($ :a {:href (route/href ["sandbox" name]) :class "text-sm text-lapis hover:underline"}
-          (if record "No runs yet: see what a run would cost, and start one →" "No runs kept on this server")))))
+       ($ ui/muted {:class "text-sm"} (if record "No runs yet." "No runs kept on this server.")))
+     (when record ($ running/run-bar {:ref name}))))
 
 (defui page []
   (let [state (api/use-get "/sandbox/scenarios")
