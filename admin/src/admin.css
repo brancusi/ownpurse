@@ -86,7 +86,9 @@
 @keyframes fade { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: none } }
 
 @layer base {
-  html { background: var(--surface-0); color: var(--ink-1); font-family: var(--font-sans); }
+  /* The scrollbar's room is always kept, so a page growing past the window, or shrinking back, never changes its
+     width: nothing moves sideways between tabs or pages, whatever the system's scrollbar setting. */
+  html { background: var(--surface-0); color: var(--ink-1); font-family: var(--font-sans); scrollbar-gutter: stable; }
   body { font-size: var(--text-base); line-height: 1.5; font-feature-settings: "calt" 0; }
   :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 }

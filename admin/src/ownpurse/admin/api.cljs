@@ -82,13 +82,19 @@
      [])
     g))
 
+(defn- held
+  "The answer kept for `path`, as use-get's state. Shown from a view's first render, so a view mounted again (a tab, a
+  page gone back to) draws its content at once: never a frame of \"Loading…\" that collapses the page under it."
+  [path]
+  (when-let [hit (and path (get @cache path))] {:data hit :path path}))
+
 (defn use-get
   "The answer at `path` as {:data} once it has come, {:error} when it failed, {:loading true} meanwhile. A nil path
   asks for nothing. It asks again after any write; with `every` (milliseconds), it also asks the server again that
   often, keeping the answer it has meanwhile (for progress)."
   ([path] (use-get path nil))
   ([path {:keys [every]}]
-   (let [[state set-state!] (use-state (if path {:loading true} {}))
+   (let [[state set-state!] (use-state #(or (held path) (if path {:loading true :path path} {})))
          g (use-generation)]
      (use-effect
       (fn []
@@ -99,11 +105,14 @@
                          (.catch #(when @live (set-state! {:error (ex-message %) :path path})))))
               timer (when (and path every) (js/setInterval #(get! true) every))]
           (when path
-            (set-state! (fn [s] (if (and (:data s) (= path (:path s))) s {:loading true :path path})))
+            (set-state! (fn [s] (if (and (:data s) (= path (:path s))) s (or (held path) {:loading true :path path}))))
             (get! false))
           #(do (reset! live false) (when timer (js/clearInterval timer)))))
       [path g every])
-     state)))
+     ;; A new path shows its own kept answer, or loads; never the last path's answer.
+     (if (and path (not= path (:path state)))
+       (or (held path) {:loading true :path path})
+       state))))
 
 (defn use-send
   "A write and its state, for a button: {:send! (fn [method path body] → promise of the answer, nil when it failed), :busy, :error,
