@@ -6,9 +6,12 @@ decided. The docs hold what stays true; the blog holds how we got there, pinned 
 
 ## What a post is
 
-- **A conversation.** Posts from design sessions are written as a conversation between Aram and Tally, the Claude
-  agent he builds ownpurse with. Aram's words are quoted and lightly edited (`> **Aram:** …`); Tally writes the rest
-  (`**Tally:** …`). Every post opens with the "A conversation" note (`.fm-convo-note`) linking the post before it.
+- **A position, distilled from the sessions (since 2026-10-29).** A post is not a transcript of a design session.
+  It argues for the direction we are taking and why it is insightful: the problem as a reader feels it, the idea
+  that answers it, the evidence (numbers, what broke), and where it goes next. Excite the reader by explaining, not
+  by selling: intelligent, calm, never aggressive, never "obviously". Quote Aram sparingly, only where his words
+  carry the idea better than a summary; never invent a quote. Every post opens with the "From our working sessions"
+  note (`.fm-convo-note`) naming the sessions it was distilled from and linking the post before it.
   Byline: `author: Aram Zadikian (@brancusi) and Tally`.
 - **Something to run.** A post about a change opens with "Run this version": one command that fetches ownpurse at
   a pinned commit and plays the demo (`samples/demo.sh`). The commit is also tagged `demo/<date>-<slug>`, so the
@@ -77,7 +80,7 @@ data they read stays pinned.
 ## Checklist
 
 - [ ] Opens with the conversation note and, for a change, the pinned command and tag
-- [ ] Aram's words quoted, Tally's in the first person, no invented quotes
+- [ ] It argues a position, not a session's play-by-play; any quote of Aram's is real
 - [ ] Every number came from a query or command; figures read the pinned export
 - [ ] Lasting material is in the docs too, linked from the post
 - [ ] Copy follows the brand; fine print names any provider mentioned
