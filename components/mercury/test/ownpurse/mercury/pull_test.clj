@@ -165,10 +165,11 @@
                                         :counterpartyName "Savings"}]}
                        {:now day-2})
         (is (= [{:channel "card" :card "c4d0-0001" :merchant-code "5411" :original-amount -41.18M
-                 :original-currency "EUR"}
+                 :original-currency "EUR" :purchased-on (LocalDate/parse "2026-03-20")}
                 {:channel "transfer"}]
                (map #(into {} (remove (comp nil? val)) %)
-                    (store/q node "SELECT channel, card, merchant_code, original_amount, original_currency FROM bank_lines ORDER BY date"))))))))
+                    (store/q node (str "SELECT channel, card, merchant_code, original_amount, original_currency, "
+                                       "purchased_on FROM bank_lines ORDER BY date")))))))))
 
 (deftest refusals-test
   (with-node

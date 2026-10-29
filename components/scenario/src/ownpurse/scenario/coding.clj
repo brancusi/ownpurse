@@ -70,6 +70,8 @@
   (let [codes (update-keys (or codes {}) kw)
         all (merge codes-below codes)]
     (cond-> (assoc coding :codes codes)
+      ;; A threshold is a probability, not money: 0.85 from EDN or JSON is read as the decimal it says.
+      (:threshold coding) (update :threshold #(bigdec (str %)))
       rules (assoc :rules (mapv (fn [r] (if (false? (:enabled r)) (update r :code kw) (rule-in all r))) rules))
       (:buckets coding) (update :buckets (partial mapv (fn [b] (update b :codes (partial mapv (fn [[c t]] [(kw c) t])))))))))
 
@@ -117,11 +119,12 @@
 
 (defn- case-of
   "A bank line as the classifier reads it: money out is a purchase (a positive amount), in the merchant's currency
-  when the line says it; the card, or else the account, as the key the world's :cards knows it by."
-  [{:keys [cards]} currencies {:keys [xt/id date counterparty description amount original-amount original-currency
-                                     currency card account merchant-code channel]}]
+  when the line says it, on the day the card was used when it says that (where its holder was is that day's); the
+  card, or else the account, as the key the world's :cards knows it by."
+  [{:keys [cards]} currencies {:keys [xt/id date purchased-on counterparty description amount original-amount
+                                     original-currency currency card account merchant-code channel]}]
   (let [spent (- (or original-amount amount))]
-    (cond-> {:id id :date (str date) :amount spent
+    (cond-> {:id id :date (str (or purchased-on date)) :amount spent
              :currency (or original-currency currency (currencies account))
              :merchant (or counterparty description "")
              :card (if (contains? cards card) card account)}

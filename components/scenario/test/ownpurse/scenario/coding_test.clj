@@ -16,7 +16,9 @@
 
 (def ^:private lines
   [(line 1 "2025-10-03" "Mercado Azul" -47.97M :merchant-code "5411" :original-amount -41.18M :original-currency "EUR")
-   (line 2 "2025-10-04" "RideNow" -12.10M :merchant-code "4121" :original-amount -10.40M :original-currency "EUR")
+   ;; Used on the trip's last day, posted the day after: it is coded where the card was used.
+   (line 2 "2025-11-01" "RideNow" -12.10M :merchant-code "4121" :original-amount -10.40M :original-currency "EUR"
+         :purchased-on (LocalDate/parse "2025-10-31"))
    (line 3 "2025-11-20" "Prairie Market" -63.15M :merchant-code "5411")
    (line 4 "2025-12-01" "Elsewhere" -9.00M :account "acct:other")])
 
@@ -83,10 +85,10 @@
           (is (= #{:per-diem :travel :personal :needs-person} (set (keys (:codes s)))))
           (is (= [[:on-trip-for "harbour"] [:category :in #{"5411"}]] (:when (first (:rules s))))))
         (testing "the lines are read from the record: money out as a purchase, in the merchant's currency"
-          (is (= [["line:test:1" 41.18M "EUR" "5411" :card "card-r"]
-                  ["line:test:2" 10.40M "EUR" "4121" :card "card-r"]
-                  ["line:test:3" 63.15M nil "5411" :card "card-r"]]
-                 (map (juxt :id :amount :currency :mcc :channel :card) (:cases s))))))
+          (is (= [["line:test:1" "2025-10-03" 41.18M "EUR" "5411" :card "card-r"]
+                  ["line:test:2" "2025-10-31" 10.40M "EUR" "4121" :card "card-r"]
+                  ["line:test:3" "2025-11-20" 63.15M nil "5411" :card "card-r"]]
+                 (map (juxt :id :date :amount :currency :mcc :channel :card) (:cases s))))))
       (testing "a rule that codes to no bucket, or a trip with no dates, is refused"
         (is (= :ownpurse/invalid
                (:type (error #(scenario/put! node (assoc-in trial [:layers 1 :coding :rules 0 :code] "nowhere"))))))

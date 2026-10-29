@@ -117,8 +117,9 @@
                          [:check-number {:optional true} [:re #"^[1-9][0-9]*$"]]
                          ;; What a card line says about the purchase, when the source says it: the card (the
                          ;; source's id for it), the merchant's category code (ISO 18245), and the amount in the
-                         ;; currency the merchant charged.
+                         ;; currency the merchant charged, and the day the card was used (a line posts a day or more later).
                          [:channel {:optional true} [:enum "card" "transfer"]]
+                         [:purchased-on {:optional true} :ownpurse/date]
                          [:card {:optional true} [:string {:min 1}]]
                          [:merchant-code {:optional true} [:re #"^[0-9]{4}$"]]
                          [:original-amount {:optional true} :ownpurse/amount]

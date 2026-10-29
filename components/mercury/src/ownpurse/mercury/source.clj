@@ -189,12 +189,14 @@
     "checkDeposit"})
 
 (defn- card-facts
-  "What a card line says about the purchase: the card, the merchant's category code, and the amount in the
-  merchant's currency (Mercury gives it in hundredths). Nil for a line that is no card's."
-  [{:keys [card-id merchant kind]}]
+  "What a card line says about the purchase: the card, the day it was used (in UTC), the merchant's category code,
+  and the amount in the merchant's currency (Mercury gives it in hundredths). Nil for a line that is no card's."
+  [{:keys [card-id merchant kind created-at]}]
   (cond
-    card-id (let [{:keys [category-code currency amount]} merchant]
+    card-id (let [{:keys [category-code currency amount]} merchant
+                  used (utc-date created-at)]
               (cond-> {:channel "card" :card card-id}
+                used (assoc :purchased-on used)
                 (and category-code (re-matches #"[0-9]{4}" category-code)) (assoc :merchant-code category-code)
                 (and currency amount (re-matches #"[A-Z]{3}" currency))
                 (assoc :original-currency currency :original-amount (.movePointLeft (bigdec amount) 2))))
