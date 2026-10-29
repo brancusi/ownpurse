@@ -31,16 +31,18 @@
 
 (def outcome-words
   {:right "coded, right" :wrong "coded, wrong" :unsafe "coded, but a person had to look"
-   :stopped "to a person, rightly" :review "to a person, needlessly"})
+   :stopped "to a person, rightly" :review "to a person, needlessly"
+   :coded "coded automatically" :asks "to a person"})
 
 (def ^:private outcome-dot
   {:right "bg-verdigris" :wrong "bg-coin" :unsafe "bg-coin-tint ring-2 ring-inset ring-coin"
-   :review "bg-gilt" :stopped "ring-2 ring-inset ring-ink-3"})
+   :review "bg-gilt" :stopped "ring-2 ring-inset ring-ink-3"
+   :coded "bg-lapis" :asks "bg-gilt"})
 
 (def ^:private outcome-pill
   {:right "bg-verdigris-tint text-verdigris" :wrong "bg-coin text-on-coin"
    :unsafe "bg-coin-tint text-coin-text ring-1 ring-inset ring-coin" :review "bg-gilt-tint text-gilt-text"
-   :stopped "bg-surface-2 text-ink-2"})
+   :stopped "bg-surface-2 text-ink-2" :coded "bg-lapis-tint text-lapis" :asks "bg-gilt-tint text-gilt-text"})
 
 (defn bad? [outcome] (#{:wrong :unsafe} outcome))
 
@@ -62,6 +64,8 @@
                       :wrong "bg-coin text-on-coin"
                       :unsafe "bg-coin-tint text-coin-text ring-1 ring-inset ring-coin"
                       :review "bg-gilt-tint text-gilt-text"
+                      :asks "bg-gilt-tint text-gilt-text"
+                      :coded "bg-lapis-tint text-lapis"
                       "bg-surface-1 text-ink-2"))}
      children))
 

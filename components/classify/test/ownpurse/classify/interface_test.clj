@@ -216,6 +216,8 @@
       (is (= :right (classify/outcome {:expect :per-diem :review :allowed} coded 0.85M)))
       (is (= :stopped (classify/outcome {:expect :per-diem :review :allowed} coded 0.95M)))
       (is (= :review (classify/outcome {:expect :per-diem} coded 0.95M)) "sent to a person, needlessly")
+      (is (= [:coded :asks] [(classify/outcome {} coded 0.85M) (classify/outcome {} coded 0.95M)])
+          "a book's own line has no answer key: coded, or sent to a person")
       (is (= :stopped (classify/outcome {:expect :needs-person :review :required} {:code :needs-person :confidence 1M} 0.85M)))))
   (testing "the scenario refuses a key that says a person looks among its buckets, or does not require one where a
     check that code decides holds"

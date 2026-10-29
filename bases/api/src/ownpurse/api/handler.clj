@@ -490,26 +490,34 @@
 (defn- sandbox-routes
   "The sandbox: scenarios of bank lines, the world they happened in, and the runs that classified them, for the admin.
   Answers are data as the components hold them; ask for application/transit+json to keep keywords, sets and decimals."
-  [{:keys [sandbox]}]
+  [{:keys [sandbox node]}]
   (let [sb (sandbox/open sandbox)
+        ;; A scenario of the record that codes lines is shown as the invented ones are: its coding is one run.
+        record? #(and node (scenario/coding-scenario? node %))
         Scenario [:map [:scenario [:string {:min 1}]]]
         Run (mu/merge Scenario [:map [:run [:re #"^[A-Za-z0-9._-]+$"]]])]
     [["/sandbox/scenarios"
-      {:get {:summary "Every scenario of bank lines, its size and its runs, newest first."
+      {:get {:summary (str "Every scenario of bank lines, its size and its runs, newest first: the record's own "
+                           "(:record true, real lines with no answer key), then the invented ones.")
              :responses {200 {:body :any}}
-             :handler (fn [_] (answer #(hash-map :scenarios (sandbox/scenarios sb))))}}]
+             :handler (fn [_] (answer #(hash-map :scenarios (into (if node (scenario/sandbox-scenarios node) [])
+                                                                  (sandbox/scenarios sb)))))}}]
      ["/sandbox/scenarios/{scenario}"
       {:get {:summary "A scenario's world: its people, cards, trips, projects, buckets, categories and rules."
              :parameters {:path Scenario}
              :responses {200 {:body :any} 404 {:body ApiError}}
              :handler (fn [{{:keys [path]} :parameters}]
-                        (answer #(hash-map :world (sandbox/world sb (:scenario path)))))}}]
+                        (answer #(hash-map :world (if (record? (:scenario path))
+                                                    (scenario/sandbox-world node (:scenario path))
+                                                    (sandbox/world sb (:scenario path))))))}}]
      ["/sandbox/scenarios/{scenario}/runs/{run}"
       {:get {:summary "A run of a scenario: one row a unit, with each strategy's coding and confidence."
              :parameters {:path Run}
              :responses {200 {:body :any} 404 {:body ApiError}}
              :handler (fn [{{:keys [path]} :parameters}]
-                        (answer #(sandbox/run-lines sb (:scenario path) (:run path))))}}]
+                        (answer #(if (record? (:scenario path))
+                                   (scenario/sandbox-run node (:scenario path))
+                                   (sandbox/run-lines sb (:scenario path) (:run path)))))}}]
      ;; A catch-all: one item of a receipt is a unit whose id has a slash (d88/1).
      ["/sandbox/scenarios/{scenario}/runs/{run}/lines/{*line}"
       {:get {:summary (str "One unit of a run all the way through: its facts, the requests exactly as sent, what came "
@@ -518,7 +526,9 @@
              :parameters {:path (mu/merge Run [:map [:line [:string {:min 1}]]])}
              :responses {200 {:body :any} 404 {:body ApiError}}
              :handler (fn [{{:keys [path]} :parameters}]
-                        (answer #(sandbox/line sb (:scenario path) (:run path) (:line path))))}}]]))
+                        (answer #(if (record? (:scenario path))
+                                   (scenario/sandbox-line node (:scenario path) (:line path))
+                                   (sandbox/line sb (:scenario path) (:run path) (:line path)))))}}]]))
 
 (defn- coding-routes
   "Coding a scenario's bank lines: a run in the background, its progress, each unit's coding, and two scenarios'
@@ -570,6 +580,16 @@
                           (catch Throwable e
                             (swap! running assoc-in [ref :failed] (ex-message e)))))
                       {:started true :plan plan :units units}))))}}]
+     ["/scenarios/{ref}/coding/estimate"
+      {:get {:summary (str "What coding a scenario's lines would take now, asking nothing: the requests Jev would be "
+                           "asked and those the record already answers, the input tokens, the cost at Jev's published "
+                           "price (the API reports tokens, not prices) and about how many seconds. `limit` as for the "
+                           "run.")
+             :parameters {:path Ref :query [:map [:limit {:optional true} [:int {:min 1}]]]}
+             :responses {200 {:body :any} 404 {:body ApiError}}
+             :handler (fn [{{:keys [path query]} :parameters}]
+                        (answer #(hash-map :estimate (scenario/estimate node (:ref path) (:model jev)
+                                                                        (select-keys query [:limit])))))}}]
      ["/scenarios/{ref}/composed"
       {:get {:summary (str "A scenario's world and coding as its layers that are on compose them, its bases' first: "
                            "the rules, codes, trips and projects that stand, the threshold and strategy, and which "

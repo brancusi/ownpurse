@@ -23,14 +23,14 @@
       (str "at home in " at))))
 
 (defn- files
-  "The files a lever or a field names, by short name."
-  [scenario]
-  {:facts "facts.clj" :core "core.clj" :scenario (str scenario ".edn")})
+  "The files a lever or a field names, by short name: a record scenario's data are its layers, not a file."
+  [scenario record]
+  {:facts "facts.clj" :core "core.clj" :scenario (if record (str scenario "'s layers") (str scenario ".edn"))})
 
 (defn- field-sources
   "How code made each field of the state Jev reads, and where to change it: [how, where]."
-  [scenario]
-  (let [{:keys [facts scenario]} (files scenario)]
+  [scenario record]
+  (let [{:keys [facts scenario]} (files scenario record)]
     {[:transaction :merchant] ["the bank line's merchant, as the bank sends it" "the bank's data"]
      [:transaction :amount] ["the bank line's amount and currency; for an item, the whole line's" "the bank's data"]
      [:transaction :how] ["the bank line's channel, in words" (str facts " · state")]
@@ -161,8 +161,8 @@
 
 ;; ----------------------------------------------------------------------------------------------- levers
 
-(defn- levers-rows [scenario unit decisions o t]
-  (let [{:keys [facts core] sc :scenario} (files scenario)
+(defn- levers-rows [scenario record unit decisions o t]
+  (let [{:keys [facts core] sc :scenario} (files scenario record)
         ok (conj (set (:ok unit)) (:expect unit))
         good? #(ok (get-in decisions [% :code]))
         conf (get-in decisions [:choice :confidence])
@@ -239,13 +239,15 @@
         applying (filter #(yes? (:holds %)) explained)
         near (filter #(and (not (yes? (:holds %))) (or (yes? (:jev %)) (>= (:holds %) 0.25))) explained)
         overruled-by (into {} (for [r applying o (:over (rules-by-id (:id r)))] [o (:id r)]))
-        sources (field-sources scenario)
+        sources (field-sources scenario (:record data))
         line-link (fn [id] ($ :a {:class "font-mono text-lapis hover:underline"
                                   :href (route/href ["sandbox" scenario (get-in data [:run :id])]
                                                     (assoc (:query (route/parse js/location.hash)) :line id))} id))]
     ($ :div {:class "border-t border-dashed border-line-1 bg-surface-1 px-3 pt-3 pb-4 md:pl-8"}
        ($ :div {:class "flex flex-wrap items-center gap-x-3.5 gap-y-1.5 pb-2.5 text-sm"}
-          ($ ui/eyebrow {} "Should be") ($ ui/tag {:code (:expect unit)})
+          (if (:expect unit)
+            ($ :<> ($ ui/eyebrow {} "Should be") ($ ui/tag {:code (:expect unit)}))
+            ($ ui/muted {} "A line of the record: no answer key"))
           (when (seq (:ok unit))
             ($ ui/muted {} "also fine " (for [c (:ok unit)] ($ :span {:key (name c) :class "mr-1"} ($ ui/tag {:code c})))))
           (case (:review unit) :required ($ ui/eyebrow {} "· a person must look") :allowed ($ ui/muted {} "· a person may look") nil)
@@ -297,7 +299,9 @@
              "This is everything Jev knows about the line: no other line, no answer key, nothing else. Both calls send "
              "the same state; call 1 adds the rules. Read it as Jev would: is anything missing, wrong, or worded so it "
              "points the wrong way?")
-          (when rebuilt ($ ui/notice {} "This run did not keep its requests: these are rebuilt from today's code and scenario."))
+          (cond
+            (:record data) ($ ui/notice {} "Rebuilt from the line's facts as the scenario stands; Jev's answers are the ones the record kept for exactly these requests.")
+            rebuilt ($ ui/notice {} "This run did not keep its requests: these are rebuilt from today's code and scenario."))
           (let [state (get-in requests [:rules :state])]
             ($ :div {:class "grid border border-line-1 bg-surface-0 text-sm md:grid-cols-[minmax(150px,240px)_minmax(0,1.3fr)_minmax(180px,1fr)]"}
                (for [sec [:transaction :context]]
@@ -404,7 +408,7 @@
           ($ :div {:class "grid border border-line-1 bg-surface-0 text-sm md:grid-cols-[minmax(200px,1fr)_minmax(200px,1.2fr)_minmax(160px,.8fr)]"}
              (for [h ["When you see" "What to change" "Where"]]
                ($ ui/eyebrow {:key h :class "hidden bg-surface-1 px-2 py-1.5 md:block"} h))
-             (for [{:keys [k see change where hit]} (levers-rows scenario unit decisions o t)
+             (for [{:keys [k see change where hit]} (levers-rows scenario (:record data) unit decisions o t)
                    :let [c (cx "border-t border-line-1 px-2 py-1.5" (when hit "bg-gilt-tint"))]]
                ($ :<> {:key (name k)}
                   ($ :div {:class c} see (when hit ($ :b " — this line")))

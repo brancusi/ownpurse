@@ -265,10 +265,20 @@
                (get-in (request app :get "/scenarios/coding/coding") [:body :plan]))))
       (testing "coding is refused without a TypeSafe key"
         (is (= 409 (:status (request app :post "/scenarios/coding/coding" {:limit 1})))))
+      (testing "what a run would cost is known before anything is asked: no answer is kept, so both are to ask"
+        (is (= {:units 1 :requests 2 :asked 2 :kept 0}
+               (select-keys (get-in (request app :get "/scenarios/coding/coding/estimate") [:body :estimate])
+                            [:units :requests :asked :kept]))))
+      (testing "the sandbox lists the record's coding scenario first, with no run until it is coded"
+        (is (= {:name "coding" :record true :lines 1 :runs []}
+               (select-keys (first (get-in (request app :get "/sandbox/scenarios") [:body :scenarios]))
+                            [:name :record :lines :runs])))
+        (is (true? (get-in (request app :get "/sandbox/scenarios/coding") [:body :world :record]))))
       (testing "the routes are in the OpenAPI document"
         (is (every? (set (keys (:paths (:body (request app :get "/openapi.json")))))
                     (map keyword ["/scenarios" "/scenarios/{ref}" "/scenarios/{ref}/evaluation"
-                                  "/scenarios/{ref}/coding" "/scenarios/{ref}/codings"]))))
+                                  "/scenarios/{ref}/coding" "/scenarios/{ref}/coding/estimate"
+                                  "/scenarios/{ref}/codings"]))))
       (finally (store/stop node)))))
 
 (deftest close-test

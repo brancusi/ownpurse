@@ -8,6 +8,7 @@
    [ownpurse.admin.api :as api]
    [ownpurse.admin.route :as route]
    [ownpurse.admin.sandbox.line :as line]
+   [ownpurse.admin.scenarios.running :as running]
    [ownpurse.admin.terms :refer [term]]
    [ownpurse.admin.ui :as ui :refer [cx]]
    [ownpurse.classify.outcome :as outcome]
@@ -27,6 +28,15 @@
   [[:all "All"] [:wrong nil] [:unsafe nil] [:review nil] [:stopped nil] [:right nil] [:hard "marked hard"]
    [:noted "with commentary"]])
 
+(def ^:private unkeyed-filters
+  "A book's own lines have no answer key: they are coded, or sent to a person."
+  [[:all "All"] [:asks nil] [:coded nil]])
+
+(defn keyed?
+  "Whether a run's lines carry an answer key (the invented ones do; a book's own do not)."
+  [lines]
+  (boolean (some #(get-in % [:unit :expect]) lines)))
+
 (defn- score
   "Each line with its outcome under `strategy` at threshold `t`."
   [lines strategy t]
@@ -39,7 +49,7 @@
              :let [fs (frequencies (map #(outcome/outcome (:unit %) (get-in % [:decisions strategy]) (/ i 100)) lines))]]
          {:t (/ i 100)
           :bad (+ (fs :wrong 0) (fs :unsafe 0))
-          :person (+ (fs :stopped 0) (fs :review 0))})))
+          :person (+ (fs :stopped 0) (fs :review 0) (fs :asks 0))})))
 
 ;; ----------------------------------------------------------------------------------------------- the world
 
@@ -126,19 +136,23 @@
                         :class "w-full accent-[var(--ink-1)]"})
              ($ :span {:class "w-12 text-right font-display text-xl font-bold"} (ui/pct t)))
           ($ :div {:class "mt-4 flex flex-wrap items-baseline gap-x-5 gap-y-2"}
-             (for [o outcome/outcomes]
+             (for [o (if (keyed? lines) outcome/outcomes outcome/unkeyed-outcomes)]
                ($ :span {:key (name o) :class "inline-flex items-baseline gap-1.5 text-sm"}
                   ($ :b {:class "font-display text-2xl leading-none"} (counts o 0))
                   ($ ui/dot {:outcome o}) ($ :span {:class "text-ink-2"} (ui/outcome-words o))))))
        ($ :div
           ($ ui/eyebrow {} "What each threshold gives")
           ($ sweep-chart {:points points :t t :on-pick on-threshold})
-          ($ ui/say {} "Raising the threshold sends more lines to a person and codes fewer wrongly. Click the chart to move it.")))))
+          ($ ui/say {} (if (keyed? lines)
+                         "Raising the threshold sends more lines to a person and codes fewer wrongly. Click the chart to move it."
+                         (str "These lines have no answer key, so nothing here is right or wrong: the chart shows how "
+                              "many go to a person at each threshold. Click it to move the threshold.")))))))
 
 ;; ----------------------------------------------------------------------------------------------- the buckets
 
 (defui board [{:keys [world scored line-href]}]
   (let [expected (frequencies (map #(get-in % [:unit :expect]) scored))
+        keyed (keyed? scored)
         placed (group-by :code scored)]
     ($ :div {:class "grid gap-4 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))]"}
        (for [{:keys [project title codes]} (:buckets world)]
@@ -148,10 +162,11 @@
               ($ :div {:key (name code) :class "grid grid-cols-[110px_1fr] gap-2 border-t border-line-1 py-1.5"}
                  ($ :div
                     ($ :div {:class "text-sm" :title (get-in world [:codes code])} label)
-                    ($ ui/mono {:class "text-2xs text-ink-3"} (get expected code 0) " belong · " (count (placed code)) " put"))
+                    ($ ui/mono {:class "text-2xs text-ink-3"}
+                       (when keyed (str (get expected code 0) " belong · ")) (count (placed code)) " put"))
                  ($ :div {:class "flex flex-wrap content-start gap-0.5"}
-                    (for [{:keys [id outcome]} (sort-by :id (placed code))]
-                      ($ ui/chip {:key id :outcome outcome :href (line-href id)} id))))))))))
+                    (for [{:keys [id short outcome]} (sort-by #(or (some-> (:short %) (subs 1) js/parseInt) (:id %)) (placed code))]
+                      ($ ui/chip {:key id :outcome outcome :href (line-href id)} (or short id)))))))))))
 
 ;; ----------------------------------------------------------------------------------------------- the lines
 
@@ -160,7 +175,7 @@
   "grid items-center gap-2.5 grid-cols-[12px_52px_78px_minmax(160px,1fr)_104px_minmax(140px,200px)_minmax(180px,260px)_84px_14px]")
 
 (defui line-row [{:keys [row strategy t open on-toggle children]}]
-  (let [{:keys [id unit decisions outcome noted]} row
+  (let [{:keys [id short unit decisions outcome noted]} row
         {:keys [code confidence]} (get decisions strategy)
         acceptable (conj (set (:ok unit)) (:expect unit))
         blk (get-in decisions [:blocks :code])]
@@ -170,16 +185,16 @@
                               (when open "bg-surface-1")
                               (when (ui/bad? outcome) "shadow-[inset_3px_0_0_var(--coin)]"))}
           ($ ui/dot {:outcome outcome})
-          ($ :span {:class "font-mono text-xs text-ink-2"} id
+          ($ :span {:class "font-mono text-xs text-ink-2" :title id} (or short id)
              (when noted ($ :span {:class "ml-1.5 font-mono text-2xs text-gilt-text" :title "Commentary on why it failed"} "✎")))
           ($ ui/mono {:class "text-ink-3"} (:date unit))
           ($ :span {:class "min-w-0 truncate"} (:merchant unit)
              (when (:item unit) ($ :span {:class "text-ink-2"} " · " (:item unit)))
              (when-let [n (:note unit)] ($ :span {:class "text-xs text-ink-3"} "  " n)))
           ($ ui/amount {:amount (:amount unit) :currency (:currency unit)})
-          ($ :span {:class "min-w-0"} ($ ui/tag {:code (:expect unit)}))
+          ($ :span {:class "min-w-0"} (if (:expect unit) ($ ui/tag {:code (:expect unit)}) ($ ui/muted {:class "text-xs"} "no key")))
           ($ :span {:class "flex min-w-0 items-center gap-1.5"}
-             ($ ui/tag {:code code :miss (not (acceptable code))})
+             ($ ui/tag {:code code :miss (and (:expect unit) (not (acceptable code)))})
              ($ :span {:class "inline-flex flex-none items-center gap-1 font-mono text-2xs text-ink-2"}
                 ($ ui/bar {:p confidence :threshold t}) (ui/pct confidence)))
           ($ :span {:class (cx "truncate font-mono text-2xs" (if (= blk code) "text-ink-3" "text-gilt-text"))
@@ -190,6 +205,7 @@
 
 (defui lines-table [{:keys [scored strategy t open show on-filter on-open line-view]}]
   (let [counts (frequencies (map :outcome scored))
+        filters (if (keyed? scored) filters unkeyed-filters)
         shown (case show
                 :all scored
                 :hard (filterv #(get-in % [:unit :hard]) scored)
@@ -214,7 +230,7 @@
              ($ :span ($ term {:id :answer-key} "belongs in")) ($ :span ($ term {:id :strategy} "chosen"))
              ($ :span ($ term {:id :block} "blocks")) ($ :span)))
        ($ :div
-          (for [row (sort-by #(case (:outcome %) :wrong 0 :unsafe 1 :review 2 :stopped 3 4) shown)]
+          (for [row (sort-by #(case (:outcome %) :wrong 0 :unsafe 1 :asks 1 :review 2 :stopped 3 4) shown)]
             ($ line-row {:key (:id row) :row row :strategy strategy :t t :open (= open (:id row))
                          :on-toggle #(on-open (when-not (= open (:id row)) (:id row)))}
                (line-view row)))))))
@@ -225,10 +241,14 @@
   (let [scenarios (api/use-get "/sandbox/scenarios")
         world-state (api/use-get (str "/sandbox/scenarios/" scenario))
         world (get-in world-state [:data :world])
-        newest (some #(when (= scenario (:name %)) (:id (first (:runs %)))) (get-in scenarios [:data :scenarios]))
+        this (some #(when (= scenario (:name %)) %) (get-in scenarios [:data :scenarios]))
+        newest (:id (first (:runs this)))
+        ;; The world says so too: a scenario made since the list was read is still the record's.
+        record (or (:record this) (:record world))
         run-state (api/use-get (when run (str "/sandbox/scenarios/" scenario "/runs/" run)))
-        t (/ (js/Number (or (:t query) 85)) 100)
-        strategy (keyword (or (:s query) "choice"))
+        ;; A record scenario's own threshold and strategy (the run's defaults when it sets none) are where it starts.
+        t (/ (js/Number (or (:t query) (some-> (:threshold world) js/Number (* 100) js/Math.round) 85)) 100)
+        strategy (keyword (or (:s query) (some-> (:strategy world) name) (if (:record world) "checked" "choice")))
         show (keyword (or (:f query) "all"))
         open (:line query)
         go! (fn [changes replace?] (route/go! ["sandbox" scenario run] (merge query changes) replace?))
@@ -243,8 +263,11 @@
        ($ :div
           ($ :div {:class "flex flex-wrap items-baseline justify-between gap-3"}
              ($ :div
-                ($ :div {:class "text-sm text-ink-3"} ($ :a {:href "#/sandbox" :class "hover:underline"} "Sandbox") " / " scenario)
-                ($ :h1 {:class "font-display text-2xl font-extrabold tracking-tight"} "Bank lines into buckets"))
+                ($ :div {:class "text-sm text-ink-3"} ($ :a {:href "#/sandbox" :class "hover:underline"} "Sandbox") " / " scenario
+                   (when record
+                     ($ :<> " · " ($ :a {:href (route/href ["scenarios" scenario]) :class "text-lapis hover:underline"}
+                                     "the record's lines; change its rules on the scenario's page →"))))
+                ($ :h1 {:class "font-display text-2xl font-extrabold tracking-tight"} (or (:title this) "Bank lines into buckets")))
              ($ :label {:class "flex items-center gap-2 text-sm text-ink-3"} "Run"
                 ($ :select {:value (or run "") :on-change #(route/go! ["sandbox" scenario (.. % -target -value)] query)
                             :class "rounded-1 border border-line-2 bg-surface-0 px-2 py-1 font-mono text-xs text-ink-1"}
@@ -252,10 +275,25 @@
                      ($ :option {:key id :value id} at)))))
           ($ ui/loading {:state world-state}
              ($ world-strip {:world world}))
+          (cond
+            (and record (not newest))
+            ($ ui/panel {:class "mt-4 p-4"} ($ running/run-panel {:s {:ref scenario}}))
+
+            (and (not run) (:data scenarios) world (not newest))
+            ($ ui/notice {}
+               "This sample of made-up lines has no run kept in this server's runs folder. To code the record's own bank lines, "
+               ($ :a {:href (route/href ["sandbox"]) :class "underline"} "pick one of the record's scenarios") ".")
+
+            :else
           ($ ui/loading {:state (if run run-state {:loading true})}
              (let [{:keys [stale] info :run} (:data run-state)]
                ($ :<>
                   (when stale ($ ui/notice {:tone :bad} stale))
+                  (when record
+                    ($ ui/disclosure {:summary (str (:results info) " of " (:units this) " lines coded"
+                                                    (when (< (:results info) (:units this)) ": code the rest")
+                                                    " · run again, with the cost first")}
+                       ($ running/run-panel {:s {:ref scenario}})))
                   ($ :div {:class "mt-2 text-xs text-ink-3"}
                      ($ ui/mono {} (:model info)) " · " (:results info) " lines and items"
                      (when-let [{:keys [requests input-tokens]} (:usage info)] (str " · " requests " requests, " input-tokens " tokens in"))
@@ -269,4 +307,4 @@
                   ($ lines-table {:scored scored :strategy strategy :t t :open open :show show
                                   :on-filter #(go! {:f (when-not (= :all %) (name %))} true)
                                   :on-open #(go! {:line %} true)
-                                  :line-view (fn [row] ($ line/walk {:scenario scenario :run run :row row :strategy strategy :t t}))}))))))))
+                                  :line-view (fn [row] ($ line/walk {:scenario scenario :run run :row row :strategy strategy :t t}))})))))))))

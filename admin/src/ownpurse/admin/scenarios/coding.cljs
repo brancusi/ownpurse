@@ -7,6 +7,7 @@
    [ownpurse.admin.api :as api]
    [ownpurse.admin.route :as route]
    [ownpurse.admin.sandbox.run :as sandbox.run]
+   [ownpurse.admin.scenarios.running :refer [run-panel]]
    [ownpurse.admin.scenarios.common :refer [path]]
    [ownpurse.admin.ui :as ui :refer [cx]]
    [uix.core :as uix :refer [$ defui]]))
@@ -17,63 +18,6 @@
   "This tab's link with `query` changed (nil values dropped)."
   [s query changes]
   (route/href ["scenarios" (:ref s)] (merge query changes)))
-
-;; ----------------------------------------------------------------------------------------------- a run
-
-(defui run-panel
-  "The plan, the run going on, and a button to code the lines (all, or at most `limit`)."
-  [{:keys [s]}]
-  (let [[polling set-polling!] (uix/use-state false)
-        state (api/use-get (path (:ref s) "coding") {:every (when polling 1500)})
-        [limit set-limit!] (uix/use-state "")
-        {:keys [send! busy error]} (api/use-send)
-        {:keys [plan running runs]} (:data state)
-        going (and running (not (:failed running)))]
-    ;; Once the run is over, everything that reads its codings asks again.
-    (uix/use-effect
-     (fn []
-       (cond
-         (and going (not polling)) (set-polling! true)
-         (and polling (not going) (:data state)) (do (set-polling! false) (api/invalidate!))))
-     [going polling state])
-    ($ ui/loading {:state state}
-       ($ :div
-          ($ :div {:class "flex flex-wrap items-end gap-4"}
-             ($ :div {:class "text-sm"}
-                ($ ui/eyebrow {} "What a run takes")
-                (ui/count-of (:lines plan) "line")
-                (when (not= (:lines plan) (:units plan)) (str " (" (:units plan) " to code, counting receipt items)"))
-                ", at most " (:at-most-requests plan) " requests to Jev. Answers already in the record are not asked "
-                "again: after a rule changes, most lines are asked again (the rules go with each request); after "
-                "a threshold or strategy changes, nothing is.")
-             ($ :form {:class "ml-auto flex items-end gap-2"
-                       :on-submit (fn [e]
-                                    (.preventDefault e)
-                                    (-> (send! "POST" (path (:ref s) "coding")
-                                               (if (seq limit) {:limit (js/parseInt limit)} {}))
-                                        (.then #(when % (set-polling! true)))))}
-                ($ ui/field {:label "At most (blank: all)"}
-                   ($ ui/number-input {:value limit :on-change set-limit! :min 1 :aria-label "At most this many lines"}))
-                ($ ui/button {:tone :primary :type "submit" :disabled (or busy going)}
-                   (cond going "Coding…" (seq limit) (str "Code " limit " lines") :else "Code every line"))))
-          (when going
-            ($ :div {:class "mt-3"}
-               ($ :div {:class "flex justify-between text-xs text-ink-2"}
-                  ($ :span {} "Coding: " (:done running) " of " (:of running))
-                  ($ ui/mono {:class "text-ink-3"} "started " (some-> (:started running) (subs 11 19))))
-               ($ :div {:class "mt-1 h-1.5 bg-surface-2"}
-                  ($ :div {:class "h-full bg-ink-2 transition-all"
-                           :style {:width (str (* 100 (/ (:done running) (max 1 (:of running)))) "%")}}))))
-          (when (:failed running) ($ ui/notice {:tone :bad} "The last run failed: " (:failed running)))
-          (when error ($ ui/notice {:tone :bad} error))
-          (when (seq runs)
-            ($ ui/disclosure {:summary (str (count runs) " runs so far; the last " (some-> (:at (first runs)) (subs 0 16)))}
-               ($ ui/table {:head ["At" "Lines" "Coded" "Asked Jev" "Answered from the record" "Model"]}
-                  (for [{:keys [at units coded asked kept model]} runs]
-                    ($ :tr {:key (str at)}
-                       ($ ui/td {} ($ ui/mono {} (some-> at str (subs 0 19))))
-                       ($ ui/td {} units) ($ ui/td {} coded) ($ ui/td {} asked) ($ ui/td {} kept)
-                       ($ ui/td {} ($ ui/mono {:class "text-ink-3"} model)))))))))))
 
 ;; ----------------------------------------------------------------------------------------------- one unit
 

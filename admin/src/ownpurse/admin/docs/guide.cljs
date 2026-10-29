@@ -13,16 +13,44 @@
    [ownpurse.classify.outcome :as outcome]
    [uix.core :as uix :refer [$ defui]]))
 
-(def scenario "atlas")
+(def sample "The invented scenario the guide follows when the record has none coded." "atlas")
 
 (def examples
-  "Lines worth following, each for what it shows."
+  "Lines of the sample worth following, each for what it shows."
   [{:id "d211" :title "A lunch in Lisbon" :why "Per diem, or hospitality? Only the note can tell."}
    {:id "d138" :title "A crane hire" :why "The bank sent no merchant code, so Jev has to guess the kind of shop."}
    {:id "d88/1" :title "A hotel room" :why "A receipt splits one payment into items, each coded on its own."}
    {:id "d109" :title "A hotel's refund" :why "Money back follows the purchase it returns."}
    {:id "d57" :title "A grill, far from home" :why "A check rule stops the line, however sure Jev is."}
    {:id "d217" :title "A cheeky note" :why "The note tells us how to code it. Should we listen?"}])
+
+(defn record-examples
+  "Lines of a record scenario's run worth following, each for what it shows, picked by what happened to them: the
+  first line of each kind, and no line twice."
+  [lines]
+  (let [d #(get-in %1 [:decisions %2])
+        person? #(= :needs-person (:code %))
+        kinds [[#(and (= :per-diem (:code (d % :checked))) (get-in % [:unit :currency])
+                      (not= "USD" (get-in % [:unit :currency])))
+                "Code knows where the cardholder was that day, and Jev reads the trip."]
+               [#(and (neg? (get-in % [:unit :amount] 0)) (not= :transfer (get-in % [:unit :channel])))
+                "Money coming back, not going out."]
+               [#(and (nil? (get-in % [:unit :mcc])) (not= :transfer (get-in % [:unit :channel])))
+                "The bank sent no merchant code, so Jev guesses the kind of shop first."]
+               [#(and (person? (d % :checked)) (not (person? (d % :choice))))
+                "Jev picked a bucket, but a check rule stops the line: a person looks."]
+               [#(and (not (person? (d % :checked))) (< (:confidence (d % :checked) 1) 0.85))
+                "Jev is not sure enough, so the line goes to a person."]
+               [#(and (not= :per-diem (:code (d % :checked))) (>= (:confidence (d % :checked) 0) 0.95))
+                "A sure coding, applied without anyone looking."]]]
+    (->> kinds
+         (reduce (fn [[picked seen] [pred why]]
+                   (if-let [l (first (filter #(and (pred %) (not (seen (:id %)))) lines))]
+                     [(conj picked {:id (:id l) :short (:short l) :title (get-in l [:unit :merchant]) :why why})
+                      (conj seen (:id l))]
+                     [picked seen]))
+                 [[] #{}])
+         first)))
 
 (def actors
   {:bank {:name "The bank" :glyph "▤" :about "Sends the line. Knows what was paid, never what for."}
@@ -107,9 +135,14 @@
           ($ p {} "What it never says is " ($ :b {} "what the money was for") ". A restaurant bill could be a "
              "traveller's dinner, a lunch with a client, or a personal treat. Each of those belongs in a different place "
              "in the books. Deciding which is called " ($ term {:id :coding}) ", and it is what the rest of this guide is about.")
-          ($ aside {:label "In the sandbox"}
-             "These lines are invented, for testing: a made-up studio with two projects, Harbour in Lisbon and Skyline in "
-             "New York. That is a " ($ term {:id :scenario}) ". Later the same pipeline will read real lines from your books."))
+          (if (:record world)
+            ($ aside {:label "Your own books"}
+               "This is a real line, from the record's bank lines, as the " ($ term {:id :scenario}) " "
+               ($ :b {} (:name world)) " reads it. The scenario adds what the bank does not know: who holds each card, "
+               "who was where and when, the projects, and the rules. Change those on the scenario's page and code again.")
+            ($ aside {:label "In the sandbox"}
+               "These lines are invented, for testing: a made-up studio with two projects, Harbour in Lisbon and Skyline in "
+               "New York. That is a " ($ term {:id :scenario}) ". With a record, this guide follows its own lines instead.")))
        ($ panel {:title "Your line, as the bank sends it"}
           ($ :div {:class "border border-dashed border-line-2 bg-surface-0 p-4 font-mono"}
              ($ :div {:class "flex items-baseline justify-between gap-3 text-xs text-ink-3"}
@@ -408,10 +441,14 @@
                 ($ :b {} (cond (= :needs-person code) "sent to a person: the coding itself says so"
                                auto? (str "coded automatically: " (ui/pct confidence) " reaches " (ui/pct t))
                                :else (str "sent to a person: " (ui/pct confidence) " is under " (ui/pct t)))))
+             (if-not (:expect unit)
+               ($ :li {:class "flex flex-wrap items-center gap-2"}
+                  ($ :span {:class "text-ink-3"} "3. No answer key:")
+                  ($ :span {} "a line of your books is right when a person says so"))
              ($ :li {:class "flex flex-wrap items-center gap-2"}
                 ($ :span {:class "text-ink-3"} "3. The answer key says") ($ ui/tag {:code (:expect unit)})
                 (when (seq (:ok unit)) ($ :span {:class "text-ink-3"} "(also fine: " (str/join ", " (map name (:ok unit))) ")"))
-                (case (:review unit) :required ($ :span {} "and a person must look") :allowed ($ :span {} "and a person may look") nil))
+                (case (:review unit) :required ($ :span {} "and a person must look") :allowed ($ :span {} "and a person may look") nil)))
              ($ :li {:class "flex flex-wrap items-center gap-2"}
                 ($ :span {:class "text-ink-3"} "4. Outcome") ($ ui/pill {:outcome o})))
           (when-let [w (or (:hard unit) (:why unit))]
@@ -457,31 +494,40 @@
              ($ :div {:class "text-sm font-semibold"} name)
              ($ :div {:class "text-xs text-ink-2"} about))))))
 
-(defui picker [{:keys [at-id on-pick]}]
+(defui picker [{:keys [examples at-id on-pick]}]
   ($ :div {:class "mt-6"}
      ($ ui/eyebrow {:class "mb-2"} "Pick a line to follow")
      ($ :div {:class "grid gap-2 sm:grid-cols-2 lg:grid-cols-6"}
-        (for [{:keys [id title why]} examples
+        (for [{:keys [id short title why]} examples
               :let [on? (= id at-id)]]
-          ($ :button {:key id :on-click #(on-pick id)
+          ($ :button {:key id :on-click #(on-pick id) :title id
                       :class (cx "flex flex-col items-start gap-1 border p-3 text-left transition-colors"
                                  (if on? "border-ink-1 bg-surface-1" "border-line-1 hover:border-line-2 hover:bg-surface-1"))}
              ($ :span {:class "flex w-full items-baseline justify-between gap-2"}
                 ($ :span {:class "text-sm font-semibold"} title)
-                ($ :span {:class "font-mono text-2xs text-ink-3"} id))
+                ($ :span {:class "font-mono text-2xs text-ink-3"} (or short id)))
              ($ :span {:class "text-xs leading-snug text-ink-2"} why))))))
 
 (defui page [{:keys [query]}]
   (let [at (min 10 (max 1 (or (some-> (:step query) js/parseInt) 1)))
-        id (or (:line query) "d211")
+
         [t set-t!] (uix/use-state 0.85)
         [strategy set-strategy!] (uix/use-state :choice)
         go! (uix/use-callback (fn [q] (route/go! ["docs"] q true)) [])
-        to-step (uix/use-callback (fn [n] (go! {:step n :line id})) [go! id])
         scenarios (api/use-get "/sandbox/scenarios")
+        ;; The record's own lines when one of its scenarios is coded: the one asked for, else the one with the most
+        ;; lines coded (the first, on a tie). Else the invented sample's.
+        coded (filterv #(and (:record %) (seq (:runs %))) (get-in scenarios [:data :scenarios]))
+        rec (or (some #(when (= (:scenario query) (:name %)) %) coded)
+                (reduce #(if (> (:coded %2 0) (:coded %1 0)) %2 %1) (first coded) (rest coded)))
+        scenario (if rec (:name rec) sample)
         run-id (some->> (get-in scenarios [:data :scenarios]) (some #(when (= scenario (:name %)) %)) :runs first :id)
+        run-state (api/use-get (when rec (str "/sandbox/scenarios/" scenario "/runs/" run-id)))
+        shown (if rec (record-examples (get-in run-state [:data :lines])) examples)
+        id (or (:line query) (:id (first shown)))
+        to-step (uix/use-callback (fn [n] (go! {:step n :line id :scenario (:scenario query)})) [go! id query])
         world-state (api/use-get (str "/sandbox/scenarios/" scenario))
-        line-state (api/use-get (when run-id (str "/sandbox/scenarios/" scenario "/runs/" run-id "/lines/" id)))
+        line-state (api/use-get (when (and run-id id) (str "/sandbox/scenarios/" scenario "/runs/" run-id "/lines/" id)))
         world (get-in world-state [:data :world])
         {:keys [title]} (nth steps (dec at))]
     (uix/use-effect
@@ -501,13 +547,18 @@
           ($ :h1 {:class "mt-1 font-display text-2xl font-extrabold tracking-tight"} "From a bank line to a bucket")
           ($ :p {:class "mt-2 max-w-[72ch] text-base leading-relaxed text-ink-2"}
              "Every payment on a card has to be filed somewhere in the books. This is how ownpurse does it, one step at a "
-             "time, on a real line from the sandbox. Four characters do the work:")
+             "time, on a real line" (if rec " of your own books." " from the sandbox.") " Four characters do the work:")
           ($ cast-of {})
-          ($ picker {:at-id id :on-pick #(go! {:step at :line %})})
+          (when (next coded)
+            ($ :label {:class "mt-6 flex flex-wrap items-center gap-2 text-sm text-ink-3"} "Following the scenario"
+               ($ :select {:value scenario :on-change #(go! {:step at :scenario (.. % -target -value)})
+                           :class "rounded-1 border border-line-2 bg-surface-0 px-2 py-1 text-sm text-ink-1"}
+                  (for [{:keys [name title]} coded] ($ :option {:key name :value name} (or title name))))))
+          ($ picker {:examples shown :at-id id :on-pick #(go! {:step at :line % :scenario (:scenario query)})})
           ($ :div {:class "sticky top-[45px] z-10 -mx-6 mt-6 border-b border-line-1 bg-surface-0/95 px-6 pt-3 pb-2 backdrop-blur"}
              ($ rail {:at at :on-go to-step}))
           ($ ui/loading {:state (cond (:error scenarios) scenarios (:error world-state) world-state
-                                      (or (nil? world) (nil? run-id)) {:loading true} :else line-state)}
+                                      (or (nil? world) (nil? run-id) (nil? id)) {:loading true} :else line-state)}
              (when-let [data (:data line-state)]
                ($ :section {:key (str id "/" at) :class "mt-6 animate-[fade_.25s_ease-out]"}
                   ($ :div {:class "flex flex-wrap items-center gap-3"}

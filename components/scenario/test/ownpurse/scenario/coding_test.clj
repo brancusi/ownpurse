@@ -124,6 +124,11 @@
         (testing "the plan says what coding would take before anything is asked"
           (is (= {:lines 4 :units 4 :at-most-requests 9} (scenario/plan node "harbour-coding")))
           (is (zero? @calls)))
+        (testing "the estimate asks nothing, and counts every request as one to ask before any answer is kept"
+          (is (= {:units 4 :requests 9 :asked 9 :kept 0 :timed false}
+                 (select-keys (scenario/estimate node "harbour-coding" "stub" {}) [:units :requests :asked :kept :timed])))
+          (is (= 2 (:units (scenario/estimate node "harbour-coding" "stub" {:limit 2}))))
+          (is (zero? @calls)))
         (testing "a run codes every line: sure codings stand, the rest go to a person"
           (is (= {:units 4 :coded 2 :asked 9 :kept 0}
                  (select-keys (scenario/code! node "harbour-coding" (stub calls) {:model "stub"})
@@ -132,6 +137,27 @@
                   ["line:test:5" "needs-person" false]]
                  (map (juxt :unit :code :auto) (scenario/codings node "harbour-coding"))))
           (is (= "travel" (:proposed (second (scenario/codings node "harbour-coding"))))))
+        (testing "after the run, the estimate finds every answer kept: nothing to ask, nothing to pay, and timed"
+          (is (= {:asked 0 :kept 9 :input-tokens 0 :cost-usd 0M :timed true}
+                 (-> (scenario/estimate node "harbour-coding" "stub" {})
+                     (select-keys [:asked :kept :input-tokens :cost-usd :timed])
+                     (update :cost-usd #(.stripTrailingZeros ^BigDecimal %))))))
+        (testing "the run says how long it took and how many tokens it sent"
+          (is (= {:input-tokens 90} (select-keys (first (scenario/coding-runs node "harbour-coding")) [:input-tokens])))
+          (is (nat-int? (:took-ms (first (scenario/coding-runs node "harbour-coding"))))))
+        (testing "the sandbox shows the record scenario as it shows an invented one: one run, \"latest\""
+          (is (= [["harbour-coding" true 4 ["latest"]]]
+                 (map (juxt :name :record :units #(map :id (:runs %))) (scenario/sandbox-scenarios node))))
+          (is (true? (:record (scenario/sandbox-world node "harbour-coding"))))
+          (let [{:keys [run lines]} (scenario/sandbox-run node "harbour-coding")]
+            (is (= ["latest" 4] [(:id run) (:results run)]))
+            (is (= ["L1" "L2" "L3" "L4"] (map :short lines)))
+            (is (= :per-diem (get-in (first lines) [:decisions :checked :code])))))
+        (testing "one line all the way through: the requests rebuilt from its facts find the answers the record kept"
+          (let [{:keys [responses explained record]} (scenario/sandbox-line node "harbour-coding" "line:test:1")]
+            (is record)
+            (is (= #{:rules :plain} (set (keys responses))))
+            (is (= ["R1" "R2" "R3"] (map :id explained)))))
         (testing "coding again asks nothing: every answer is in the record"
           (is (= {:asked 0 :kept 9} (select-keys (scenario/code! node "harbour-coding" (stub calls) {:model "stub"})
                                                  [:asked :kept])))

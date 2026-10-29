@@ -662,11 +662,19 @@ steps 2 and 3.
   compare (bucket proposed changed, apart from sureness changed); a book's evaluation; versions with restore.
   An agent walked it as a user on a real record (2026-10-29) and its bugs are fixed (7cd5712).
 - Not yet in step 2: each bucket naming its account in each book (so a coding adds to a book's evaluation); a run
-  of chosen lines (only those a rule touches, or a bucket's) rather than the first N; the plan saying how many
-  answers the record already holds; a child turning off or shortening what a world layer under it says (SCENARIOS.md,
+  of chosen lines (only those a rule touches, or a bucket's) rather than the first N; a child turning off or shortening what a world layer under it says (SCENARIOS.md,
   open questions); rule blocks edited as fields rather than JSON; versions showing what changed.
-- The sandbox's `/sandbox/scenarios` (classify scenario files) are still the other thing called scenarios: they
-  stay for the invented demo until a scenario of layers can be exported to the static site.
+- **The sandbox and the guide show the record's own lines (2026-10-29).** With a record, `/sandbox/scenarios` lists
+  its scenarios that code lines first (`:record true`), each coded one with one run, "latest" (ownpurse.scenario.
+  sandbox): the same views as the invented ones, scored :coded or :asks (no answer key: outcome.cljc), a line's
+  requests rebuilt from its facts and its answers read from the kept judgments. The guide follows the record
+  scenario with the most lines coded (or the one picked), with lines chosen by what happened to them. Before a
+  run, `GET /scenarios/{ref}/coding/estimate` walks every line through the classifier with the kept answers: the
+  requests to ask and those kept, tokens (scaled from the kept answers' own usage), cost at Jev's published price
+  ($0.042 a million input tokens; the API reports tokens, not prices) and seconds (from the timed runs: a run now
+  keeps :took-ms and :input-tokens). An empty scenario says it has no runs and offers the run with that estimate.
+- The invented scenarios (classify scenario files) stay for the demo with no record, until a scenario of layers
+  can be exported to the static site.
 - Next: the rest of step 2 above, then step 3 (overrides and labels).
 
 ## After 3b

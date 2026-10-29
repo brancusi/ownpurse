@@ -6,7 +6,8 @@
   dropped, duplicated or changed freely, and every version is kept. Knows nothing about any one source."
   (:require
    [ownpurse.scenario.core :as core]
-   [ownpurse.scenario.run :as run]))
+   [ownpurse.scenario.run :as run]
+   [ownpurse.scenario.sandbox :as sandbox]))
 
 (def kinds
   "The kinds of layer, each with what it says."
@@ -95,6 +96,14 @@
   [node ref]
   (run/plan (core/classifier-scenario node ref)))
 
+(defn estimate
+  "What coding scenario `ref` would take now, asking nothing: the requests to ask of `model` and those the record
+  answers, the input tokens and cost (at Jev's published price) and the seconds it would take (from its timed runs).
+  opts: :limit, as for code!. {:units :requests :asked :kept :input-tokens :cost-usd :seconds :timed
+  :price-per-million-input-tokens}"
+  [node ref model opts]
+  (run/estimate node (core/classifier-scenario node ref) model (assoc opts :runs (run/runs node ref))))
+
 (defn code!
   "Codes scenario `ref`'s lines with `ask` (state, questions → a System One response; ownpurse.classify.interface/
   jev-ask makes one), keeping every answer in the record by its exact request, so coding again after an edit asks
@@ -125,3 +134,29 @@
   "The units scenarios `a` and `b` code differently."
   [node a b]
   (run/compare-codings node a b))
+
+(defn sandbox-scenarios
+  "The record's scenarios that code lines, in the sandbox's shape (ownpurse.sandbox/scenarios): each coded one has
+  one run, \"latest\"."
+  [node]
+  (sandbox/scenarios node))
+
+(defn coding-scenario?
+  "Whether scenario `ref` is in the record and codes lines."
+  [node ref]
+  (boolean (and (core/scenario node ref) (sandbox/coding-scenario? node ref))))
+
+(defn sandbox-world
+  "Scenario `ref`'s world, in the sandbox's shape."
+  [node ref]
+  (sandbox/world node ref))
+
+(defn sandbox-run
+  "Scenario `ref`'s coding as the sandbox's run: one row a unit."
+  [node ref]
+  (sandbox/run-lines node ref))
+
+(defn sandbox-line
+  "One unit of scenario `ref`'s coding all the way through, as the sandbox's line."
+  [node ref unit]
+  (sandbox/line node ref unit))
