@@ -8,6 +8,8 @@
    [ownpurse.admin.route :as route]
    [ownpurse.admin.sandbox.home :as sandbox.home]
    [ownpurse.admin.sandbox.run :as sandbox.run]
+   [ownpurse.admin.scenarios.home :as scenarios.home]
+   [ownpurse.admin.scenarios.page :as scenarios.page]
    [ownpurse.admin.theme :as theme]
    [ownpurse.admin.ui :as ui]
    [uix.core :refer [$ defui]]
@@ -16,6 +18,7 @@
 (def sections
   "The admin's sections, in the order the bar lists them."
   [{:id "sandbox" :title "Sandbox" :about "Build a rule set over bank lines, and see how each line is coded"}
+   {:id "scenarios" :title "Scenarios" :about "The books read through layers: create, duplicate, change and code them, and compare"}
    {:id "docs" :title "Docs" :about "How a bank line is coded, step by step, and every word explained"}])
 
 (defui shell [{:keys [route children]}]
@@ -47,6 +50,9 @@
          "sandbox" (if scenario
                      ($ sandbox.run/page {:scenario scenario :run run :query (:query r) :key (str scenario "/" run)})
                      ($ sandbox.home/page))
+         "scenarios" (if scenario
+                       ($ scenarios.page/page {:ref scenario :query (:query r) :key scenario})
+                       ($ scenarios.home/page))
          "docs" (if (= "terms" scenario)
                   ($ docs.vocabulary/page {:query (:query r)})
                   ($ docs.guide/page {:query (:query r)}))

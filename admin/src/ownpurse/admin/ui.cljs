@@ -150,3 +150,86 @@
     (:error state) ($ notice {:tone :bad} (:error state))
     (:loading state) ($ notice {} "Loading…")
     :else children))
+
+;; ----------------------------------------------------------------------------------------------- controls
+
+(defui button
+  "A button. `tone` :primary for the one thing a block is for, :danger for what drops something; else quiet."
+  [{:keys [tone on-click disabled type title children]}]
+  ($ :button {:type (or type "button") :on-click on-click :disabled disabled :title title
+              :class (cx "whitespace-nowrap rounded-1 px-2.5 py-1 text-xs disabled:cursor-not-allowed disabled:opacity-50"
+                         (case tone
+                           :primary "bg-ink-1 text-ink-inverse hover:bg-ink-2"
+                           :danger "border border-coin text-coin-text hover:bg-coin-tint"
+                           "border border-line-2 text-ink-1 hover:bg-surface-1"))}
+     children))
+
+(def ^:private field-class
+  "w-full rounded-1 border border-line-2 bg-surface-0 px-2 py-1 text-sm text-ink-1 focus:outline-2 focus:outline-focus")
+
+(defui text-input
+  "A one-line text field; `on-change` gets the text."
+  [{:keys [value on-change placeholder class name aria-label]}]
+  ($ :input {:type "text" :value (or value "") :placeholder placeholder :name name :aria-label (or aria-label placeholder)
+             :on-change #(on-change (.. % -target -value)) :class (cx field-class class)}))
+
+(defui number-input
+  [{:keys [value on-change min class aria-label]}]
+  ($ :input {:type "number" :value (or value "") :min min :aria-label aria-label
+             :on-change #(on-change (.. % -target -value)) :class (cx (str/replace field-class "w-full" "w-24") class)}))
+
+(defui text-area
+  "A field for a block of text, such as a layer as JSON; monospace, as tall as `rows`."
+  [{:keys [value on-change rows name aria-label]}]
+  ($ :textarea {:value (or value "") :rows (or rows 12) :name name :aria-label aria-label :spell-check false
+                :on-change #(on-change (.. % -target -value))
+                :class (cx field-class "font-mono text-2xs leading-snug")}))
+
+(defui select
+  "A choice among `options`, [value label] pairs; `on-change` gets the value."
+  [{:keys [value on-change options aria-label class]}]
+  ($ :select {:value (or value "") :aria-label aria-label :on-change #(on-change (.. % -target -value))
+              :class (cx field-class "w-auto" class)}
+     (for [[v label] options] ($ :option {:key v :value v} label))))
+
+(defui field
+  "A labelled control."
+  [{:keys [label children class]}]
+  ($ :label {:class (cx "block" class)}
+     ($ eyebrow {:class "mb-1"} label)
+     children))
+
+(defui switch
+  "On or off, as a small switch with its label."
+  [{:keys [on on-change label disabled]}]
+  ($ :label {:class (cx "inline-flex cursor-pointer items-center gap-1.5 text-xs" (when disabled "cursor-not-allowed opacity-50"))}
+     ($ :input {:type "checkbox" :checked (boolean on) :disabled disabled :class "peer sr-only"
+                :on-change #(on-change (.. % -target -checked))})
+     ($ :span {:class (cx "relative inline-block h-3.5 w-6 rounded-full transition-colors"
+                          (if on "bg-verdigris" "bg-line-2"))}
+        ($ :span {:class (cx "absolute top-0.5 size-2.5 rounded-full bg-surface-0 transition-all" (if on "left-3" "left-0.5"))}))
+     ($ :span {:class (if on "text-ink-1" "text-ink-3")} label)))
+
+(defui table
+  "A dense table: `head` the column titles, `children` the rows (tr)."
+  [{:keys [head children class]}]
+  ($ :div {:class (cx "overflow-x-auto border border-line-1" class)}
+     ($ :table {:class "w-full border-collapse text-sm"}
+        ($ :thead
+           ($ :tr {:class "border-b border-line-1 bg-surface-1 text-left"}
+              (for [[i h] (map-indexed vector head)]
+                ($ :th {:key i :class "px-2 py-1 font-mono text-2xs font-medium uppercase tracking-[0.06em] text-ink-3"} h))))
+        ($ :tbody {:class "divide-y divide-line-1"} children))))
+
+(defui td [{:keys [children class col-span]}]
+  ($ :td {:class (cx "px-2 py-1 align-top" class) :col-span col-span} children))
+
+(defui tabs
+  "Links along a page, the current one marked: `items` [[id label href]]."
+  [{:keys [items current]}]
+  ($ :nav {:class "mt-4 flex gap-1 border-b border-line-1"}
+     (for [[id label href] items]
+       ($ :a {:key id :href href
+              :class (cx "-mb-px border-b-2 px-3 py-1.5 text-sm"
+                         (if (= id current) "border-ink-1 text-ink-1" "border-transparent text-ink-3 hover:text-ink-1"))}
+          label))))

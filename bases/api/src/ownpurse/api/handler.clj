@@ -552,8 +552,12 @@
                         (throw (ex-info (str "No TypeSafe key: set TYPESAFE_API_KEY, or the key in the config's "
                                              "secrets, then restart ownpurse.")
                                         {:type :ownpurse/scenario-conflict})))
-                      (when-not (compare-and-set! running (dissoc @running ref)
-                                                  (assoc @running ref {:done 0 :of units :started (str (java.time.Instant/now))}))
+                      ;; A run that failed is over: its entry says why until the next run replaces it.
+                      (when-not (let [now @running]
+                                  (and (or (nil? (get now ref)) (:failed (get now ref)))
+                                       (compare-and-set! running now
+                                                         (assoc now ref {:done 0 :of units
+                                                                         :started (str (java.time.Instant/now))}))))
                         (throw (ex-info (str "Scenario " ref " is being coded now. GET /scenarios/" ref "/coding for "
                                              "its progress.")
                                         {:type :ownpurse/scenario-conflict})))
@@ -566,6 +570,14 @@
                           (catch Throwable e
                             (swap! running assoc-in [ref :failed] (ex-message e)))))
                       {:started true :plan plan :units units}))))}}]
+     ["/scenarios/{ref}/composed"
+      {:get {:summary (str "A scenario's world and coding as its layers that are on compose them, its bases' first: "
+                           "the rules, codes, trips and projects that stand, the threshold and strategy, and which "
+                           "lines it reads (:selects). The lines themselves are not read.")
+             :parameters {:path Ref}
+             :responses {200 {:body :any} 404 {:body ApiError}}
+             :handler (fn [{{:keys [path]} :parameters}]
+                        (answer #(hash-map :composed (scenario/composed node (:ref path)))))}}]
      ["/scenarios/{ref}/codings"
       {:get {:summary (str "A scenario's coding of each unit, as its last run left it: the bucket that stands, the "
                            "one proposed, how sure, and whether it stands without a person.")

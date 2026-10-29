@@ -78,6 +78,12 @@
   [node ref]
   (core/classifier-scenario node ref))
 
+(defn composed
+  "Scenario `ref`'s world and coding as its layers that are on compose them (its bases' first), without reading its
+  lines: the rules that stand, with the lines layers' selections as :selects and their given lines as :cases."
+  [node ref]
+  (merge {:threshold run/default-threshold :strategy run/default-strategy} (core/composed node ref)))
+
 (defn plan
   "What coding scenario `ref` would take, before asking anything: {:lines :units :at-most-requests}."
   [node ref]

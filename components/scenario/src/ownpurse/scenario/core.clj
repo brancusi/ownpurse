@@ -226,6 +226,10 @@
              :when (:enabled l)]
          l)))
 
+(defn composed [node ref]
+  (-> (coding/compose (stack-layers node ref))
+      (assoc :scenario ref)))
+
 (defn classifier-scenario [node ref]
   (let [{:keys [selects] :as s} (coding/compose (stack-layers node ref))
         read (vec (mapcat #(coding/read-lines node s %) selects))]

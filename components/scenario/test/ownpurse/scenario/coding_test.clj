@@ -93,6 +93,12 @@
                   ["line:test:2" "2025-10-31" 10.40M "EUR" "4121" :card "card-r"]
                   ["line:test:3" "2025-11-20" 63.15M nil "5411" :card "card-r"]]
                  (map (juxt :id :date :amount :currency :mcc :channel :card) (take 3 (:cases s)))))))
+      (testing "the composed stack says which rules stand and which lines it reads, without reading them"
+        (let [c (scenario/composed node "harbour-coding")]
+          (is (= ["R1" "R2" "R3"] (map :id (:rules c))))
+          (is (= [{:accounts [checking] :from "2025-01-01" :to "2025-12-31"}] (:selects c)))
+          (is (= [0.85M :checked] [(:threshold c) (:strategy c)]))
+          (is (nil? (:cases c)))))
       (testing "a rule that codes to no bucket, or a trip with no dates, is refused"
         (is (= :ownpurse/invalid
                (:type (error #(scenario/put! node (assoc-in trial [:layers 1 :coding :rules 0 :code] "nowhere"))))))
