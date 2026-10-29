@@ -691,6 +691,11 @@ steps 2 and 3.
   re-asks every line once; a rule added with exact blocks re-asks only the lines it could apply to. The sandbox
   shows unsent rules apart ("Not sent to Jev"), and a line coded before the rules changed shows the fuzzy answers
   it lacks as not known instead of failing.
+- **A project can pay a per diem (2026-10-29).** A world layer sets `:per-diem true|false` on a project; a layer
+  above amends a project field by field without restating it (an id-keyed world entry merges, and a project with
+  no name anywhere in the stack is refused). The block `[:per-diem-trip]` holds on a trip for such a project, so one
+  pair of rules (per diem where the project pays one, travel meals where it does not) serves every project. Jev
+  is told "the project pays (no) per diem" only in a world that sets it on its projects.
 - The invented scenarios (classify scenario files) stay for the demo with no record, until a scenario of layers
   can be exported to the static site.
 - Next: the rest of step 2 above, then step 3 (overrides and labels).
