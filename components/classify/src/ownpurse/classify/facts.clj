@@ -142,7 +142,7 @@
   {:transaction (cond-> {:merchant merchant
                          :amount (str currency " " (.toPlainString ^BigDecimal (or line-amount amount)))
                          :how (case channel :in-store "in person, in a shop" :online "online" :transfer "a transfer"
-                                    (name channel))}
+                                    nil "not said by the bank" (name channel))}
                   category (assoc :category category)
                   country (assoc :merchant_country country)
                   city (assoc :merchant_city city)

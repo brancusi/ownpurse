@@ -9,10 +9,11 @@
 (def ^:private checking "acct:robin:checking")
 
 (defn- line [n date merchant amount & {:as more}]
-  (merge {:xt/id (str "line:test:" n) :account checking :source "test" :source-table "test.transactions"
-          :source-row (str "test:" n) :org "test" :date (LocalDate/parse date) :amount amount :status "posted"
-          :counterparty merchant :channel "card" :card "card-r"}
-         more))
+  (into {} (remove (comp nil? val))
+        (merge {:xt/id (str "line:test:" n) :account checking :source "test" :source-table "test.transactions"
+                :source-row (str "test:" n) :org "test" :date (LocalDate/parse date) :amount amount :status "posted"
+                :counterparty merchant :channel "card" :card "card-r"}
+               more)))
 
 (def ^:private lines
   [(line 1 "2025-10-03" "Mercado Azul" -47.97M :merchant-code "5411" :original-amount -41.18M :original-currency "EUR")
@@ -20,7 +21,9 @@
    (line 2 "2025-11-01" "RideNow" -12.10M :merchant-code "4121" :original-amount -10.40M :original-currency "EUR"
          :purchased-on (LocalDate/parse "2025-10-31"))
    (line 3 "2025-11-20" "Prairie Market" -63.15M :merchant-code "5411")
-   (line 4 "2025-12-01" "Elsewhere" -9.00M :account "acct:other")])
+   (line 4 "2025-12-01" "Elsewhere" -9.00M :account "acct:other")
+   ;; A line the bank says nothing about how it was paid (a fee refunded): no channel, no card.
+   (line 5 "2025-12-02" "ATM fee refund" 6.61M :channel nil :card nil)])
 
 ;; As a JSON client sends it: strings where the classifier reads keywords and sets.
 (def ^:private world
@@ -52,7 +55,8 @@
 
 (def ^:private answers
   "What the stand-in answers, by merchant: a bucket and how sure."
-  {"Mercado Azul" ["per_diem" 0.97M] "RideNow" ["travel" 0.62M] "Prairie Market" ["personal" 0.93M]})
+  {"Mercado Azul" ["per_diem" 0.97M] "RideNow" ["travel" 0.62M] "Prairie Market" ["personal" 0.93M]
+   "ATM fee refund" ["needs_person" 0.9M]})
 
 (defn- stub [calls]
   (fn [{:keys [transaction]} questions]
@@ -88,7 +92,7 @@
           (is (= [["line:test:1" "2025-10-03" 41.18M "EUR" "5411" :card "card-r"]
                   ["line:test:2" "2025-10-31" 10.40M "EUR" "4121" :card "card-r"]
                   ["line:test:3" "2025-11-20" 63.15M nil "5411" :card "card-r"]]
-                 (map (juxt :id :date :amount :currency :mcc :channel :card) (:cases s))))))
+                 (map (juxt :id :date :amount :currency :mcc :channel :card) (take 3 (:cases s)))))))
       (testing "a rule that codes to no bucket, or a trip with no dates, is refused"
         (is (= :ownpurse/invalid
                (:type (error #(scenario/put! node (assoc-in trial [:layers 1 :coding :rules 0 :code] "nowhere"))))))
@@ -101,19 +105,20 @@
       (scenario/put! node trial)
       (let [calls (atom 0)]
         (testing "the plan says what coding would take before anything is asked"
-          (is (= {:lines 3 :units 3 :at-most-requests 6} (scenario/plan node "harbour-coding")))
+          (is (= {:lines 4 :units 4 :at-most-requests 9} (scenario/plan node "harbour-coding")))
           (is (zero? @calls)))
         (testing "a run codes every line: sure codings stand, the rest go to a person"
-          (is (= {:units 3 :coded 2 :asked 6 :kept 0}
+          (is (= {:units 4 :coded 2 :asked 9 :kept 0}
                  (select-keys (scenario/code! node "harbour-coding" (stub calls) {:model "stub"})
                               [:units :coded :asked :kept])))
-          (is (= [["line:test:1" "per-diem" true] ["line:test:2" "needs-person" false] ["line:test:3" "personal" true]]
+          (is (= [["line:test:1" "per-diem" true] ["line:test:2" "needs-person" false] ["line:test:3" "personal" true]
+                  ["line:test:5" "needs-person" false]]
                  (map (juxt :unit :code :auto) (scenario/codings node "harbour-coding"))))
           (is (= "travel" (:proposed (second (scenario/codings node "harbour-coding"))))))
         (testing "coding again asks nothing: every answer is in the record"
-          (is (= {:asked 0 :kept 6} (select-keys (scenario/code! node "harbour-coding" (stub calls) {:model "stub"})
+          (is (= {:asked 0 :kept 9} (select-keys (scenario/code! node "harbour-coding" (stub calls) {:model "stub"})
                                                  [:asked :kept])))
-          (is (= 6 @calls)))
+          (is (= 9 @calls)))
         (testing "a scenario standing on it with a lower threshold codes the taxi too, and asks nothing new"
           (scenario/put! node {:ref "looser" :name "Trust the taxi" :base "harbour-coding"
                                :layers [{:id "threshold" :kind "coding" :coding {:threshold "0.6"}}]})
@@ -128,7 +133,7 @@
                                :layers [{:id "more" :kind "coding"
                                          :coding {:rules [{:id "R4" :code "travel" :rule "Rideshare is travel."
                                                            :when [["contains" "merchant" "ride"]]}]}}]})
-          (is (= {:asked 3 :kept 3} (select-keys (scenario/code! node "rule-more" (stub calls) {:model "stub"})
+          (is (= {:asked 4 :kept 5} (select-keys (scenario/code! node "rule-more" (stub calls) {:model "stub"})
                                                  [:asked :kept]))))
         (testing "one unit all the way through"
           (is (= :harbour (keyword (get-in (scenario/coding node "harbour-coding" "line:test:1")
