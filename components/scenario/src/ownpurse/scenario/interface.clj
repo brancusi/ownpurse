@@ -98,6 +98,12 @@
   [node ref]
   (core/rule-ledger node ref))
 
+(defn world-ledger
+  "What scenario `ref`'s world layers say, its bases' first: each project, card, entity and trip with where it was
+  said, which layers changed it, and whether it is on (one turned off stays in its place); and :home."
+  [node ref]
+  (core/world-ledger node ref))
+
 (defn plan
   "What coding scenario `ref` would take, before asking anything: {:lines :units :at-most-requests}. Over its own
   lines, or over set `over` (as set-over gives it)."

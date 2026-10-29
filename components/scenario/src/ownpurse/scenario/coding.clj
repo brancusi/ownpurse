@@ -46,21 +46,31 @@
               (update :when (partial mapv block)))
     (contains? r :over) (update :over vec)))
 
+(defn trip-id
+  "A trip's id: its :id, else whose it is and the day it starts. A trip of the same id in a layer above replaces it."
+  [{:keys [id person from]}]
+  (or id (str person " " from)))
+
 (defn world-in
-  "A world layer's data, checked: dates are dates, names are named. A project given without its name and dates
-  amends the project of that id in a layer below (its :per-diem, say); the scenario checks there is one."
+  "A world layer's data, checked: dates are dates, names are named. A project given without its name amends the
+  project of that id in a layer below (its dates, its :per-diem); the scenario checks there is one. A trip,
+  project, card or entity with :enabled false is turned off: it stays in its layer, and the world reads as if it
+  were not there; a trip turned off needs only its id."
   [{:keys [projects trips] :as world}]
   (doseq [[id {:keys [name from to per-diem] :as p}] projects]
-    (when (or name from to)
-      (when (str/blank? name) (fail! (str "Project " id " needs a name.") {:project id}))
-      (date! (str "Project " id) from)
-      (date! (str "Project " id) to))
+    ;; A project amended (its dates, say) need not say its name again; one no layer names is refused by the scenario.
+    (when (and (contains? p :name) (str/blank? name)) (fail! (str "Project " id " needs a name.") {:project id}))
+    (when (contains? p :from) (date! (str "Project " id) from))
+    (when (contains? p :to) (date! (str "Project " id) to))
     (when (and (contains? p :per-diem) (not (boolean? per-diem)))
       (fail! (str "Project " id ": :per-diem is true (the project pays one) or false.") {:project id})))
-  (doseq [{:keys [person from to]} trips]
+  (doseq [{:keys [person from to enabled] :as t} trips
+          :when (not (and (false? enabled) (:id t)))]
     (when (str/blank? person) (fail! "A trip says whose it is (:person)." {:trip from}))
     (date! (str "A trip of " person) from)
     (date! (str "A trip of " person) to))
+  (when-let [twice (first (keep (fn [[id k]] (when (> k 1) id)) (frequencies (map trip-id trips))))]
+    (fail! (str "Two trips in one layer are the same trip, " twice ": give one an :id, or another start.") {:trip twice}))
   (cond-> (update-keys world kw)
     (:cards world) (update :cards update-keys name)
     (:projects world) (update :projects update-keys name)
@@ -131,19 +141,29 @@
       (fail! (str "Line " unit " of the key says bucket " c ", which no coding layer of the scenario has.")
              {:unit unit :code c}))))
 
-(defn- merge-rules
-  "The rules of `below` with those of `above`: a rule of an id below is replaced where it stands, a new one comes
-  last, and one turned off (enabled false) leaves."
-  [below above]
-  (let [by-id (into {} (map (juxt :id identity)) above)
-        ids (set (map :id below))]
-    (->> (concat (map #(get by-id (:id %) %) below) (remove (comp ids :id) above))
+(defn- merge-by-id
+  "The entries of `below` with those of `above`, each known by `id`: one of an id below is replaced where it stands,
+  a new one comes last, and one turned off (enabled false) leaves."
+  [id below above]
+  (let [by-id (into {} (map (juxt id identity)) above)
+        ids (set (map id below))]
+    (->> (concat (map #(get by-id (id %) %) below) (remove (comp ids id) above))
          (remove #(false? (:enabled %)))
          vec)))
 
-(defn compose
-  "The classifier's scenario from `layers` (bases' first, only those on): the worlds merged, the codings merged, and
-  the lines layers' selections and cases gathered."
+(def ^:private merge-rules (partial merge-by-id :id))
+
+(defn- world-on
+  "A composed world without what its layers turned off: the projects, cards and entities with :enabled false."
+  [w]
+  (reduce (fn [w k]
+            (cond-> w
+              (map? (get w k)) (update k #(into {} (for [[id v] % :when (not (false? (:enabled v)))]
+                                                   [id (cond-> v (map? v) (dissoc :enabled))])))))
+          w [:projects :cards :entities]))
+
+(defn- layered
+  "`layers` merged in order: the worlds, the codings, the lines layers' selections and cases."
   [layers]
   (reduce (fn [acc {:keys [kind] :as l}]
             (case kind
@@ -153,7 +173,7 @@
                             entry (fn [a b] (if (and (map? a) (map? b)) (merge a b) b))]
                         (-> (merge-with (fn [a b] (if (and (map? a) (map? b)) (merge-with entry a b) b))
                                         acc (dissoc w :trips))
-                            (update :trips (fnil into []) (:trips w))))
+                            (update :trips #(merge-by-id trip-id (or % []) (:trips w)))))
               "coding" (let [{:keys [codes rules buckets threshold strategy]} (:coding l)]
                          (cond-> (update acc :codes merge codes)
                            rules (update :rules merge-rules rules)
@@ -167,6 +187,12 @@
               acc))
           {:codes {} :rules [] :trips []}
           layers))
+
+(defn compose
+  "The classifier's scenario from `layers` (bases' first, only those on): the worlds merged, the codings merged, and
+  the lines layers' selections and cases gathered; what a layer turned off is not in it."
+  [layers]
+  (world-on (layered layers)))
 
 (defn- case-of
   "A bank line as the classifier reads it: money out is a purchase (a positive amount), in the merchant's currency

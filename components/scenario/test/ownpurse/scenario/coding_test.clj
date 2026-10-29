@@ -332,3 +332,42 @@
           (is (= [{:scenario "child" :layer "changes"}] (:changed-in (nth ledger 2)))))
         (testing "the ledger's rules that are on are the composed scenario's"
           (is (= (map :id (:rules (scenario/composed node "child"))) (map :id (filter :on ledger)))))))))
+
+(deftest world-ledger-test
+  (with-node
+    (fn [node]
+      (scenario/put! node trial)
+      (scenario/put! node {:ref "moved" :name "The trip moved" :base "harbour-coding"
+                           :layers [{:id "world-changes" :kind "world"
+                                     :world {:trips [{:id "robin 2025-09-25" :person "robin" :place "Portugal"
+                                                      :city "Porto" :from "2025-09-28" :to "2025-10-31"
+                                                      :project "harbour"}
+                                                     {:person "sol" :place "Portugal" :from "2025-10-01"
+                                                      :to "2025-10-10" :enabled false}]
+                                             :projects {"harbour" {:to "2025-11-30"}}
+                                             :cards {"card-r" {:enabled false}}}}]})
+      (let [w (scenario/world-ledger node "moved")
+            c (scenario/composed node "moved")]
+        (testing "a trip of the same id above replaces the one below, where it stood"
+          (is (= [["robin 2025-09-25" true "Porto"] ["sol 2025-10-01" false nil]]
+                 (map (juxt :id :on (comp :city :value)) (:trips w))))
+          (is (= [{:scenario "moved" :layer "world-changes"}] (:changed-in (first (:trips w)))))
+          (is (= {:scenario "harbour-coding" :layer "world"} (:from (first (:trips w))))))
+        (testing "a trip turned off stays in the ledger, and is not in the world"
+          (is (= ["robin"] (map :person (:trips c))))
+          (is (= "Porto" (:city (first (:trips c))))))
+        (testing "a project amended field by field; a card turned off is gone from the world, kept in the ledger"
+          (is (= ["Harbour Exhibition" "2025-11-30"] ((juxt :name :to) (:value (first (:projects w))))))
+          (is (= [false {:scenario "moved" :layer "world-changes"}] ((juxt :on :off-in) (first (:cards w)))))
+          (is (nil? (get-in c [:cards "card-r"]))))
+        (testing "a trip turned off by its id alone"
+          (scenario/put! node {:ref "gone" :name "No trip" :base "harbour-coding"
+                               :layers [{:id "w" :kind "world" :world {:trips [{:id "robin 2025-09-25" :enabled false}]}}]})
+          (is (= [] (:trips (scenario/composed node "gone"))))
+          (is (= ["Lisbon" false] ((juxt (comp :city :value) :on) (first (:trips (scenario/world-ledger node "gone")))))))
+        (testing "two trips in one layer cannot be the same"
+          (is (= :ownpurse/invalid
+                 (:type (error #(scenario/put! node {:ref "twice" :name "Twice" :base "harbour-coding"
+                                                     :layers [{:id "w" :kind "world"
+                                                               :world {:trips [{:person "sol" :place "Portugal" :from "2025-10-01" :to "2025-10-02"}
+                                                                               {:person "sol" :place "Spain" :from "2025-10-01" :to "2025-10-03"}]}}]}))))))))))

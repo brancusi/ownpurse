@@ -5,6 +5,7 @@
    [ownpurse.classify.blocks :as blocks]
    [ownpurse.classify.core :as core]
    [ownpurse.classify.eval :as eval]
+   [ownpurse.classify.facts :as facts]
    [ownpurse.classify.interface :as classify]))
 
 (def ^:private s (classify/scenario "harbour"))
@@ -272,3 +273,10 @@
       (is (= (map :id (:results first-run)) (map :id (:results resumed))) "in the scenario's order")
       (is (= (- (get-in first-run [:usage :requests]) (count (mapcat (comp vals :responses) kept))) @asked))
       (is (= "2026-01-01T00:00:00Z" (:at resumed))))))
+
+(deftest trip-for-a-missing-project-test
+  (let [world {:trips [{:person "robin" :place "Portugal" :from "2025-06-01" :to "2025-06-30" :project "harbour"}]
+               :projects {"harbour" {:name "Harbour" :from "2025-05-01" :to "2025-12-31" :per-diem true}}}]
+    (is (= [:project "harbour" true] ((juxt :trip :project :per-diem) (facts/whereabouts world "robin" "2025-06-05"))))
+    (testing "a trip for a project the world does not have (a layer turned it off) is personal"
+      (is (= [:personal nil] ((juxt :trip :project) (facts/whereabouts (assoc world :projects {}) "robin" "2025-06-05")))))))

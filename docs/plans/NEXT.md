@@ -10,6 +10,12 @@ it when a step lands. The plans: [SPIKE.md](SPIKE.md) (the ledger in Clojure on 
 
 **SANDBOX.md step 4: evidence.** Then step 5 (in use).
 
+- The world is edited in place (2026-10-29): a scenario's Rules tab lists every project, trip, person, card, home
+  and the business its world layers say (`:world` beside `:rules` on `GET /scenarios/{ref}/composed`, from
+  `world-ledger`), each on or off (greyed in place) with where it comes from, and changes, adds or turns one off by
+  writing into the scenario's own world layer. A trip is known by `:id`, else person and start; one of the same id
+  above replaces it, and `:enabled false` turns off a trip, project, card or entity. A trip for a project that is
+  off reads as personal.
 - Step 3 done (2026-10-29): a run is a scenario over a set of lines. Sets: a scenario's lines layer
   (`<scenario>~<layer>`), a saved set (`line_sets`, `PUT /lines/{name}`: accounts or every book's, days, or chosen
   lines, with its own key, `POST /lines/{name}/key`) and the samples (`sample~<name>`). Over its own lines a run is

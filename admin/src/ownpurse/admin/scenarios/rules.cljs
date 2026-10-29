@@ -1,12 +1,13 @@
 (ns ownpurse.admin.scenarios.rules
   "The rules and the world a scenario's layers compose to, its bases' first: the rules that stand, the buckets, the
-  threshold and strategy, the projects and trips. A rule is changed, added or turned off by writing it into one of
+  threshold and strategy, and the world (ownpurse.admin.scenarios.world). A rule is changed, added or turned off by writing it into one of
   the scenario's own coding layers, so the layer under it stays as it was."
   (:require
    [clojure.string :as str]
    [ownpurse.admin.api :as api]
    [ownpurse.admin.sandbox.run :as sandbox.run]
    [ownpurse.admin.scenarios.common :refer [json layer-body parse-json path]]
+   [ownpurse.admin.scenarios.world :as world]
    [ownpurse.admin.ui :as ui :refer [cx]]
    [uix.core :as uix :refer [$ defui]]))
 
@@ -119,28 +120,13 @@
              (if busy "Saving…" (str "Save rule into " layer)))
           ($ ui/button {:on-click on-done} "Cancel")))))
 
-(defn- where-text
-  "A layer as a rule's provenance says it: \"here, layer changes\" for this scenario's own, else the scenario and layer."
-  [s {:keys [scenario layer]}]
-  (if (= scenario (:ref s)) (str "here, layer " layer) (str scenario ", layer " layer)))
-
-(defui where
-  "Where a rule comes from, on two lines: the scenario (this one, or a link to the one under it), then its layer."
-  [{:keys [s at]}]
-  (let [{:keys [scenario layer]} at]
-    ($ :div {}
-       (if (= scenario (:ref s))
-         ($ :span {:class "text-ink-2"} "here")
-         ($ :a {:class "font-mono text-lapis hover:underline" :href (str "#/scenarios/" scenario "?tab=rules")} scenario))
-       ($ :div {:class "font-mono text-2xs"} "layer " layer))))
-
 (defui rule-row
   "One rule in its place: a switch (on, or off and greyed), its id, the bucket it codes to, what it says and when it
   holds, and where it comes from. Off or on is written into this scenario's own coding layer."
   [{:keys [s composed entry categories labels]}]
   (let [[editing set-editing!] (uix/use-state false)
         {:keys [send! busy error]} (api/use-send)
-        {:keys [id on from off-in changed-in] rule :rule} entry
+        {:keys [id on off-in] rule :rule} entry
         {:keys [code over check]} rule
         layer (default-layer s)
         own-off (and off-in (= (:scenario off-in) (:ref s)))
@@ -169,11 +155,7 @@
              ($ :ul {:class "mt-0.5 text-xs text-ink-3"}
                 (for [[i b] (map-indexed vector (:when rule))] ($ :li {:key i} "· " (block-text b categories))))
              (when (seq over) ($ :div {:class "text-xs text-ink-3"} "wins over " (str/join ", " over))))
-          ($ ui/td {:class "min-w-[11rem] text-xs text-ink-3"}
-             (when from ($ where {:s s :at from}))
-             (when (seq changed-in) ($ :div {} "changed in " (str/join "; " (map #(where-text s %) changed-in))))
-             (when off-in ($ :div {:class "text-ink-2"} "turned off " (if own-off (str "here, layer " (:layer off-in))
-                                                                          (str "in " (where-text s off-in))))))
+          ($ ui/td {:class "min-w-[11rem] text-xs text-ink-3"} ($ world/provenance {:s s :entry entry}))
           ($ ui/td {:class "whitespace-nowrap text-right"}
              (when-not (:built-in s)
                ($ ui/button {:on-click #(set-editing! (not editing))} (if editing "Close" "Change")))))
@@ -213,9 +195,10 @@
   (let [state (api/use-get (path (:ref s) "composed"))
         composed (get-in state [:data :composed])
         ledger (get-in state [:data :rules])
+        world-ledger (get-in state [:data :world])
         [adding set-adding!] (uix/use-state false)
         account-names (into {} (map (juxt :id :name)) (get-in (api/use-get "/source-accounts") [:data :source-accounts]))
-        {:keys [codes buckets trips projects categories entities cards selects threshold strategy]} composed
+        {:keys [codes buckets categories selects threshold strategy]} composed
         categories (update-keys (or categories {}) n)
         labels (into {} (for [{:keys [codes]} buckets [c l] codes] [(n c) l]))
         on (count (filter :on ledger))
@@ -258,26 +241,7 @@
                (for [e ledger]
                  ($ rule-row {:key (:id e) :s s :composed composed :entry e :categories categories :labels labels})))
 
-            ($ ui/section-title {:aside "What the classifier knows about where and when a line happened"} "The world")
-            ($ ui/eyebrow {:class "mt-2 mb-1"} "Projects")
-            ($ ui/table {:head ["Project" "Name" "From" "To" "Place" "Borne by" "Travellers" "Per diem"]}
-               (for [[id {nm :name :keys [from to place bears travellers per-diem]}] (sort-by (comp n key) projects)]
-                 ($ :tr {:key (n id)}
-                    ($ ui/td {} ($ ui/mono {} (n id))) ($ ui/td {} nm) ($ ui/td {} ($ ui/mono {} from))
-                    ($ ui/td {} ($ ui/mono {} to)) ($ ui/td {} place) ($ ui/td {} ($ ui/mono {} bears))
-                    ($ ui/td {} (str/join ", " travellers))
-                    ($ ui/td {} (case per-diem true "pays one" false "none" ($ ui/muted {} "not said"))))))
-            ($ ui/eyebrow {:class "mt-4 mb-1"} "Trips, from every world layer")
-            ($ ui/table {:head ["Who" "Where" "From" "To" "For"]}
-               (for [[i {:keys [person place city from to project]}] (map-indexed vector (sort-by :from trips))]
-                 ($ :tr {:key i}
-                    ($ ui/td {} person) ($ ui/td {} (str/join ", " (remove nil? [city place])))
-                    ($ ui/td {} ($ ui/mono {} from)) ($ ui/td {} ($ ui/mono {} to)) ($ ui/td {} ($ ui/mono {} project)))))
-            ($ ui/eyebrow {:class "mt-4 mb-1"} "Who, and which cards")
-            ($ :div {:class "grid gap-1 text-sm"}
-               (for [[id {nm :name kind :kind}] entities] ($ :div {:key (n id)} ($ ui/mono {} (n id)) " " nm " " ($ ui/muted {} kind)))
-               (for [[id {nm :name :keys [holder]}] cards]
-                 ($ :div {:key (n id) :class "text-xs"} nm ", held by " holder " " ($ ui/mono {:class "text-ink-3"} (n id)))))
+            ($ world/section {:s s :ledger world-ledger})
 
             ($ ui/section-title {:aside "Its own lines; the Sandbox runs it over any others"} "Lines it reads by default")
             (if (seq selects)

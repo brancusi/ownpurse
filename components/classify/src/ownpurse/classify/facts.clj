@@ -21,10 +21,12 @@
 (defn whereabouts
   "Where `person` was on day `d`: on one of their trips (with its project, if any, whether that project pays a per
   diem, and which day of it), else at home. :place is the country; :city is there when the trip or the home names
-  one. A scenario's :home is a country, or {:country :city}."
+  one. A scenario's :home is a country, or {:country :city}. A trip for a project the world does not have (one a
+  layer turned off) is a personal trip."
   [{:keys [trips home projects]} person d]
   (if-let [{:keys [place city project from to]} (first (filter #(and (= person (:person %)) (within? d %)) trips))]
-    (cond-> {:place place :trip (if project :project :personal) :project project
+    (cond-> {:place place :trip (if (contains? projects project) :project :personal)
+             :project (when (contains? projects project) project)
              :day (days-between from d) :days (days-between from to)}
       city (assoc :city city)
       (get-in projects [project :per-diem]) (assoc :per-diem true))

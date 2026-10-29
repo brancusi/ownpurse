@@ -156,9 +156,13 @@
       (when (or (= base ref) (some #{ref} (bases-of node base)))
         (fail! :ownpurse/invalid (str "Scenario " ref " cannot stand on " base ", which stands on it.") {:ref ref :base base})))
     (let [world (coding/compose (concat (when base (stack-layers node base)) layers))]
-      (doseq [[id p] (:projects world) :when (str/blank? (:name p))]
-        (fail! :ownpurse/invalid (str "Scenario " ref " amends project " id ", which no layer of it or under it names.")
-               {:ref ref :project id})))
+      (doseq [[id p] (:projects world)]
+        (when (str/blank? (:name p))
+          (fail! :ownpurse/invalid (str "Scenario " ref " amends project " id ", which no layer of it or under it names.")
+                 {:ref ref :project id}))
+        (when-not (and (:from p) (:to p))
+          (fail! :ownpurse/invalid (str "Project " id " needs the day it starts and the day it ends.")
+                 {:ref ref :project id}))))
     (let [layers (mapv coding/stored (check-codings node base layers))]
       (store/put-changed! node {:scenarios [(cond-> {:xt/id (scenario-id ref) :ref ref :name name :layers layers}
                                               note (assoc :note note)
@@ -269,6 +273,40 @@
                  [(if had order (conj order id)) (assoc by-id id e)]))
         [order by-id] (reduce step [[] {}] entries)]
     (mapv by-id order)))
+
+(defn world-ledger
+  "What scenario `ref`'s world layers that are on say, its bases' first, those turned off kept in their place. For
+  :projects, :cards, :entities and :trips, each entry in the order it was first said: {:id :value (as it stands, or
+  as it was when turned off) :on :from {:scenario :layer} (where it was first said) :changed-in [{:scenario :layer}]
+  :off-in {:scenario :layer}}. A layer above amends a project, card or entity field by field and replaces a trip of
+  the same id (ownpurse.scenario.coding/trip-id). :home (where people are when on no trip) and :business (the
+  entity whose costs are the business's) are each {:value :from}, from the nearest layer saying it."
+  [node ref]
+  (let [said (for [r (concat (reverse (bases-of node ref)) [ref])
+                   l (:layers (scenario node r))
+                   :when (and (:enabled l) (= "world" (:kind l)))]
+               [{:scenario r :layer (:id l)} (:world l)])
+        step (fn [amend [order by-id] [where id x]]
+               (let [had (by-id id)
+                     value (dissoc (if had (amend (:value had) x) x) :enabled)
+                     e (cond-> (assoc (or had {:id id :from where}) :value value)
+                         ;; Only turning it on or off is not a change of what it says.
+                         (and had (seq (dissoc x :id :enabled))) (update :changed-in (fnil conj []) where)
+                         (false? (:enabled x)) (assoc :on false :off-in where)
+                         (not (false? (:enabled x))) (-> (assoc :on true) (dissoc :off-in)))]
+                 [(if had order (conj order id)) (assoc by-id id e)]))
+        ledger (fn [entries amend]
+                 (let [[order by-id] (reduce (partial step amend) [[] {}] entries)] (mapv by-id order)))
+        keyed (fn [k] (ledger (for [[where w] said [id x] (get w k)] [where id x])
+                              #(if (map? %2) (merge %1 %2) %2)))]
+    {:projects (keyed :projects)
+     :cards (keyed :cards)
+     :entities (keyed :entities)
+     ;; A trip turned off by its id alone keeps what it said below.
+     :trips (ledger (for [[where w] said t (:trips w)] [where (coding/trip-id t) t])
+                    (fn [had x] (if (and (false? (:enabled x)) (not (:person x))) had x)))
+     :home (last (for [[where w] said :when (:home w)] {:value (:home w) :from where}))
+     :business (last (for [[where w] said :when (:business w)] {:value (:business w) :from where}))}))
 
 (defn classifier-scenario [node ref]
   (let [{:keys [selects] :as s} (coding/compose (stack-layers node ref))
