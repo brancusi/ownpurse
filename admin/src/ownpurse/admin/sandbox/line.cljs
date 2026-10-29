@@ -160,6 +160,46 @@
   ($ :div {:class "grid grid-cols-[14px_34px_minmax(0,1fr)_44px] items-baseline gap-x-2.5 gap-y-1 text-sm md:grid-cols-[14px_34px_minmax(130px,170px)_minmax(0,1fr)_54px_54px]"}
      children))
 
+(defui rules-panel
+  "Every rule of a line the same way wherever rules are shown: how many apply, the blocks' legend, the rules that
+  apply (most first), those that came close (Jev read them as applying, or a block nearly held), and the rest on
+  asking, each with why it does not apply. `all` opens on every rule: where every rule is sent, say."
+  [{:keys [world facts explained all note]}]
+  (let [[all? set-all!] (uix/use-state (boolean all))
+        rules-by-id (into {} (map (juxt :id identity)) (:rules world))
+        applying (sort-by #(- (:holds %)) (filter #(yes? (:holds %)) explained))
+        near (filter #(and (not (yes? (:holds %))) (or (yes? (:jev %)) (>= (:holds %) 0.25))) explained)
+        rest-rules (remove (set (concat applying near)) explained)
+        overruled-by (into {} (for [r applying o (:over (rules-by-id (:id r)))] [o (:id r)]))
+        head (fn [text] ($ :<> ($ :span) ($ ui/eyebrow {:class "col-span-3 mt-1.5 md:col-span-5"} text)))]
+    ($ :div
+       ($ :div {:class "mb-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"}
+          ($ ui/eyebrow {} (count applying) " of " (count explained) (if (= 1 (count explained)) " rule applies" " rules apply")
+             " to this line")
+          ($ :span {:class "flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-3"}
+             ($ :span {} ($ :span {:class "mr-1 inline-block rounded-1 border border-verdigris px-1"} "solid") "exact block, checked by code")
+             ($ :span {} ($ :span {:class "mr-1 inline-block rounded-1 border border-dashed border-line-2 px-1"} "dashed") "fuzzy block, Jev's yes/no")))
+       (when note ($ ui/say {:class "mt-0 mb-2"} note))
+       ($ rules-grid {}
+          ($ :span) ($ ui/eyebrow {} "rule") ($ ui/eyebrow {:class "hidden md:block"} "codes to")
+          ($ ui/eyebrow {} "its blocks, and whether each holds") ($ ui/eyebrow {:class "text-right"} "holds")
+          ($ ui/eyebrow {:class "hidden text-right md:block"} "Jev")
+          (if (seq applying)
+            ($ rule-rows {:world world :facts facts :rows applying :overruled-by overruled-by})
+            (head "No rule applies: Jev's pick decides, or a person looks"))
+          (when (seq near)
+            ($ :<>
+               (head "Did not apply, but Jev read them as applying (the Jev column), or a block came close")
+               ($ rule-rows {:world world :facts facts :rows near :overruled-by overruled-by})))
+          (when (and all? (seq rest-rules))
+            ($ :<>
+               (head "Did not apply")
+               ($ rule-rows {:world world :facts facts :rows rest-rules :overruled-by overruled-by}))))
+       (when (seq rest-rules)
+         ($ :button {:class "mt-3 text-xs text-lapis hover:underline" :on-click #(set-all! not)}
+            (if all? "Show only the rules that apply, or came close"
+                (str "Show all " (count explained) " rules, and why the other " (count rest-rules) " don't apply")))))))
+
 ;; ----------------------------------------------------------------------------------------------- levers
 
 (defn- levers-rows [scenario record unit decisions o t]
@@ -327,9 +367,11 @@
                    ($ :<>
                       ($ ui/eyebrow {:class "border-t border-line-1 bg-surface-1 px-2 py-1 md:col-span-3"} "rules — sent with call 1 only")
                       ($ :div {:class "border-t border-line-1 px-2 py-1 font-mono text-2xs text-ink-2"} "rules")
-                      ($ :div {:class "px-2 py-1 md:border-t md:border-line-1"}
-                         ($ :details ($ :summary {:class "cursor-pointer"} (count rules) " rules, each its id and text") ($ value {:v rules})))
-                      ($ :div {:class "px-2 py-1 text-2xs text-ink-3 md:border-t md:border-line-1"} how " · " ($ where-code {} where)))))))
+                      ($ :div {:class "px-2 py-1 text-2xs text-ink-3 md:col-span-2 md:border-t md:border-line-1"} how " · " ($ where-code {} where))
+                      ($ :div {:class "border-t border-line-1 px-2 py-2 md:col-span-3"}
+                         ($ rules-panel {:world world :facts facts :explained explained :all true
+                                         :note (str "All " (count rules) " are sent, each its id and text; which apply is worked out "
+                                                    "by code from their blocks (step 5), not by Jev.")})))))))
           ($ :div {:class "mt-2 border-l-2 border-line-2 pl-2 text-sm text-ink-2"}
              ($ :b "Not sent to Jev")
              ($ :ul {:class "list-disc pl-4"}
@@ -358,19 +400,7 @@
                      ($ ui/say {} "Call 2 also asks the yes/no question in each dashed block of step 5, with the state alone."))))))
 
        ($ step {:n 5 :title "The rules, applied" :where "blocks/holds: each block checked"}
-          ($ rules-grid {}
-             ($ :span) ($ ui/eyebrow {} "rule") ($ ui/eyebrow {:class "hidden md:block"} "codes to")
-             ($ ui/eyebrow {} "its blocks, and whether each holds") ($ ui/eyebrow {:class "text-right"} "holds")
-             ($ ui/eyebrow {:class "hidden text-right md:block"} "Jev")
-             ($ rule-rows {:world world :facts facts :rows (sort-by #(- (:holds %)) applying) :overruled-by overruled-by})
-             (when (seq near)
-               ($ :<>
-                  ($ :span)
-                  ($ ui/eyebrow {:class "col-span-3 mt-1.5 md:col-span-5"} "Did not apply, but Jev read them as applying (the Jev column), or a block came close")
-                  ($ rule-rows {:world world :facts facts :rows near :overruled-by overruled-by}))))
-          (let [rest-rules (remove (set (concat applying near)) explained)]
-            ($ ui/disclosure {:summary (str (count rest-rules) " rules did not apply")}
-               ($ rules-grid {} ($ rule-rows {:world world :facts facts :rows rest-rules :overruled-by overruled-by}))))
+          ($ rules-panel {:world world :facts facts :explained explained})
           ($ ui/disclosure {:summary "Call 2, raw: the yes/no questions in the dashed blocks, sent without the rules"}
              ($ :div {:class "grid gap-2.5 md:grid-cols-2"}
                 ($ :div ($ ui/eyebrow {} "Sent") ($ ui/code-block {:value (assoc (get requests :plain) :state "… the state in step 3")}))

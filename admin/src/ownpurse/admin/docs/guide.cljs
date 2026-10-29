@@ -375,12 +375,7 @@
 
 (defui step-8 [{:keys [data]}]
   (let [world (ui/use-world)
-        [all? set-all!] (uix/use-state false)
-        {:keys [facts explained]} data
-        rules-by-id (into {} (map (juxt :id identity)) (:rules world))
-        applying (filter #(yes? (:holds %)) explained)
-        overruled-by (into {} (for [r applying o (:over (rules-by-id (:id r)))] [o (:id r)]))
-        rows (if all? explained applying)]
+        {:keys [facts explained]} data]
     ($ :<>
        ($ :div
           ($ p {} "A " ($ term {:id :rule}) " is a sentence a person wrote once, for every line: “While a traveller is on a "
@@ -398,14 +393,8 @@
           ($ aside {:label "Where your policy lives"}
              "Rules are the part you control. When a line is coded wrongly, the fix is usually a rule: a new one, a sharper "
              "block, or an exception."))
-       ($ panel {:title (str (count applying) " of " (count explained) " rules apply to your line")}
-          ($ :div {:class "mb-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-3"}
-             ($ :span {} ($ :span {:class "mr-1 inline-block rounded-1 border border-verdigris px-1"} "solid") "exact block, checked by code")
-             ($ :span {} ($ :span {:class "mr-1 inline-block rounded-1 border border-dashed border-line-2 px-1"} "dashed") "fuzzy block, Jev's yes/no"))
-          ($ line/rules-grid {}
-             ($ line/rule-rows {:world world :facts facts :rows rows :overruled-by overruled-by}))
-          ($ :button {:class "mt-3 text-xs text-lapis hover:underline" :on-click #(set-all! not)}
-             (if all? "Show only the rules that apply" (str "Show all " (count explained) " rules, and why the others don't apply")))))))
+       ($ panel {:title "The rules, on your line"}
+          ($ line/rules-panel {:world world :facts facts :explained explained})))))
 
 (defui step-9 [{:keys [data]}]
   (let [{:keys [decisions]} data]
