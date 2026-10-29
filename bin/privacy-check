@@ -13,7 +13,8 @@
 ;; any other term matches as text, ignoring case. Terms shorter than four characters are skipped. A hit names the
 ;; file, the line and the term's line in the denylist, never the term or the text. Terms in the private allow list
 ;; ($OWNPURSE_DENYLIST_ALLOW or ~/.config/ownpurse/denylist-allow.txt, same format) are skipped: public names and
-;; round amounts the books share with this repository's code and samples.
+;; round amounts the books share with this repository's code and samples. An allowed phrase also covers the denied
+;; terms inside it (a surname within an allowed full name); the same term elsewhere still matches.
 ;;
 ;; The agent's review sends the staged diff to Claude (`claude -p`, no tools) and refuses the commit when it finds
 ;; a leak. Only a person may skip it, after reading the diff: OWNPURSE_PRIVACY_REVIEW=off. Agents never do.
@@ -40,11 +41,24 @@
        (map-indexed (fn [i l] [(inc i) (str/trim l)]))
        (remove (fn [[_ t]] (or (str/blank? t) (str/starts-with? t "#"))))))
 
+(defn- allowed []
+  (if (.exists (io/file allow-path)) (set (map (comp str/lower-case second) (entries allow-path))) #{}))
+
 (defn- terms
   "The denylist's terms with their line numbers, [[n term] ...], less the allowed ones."
   []
-  (let [allowed (if (.exists (io/file allow-path)) (set (map (comp str/lower-case second) (entries allow-path))) #{})]
+  (let [allowed (allowed)]
     (remove (fn [[_ t]] (or (< (count t) 4) (allowed (str/lower-case t)))) (entries denylist-path))))
+
+(defn- unallowed
+  "A line with every allowed phrase blanked out, so a denied term inside an allowed phrase (a surname inside an
+  allowed full name) is not a match, while the same term elsewhere still is."
+  [phrases]
+  (if (empty? phrases)
+    identity
+    (let [re (re-pattern (str "(?i)" (str/join "|" (map #(java.util.regex.Pattern/quote %)
+                                                        (sort-by count > phrases)))))]
+      #(str/replace % re (fn [m] (apply str (repeat (count m) " ")))))))
 
 (def ^:private amount-token #"(?<![\d.,])(?:\d{1,3}(?:,\d{3})+|\d+)\.\d{2}(?![\d])")
 
@@ -107,7 +121,7 @@
     (do (println (str "privacy-check: no denylist at " denylist-path "; set OWNPURSE_DENYLIST to check against one."))
         true)
     (let [ts (terms)
-          found (hits (matcher ts) lines)]
+          found (hits (comp (matcher ts) (unallowed (allowed))) lines)]
       (if (empty? found)
         (do (println (str "privacy-check: denylist (" (count ts) " terms): clean.")) true)
         (do (println (str "privacy-check: denylist: " (count found) " line(s) match a private term:"))
