@@ -45,6 +45,25 @@
   [{:keys [when]} facts fuzzy]
   (reduce min 1M (map #(holds % facts fuzzy) when)))
 
+(defn- fuzzy? [[op & args]]
+  (case op :jev true (:not :any) (boolean (some fuzzy? args)) false))
+
+(defn- could-hold
+  "At most how much `block` can hold before any judgment: an exact block's own value, but 1 for a fuzzy one (not yet
+  asked) and for a category block on a line whose category is unknown (no merchant code, and Jev could not tell)."
+  [[op & args :as block] facts]
+  (cond
+    (fuzzy? block) 1M
+    (and (= :category op) (nil? (:mcc facts))) 1M
+    (= :not op) (- 1M (holds (first args) facts {}))
+    (= :any op) (reduce max 0M (map #(could-hold % facts) args))
+    :else (holds block facts {})))
+
+(defn possible?
+  "Whether `rule` could apply to `facts`: no exact block of it rules it out. A rule that cannot is not sent to Jev."
+  [{:keys [when]} facts]
+  (pos? (reduce min 1M (map #(could-hold % facts) when))))
+
 (defn fuzzy-questions
   "Every fuzzy block's question in `rules`, once each, in order."
   [rules]

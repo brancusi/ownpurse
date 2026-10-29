@@ -63,11 +63,19 @@
   (when (>= confidence yes)
     (some (fn [[mcc n]] (when (= n choice) mcc)) categories)))
 
+(defn sent-rules
+  "The rules that could apply to a line's facts, the only ones sent to Jev: a rule an exact block rules out (a trip,
+  a date, a category, a card that does not match) stays out of both requests, so the requests stay lean however
+  many rules a scenario has."
+  [{:keys [rules]} line-facts]
+  (filterv #(blocks/possible? % line-facts) rules))
+
 (defn requests
-  "The two requests for a line's facts: :rules (state with the rules: the coding Choices and a Noul per rule) and
-  :plain (state alone: the coding Choice without rules, and each fuzzy block)."
-  [{:keys [codes rules] :as scenario} line-facts]
-  (let [state (facts/state scenario line-facts)]
+  "The two requests for a line's facts: :rules (state with the rules that could apply: the coding Choices and a Noul
+  per rule) and :plain (state alone: the coding Choice without rules, and each fuzzy block of those rules)."
+  [{:keys [codes] :as scenario} line-facts]
+  (let [state (facts/state scenario line-facts)
+        rules (sent-rules scenario line-facts)]
     {:rules {:state (assoc state :rules (mapv #(select-keys % [:id :rule]) rules))
              :questions (into {:code (code-question codes false)
                                :reversed (code-question codes true)}
@@ -122,18 +130,22 @@
     (zipmap questions (map-indexed (fn [i _] (get-in plain-answers [(keyword (str "fuzzy_" i)) :noul])) questions))))
 
 (defn decide
-  "Each strategy's coding of a line, from its facts and the answers to its two requests."
-  [{:keys [rules]} line-facts {:keys [rules-answers plain-answers]}]
-  (let [fuzzy (fuzzy-answers rules plain-answers)
-        by-blocks (combine rules (into {} (map (fn [r] [(:id r) (blocks/rule-holds r line-facts fuzzy)])) rules))
+  "Each strategy's coding of a line, from its facts and the answers to its two requests. A rule not sent (an exact
+  block rules it out) holds 0."
+  [{:keys [rules] :as scenario} line-facts {:keys [rules-answers plain-answers]}]
+  (let [sent (sent-rules scenario line-facts)
+        sent? (set (map :id sent))
+        fuzzy (fuzzy-answers sent plain-answers)
+        rule-p (fn [r] (if (sent? (:id r)) (blocks/rule-holds r line-facts fuzzy) 0M))
+        by-blocks (combine rules (into {} (map (fn [r] [(:id r) (rule-p r)])) rules))
         choice (chose (:code rules-answers))
-        checks (keep (fn [r] (let [p (blocks/rule-holds r line-facts fuzzy)] (when (>= p yes) [(:id r) p])))
+        checks (keep (fn [r] (let [p (rule-p r)] (when (>= p yes) [(:id r) p])))
                      (filter :check rules))]
     {:choice choice
      :reversed (chose (:reversed rules-answers))
      :no-rules (chose (:code plain-answers))
      :rule-nouls (combine rules (into {} (map (fn [{:keys [id]}]
-                                                [id (get-in rules-answers [(keyword (str "rule_" id)) :noul])]))
+                                                [id (or (get-in rules-answers [(keyword (str "rule_" id)) :noul]) 0M)]))
                                       rules))
      :blocks by-blocks
      :hybrid (if (#{:no-rule :conflict} (:reason by-blocks))
@@ -168,10 +180,16 @@
 (defn explain
   "Why each rule did or did not apply to a classified line (a result of `classify`): each of its building blocks
   with the probability it holds, the rule's (the least of them), and Jev's own judgment of the whole rule."
-  [{:keys [rules]} {:keys [facts responses]}]
-  (let [fuzzy (fuzzy-answers rules (get-in responses [:plain :answers]))]
-    (vec (for [{:keys [id] :as rule} rules]
+  [{:keys [rules] :as scenario} {:keys [facts responses]}]
+  (let [sent (set (map :id (sent-rules scenario facts)))
+        fuzzy (fuzzy-answers (filter (comp sent :id) rules) (get-in responses [:plain :answers]))
+        ;; A fuzzy block of a rule not sent was never asked, and one whose answer is not kept (the rules changed since
+        ;; the line was coded) has none: either holds nothing known.
+        held (fn [f & args] (try (apply f (concat args [facts fuzzy])) (catch clojure.lang.ExceptionInfo _ nil)))]
+    (vec (for [{:keys [id] :as rule} rules
+               :let [sent? (sent id)]]
            (assoc (select-keys rule [:id :code :check :rule])
-                  :blocks (mapv (fn [block] {:block block :holds (blocks/holds block facts fuzzy)}) (:when rule))
-                  :holds (blocks/rule-holds rule facts fuzzy)
+                  :sent (boolean sent?)
+                  :blocks (mapv (fn [block] {:block block :holds (held blocks/holds block)}) (:when rule))
+                  :holds (if sent? (held blocks/rule-holds rule) 0M)
                   :jev (get-in responses [:rules :answers (keyword (str "rule_" id)) :noul]))))))

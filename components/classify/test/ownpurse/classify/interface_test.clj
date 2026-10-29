@@ -180,9 +180,11 @@
 
 (deftest requests-test
   (let [{:keys [rules plain]} (core/requests s (classify/enrich s (line "c01")))]
-    (testing "one Noul per rule, beside the rules; the fuzzy blocks apart, with the facts alone"
-      (is (= 11 (count (filter #(str/starts-with? (name %) "rule_") (keys (:questions rules))))))
-      (is (= 4 (count (filter #(str/starts-with? (name %) "fuzzy_") (keys (:questions plain))))))
+    (testing "one Noul per rule that could apply, beside those rules; the fuzzy blocks apart, with the facts alone"
+      (is (= 4 (count (filter #(str/starts-with? (name %) "rule_") (keys (:questions rules))))))
+      (is (= 4 (count (get-in rules [:state :rules]))))
+      (is (= 3 (count (filter #(str/starts-with? (name %) "fuzzy_") (keys (:questions plain))))))
+      (is (< 4 (count (:rules s))) "a rule an exact block rules out is not sent")
       (is (contains? (:state rules) :rules))
       (is (not (contains? (:state plain) :rules))))
     (testing "the reversed Choice has the same options, last first"
@@ -238,8 +240,8 @@
     (testing "a run keeps each request as it was sent, the shared parts once"
       (is (= (set @asked)
              (set (for [r (:results run) req (vals (classify/sent run r))] [(:state req) (:questions req)]))))
-      (is (contains? (:sent run) :rules))
-      (is (not (contains? (get-in (first (:results run)) [:requests :rules :state]) :rules))))
+      (is (not (contains? (:sent run) :rules)) "each line sends only the rules that could apply to it, so they differ")
+      (is (contains? (get-in (first (:results run)) [:requests :rules :state]) :rules)))
     (testing "a run says which code ran and the scenario's hash"
       (is (contains? (:source run) :commit))
       (is (= (eval/scenario-hash "harbour") (:scenario-hash run))))

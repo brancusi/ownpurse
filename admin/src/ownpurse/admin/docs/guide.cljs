@@ -325,8 +325,13 @@
              ($ :li {} "→ a " ($ term {:id :choice}) ": pick one from a list (“which bucket?”)")
              ($ :li {} "→ a " ($ term {:id :noul}) ": yes or no (“does rule A15 apply?”)"))
           ($ p {} "They are sent in two " ($ term {:id :request} "requests") " with the same state. One also includes "
-             "every " ($ term {:id :rule}) " written out, so Jev can apply them. The other leaves the rules out, so we can see "
+             "the " ($ term {:id :rule} "rules") " written out, so Jev can apply them. The other leaves the rules out, so we can see "
              "what Jev thinks from the facts alone, and asks the small yes/no questions some rules depend on.")
+          ($ aside {:label "Only the rules that could apply"}
+             "Before anything is sent, code checks each rule's exact blocks against the line: a date outside a trip, a "
+             "country that doesn't match, a sign or amount that's wrong. A rule one of those rules out is not sent at all, "
+             "and its yes/no questions are not asked. A fact the line doesn't have (no merchant code, say) rules nothing out. "
+             "So the requests stay small however many projects are running.")
           ($ aside {:label "All at once"}
              "Questions in one request are answered together, in parallel, and can't see each other's answers. That keeps "
              "each one honest and the whole thing fast: your line took " calls " calls."))
@@ -401,7 +406,7 @@
     ($ :<>
        ($ :div
           ($ p {} "Now there are plenty of answers: Jev's own pick with the rules, its pick without them, a yes or no for "
-             "every rule, and the blocks. How should they be combined into one coding?")
+             "every rule it was sent, and the blocks. How should they be combined into one coding?")
           ($ p {} "There's more than one sensible way, and each is a " ($ term {:id :strategy}) ". Trust Jev's pick? Trust "
              "only the rules? Use the rules where they decide and Jev where they can't? The sandbox works out all seven "
              "from the same answers, so comparing them costs nothing.")

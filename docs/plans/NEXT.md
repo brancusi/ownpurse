@@ -681,6 +681,16 @@ steps 2 and 3.
   coded or to a person; a benchmark table scores every strategy on the keyed lines; a line's walk keys it (the
   bucket chosen, one click, or another bucket in any scenario of the stack; the bottom one by default).
   Not yet: keying from the scenario's codings table, many lines at once; the eval's report over a record key.
+- **Only the rules that could apply are sent (2026-10-29).** Before a line's requests are built, each rule's exact
+  blocks are checked against its facts (`blocks/possible?`): a rule one of them rules out (not on that trip, wrong
+  country, category, channel, sign or amount) is not in the :rules request, and its fuzzy questions are not in
+  :plain. A fact the line lacks rules nothing out (no merchant code: category blocks stay possible); fuzzy blocks
+  never rule out. Checks are filtered like any rule. An unsent rule holds 0 in every strategy. Cost: Jev's yes/no
+  on a rule it never sees is gone, so its Jev column is blank. On a book of 9 or 10 rules a line now sends 2 on
+  average (up to 7 with no merchant code), and the requests stay small as projects multiply. Changing the requests
+  re-asks every line once; a rule added with exact blocks re-asks only the lines it could apply to. The sandbox
+  shows unsent rules apart ("Not sent to Jev"), and a line coded before the rules changed shows the fuzzy answers
+  it lacks as not known instead of failing.
 - The invented scenarios (classify scenario files) stay for the demo with no record, until a scenario of layers
   can be exported to the static site.
 - Next: the rest of step 2 above, then step 3 (overrides and labels).

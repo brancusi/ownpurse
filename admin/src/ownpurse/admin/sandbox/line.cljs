@@ -50,7 +50,7 @@
      [:context :shop_is_where_cardholder_was] ["for a purchase in person: the shop's city and country against where the cardholder was" (str facts " · enrich")]
      [:context :refund_of] ["for a refund: the earlier purchase it returns, same card, merchant and currency, by amount" (str facts " · refund-of")]
      [:context :earlier_charge_here] ["the latest other charge on the same card at the same merchant in the week before" (str facts " · earlier-here")]
-     [:rules] ["every rule's id and text; not its exceptions (:over) nor its conditions (:when). Sent in call 1 only" (str scenario " · :rules")]}))
+     [:rules] ["the id and text of every rule that could apply (none an exact block rules out); not its exceptions (:over) nor its conditions (:when). Sent in call 1 only" (str scenario " · :rules")]}))
 
 ;; ----------------------------------------------------------------------------------------------- pieces
 
@@ -124,11 +124,13 @@
 (defui block-chip [{:keys [world facts block holds]}]
   (let [fuzzy? (some #{:jev} (flatten (seq block)))
         yes (yes? holds)]
-    ($ :span {:title (if fuzzy? "A yes/no question Jev answered, asked without the rules (call 2)" "Exact: code checks it")
+    ($ :span {:title (cond (and fuzzy? (nil? holds)) "A yes/no question for Jev with no answer: its rule was not sent, or the line has not been coded since the rules changed"
+                           fuzzy? "A yes/no question Jev answered, asked without the rules (call 2)"
+                           :else "Exact: code checks it")
               :class (cx "inline-flex items-baseline gap-1.5 rounded-1 border bg-surface-0 px-1.5 py-px text-xs"
                          (if yes "border-verdigris" "border-line-1 text-ink-3") (when fuzzy? "border-dashed"))}
        (block-text world block facts)
-       ($ :span {:class (cx "font-mono text-2xs" (when yes "text-verdigris"))} (if fuzzy? (ui/pct holds) (if yes "yes" "no"))))))
+       ($ :span {:class (cx "font-mono text-2xs" (when yes "text-verdigris"))} (cond (nil? holds) "not asked" fuzzy? (ui/pct holds) yes "yes" :else "no")))))
 
 (defui rule-rows [{:keys [world facts rows overruled-by]}]
   (let [rules (into {} (map (juxt :id identity)) (:rules world))]
@@ -152,8 +154,8 @@
                ($ :div {:class "mt-0.5 text-xs text-ink-2"} rule
                   (when by ($ :b " Set aside here by " by ", its exception."))
                   (when-let [over (seq (:over (rules id)))] ($ ui/muted {} " Exception to " (str/join ", " over) "."))))
-            ($ ui/mono {:class (cx "text-right text-2xs" off)} (ui/pct holds))
-            ($ ui/mono {:class (cx "hidden text-right text-2xs md:block" off) :title "Jev's own reading of the whole rule, given every rule (call 1)"}
+            ($ ui/mono {:class (cx "text-right text-2xs" off)} (if holds (ui/pct holds) "—"))
+            ($ ui/mono {:class (cx "hidden text-right text-2xs md:block" off) :title "Jev's own reading of the whole rule, given the rules sent (call 1)"}
                (when jev (ui/pct jev))))))))
 
 (defui rules-grid [{:keys [children]}]
@@ -163,19 +165,22 @@
 (defui rules-panel
   "Every rule of a line the same way wherever rules are shown: how many apply, the blocks' legend, the rules that
   apply (most first), those that came close (Jev read them as applying, or a block nearly held), and the rest on
-  asking, each with why it does not apply. `all` opens on every rule: where every rule is sent, say."
+  asking, each with why it does not apply: sent and did not apply, or never sent because an exact block rules it
+  out. `all` opens on every rule."
   [{:keys [world facts explained all note]}]
   (let [[all? set-all!] (uix/use-state (boolean all))
         rules-by-id (into {} (map (juxt :id identity)) (:rules world))
-        applying (sort-by #(- (:holds %)) (filter #(yes? (:holds %)) explained))
-        near (filter #(and (not (yes? (:holds %))) (or (yes? (:jev %)) (>= (:holds %) 0.25))) explained)
-        rest-rules (remove (set (concat applying near)) explained)
+        {sent true unsent false} (group-by #(not (false? (:sent %))) explained)
+        applying (sort-by #(- (:holds %)) (filter #(yes? (:holds %)) sent))
+        near (filter #(and (not (yes? (:holds %))) (or (yes? (:jev %)) (>= (or (:holds %) 0) 0.25))) sent)
+        rest-rules (remove (set (concat applying near)) sent)
         overruled-by (into {} (for [r applying o (:over (rules-by-id (:id r)))] [o (:id r)]))
         head (fn [text] ($ :<> ($ :span) ($ ui/eyebrow {:class "col-span-3 mt-1.5 md:col-span-5"} text)))]
     ($ :div
        ($ :div {:class "mb-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"}
           ($ ui/eyebrow {} (count applying) " of " (count explained) (if (= 1 (count explained)) " rule applies" " rules apply")
-             " to this line")
+             " to this line"
+             (when (seq unsent) (str " · " (count sent) " sent to Jev")))
           ($ :span {:class "flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-3"}
              ($ :span {} ($ :span {:class "mr-1 inline-block rounded-1 border border-verdigris px-1"} "solid") "exact block, checked by code")
              ($ :span {} ($ :span {:class "mr-1 inline-block rounded-1 border border-dashed border-line-2 px-1"} "dashed") "fuzzy block, Jev's yes/no")))
@@ -194,11 +199,15 @@
           (when (and all? (seq rest-rules))
             ($ :<>
                (head "Did not apply")
-               ($ rule-rows {:world world :facts facts :rows rest-rules :overruled-by overruled-by}))))
-       (when (seq rest-rules)
+               ($ rule-rows {:world world :facts facts :rows rest-rules :overruled-by overruled-by})))
+          (when (and all? (seq unsent))
+            ($ :<>
+               (head "Not sent to Jev: an exact block rules it out (the one that says no)")
+               ($ rule-rows {:world world :facts facts :rows unsent :overruled-by overruled-by}))))
+       (when (or (seq rest-rules) (seq unsent))
          ($ :button {:class "mt-3 text-xs text-lapis hover:underline" :on-click #(set-all! not)}
             (if all? "Show only the rules that apply, or came close"
-                (str "Show all " (count explained) " rules, and why the other " (count rest-rules) " don't apply")))))))
+                (str "Show all " (count explained) " rules, and why the other " (+ (count rest-rules) (count unsent)) " don't apply")))))))
 
 ;; ----------------------------------------------------------------------------------------------- levers
 
@@ -278,7 +287,7 @@
         o (outcome/outcome unit (get decisions strategy) t)
         rules-by-id (into {} (map (juxt :id identity)) (:rules world))
         applying (filter #(yes? (:holds %)) explained)
-        near (filter #(and (not (yes? (:holds %))) (or (yes? (:jev %)) (>= (:holds %) 0.25))) explained)
+        near (filter #(and (not (yes? (:holds %))) (or (yes? (:jev %)) (>= (or (:holds %) 0) 0.25))) explained)
         overruled-by (into {} (for [r applying o (:over (rules-by-id (:id r)))] [o (:id r)]))
         sources (field-sources scenario (:record data))
         line-link (fn [id] ($ :a {:class "font-mono text-lapis hover:underline"
@@ -370,8 +379,9 @@
                       ($ :div {:class "px-2 py-1 text-2xs text-ink-3 md:col-span-2 md:border-t md:border-line-1"} how " · " ($ where-code {} where))
                       ($ :div {:class "border-t border-line-1 px-2 py-2 md:col-span-3"}
                          ($ rules-panel {:world world :facts facts :explained explained :all true
-                                         :note (str "All " (count rules) " are sent, each its id and text; which apply is worked out "
-                                                    "by code from their blocks (step 5), not by Jev.")})))))))
+                                         :note (str (ui/count-of rules "rule is" "rules are") " sent, each its id and text: those no exact "
+                                                    "block rules out for this line. Which apply is worked out by code from their "
+                                                    "blocks (step 5), not by Jev.")})))))))
           ($ :div {:class "mt-2 border-l-2 border-line-2 pl-2 text-sm text-ink-2"}
              ($ :b "Not sent to Jev")
              ($ :ul {:class "list-disc pl-4"}
@@ -421,7 +431,7 @@
                                (when (seq (:overruled blocks)) (str "; set aside " (str/join ", " (:overruled blocks))))))))
                   ($ ui/say {} ($ ui/muted {} "Their confidence is the least certain rule's: ") ($ ui/mono {} (ui/pct (:confidence blocks)))))
                ($ ui/panel {:class "px-2.5 py-2"}
-                  ($ ui/eyebrow {} "Jev's Choice, given the facts and every rule (call 1)")
+                  ($ ui/eyebrow {} "Jev's Choice, given the facts and the rules that could apply (call 1)")
                   ($ :div {:class "mt-1 grid grid-cols-[minmax(0,1fr)_96px_34px] items-center gap-x-2 gap-y-1 text-sm"}
                      (for [[option p] (take 5 (sort-by val > (get-in responses [:rules :answers :code :probabilities])))]
                        ($ :<> {:key option} ($ :span ($ ui/tag {:code (option-code option)})) ($ ui/bar {:p p :wide true})

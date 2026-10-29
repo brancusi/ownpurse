@@ -213,9 +213,10 @@
         rules-id (id-of rules)
         plain-id (id-of plain)
         s6 (step {:step 6 :call "(ownpurse.classify.interface/requests s facts)"
-                  :about (str "Two requests over the same state (step 5): :rules asks which bucket with every rule "
-                              "as text, and whether each rule applies; :plain asks which bucket from the facts "
-                              "alone, and the fuzzy blocks' questions. Each is kept by the SHA-256 of [model state "
+                  :about (str "Two requests over the same state (step 5): :rules asks which bucket with the rules "
+                              "as text, and whether each applies; :plain asks which bucket from the facts alone, and "
+                              "those rules' fuzzy blocks' questions. Only rules no exact block rules out are sent. "
+                              "Each is kept by the SHA-256 of [model state "
                               "questions], so the same request is never asked twice.")
                   :in {:facts facts :model model}
                   :out {:rules {:judgment-id rules-id :questions (:questions rules)}

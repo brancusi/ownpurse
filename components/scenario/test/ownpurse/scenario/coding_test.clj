@@ -192,6 +192,18 @@
                                          :coding {:rules [(assoc (get-in coding [:rules 0]) :rule "Groceries away are per diem.")]}}]})
           (is (= [:rules] (:unanswered (scenario/sandbox-line node "reworded" "line:test:1"))))
           (scenario/drop! node "reworded"))
+        (testing "a line whose yes/no answers are not kept still shows its rules: the rule asking one holds nothing known"
+          (let [asking #(scenario/put! node {:ref "asked" :name "A question" :base "harbour-coding"
+                                             :layers [{:id "q" :kind "coding"
+                                                       :coding {:rules [{:id "R5" :code "travel" :rule "Rides are travel."
+                                                                         :when [["jev" %]]}]}}]})]
+            (asking "Is this a ride?")
+            (scenario/code! node "asked" (stub (atom 0)) {:model "stub" :limit 1})
+            (asking "Is this a ride somewhere?")
+            (let [{:keys [unanswered explained]} (scenario/sandbox-line node "asked" "line:test:1")]
+              (is (some #{:plain} unanswered))
+              (is (= [nil] (map :holds (filter (comp #{"R5"} :id) explained)))))
+            (scenario/drop! node "asked")))
         (testing "coding again asks nothing: every answer is in the record"
           (is (= {:asked 0 :kept 9} (select-keys (scenario/code! node "harbour-coding" (stub calls) {:model "stub"})
                                                  [:asked :kept])))
@@ -205,12 +217,12 @@
                    :b {:code "travel" :proposed "travel" :confidence 0.62M}}]
                  (map #(dissoc % :date :merchant :amount :currency)
                       (scenario/compare-codings node "harbour-coding" "looser")))))
-        (testing "a rule added asks again only the request that carries the rules"
+        (testing "a rule added asks again only the rules requests of the lines it could apply to: one rideshare"
           (scenario/put! node {:ref "rule-more" :name "One rule more" :base "harbour-coding"
                                :layers [{:id "more" :kind "coding"
                                          :coding {:rules [{:id "R4" :code "travel" :rule "Rideshare is travel."
                                                            :when [["contains" "merchant" "ride"]]}]}}]})
-          (is (= {:asked 4 :kept 5} (select-keys (scenario/code! node "rule-more" (stub calls) {:model "stub"})
+          (is (= {:asked 1 :kept 8} (select-keys (scenario/code! node "rule-more" (stub calls) {:model "stub"})
                                                  [:asked :kept]))))
         (testing "one unit all the way through"
           (is (= :harbour (keyword (get-in (scenario/coding node "harbour-coding" "line:test:1")
