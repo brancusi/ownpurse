@@ -92,21 +92,30 @@
     (seq items) (assoc :items (count items))))
 
 (defn line-sets
-  "Every scenario's made-up lines as a set of lines to pick: {:id \"sample/<name>\" :kind \"sample\" :title :note
-  :lines :units :scenarios}. A sample's lines are read by its own rules only, for now."
+  "Every scenario's made-up lines as a set of lines to pick: {:id \"sample~<name>\" :kind \"sample\" :title :note
+  :where :lines :units :scenarios :peek}, :scenarios its own rules (a file the eval runs); any scenario of the
+  workspace runs over them too."
   [sandbox]
   (vec (for [name (sort (keys (sources sandbox)))
              :let [{:keys [cases business entities]} (scenario sandbox name)]]
-         (cond-> {:id (str "sample/" name) :kind "sample" :title (str/capitalize name)
+         (cond-> {:id (str "sample~" name) :kind "sample" :title (str/capitalize name)
                   :where [["made up" (str "the " name " set, each line with the coding a bookkeeper would give it")]]
                   :lines (count cases) :units (count (mapcat classify/units cases)) :scenarios [name]}
            (get-in entities [business :name]) (assoc :note (str (get-in entities [business :name]) " and its people, invented"))
            true (assoc :peek (mapv glance (take 3 (sort-by :date cases))))))))
 
+(defn over
+  "Sample set `id` as a workspace's scenario runs over it: {:id :title :cases}, each line keyed as it says (its
+  :expect); nil when there is no such sample."
+  [sandbox id]
+  (when-let [name (second (re-matches #"sample~(.+)" id))]
+    (when (contains? (sources sandbox) name)
+      {:id id :title (str/capitalize name) :cases (vec (:cases (scenario sandbox name)))})))
+
 (defn line-set
   "Sample set `id` with a preview: its first two hundred lines, the days they span, and their currencies."
   [sandbox id]
-  (let [name (second (re-matches #"sample/(.+)" id))
+  (let [name (second (re-matches #"sample~(.+)" id))
         s (some #(when (= id (:id %)) %) (line-sets sandbox))]
     (when-not s (throw (ex-info (str "No set of lines " id ".") {:type :ownpurse/not-found})))
     (let [cases (sort-by :date (:cases (scenario sandbox name)))]

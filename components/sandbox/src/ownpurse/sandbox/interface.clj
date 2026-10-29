@@ -20,6 +20,11 @@
   [sandbox]
   (core/line-sets sandbox))
 
+(defn over
+  "Sample set `id` as a workspace's scenario runs over it ({:id :title :cases}), or nil."
+  [sandbox id]
+  (core/over sandbox id))
+
 (defn line-set
   "Sample set `id`, with a preview of its lines."
   [sandbox id]

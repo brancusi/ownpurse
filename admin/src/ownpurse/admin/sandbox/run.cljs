@@ -272,6 +272,8 @@
         ;; A record scenario's one run is its coding as it stands, whatever the list read earlier said.
         newest (if record "latest" (:id (first (:runs this))))
         run-state (api/use-get (when run (str "/sandbox/scenarios/" scenario "/runs/" run)))
+        ;; A record scenario's run over another set of lines than its own is that set's id.
+        over (when (and record run (not= "latest" run)) run)
         ;; A record scenario's own threshold and strategy (the run's defaults when it sets none) are where it starts.
         t (/ (js/Number (or (:t query) (some-> (:threshold world) js/Number (* 100) js/Math.round) 85)) 100)
         strategy (keyword (or (:s query) (some-> (:strategy world) name) (if (:record world) "checked" "choice")))
@@ -292,18 +294,19 @@
                 ($ :div {:class "text-sm text-ink-3"} ($ :a {:href "#/sandbox" :class "hover:underline"} "Sandbox") " / " scenario
                    (when record
                      ($ :<> " · " ($ :a {:href (route/href ["scenarios" scenario]) :class "text-lapis hover:underline"}
-                                     "lines from your books; change its rules on the scenario's page →"))))
+                                     "lines from your books; change its rules on the scenario's page →")))
+                   (when over ($ :<> " · over the lines " ($ ui/mono {} over))))
                 ($ :h1 {:class "font-display text-2xl font-extrabold tracking-tight"} (or (:title this) "Bank lines into buckets")))
              ($ :label {:class "flex items-center gap-2 text-sm text-ink-3"} "Run"
                 ($ :select {:value (or run "") :on-change #(route/go! ["sandbox" scenario (.. % -target -value)] query)
                             :class "rounded-1 border border-line-2 bg-surface-0 px-2 py-1 font-mono text-xs text-ink-1"}
-                   (for [{:keys [id at]} (some #(when (= scenario (:name %)) (:runs %)) (get-in scenarios [:data :scenarios]))]
-                     ($ :option {:key id :value id} at)))))
+                   (for [{:keys [id at over]} (some #(when (= scenario (:name %)) (:runs %)) (get-in scenarios [:data :scenarios]))]
+                     ($ :option {:key id :value id} (if over (str "over " over ", " (subs at 0 16)) at))))))
           ($ ui/loading {:state world-state}
              ($ world-strip {:world world}))
           (cond
             (and record (:data run-state) (nil? (get-in run-state [:data :run])))
-            ($ ui/panel {:class "mt-4 p-4"} ($ running/run-panel {:s {:ref scenario}}))
+            ($ ui/panel {:class "mt-4 p-4"} ($ running/run-panel {:s {:ref scenario} :over over}))
 
             (and (not run) (:data scenarios) world (not newest))
             ($ ui/notice {}
@@ -317,10 +320,10 @@
                   (when stale ($ ui/notice {:tone :bad} stale))
                   (when record
                     ($ ui/panel {:class "mt-4 px-4 pb-3"}
-                       ($ running/run-bar {:ref scenario})
-                       ($ ui/disclosure {:summary (str (:results info) " of " (:units this) " lines coded"
+                       ($ running/run-bar {:ref scenario :over over})
+                       ($ ui/disclosure {:summary (str (:results info) " lines coded"
                                                        " · a trial of a few lines, and the runs so far")}
-                          ($ running/run-panel {:s {:ref scenario}}))))
+                          ($ running/run-panel {:s {:ref scenario} :over over}))))
                   ($ :div {:class "mt-2 text-xs text-ink-3"}
                      ($ ui/mono {} (:model info)) " · " (:results info) " lines and items"
                      (when-let [{:keys [requests input-tokens]} (:usage info)] (str " · " requests " requests, " input-tokens " tokens in"))

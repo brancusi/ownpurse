@@ -4,6 +4,7 @@
    [ownpurse.close.interface :as close]
    [ownpurse.money.interface :as money]
    [ownpurse.scenario.coding :as coding]
+   [ownpurse.scenario.lines :as lines]
    [ownpurse.schema.interface :as schema]
    [ownpurse.store.interface :as store])
   (:import
@@ -287,3 +288,54 @@
           lines (if (:remove entry) others (conj others (-> (select-keys entry [:unit :expect :ok :review :why :by])
                                                    (assoc :at (str (LocalDate/now))))))]
       (put! node (assoc s :layers (assoc-in layers [i :key :lines] lines))))))
+
+;; ----------------------------------------------------------------------------------------------- over a set of lines
+
+(defn lines-layers
+  "The lines layers scenario `ref` reads, as [the scenario that holds it, its id, the layer]: its bases' first."
+  [node ref]
+  (vec (for [r (concat (reverse (bases-of node ref)) [ref])
+             l (:layers (scenario node r))
+             :when (and (:enabled l) (= "lines" (:kind l)))]
+         [r (:id l) l])))
+
+(defn layer-set-id
+  "The id of the set of lines a scenario's lines layer is: <scenario>~<layer>."
+  [owner layer]
+  (str owner "~" layer))
+
+(defn default-set
+  "The set of lines scenario `ref` reads by default: its one lines layer's, or nil when it has none or several."
+  [node ref]
+  (let [ls (lines-layers node ref)]
+    (when (= 1 (count ls)) (let [[owner id] (first ls)] (layer-set-id owner id)))))
+
+(defn set-over
+  "Set `id` of the record's lines as a run reads it: {:id :title :select} or {:id :cases}, with a saved set's :key;
+  or nil when there is no such set. A scenario's lines layer is <scenario>~<layer>; a saved set is its name."
+  [node id]
+  (if-let [[_ owner layer] (re-matches #"(.+)~([^~]+)" id)]
+    (when-let [l (and (scenario node owner)
+                      (some #(when (and (= layer (:id %)) (= "lines" (:kind %))) %) (:layers (scenario node owner))))]
+      (merge {:id id} (select-keys (:lines l) [:select :cases])))
+    (when-let [s (lines/line-set node id)]
+      {:id id :title (:title s) :select (:select s) :key (lines/answer-key s)})))
+
+(defn scope
+  "Where a run of scenario `ref` over set `over` is kept: `ref` over its own lines, else <ref>@<set>."
+  [node ref over]
+  (if (or (nil? over) (= (:id over) (default-set node ref))) ref (str ref "@" (:id over))))
+
+(defn over
+  "Scenario `ref` run over set `over` ({:id, :select or :cases, and :key}, as set-over gives it), or over its own
+  lines (`over` nil, or its default set): {:scope :s :key :over}. Over its own lines the run is kept as the
+  scenario's (scope `ref`); over another set under the scope <ref>@<set>. The key is the set's, then the
+  scenario's key layers over it."
+  [node ref over]
+  (if (= ref (scope node ref over))
+    {:scope ref :s (classifier-scenario node ref) :key (answer-key node ref)}
+    (let [c (coding/compose (stack-layers node ref))
+          cases (if (:select over) (coding/read-lines node c (:select over)) (vec (:cases over)))]
+      {:scope (str ref "@" (:id over)) :over (:id over)
+       :s (-> (dissoc c :selects) (assoc :scenario ref :cases cases))
+       :key (merge (:key over) (answer-key node ref))})))

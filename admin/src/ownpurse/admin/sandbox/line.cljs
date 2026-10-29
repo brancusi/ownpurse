@@ -489,6 +489,20 @@
          ($ ui/say {} ($ :span {:class "text-ink-3"} "Not used by this view, for comparison: ")
             (interpose "; " (map-indexed (fn [i x] ($ :span {:key i} x)) others)) ".")))))
 
+(defui alone
+  "Saves this bank line as a set of one, and opens it in the sandbox under the same scenario: to try other scenarios
+  on it, or evidence."
+  [{:keys [scenario line-id merchant date]}]
+  (let [{:keys [send! busy error]} (api/use-send)
+        name (str "line-" (str/lower-case (str/replace (subs line-id (max 0 (- (count line-id) 12))) #"[^A-Za-z0-9]" "")))]
+    ($ :span {:class "ml-auto"}
+       ($ ui/button {:disabled busy :title "A set of this one line: any scenario runs over it"
+                     :on-click #(-> (send! "PUT" (str "/lines/" name)
+                                           {:title (str merchant ", " date) :select {:lines [line-id]}})
+                                    (.then (fn [ok] (when ok (route/go! ["sandbox"] {:lines name :scenario scenario})))))}
+          "Run this line on its own →")
+       (when error ($ ui/muted {:class "text-xs text-coin-text"} " " error)))))
+
 (defui walk-body [{:keys [scenario row strategy t data]}]
   (let [world (ui/use-world)
         {:keys [unit line facts requests enrich rebuilt responses decisions explained note]} data
@@ -507,6 +521,8 @@
           (if (:record data)
             ($ :div {:class "w-full border-b border-line-1 pb-2.5"} ($ key/confirm {:unit unit :chosen code :world world}))
             ($ :<> ($ ui/eyebrow {} "Should be") ($ ui/tag {:code (:expect unit)})))
+          (when (:books data)
+            ($ alone {:scenario scenario :line-id (or (:line unit) (:id unit)) :merchant (:merchant unit) :date (:date unit)}))
           (when (seq (:ok unit))
             ($ ui/muted {} "also fine " (for [c (:ok unit)] ($ :span {:key (name c) :class "mr-1"} ($ ui/tag {:code c})))))
           (when-not (:record data)

@@ -9,6 +9,11 @@
    [ownpurse.admin.ui :as ui]
    [uix.core :as uix :refer [$ defui]]))
 
+(defn- over-query
+  "The query that runs a scenario over set `over` (nil: its own lines)."
+  [over]
+  (when over (str "?over=" (js/encodeURIComponent over))))
+
 (defn- about-seconds [n]
   (cond (< n 2) "a second or two" (< n 90) (str "about " n " seconds") :else (str "about " (js/Math.round (/ n 60)) " minutes")))
 
@@ -18,8 +23,9 @@
 
 (defui estimate-line
   "What a run would ask of Jev now, what it would cost and how long it would take, before anything is asked."
-  [{:keys [ref limit]}]
-  (let [state (api/use-get (str (path ref "coding" "estimate") (when (seq limit) (str "?limit=" limit))))
+  [{:keys [ref limit over]}]
+  (let [state (api/use-get (str (path ref "coding" "estimate") (or (over-query over) "?")
+                                (when (seq limit) (str "&limit=" limit))))
         {:keys [units requests asked kept input-tokens cost-usd seconds timed price-per-million-input-tokens]}
         (get-in state [:data :estimate])]
     ($ :div {:class "text-sm"}
@@ -42,11 +48,13 @@
                 "The price is TypeSafe's published one: the API reports tokens, not prices."))))))
 
 (defn use-run
-  "A scenario's coding runs, polled while one is going: {:state :plan :running :runs :going :start! :busy :error}.
-  `start!` codes every line, or at most `limit`. When a run ends, everything that reads codings asks again."
-  [ref]
+  "A scenario's coding runs, over its own lines or over set `over`, polled while one is going: {:state :plan
+  :running :runs :going :start! :busy :error}. `start!` codes every line, or at most `limit`. When a run ends,
+  everything that reads codings asks again."
+  ([ref] (use-run ref nil))
+  ([ref over]
   (let [[polling set-polling!] (uix/use-state false)
-        state (api/use-get (path ref "coding") {:every (when polling 1500)})
+        state (api/use-get (str (path ref "coding") (over-query over)) {:every (when polling 1500)})
         {:keys [send! busy error]} (api/use-send)
         {:keys [plan running runs]} (:data state)
         going (boolean (and running (not (:failed running))))]
@@ -58,8 +66,8 @@
      [going polling state])
     {:state state :plan plan :running running :runs runs :going going :busy busy :error error
      :start! (fn [limit]
-               (-> (send! "POST" (path ref "coding") (if limit {:limit limit} {}))
-                   (.then #(when % (set-polling! true)))))}))
+               (-> (send! "POST" (path ref "coding") (cond-> {} limit (assoc :limit limit) over (assoc :over over)))
+                   (.then #(when % (set-polling! true)))))})))
 
 (defui progress [{:keys [running]}]
   ($ :div {:class "mt-3"}
@@ -73,9 +81,9 @@
 (defui run-bar
   "One line and a button: what a run of every line would ask, cost and take now, and Run. Its progress while it
   goes. For the sandbox's cards and the top of a scenario's lines."
-  [{:keys [ref]}]
-  (let [{:keys [runs running going start! busy error]} (use-run ref)
-        est (api/use-get (path ref "coding" "estimate"))
+  [{:keys [ref over]}]
+  (let [{:keys [runs running going start! busy error]} (use-run ref over)
+        est (api/use-get (str (path ref "coding" "estimate") (over-query over)))
         {:keys [asked kept cost-usd seconds]} (get-in est [:data :estimate])]
     ($ :div {:class "mt-3"}
        ($ :div {:class "flex flex-wrap items-center justify-between gap-3"}
@@ -94,8 +102,8 @@
 
 (defui run-panel
   "The plan, the run going on, and a button to code the lines (all, or at most `limit`)."
-  [{:keys [s]}]
-  (let [{:keys [state plan running runs going start! busy error]} (use-run (:ref s))
+  [{:keys [s over]}]
+  (let [{:keys [state plan running runs going start! busy error]} (use-run (:ref s) over)
         [limit set-limit!] (uix/use-state "")]
     ($ ui/loading {:state state}
        ($ :div
@@ -103,7 +111,7 @@
             ($ ui/notice {} "No runs yet: nothing of this scenario has been coded. Start one below."))
           ($ :div {:class "mt-3 flex flex-wrap items-end gap-4"}
              ($ :div {:class "max-w-3xl"}
-                ($ estimate-line {:ref (:ref s) :limit limit})
+                ($ estimate-line {:ref (:ref s) :limit limit :over over})
                 ($ ui/say {}
                    (ui/count-of (:lines plan) "line")
                    (when (not= (:lines plan) (:units plan)) (str " (" (:units plan) " to code, counting receipt items)"))
@@ -121,7 +129,7 @@
           (when (:failed running) ($ ui/notice {:tone :bad} "The last run failed: " (:failed running)))
           (when error ($ ui/notice {:tone :bad} error))
           (when (seq runs)
-            ($ :a {:class "mt-3 inline-block text-sm text-lapis hover:underline" :href (route/href ["sandbox" (:ref s) "latest"])}
+            ($ :a {:class "mt-3 inline-block text-sm text-lapis hover:underline" :href (route/href ["sandbox" (:ref s) (or over "latest")])}
                "Open its coding in the sandbox →"))
           (when (seq runs)
             ($ ui/disclosure {:summary (str (count runs) " runs so far; the last " (some-> (:at (first runs)) (subs 0 16)))}

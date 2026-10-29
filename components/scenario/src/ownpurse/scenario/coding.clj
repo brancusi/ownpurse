@@ -84,16 +84,23 @@
       rules (assoc :rules (mapv (fn [r] (if (false? (:enabled r)) (update r :code kw) (rule-in all r))) rules))
       (:buckets coding) (update :buckets (partial mapv (fn [b] (update b :codes (partial mapv (fn [[c t]] [(kw c) t])))))))))
 
+(defn select-in
+  "A selection of the record's bank lines, checked: {:accounts [source account ids]} or {:all true} (every book's),
+  and/or {:lines [bank line ids]} (one line, or a few); within {:from :to} days, when given."
+  [{:keys [accounts all lines from to] :as select}]
+  (when-not (or (seq accounts) all (seq lines))
+    (fail! "Say which lines to read: :accounts, :all (every book's lines) or :lines (their ids)." {}))
+  (some->> from (date! "The lines' :from"))
+  (some->> to (date! "The lines' :to"))
+  select)
+
 (defn lines-in
-  "A lines layer's data: lines chosen from the record ({:select {:accounts [source account ids] :from :to}}) or
-  given as they are ({:cases [...]})."
+  "A lines layer's data: lines chosen from the record ({:select ...}, as select-in checks it) or given as they are
+  ({:cases [...]})."
   [{:keys [select cases] :as lines}]
   (when-not (or select cases)
     (fail! "A lines layer chooses lines from the record (:select) or gives them (:cases)." {}))
-  (when select
-    (when (empty? (:accounts select)) (fail! "Say which accounts' lines to read (:select :accounts)." {}))
-    (some->> (:from select) (date! "The lines' :from"))
-    (some->> (:to select) (date! "The lines' :to")))
+  (when select (select-in select))
   lines)
 
 (defn key-in
@@ -175,23 +182,29 @@
       merchant-code (assoc :mcc merchant-code)
       channel (assoc :channel (kw channel)))))
 
+(defn select-sql
+  "The query for the bank lines `select` chooses, oldest first: [sql & params]."
+  [{:keys [accounts all lines from to]}]
+  (let [marks #(str/join ", " (repeat (count %) "?"))
+        where (cond-> []
+                (and (seq accounts) (not all)) (conj [(str "account IN (" (marks accounts) ")") accounts])
+                (seq lines) (conj [(str "_id IN (" (marks lines) ")") lines])
+                from (conj ["date >= ?" [(LocalDate/parse (str from))]])
+                to (conj ["date <= ?" [(LocalDate/parse (str to))]]))]
+    (into [(str "SELECT * FROM bank_lines"
+                (when (seq where) (str " WHERE " (str/join " AND " (map first where))))
+                " ORDER BY date, _id")]
+          (mapcat second where))))
+
 (defn read-lines
   "The lines `select` chooses from the record, oldest first, as the classifier reads them."
-  [node world {:keys [accounts from to]}]
+  [node world select]
   (if-not (store/table-exists? node :bank-lines)
     []
     (let [currencies (into {} (map (juxt :xt/id :currency))
                            (when (store/table-exists? node :source-accounts)
-                             (store/q node ["SELECT _id, currency FROM source_accounts"])))
-          marks (str/join ", " (repeat (count accounts) "?"))
-          rows (store/q node (cond-> (into [(str "SELECT * FROM bank_lines WHERE account IN (" marks ")"
-                                                 (when from " AND date >= ?")
-                                                 (when to " AND date <= ?")
-                                                 " ORDER BY date, _id")]
-                                           accounts)
-                               from (conj (LocalDate/parse (str from)))
-                               to (conj (LocalDate/parse (str to)))))]
-      (mapv (partial case-of world currencies) rows))))
+                             (store/q node ["SELECT _id, currency FROM source_accounts"])))]
+      (mapv (partial case-of world currencies) (store/q node (select-sql select))))))
 
 (def ^:private keyed
   "The maps in a world or a coding layer keyed by ids: kept in the store as lists of pairs, since the store turns a

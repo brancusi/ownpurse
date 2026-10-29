@@ -99,7 +99,7 @@
         [open set-open!] (uix/use-state false)]
     ($ :div {:class (ui/cx "bg-surface-0 p-3" (card-edge picked))}
        ($ pick-head {:href (route/href ["sandbox"] {:lines id}) :picked picked :title title :detail (set-size s)
-                     :label ($ kind-label {:mark rows-mark} (if (= "books" kind) "Lines · your books" "Lines · made up"))})
+                     :label ($ kind-label {:mark rows-mark} (cond (:saved s) "Lines · your books, saved" (= "books" kind) "Lines · your books" :else "Lines · made up"))})
        ($ :div {:class "pl-7"}
           ($ query {:where where})
           (when note ($ :div {:class "mt-0.5 text-xs text-ink-3"} note))
@@ -168,11 +168,21 @@
                                                 (str id (when (not= id kind) (str " (" kind ")")) (when-not enabled ", off"))))])
     (not record) (conj ["one file" "its world, buckets, rules and lines"])))
 
+(defn run-over
+  "Scenario `sc` run over set `lines`: {:over (the set's id, nil over the scenario's own lines) :run (the sandbox's id
+  of that run) :ran (whether it has run so)}."
+  [sc lines]
+  (let [over (when (and (:record sc) (not= (:id lines) (:default-set sc))) (:id lines))
+        run (or over "latest")]
+    {:over over :run run :ran (boolean (some #(= run (:id %)) (:runs sc)))}))
+
 (defui scenario-row
   "A scenario, drawn as a stack of layers (a sheet behind when it stands on another): what it adds, its buckets;
   More shows it all, in place."
   [{:keys [sc lines picked]}]
-  (let [{:keys [name title rules runs buckets base]} sc
+  (let [{:keys [name title rules buckets base]} sc
+        {:keys [ran]} (if (:record sc) (run-over sc lines) {:ran (seq (:runs sc))})
+        default (some #{name} (:scenarios lines))
         [open set-open!] (uix/use-state false)
         shown 8
         all (distinct buckets)]
@@ -182,8 +192,9 @@
        ($ :div {:class (ui/cx "relative bg-surface-0 p-3" (card-edge picked))}
           ($ pick-head {:href (route/href ["sandbox"] {:lines (:id lines) :scenario name}) :picked picked
                         :title (or title name) :name (when title name)
-                        :detail (str (ui/count-of rules "rule") " · " (if (seq runs) "run" "not run yet"))
-                        :label ($ kind-label {:mark layers-mark} "Scenario")})
+                        :detail (str (ui/count-of rules "rule") " · " (if ran "run over these lines" "not run over them yet"))
+                        :label ($ kind-label {:mark layers-mark}
+                                  (if default "Scenario · reads these lines by default" "Scenario"))})
           ($ :div {:class "pl-7"}
              ($ query {:where (scenario-where sc)})
              (if open
@@ -209,26 +220,33 @@
        ($ ui/eyebrow {:class "mb-1"} "Sample lines (made up)")
        ($ :div {:class "space-y-2"} (map row samples)))))
 
+(defn- offered
+  "The scenarios that can run over set `lines`: those that read it by default first, then every other of the
+  workspace's. A sample's own rules run over its own lines only."
+  [lines scenarios]
+  (let [default (keep scenarios (:scenarios lines))]
+    (into (vec default)
+          (filter #(and (:record %) (not (some #{(:name %)} (:scenarios lines)))))
+          (sort-by :name (vals scenarios)))))
+
 (defui scenario-step [{:keys [lines scenarios picked]}]
-  (let [reading (keep scenarios (:scenarios lines))
-        others (- (count scenarios) (count reading))]
+  (let [reading (offered lines scenarios)]
     ($ :<>
        ($ step-title {:n 2 :aside "How to code them: the world, the buckets and the rules"} "Scenario")
        ($ :div {:class "space-y-2"}
           (for [sc reading]
-            ($ scenario-row {:key (:name sc) :sc sc :lines lines :picked (= (:name sc) (:name picked))})))
-       (when (pos? others)
-         ($ ui/say {}
-            (ui/count-of others "other scenario") " read other lines. Running any scenario over any lines comes next.")))))
+            ($ scenario-row {:key (:name sc) :sc sc :lines lines :picked (= (:name sc) (:name picked))}))))))
 
-(defui books-run [{:keys [name runs]}]
+(defui books-run [{:keys [sc lines]}]
+  (let [{:keys [name runs]} sc
+        {:keys [over run]} (run-over sc lines)]
   ($ :<>
-     ($ running/run-bar {:ref name})
+     ($ running/run-bar {:ref name :over over :key (str name "/" over)})
      ($ :div {:class "mt-3 flex flex-wrap gap-4 text-sm"}
-        (when-let [{:keys [id at]} (first runs)]
+        (when-let [{:keys [id at]} (some #(when (= run (:id %)) %) runs)]
           ($ :a {:class "text-lapis hover:underline" :href (route/href ["sandbox" name id])}
-             "Open its coding, last run " (subs at 0 16) " →"))
-        ($ :a {:class "text-lapis hover:underline" :href (route/href ["scenarios" name])} "Change it in Scenarios →"))))
+             "Open its coding over these lines, last run " (subs at 0 16) " →"))
+        ($ :a {:class "text-lapis hover:underline" :href (route/href ["scenarios" name])} "Change it in Scenarios →")))))
 
 (defui sample-runs [{:keys [name runs]}]
   ($ :<>
@@ -252,8 +270,12 @@
         ($ :div {:class "mb-2 text-sm text-ink-2"}
            ($ :b {:class "text-ink-1"} (or (:title scenario) (:name scenario))) " over " ($ :b {:class "text-ink-1"} (:title lines))
            " (" (set-size lines) ")")
+        (when (and (:record scenario) (= "sample" (:kind lines)))
+          ($ ui/notice {}
+             "This scenario's world (people, cards, trips, projects) is your books'; these made-up lines happened in "
+             "another. Expect most of them to go to a person: a run here tests the rules' wording, not the coding."))
         (if (:record scenario)
-          ($ books-run scenario)
+          ($ books-run {:sc scenario :lines lines})
           ($ sample-runs scenario)))))
 
 (defui page [{:keys [query]}]
@@ -262,8 +284,8 @@
         sets (get-in sets-state [:data :lines])
         scenarios (into {} (map (juxt :name identity)) (get-in sc-state [:data :scenarios]))
         lines (or (some #(when (= (:lines query) (:id %)) %) sets) (first sets))
-        scenario (or (when (some #{(:scenario query)} (:scenarios lines)) (scenarios (:scenario query)))
-                     (some scenarios (:scenarios lines)))]
+        can (when lines (offered lines scenarios))
+        scenario (or (some #(when (= (:scenario query) (:name %)) %) can) (first can))]
     ($ :div
        ($ :h1 {:class "font-display text-2xl font-extrabold tracking-tight"} "Sandbox")
        ($ :p {:class "mt-1 max-w-3xl text-ink-3"}

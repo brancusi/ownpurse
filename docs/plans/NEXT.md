@@ -8,7 +8,16 @@ it when a step lands. The plans: [SPIKE.md](SPIKE.md) (the ledger in Clojure on 
 
 ## Now
 
-**SANDBOX.md step 3: lines out of scenarios.** Then steps 4 and 5.
+**SANDBOX.md step 4: evidence.** Then step 5 (in use).
+
+- Step 3 done (2026-10-29): a run is a scenario over a set of lines. Sets: a scenario's lines layer
+  (`<scenario>~<layer>`), a saved set (`line_sets`, `PUT /lines/{name}`: accounts or every book's, days, or chosen
+  lines, with its own key, `POST /lines/{name}/key`) and the samples (`sample~<name>`). Over its own lines a run is
+  kept as before ("latest"); over another set under `<ref>@<set>` (`:of`, `:over`), its sandbox run the set's id.
+  `over` on the coding endpoints and `?run=` on the trace. The Sandbox offers every workspace scenario for any set;
+  the Lines page saves a set; a line of the books can be run on its own. Learnt: a set changes a line's context (a
+  refund is matched to purchases in the same set), so a smaller set can ask Jev again for a few lines.
+- Step 2 (2026-10-29) is in the archive's sense done: the front is Lines → Scenario → Run, rows that open in place.
 
 - Step 2 done (2026-10-29): `GET /sandbox/lines` lists the sets of lines, a workspace's (one per scenario's lines
   layer, with every scenario that reads it) and the samples (each read by its own rules). The Sandbox front is three

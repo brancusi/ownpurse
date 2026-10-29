@@ -515,6 +515,15 @@
           (error status (error-type t) (ex-message e))
           (throw e))))))
 
+(defn- over-of
+  "Set of lines `id` as a run of a workspace's scenario reads it: a sample's lines, a scenario's lines layer
+  (<scenario>~<layer>) or a saved set; nil for none. A set there is not is an error."
+  [node sb id]
+  (when id
+    (or (sandbox/over sb id)
+        (and node (scenario/set-over node id))
+        (throw (ex-info (str "No set of lines " id ".") {:type :ownpurse/not-found})))))
+
 (defn- sandbox-routes
   "The sandbox: scenarios of bank lines, the world they happened in, and the runs that classified them, for the admin.
   Answers are data as the components hold them; ask for application/transit+json to keep keywords, sets and decimals."
@@ -523,7 +532,9 @@
         ;; A scenario of the record that codes lines is shown as the invented ones are: its coding is one run.
         record? #(and node (scenario/coding-scenario? node %))
         Scenario [:map [:scenario [:string {:min 1}]]]
-        Run (mu/merge Scenario [:map [:run [:re #"^[A-Za-z0-9._-]+$"]]])]
+        Run (mu/merge Scenario [:map [:run [:re #"^[A-Za-z0-9._~-]+$"]]])
+        ;; A record scenario's run over its own lines is "latest"; over another set, that set's id.
+        run-over #(when-not (= "latest" %) (over-of node sb %))]
     [["/sandbox/lines"
       {:get {:summary (str "The sets of lines the sandbox picks from: this workspace's books' (:kind \"books\", one a "
                            "scenario's lines layer) and the made-up samples (:kind \"sample\"), each with the scenarios "
@@ -536,7 +547,7 @@
              :parameters {:path [:map [:set [:string {:min 1}]]]}
              :responses {200 {:body :any} 404 {:body ApiError}}
              :handler (fn [{{:keys [path]} :parameters}]
-                        (answer #(hash-map :lines (if (str/starts-with? (:set path) "sample/")
+                        (answer #(hash-map :lines (if (str/starts-with? (:set path) "sample~")
                                                     (sandbox/line-set sb (:set path))
                                                     (if node
                                                       (scenario/line-set node (:set path))
@@ -562,17 +573,19 @@
              :responses {200 {:body :any} 404 {:body ApiError}}
              :handler (fn [{{:keys [path]} :parameters}]
                         (answer #(if (record? (:scenario path))
-                                   (scenario/sandbox-run node (:scenario path))
+                                   (scenario/sandbox-run node (:scenario path) (run-over (:run path)))
                                    (sandbox/run-lines sb (:scenario path) (:run path)))))}}]
      ["/sandbox/scenarios/{scenario}/trace/{*line}"
       {:get {:summary (str "One line of a record scenario through the pipeline, step by step: each step's function "
                            "called again on the record's data, its input and output, and every query it made, with "
                            "parameters and the row that came back. Nothing is asked of Jev.")
-             :parameters {:path (mu/merge Scenario [:map [:line [:string {:min 1}]]])}
+             :parameters {:path (mu/merge Scenario [:map [:line [:string {:min 1}]]])
+                          :query [:map [:run {:optional true} [:re #"^[A-Za-z0-9._~-]+$"]]]}
              :responses {200 {:body :any} 404 {:body ApiError}}
-             :handler (fn [{{:keys [path]} :parameters}]
+             :handler (fn [{{:keys [path query]} :parameters}]
                         (answer #(if (record? (:scenario path))
-                                   (hash-map :trace (scenario/sandbox-trace node (:scenario path) (:line path)))
+                                   (hash-map :trace (scenario/sandbox-trace node (:scenario path)
+                                                                            (some-> (:run query) run-over) (:line path)))
                                    (throw (ex-info (str "A trace follows a line of the record; " (:scenario path)
                                                         " is an invented sample, read from its file.")
                                                    {:type :ownpurse/not-found})))))}}]
@@ -585,36 +598,44 @@
              :responses {200 {:body :any} 404 {:body ApiError}}
              :handler (fn [{{:keys [path]} :parameters}]
                         (answer #(if (record? (:scenario path))
-                                   (scenario/sandbox-line node (:scenario path) (:line path))
+                                   (scenario/sandbox-line node (:scenario path) (run-over (:run path)) (:line path))
                                    (sandbox/line sb (:scenario path) (:run path) (:line path)))))}}]]))
 
 (defn- coding-routes
   "Coding a scenario's bank lines: a run in the background, its progress, each unit's coding, and two scenarios'
   codings side by side. Answers are data as the component holds them; ask for application/transit+json to keep
   keywords and decimals."
-  [{:keys [node jev]}]
+  [{:keys [node jev sandbox]}]
   (let [running (atom {})
-        Ref [:map [:ref [:string {:min 1}]]]]
+        sb (sandbox/open sandbox)
+        Ref [:map [:ref [:string {:min 1}]]]
+        Over [:map [:over {:optional true} [:string {:min 1}]]]]
     [["/scenarios/{ref}/coding"
       {:get {:summary (str "Coding a scenario's lines: what a run would take (:plan), the run going on, if any "
-                           "(:running, with units done of all), and the runs so far, newest first.")
-             :parameters {:path Ref}
+                           "(:running, with units done of all), and the runs so far, newest first. `over` a set of "
+                           "lines (a sample, <scenario>~<layer> or a saved set's name) for a run over it instead.")
+             :parameters {:path Ref :query Over}
              :responses {200 {:body :any} 404 {:body ApiError}}
-             :handler (fn [{{:keys [path]} :parameters}]
-                        (answer #(hash-map :plan (scenario/plan node (:ref path))
-                                           :running (get @running (:ref path))
-                                           :runs (scenario/coding-runs node (:ref path)))))}
+             :handler (fn [{{:keys [path query]} :parameters}]
+                        (answer #(let [over (over-of node sb (:over query))]
+                                   {:plan (scenario/plan node (:ref path) over)
+                                    :running (get @running [(:ref path) (:over query)])
+                                    :runs (scenario/coding-runs node (:ref path) over)})))}
        :post {:summary (str "Codes a scenario's lines in the background, through Jev, keeping every answer by its "
                             "exact request: coding again after an edit asks only what changed. `limit` codes at most "
                             "that many units, for a trial. GET the same path for progress. Refused while a run of "
                             "the scenario is going on, or when no TypeSafe key is set. Nothing posts anywhere.")
-              :parameters {:path Ref :body [:map {:closed true} [:limit {:optional true} [:int {:min 1}]]]}
+              :parameters {:path Ref :body [:map {:closed true}
+                                            [:limit {:optional true} [:int {:min 1}]]
+                                            [:over {:optional true} [:string {:min 1}]]]}
               :responses {200 {:body :any} 404 {:body ApiError} 409 {:body ApiError}}
               :handler
               (fn [{{:keys [path body]} :parameters}]
-                (let [ref (:ref path)]
+                (let [ref (:ref path)
+                      k [ref (:over body)]]
                   (answer
-                   #(let [plan (scenario/plan node ref)
+                   #(let [over (over-of node sb (:over body))
+                          plan (scenario/plan node ref over)
                           units (cond-> (:units plan) (:limit body) (min (:limit body)))]
                       (when-not (:api-key jev)
                         (throw (ex-info (str "No TypeSafe key: set TYPESAFE_API_KEY, or the key in the config's "
@@ -622,9 +643,9 @@
                                         {:type :ownpurse/scenario-conflict})))
                       ;; A run that failed is over: its entry says why until the next run replaces it.
                       (when-not (let [now @running]
-                                  (and (or (nil? (get now ref)) (:failed (get now ref)))
+                                  (and (or (nil? (get now k)) (:failed (get now k)))
                                        (compare-and-set! running now
-                                                         (assoc now ref {:done 0 :of units
+                                                         (assoc now k {:done 0 :of units
                                                                          :started (str (java.time.Instant/now))}))))
                         (throw (ex-info (str "Scenario " ref " is being coded now. GET /scenarios/" ref "/coding for "
                                              "its progress.")
@@ -632,22 +653,56 @@
                       (future
                         (try
                           (scenario/code! node ref (classify/jev-ask jev)
-                                          {:model (:model jev) :limit (:limit body)
-                                           :on-unit (fn [_] (swap! running update-in [ref :done] inc))})
-                          (swap! running dissoc ref)
+                                          {:model (:model jev) :limit (:limit body) :over over
+                                           :on-unit (fn [_] (swap! running update-in [k :done] inc))})
+                          (swap! running dissoc k)
                           (catch Throwable e
-                            (swap! running assoc-in [ref :failed] (ex-message e)))))
+                            (swap! running assoc-in [k :failed] (ex-message e)))))
                       {:started true :plan plan :units units}))))}}]
      ["/scenarios/{ref}/coding/estimate"
       {:get {:summary (str "What coding a scenario's lines would take now, asking nothing: the requests Jev would be "
                            "asked and those the record already answers, the input tokens, the cost at Jev's published "
                            "price (the API reports tokens, not prices) and about how many seconds. `limit` as for the "
                            "run.")
-             :parameters {:path Ref :query [:map [:limit {:optional true} [:int {:min 1}]]]}
+             :parameters {:path Ref :query (mu/merge Over [:map [:limit {:optional true} [:int {:min 1}]]])}
              :responses {200 {:body :any} 404 {:body ApiError}}
              :handler (fn [{{:keys [path query]} :parameters}]
                         (answer #(hash-map :estimate (scenario/estimate node (:ref path) (:model jev)
-                                                                        (select-keys query [:limit])))))}}]
+                                                                        (assoc (select-keys query [:limit])
+                                                                               :over (over-of node sb (:over query)))))))}}]
+     ["/lines/{name}"
+      {:put {:summary (str "Saves a set of lines by name: a title, a note and a selection over the books (accounts, or "
+                           "all: every book's lines; from and to; lines, by id, for one line or a few). Any scenario "
+                           "runs over it. Its key is kept. Nothing posts anywhere.")
+             :parameters {:path [:map [:name [:string {:min 1}]]]
+                          :body [:map {:closed true}
+                                 [:title [:string {:min 1}]]
+                                 [:note {:optional true} :string]
+                                 [:select [:map {:closed true}
+                                           [:accounts {:optional true} [:vector [:string {:min 1}]]]
+                                           [:all {:optional true} :boolean]
+                                           [:lines {:optional true} [:vector [:string {:min 1}]]]
+                                           [:from {:optional true} :string]
+                                           [:to {:optional true} :string]]]]}
+             :responses {200 {:body :any} 400 {:body ApiError}}
+             :handler (fn [{{:keys [path body]} :parameters}]
+                        (answer #(hash-map :lines (scenario/line-set-put! node (assoc body :name (:name path))))))}}]
+     ["/lines/{name}/key"
+      {:post {:summary "Keys one line in a saved set: the bucket a person says it belongs in; `remove` takes it out."
+              :parameters {:path [:map [:name [:string {:min 1}]]]
+                           :body [:map {:closed true}
+                                  [:unit [:string {:min 1}]]
+                                  [:expect {:optional true} [:string {:min 1}]]
+                                  [:ok {:optional true} [:vector [:string {:min 1}]]]
+                                  [:review {:optional true} [:enum "required" "allowed"]]
+                                  [:why {:optional true} :string]
+                                  [:remove {:optional true} :boolean]]}
+              :responses {200 {:body :any} 400 {:body ApiError} 404 {:body ApiError}}
+              :handler (fn [{{:keys [path body]} :parameters}]
+                         (answer #(do (when-not (or (:remove body) (:expect body))
+                                        (throw (ex-info "Say the bucket the line belongs in (expect), or remove it."
+                                                        {:type :ownpurse/invalid})))
+                                      {:lines (scenario/line-set-confirm! node (:name path) body)})))}}]
      ["/scenarios/{ref}/key"
       {:get {:summary (str "A scenario's answer key, its bases' first: each line a person coded, the bucket it belongs "
                            "in (:expect), others that are fine (:ok), whether a person must or may look (:review), "

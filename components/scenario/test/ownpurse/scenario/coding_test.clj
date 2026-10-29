@@ -193,9 +193,9 @@
                  ((juxt :expect :keyed-in) (:unit (first (:lines (scenario/sandbox-run node "harbour-coding")))))))
           (scenario/put! node {:ref "child-key" :name "Keyed otherwise" :base "harbour-coding" :layers []})
           (testing "the lines a scenario selects are one set, read by it and every scenario standing on it"
-            (is (= [{:id "harbour-coding/lines" :kind "books" :lines 4 :scenarios ["harbour-coding" "child-key"]}]
+            (is (= [{:id "harbour-coding~lines" :kind "books" :lines 4 :scenarios ["harbour-coding" "child-key"]}]
                    (map #(select-keys % [:id :kind :lines :scenarios]) (scenario/line-sets node))))
-            (let [{:keys [first peek from]} (scenario/line-set node "harbour-coding/lines")]
+            (let [{:keys [first peek from]} (scenario/line-set node "harbour-coding~lines")]
               (is (= 4 (count first)))
               (is (= 3 (count peek)))
               (is (= from (:date (clojure.core/first first)))))
@@ -261,3 +261,53 @@
           (is (= :harbour (keyword (get-in (scenario/coding node "harbour-coding" "line:test:1")
                                            [:facts :whereabouts :project]))))
           (is (= 2 (count (scenario/coding-runs node "harbour-coding")))))))))
+
+(deftest over-a-set-test
+  (with-node
+    (fn [node]
+      (scenario/put! node trial)
+      (let [calls (atom 0)
+            code! #(scenario/code! node "harbour-coding" (stub calls) (cond-> {:model "stub"} % (assoc :over %)))]
+        (testing "a scenario's lines layer is the set it reads by default; a run over it is the scenario's own"
+          (is (= "harbour-coding~lines" (:default-set (first (scenario/sandbox-scenarios node)))))
+          (code! (scenario/set-over node "harbour-coding~lines"))
+          (is (= 1 (count (scenario/coding-runs node "harbour-coding"))))
+          (is (= 4 (count (scenario/codings node "harbour-coding")))))
+        (testing "a saved set chooses lines by account and days, one line, or every book's"
+          (scenario/line-set-put! node {:name "november" :title "November"
+                                        :select {:accounts [checking] :from "2025-11-01" :to "2025-11-30"}})
+          (scenario/line-set-put! node {:name "one-line" :title "The groceries in Lisbon"
+                                        :select {:lines ["line:test:1"]}})
+          (scenario/line-set-put! node {:name "everything" :title "Every book's lines" :select {:all true}})
+          (is (= {:lines 2} (select-keys (scenario/plan node "harbour-coding" (scenario/set-over node "november")) [:lines])))
+          (is (= 1 (:lines (scenario/plan node "harbour-coding" (scenario/set-over node "one-line")))))
+          (is (= 5 (:lines (scenario/plan node "harbour-coding" (scenario/set-over node "everything")))))
+          (is (= ["everything" "november" "one-line"] (keep #(when (:saved %) (:id %)) (scenario/line-sets node)))
+              "saved sets, by name")
+          (is (= :ownpurse/invalid (:type (error #(scenario/line-set-put! node {:name "No Caps" :title "x" :select {:all true}})))))
+          (is (= :ownpurse/invalid (:type (error #(scenario/line-set-put! node {:name "empty" :title "x" :select {}}))))))
+        (testing "the same scenario over another set is a run of its own, kept and scored apart"
+          (scenario/line-set-confirm! node "november" {:unit "line:test:3" :expect "travel"})
+          (let [over (scenario/set-over node "november")]
+            (code! over)
+            (is (= 1 (count (scenario/coding-runs node "harbour-coding" over))))
+            (is (= 1 (count (scenario/coding-runs node "harbour-coding"))) "its own lines' runs are as they were")
+            (is (= 4 (count (scenario/codings node "harbour-coding"))))
+            (let [{:keys [run lines]} (scenario/sandbox-run node "harbour-coding" over)]
+              (is (= ["november" "november" 2] [(:id run) (:over run) (:results run)]))
+              (is (= [:travel "november"] ((juxt :expect :keyed-in) (:unit (second lines))))
+                  "the set's own key scores it"))
+            (is (= ["november" "latest"] (map :id (:runs (first (scenario/sandbox-scenarios node))))))
+            (is (= "line:test:3" (:id (scenario/sandbox-line node "harbour-coding" over "line:test:3"))))
+            (is (= 10 (count (:steps (scenario/sandbox-trace node "harbour-coding" over "line:test:3")))))))
+        (testing "the scenario's own key stands over the set's: a policy that differs"
+          (scenario/confirm! node "harbour-coding" {:unit "line:test:3" :expect "personal"})
+          (is (= [:personal "harbour-coding"]
+                 ((juxt :expect :keyed-in)
+                  (:unit (second (:lines (scenario/sandbox-run node "harbour-coding" (scenario/set-over node "november")))))))))
+        (testing "lines given as they are (a sample's) carry their key with them"
+          (let [over {:id "sample~tiny"
+                      :cases [{:id "c1" :date "2025-10-05" :amount 10M :currency "EUR" :merchant "Mercado Azul"
+                               :card "card-r" :mcc "5411" :expect :per-diem}]}]
+            (code! over)
+            (is (= :per-diem (get-in (first (:lines (scenario/sandbox-run node "harbour-coding" over))) [:unit :expect])))))))))

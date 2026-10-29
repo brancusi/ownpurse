@@ -10,20 +10,28 @@
    [ownpurse.classify.interface :as classify]
    [ownpurse.scenario.coding :as coding]
    [ownpurse.scenario.core :as core]
+   [ownpurse.scenario.lines :as lines]
    [ownpurse.scenario.run :as run]
    [ownpurse.store.interface :as store]))
 
 (def run-id "The one run a record scenario has in the sandbox: its coding as its runs left it." "latest")
 
 (defn coding-scenario?
-  "Whether scenario `ref` codes lines: a lines layer is on in its stack."
+  "Whether scenario `ref` codes lines: a coding or lines layer is on in its stack."
   [node ref]
-  (boolean (some #(= "lines" (:kind %)) (core/stack-layers node ref))))
+  (boolean (some #(#{"lines" "coding"} (:kind %)) (core/stack-layers node ref))))
 
-(defn- coded-rows [node ref]
+(defn- coded-rows
+  "The codings kept under `scope`: a scenario's ref over its own lines, <ref>@<set> over another set."
+  [node scope]
   (if (store/table-exists? node :codings)
-    (store/q node ["SELECT * FROM codings WHERE scenario = ? ORDER BY date, unit" ref])
+    (store/q node ["SELECT * FROM codings WHERE scenario = ? ORDER BY date, unit" scope])
     []))
+
+(defn run-of
+  "The sandbox's id of a run over set `over-id`: \"latest\" over the scenario's own lines, else the set's id."
+  [over-id]
+  (or over-id run-id))
 
 (defn- buckets [s]
   (or (:buckets s)
@@ -31,20 +39,31 @@
 
 (defn- instant [t] (str (if (instance? java.time.ZonedDateTime t) (.toInstant ^java.time.ZonedDateTime t) t)))
 
-(defn- run-summary [node ref n]
-  (when-let [{:keys [at model asked input-tokens]} (first (run/runs node ref))]
-    (cond-> {:id run-id :at (instant at) :model model :results n}
+(defn- run-summary [node scope over-id n]
+  (when-let [{:keys [at model asked input-tokens]} (first (run/runs node scope))]
+    (cond-> {:id (run-of over-id) :at (instant at) :model model :results n}
+      over-id (assoc :over over-id)
       input-tokens (assoc :usage {:requests asked :input-tokens input-tokens}))))
 
+(defn- runs-listed
+  "Scenario `ref`'s runs as the sandbox lists them, newest first: one a set it ran over, its last run's time; over
+  its own lines \"latest\", once it has coded them."
+  [node ref]
+  (let [coded (seq (coded-rows node ref))]
+    (->> (run/runs-of node ref)
+         (filter #(or (:over %) coded))
+         (reduce (fn [acc {:keys [over at]}] (if (some #(= (run-of over) (:id %)) acc) acc
+                                                (conj acc (cond-> {:id (run-of over) :at (instant at)} over (assoc :over over)))))
+                 []))))
+
 (defn scenarios
-  "Every record scenario that codes lines, as the sandbox lists its own: {:name :title :record true :lines :units
-  :rules :coded :runs}, its one run \"latest\" when it has been coded."
+  "Every record scenario that codes lines, as the sandbox lists its own: {:name :title :record true :default-set
+  :lines :units :rules :coded :runs}: its runs, one a set of lines it ran over (\"latest\" over its own lines)."
   [node]
   (vec (for [{:keys [ref] :as sc} (core/scenarios node)
              :when (coding-scenario? node ref)
              :let [s (core/classifier-scenario node ref)
-                   coded (seq (coded-rows node ref))
-                   {:keys [at]} (first (run/runs node ref))]]
+                   coded (seq (coded-rows node ref))]]
          {:name ref :title (:name sc) :record true :base (:base sc)
           :layers (vec (for [{:keys [id kind note enabled]} (:layers sc)]
                          (cond-> {:id id :kind kind :enabled enabled} note (assoc :note note))))
@@ -53,7 +72,8 @@
           :units (count (mapcat classify/units (:cases s)))
           :rules (count (:rules s))
           :coded (count coded)
-          :runs (if (and coded at) [{:id run-id :at (instant at)}] [])})))
+          :default-set (core/default-set node ref)
+          :runs (runs-listed node ref)})))
 
 (defn world
   "What scenario `ref`'s lines happened in, as the sandbox's world: everything of its classifier scenario but the
@@ -82,15 +102,16 @@
         (sort-by (juxt :date :id) units)))
 
 (defn run-lines
-  "Scenario `ref`'s coding in the sandbox's run shape: one row a unit it coded, each strategy's coding."
-  [node ref]
-  (let [s (core/classifier-scenario node ref)
+  "Scenario `ref`'s coding in the sandbox's run shape, over its own lines or over set `over` (as
+  ownpurse.scenario.core/set-over gives it): one row a unit it coded, each strategy's coding."
+  [node ref over]
+  (let [{:keys [scope s key] over-id :over} (core/over node ref over)
         units (mapcat classify/units (:cases s))
         by-id (into {} (map (juxt :id identity)) units)
         short (short-ids units)
-        k (core/answer-key node ref)
-        rows (coded-rows node ref)]
-    {:run (run-summary node ref (count rows))
+        k key
+        rows (coded-rows node scope)]
+    {:run (run-summary node scope over-id (count rows))
      :lines (vec (for [{:keys [unit result]} rows
                        :let [{:keys [decisions]} (edn/read-string result)]]
                    {:id unit
@@ -101,17 +122,17 @@
 (defn line
   "One unit of scenario `ref`'s coding all the way through, as the sandbox's line: the bank line, its facts, the
   requests rebuilt from them, the answers the record kept for those requests, how each rule held, and each strategy's
-  decision."
-  [node ref unit-id]
-  (let [s (core/classifier-scenario node ref)
-        row (first (store/q node ["SELECT * FROM codings WHERE scenario = ? AND unit = ?" ref unit-id]))
+  decision. Over its own lines, or over set `over`."
+  [node ref over unit-id]
+  (let [{:keys [scope s key] over-id :over} (core/over node ref over)
+        row (first (store/q node ["SELECT * FROM codings WHERE scenario = ? AND unit = ?" scope unit-id]))
         _ (when-not row
             (throw (ex-info (str "Scenario " ref " has not coded " unit-id ".") {:type :ownpurse/not-found})))
         {:keys [facts decisions]} (edn/read-string (:result row))
         units (mapcat classify/units (:cases s))
         unit (some #(when (= unit-id (:id %)) %) units)
         line (some #(when (= (or (:line unit) unit-id) (:id %)) %) (:cases s))
-        model (:model (first (run/runs node ref)))
+        model (:model (first (run/runs node scope)))
         enrich (classify/enrichment s unit)
         requests (cond-> (classify/requests s facts) enrich (assoc :enrich enrich))
         responses (into {} (keep (fn [[k {:keys [state questions]}]]
@@ -121,13 +142,15 @@
         result {:id unit-id :facts facts :responses responses :decisions decisions}]
     {:id unit-id
      :short (get (short-ids units) unit-id)
-     :run (run-summary node ref (count (coded-rows node ref)))
-     :unit (keyed (core/answer-key node ref) unit)
+     :run (run-summary node scope over-id (count (coded-rows node scope)))
+     :unit (keyed key unit)
      :line line
      :facts facts
      :requests (dissoc requests :enrich)
      :enrich enrich
      :record true
+     ;; A line read from the books (not given as it is, as a sample's): it can be chosen on its own, as a set.
+     :books (boolean (if over-id (:select over) (seq (:selects (core/composed node ref)))))
      :rebuilt true
      ;; Asked for when the line was coded, but under rules that have changed since: nothing kept for them as they are.
      :unanswered (vec (remove responses (keys requests)))
@@ -137,14 +160,6 @@
 
 ;; ----------------------------------------------------------------------------------------------- lines
 
-(defn- lines-layers
-  "The lines layers scenario `ref` reads, as [the scenario that holds it, its id, the layer]: its bases' first."
-  [node ref]
-  (vec (for [r (concat (reverse (core/bases-of node ref)) [ref])
-             l (:layers (core/scenario node r))
-             :when (and (:enabled l) (= "lines" (:kind l)))]
-         [r (:id l) l])))
-
 (defn- account-names [node]
   (if (store/table-exists? node :source-accounts)
     (into {} (map (juxt :xt/id :name)) (store/q node ["SELECT _id, name FROM source_accounts"]))
@@ -152,8 +167,8 @@
 
 (defn- lines-title [names {:keys [select cases]}]
   (if select
-    (let [{:keys [accounts from to]} select]
-      (str (str/join ", " (map #(get names % %) accounts))
+    (let [{:keys [accounts all from to]} select]
+      (str (if all "Every book's lines" (str/join ", " (map #(get names % %) accounts)))
            (cond (and from to) (str ", " from " to " to) from (str ", from " from) to (str ", to " to))))
     (str (count cases) " lines given as they are")))
 
@@ -161,8 +176,11 @@
   "What a set of lines is, as the query that chooses it: [[field value] ...]."
   [names {:keys [select cases]}]
   (if select
-    (let [{:keys [accounts from to]} select]
-      (cond-> [["account" (str/join " or " (map #(get names % %) accounts))]]
+    (let [{:keys [accounts all lines from to]} select]
+      (cond-> []
+        all (conj ["account" "every book's"])
+        (and (seq accounts) (not all)) (conj ["account" (str/join " or " (map #(get names % %) accounts))])
+        (seq lines) (conj ["lines" (if (= 1 (count lines)) "this one" (str (count lines) " chosen"))])
         from (conj ["from" (str from)])
         to (conj ["to" (str to)])))
     [["given" (str (count cases) " lines, as they are")]]))
@@ -176,22 +194,33 @@
 (defn- sets-with-cases [node]
   (let [names (account-names node)
         coding (filter #(coding-scenario? node %) (map :ref (core/scenarios node)))
-        reading (for [ref coding [owner id l] (lines-layers node ref)] [[owner id l] ref])]
-    (for [[[owner id {:keys [lines note]}] refs] (group-by first reading)
-          :let [cases (sort-by :date (if-let [select (:select lines)] (coding/read-lines node {} select) (:cases lines)))]]
-      [(cond-> {:id (str owner "/" id) :kind "books" :title (lines-title names lines) :lines (count cases)
+        reading (for [ref coding [owner id l] (core/lines-layers node ref)] [[owner id l] ref])
+        read (fn [lines] (sort-by :date (if-let [select (:select lines)] (coding/read-lines node {} select) (:cases lines))))]
+    (concat
+     (for [[[owner id {:keys [lines note]}] refs] (group-by first reading)
+          :let [cases (read lines)]]
+      [(cond-> {:id (core/layer-set-id owner id) :kind "books" :title (lines-title names lines) :lines (count cases)
                 :where (lines-where names lines)
                 :units (count (mapcat classify/units cases))
                 :scenarios (vec (distinct (cons owner (sort (map second refs)))))
                 :peek (mapv glance (take 3 cases))}
          note (assoc :note note))
-       cases])))
+       cases])
+     ;; Saved sets: read by no scenario by default, run under any.
+     (for [{:keys [name title note select]} (lines/line-sets node)
+           :let [cases (read {:select select})]]
+       [(cond-> {:id name :kind "books" :saved true :title title :lines (count cases)
+                 :where (lines-where names {:select select})
+                 :units (count (mapcat classify/units cases)) :scenarios [] :peek (mapv glance (take 3 cases))}
+          note (assoc :note note))
+        cases]))))
 
 (defn line-sets
   "The sets of this workspace's own lines the sandbox picks from: one a lines layer of a scenario that codes lines,
-  {:id \"<scenario>/<layer>\" :kind \"books\" :title :note :lines :units :scenarios :peek}, its :scenarios every
-  scenario that reads it (the one that holds it first), :peek its first three lines. A scenario reads the lines layers
-  of its stack, its bases' included."
+  {:id \"<scenario>~<layer>\" :kind \"books\" :title :note :where :lines :units :scenarios :peek}, its :scenarios every
+  scenario that reads it by default (the one that holds it first), :peek its first three lines; then the saved sets
+  (:saved true, by name), which no scenario reads by default. A scenario reads the lines layers of its stack, its
+  bases' included."
   [node]
   (mapv first (sets-with-cases node)))
 
@@ -221,8 +250,9 @@
   function again on the record's data: {:step :call :about :in :out :db}. :db is every query the step made, with
   its parameters and what came back; a run's writes are shown as the rows it wrote, read back. Nothing is asked of
   Jev: its answers are the ones the record keeps."
-  [node ref unit-id]
-  (let [log (atom [])
+  [node ref over unit-id]
+  (let [{:keys [scope s]} (core/over node ref over)
+        log (atom [])
         q! (fn [sql & params]
              (let [rows (if (store/table-exists? node (keyword (second (re-find #"FROM (\w+)" sql))))
                           (store/q node (into [sql] params))
@@ -232,24 +262,22 @@
         step (fn [m] (let [db @log] (reset! log []) (plain (assoc m :db db))))
         stack (concat (reverse (core/bases-of node ref)) [ref])
         _ (doseq [r stack] (q! "SELECT * FROM scenarios WHERE _id = ?" (str "scenario:" r)))
-        s (core/classifier-scenario node ref)
         units (mapcat classify/units (:cases s))
         unit (or (some #(when (= unit-id (:id %)) %) units)
                  (throw (ex-info (str "Scenario " ref " does not read " unit-id ".") {:type :ownpurse/not-found})))
         line-id (or (:line unit) unit-id)
         ;; The lines layers' own selections, as ownpurse.scenario.coding/read-lines makes them; the row shown is this line's.
-        raw (some (fn [{:keys [accounts from to]}]
-                    (let [sql (str "SELECT * FROM bank_lines WHERE account IN (" (str/join ", " (repeat (count accounts) "?")) ")"
-                                   (when from " AND date >= ?") (when to " AND date <= ?") " ORDER BY date, _id")
-                          params (cond-> (vec accounts) from (conj (java.time.LocalDate/parse (str from)))
-                                   to (conj (java.time.LocalDate/parse (str to))))
+        raw (some (fn [select]
+                    (let [[sql & params] (coding/select-sql select)
                           rows (apply q! sql params)
                           row (some #(when (= line-id (:xt/id %)) %) rows)]
                       (swap! log #(conj (pop %) (assoc (peek %) :row row :shown "this line's row")))
                       row))
-                  (:selects (core/composed node ref)))
+                  (if (= scope ref)
+                    (:selects (core/composed node ref))
+                    (some-> (:select over) vector)))
         case (some #(when (= line-id (:id %)) %) (:cases s))
-        model (:model (first (run/runs node ref)))
+        model (:model (first (run/runs node scope)))
         held (fn [{:keys [state questions]}]
                (let [id (run/judgment-id model state questions)]
                  [id (some-> (first (q! "SELECT * FROM judgments WHERE _id = ?" id)) :response edn/read-string)]))
@@ -326,8 +354,8 @@
                   :out (or decisions missing)})
         settings (select-keys (merge {:threshold run/default-threshold :strategy run/default-strategy} s) [:threshold :strategy])
         standing (if decisions (run/standing settings decisions) missing)
-        _ (q! "SELECT * FROM codings WHERE _id = ?" (str "coding:" ref ":" unit-id))
-        _ (q! "SELECT * FROM coding_runs WHERE scenario = ? ORDER BY at DESC LIMIT 1" ref)
+        _ (q! "SELECT * FROM codings WHERE _id = ?" (str "coding:" scope ":" unit-id))
+        _ (q! "SELECT * FROM coding_runs WHERE scenario = ? ORDER BY at DESC LIMIT 1" scope)
         s10 (step {:step 10 :call "(ownpurse.scenario.run/standing {:threshold :strategy} decisions)"
                    :about (str "The scenario's strategy's coding stands when it is a bucket and sure enough; else a "
                                "person looks. A run keeps it as one codings row per unit (put only when changed), "

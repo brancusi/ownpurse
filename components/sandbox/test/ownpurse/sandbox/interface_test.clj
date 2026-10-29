@@ -20,10 +20,10 @@
       (is (seq (:runs harbour)))
       (is (= (:runs harbour) (sort-by :id #(compare %2 %1) (:runs harbour)))))
     (testing "each scenario's made-up lines are a set of lines to pick, read by its own rules"
-      (is (= {:id "sample/harbour" :kind "sample" :lines 51 :units 65 :scenarios ["harbour"]}
-             (select-keys (some #(when (= "sample/harbour" (:id %)) %) (sandbox/line-sets sb))
+      (is (= {:id "sample~harbour" :kind "sample" :lines 51 :units 65 :scenarios ["harbour"]}
+             (select-keys (some #(when (= "sample~harbour" (:id %)) %) (sandbox/line-sets sb))
                           [:id :kind :lines :units :scenarios])))
-      (let [{:keys [peek first from to currencies]} (sandbox/line-set sb "sample/harbour")]
+      (let [{:keys [peek first from to currencies]} (sandbox/line-set sb "sample~harbour")]
         (is (= 3 (count peek)))
         (is (= 51 (count first)) "every line, up to two hundred")
         (is (= (sort (map :date first)) (map :date first)) "oldest first")

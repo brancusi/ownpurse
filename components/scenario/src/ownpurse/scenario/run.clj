@@ -135,8 +135,9 @@
 (defn code!
   "Codes every unit of classifier scenario `s` (scenario `ref`'s, as ownpurse.scenario.core/classifier-scenario
   composes it) with `ask`, four at a time, at most `limit` units when given. Keeps each unit's coding and the run.
-  Returns the run: {:scenario :at :units :coded :asked :kept :model}."
-  [node ref s ask {:keys [model limit on-unit]}]
+  `ref` is the run's scope: the scenario's ref over its own lines, <ref>@<set> over another set, which `of` (the
+  scenario) and `over` (the set) say. Returns the run: {:scenario :at :units :coded :asked :kept :model}."
+  [node ref s ask {:keys [model limit on-unit of over]}]
   (let [counts (atom {})
         ask (caching-ask node model ask counts)
         units (cond->> (mapcat classify/units (:cases s)) limit (take limit))
@@ -155,11 +156,13 @@
                                 :code (name code) :proposed (name proposed) :confidence confidence :auto auto
                                 :result (pr-str (select-keys r [:id :facts :decisions]))}
                          reason (assoc :reason (name reason))
-                         by (assoc :by (vec by)))))
+                         by (assoc :by (vec by))
+                         over (assoc :of of :over over))))
         run {:xt/id (str "coding-run:" ref ":" at) :scenario ref :at at :units (count units)
              :coded (count (filter :auto codings)) :asked (get @counts :asked 0) :kept (get @counts :kept 0)
              :model (str model) :took-ms (quot (- (System/nanoTime) started) 1000000)
-             :input-tokens (get @counts :input-tokens 0)}]
+             :input-tokens (get @counts :input-tokens 0)}
+        run (cond-> run over (assoc :of of :over over))]
     (store/put-changed! node {:codings codings} metadata)
     ;; A whole run is the scenario's coding: a unit it no longer reads stops counting (its history stays).
     (when-not limit
@@ -191,6 +194,16 @@
   (if-not (store/table-exists? node :coding-runs)
     []
     (mapv #(dissoc % :xt/id) (store/q node ["SELECT * FROM coding_runs WHERE scenario = ? ORDER BY at DESC" ref]))))
+
+(defn runs-of
+  "Every coding run of scenario `ref`, over its own lines and over other sets, newest first: each with :over, the
+  set, when it was not the scenario's own."
+  [node ref]
+  (if-not (store/table-exists? node :coding-runs)
+    []
+    (->> (store/q node ["SELECT * FROM coding_runs ORDER BY at DESC"])
+         (filter #(or (= ref (:scenario %)) (= ref (:of %))))
+         (mapv #(dissoc % :xt/id)))))
 
 (defn compare-codings
   "Each unit two scenarios code differently: {:unit :date :merchant :amount :a {:code :confidence} :b {...}}, a side

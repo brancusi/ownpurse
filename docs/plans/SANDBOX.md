@@ -49,10 +49,20 @@ of the group" cannot be asked. This plan pulls the pieces apart so each is one t
 2. **The Sandbox front as lines × scenario.** *Done 2026-10-29: only the scenarios that read a set of lines are offered for it, and samples are not run from the admin; both lift in step 3.* Pick a set of lines (the samples among them) and a scenario, see what a
    run would cost, run it. The samples move under Lines. Done when a sample and a book's lines are picked the same
    way, and a scenario's runs open from either section.
-3. **Lines out of scenarios.** A run is a scenario over a set of lines; a scenario's `lines` layer becomes a saved set
+3. **Lines out of scenarios.** *Done 2026-10-29.* A run is a scenario over a set of lines; a scenario's `lines` layer becomes a saved set
    of lines it defaults to. One line, a filter, or every book's lines can be run under any scenario. The key moves
    with the lines (a scenario's own key layer stays, for a policy that differs). Done when the same scenario runs
    over two sets of lines and both runs are kept and scored, and the existing scenarios still run as before.
+   How (agreed 2026-10-29):
+   - **A set of lines** is one of: a scenario's lines layer (id `<scenario>.<layer>`, as before), a saved set (id
+     `<name>`, a `line_sets` row: a title, a selection, its own key), or a sample (`sample.<name>`). A selection says
+     accounts (or `:all`, every book's lines), days (`:from`, `:to`) and, for one line or a few, `:lines` (their ids).
+   - **A run is a scenario over a set.** Over the scenario's own lines (its one lines layer) a run is kept as it is
+     now (`coding:<ref>:<unit>`, run "latest"), so the existing scenarios run and score as before. Over any other set
+     it is kept under the scope `<ref>@<set>`, with `:of` and `:over` saying which; its sandbox run is that set's id.
+   - **The key** of a run over a set is the set's own key, then the scenario's key layers over it (a policy that
+     differs). A sample's lines carry their key with them.
+   - The samples' own rules stay files the eval runs; a workspace's scenarios run over the samples like any set.
 4. **Evidence.** Hang a receipt (a PDF or image), an order or a note on a line; the line's facts gain its items; run
    again and compare with and without. Done when one line, with and without a receipt, is compared in the Sandbox.
 5. **In use.** Mark one scenario per workspace as in use; the Sandbox and Scenarios show it apart from experiments,

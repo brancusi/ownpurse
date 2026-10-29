@@ -552,7 +552,8 @@
         to-step (uix/use-callback (fn [n] (go! {:step n :line id :scenario (:scenario query)})) [go! id query])
         world-state (api/use-get (str "/sandbox/scenarios/" scenario))
         line-state (api/use-get (when (and run-id id) (str "/sandbox/scenarios/" scenario "/runs/" run-id "/lines/" id)))
-        trace-state (api/use-get (when (and rec id) (str "/sandbox/scenarios/" scenario "/trace/" id)))
+        trace-state (api/use-get (when (and rec id) (str "/sandbox/scenarios/" scenario "/trace/" id
+                                                            (when (and run-id (not= "latest" run-id)) (str "?run=" run-id)))))
         world (get-in world-state [:data :world])
         {:keys [title]} (nth steps (dec at))]
     (uix/use-effect

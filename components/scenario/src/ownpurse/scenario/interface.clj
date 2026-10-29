@@ -6,6 +6,7 @@
   dropped, duplicated or changed freely, and every version is kept. Knows nothing about any one source."
   (:require
    [ownpurse.scenario.core :as core]
+   [ownpurse.scenario.lines :as lines]
    [ownpurse.scenario.run :as run]
    [ownpurse.scenario.sandbox :as sandbox]))
 
@@ -92,17 +93,19 @@
   (merge {:threshold run/default-threshold :strategy run/default-strategy} (core/composed node ref)))
 
 (defn plan
-  "What coding scenario `ref` would take, before asking anything: {:lines :units :at-most-requests}."
-  [node ref]
-  (run/plan (core/classifier-scenario node ref)))
+  "What coding scenario `ref` would take, before asking anything: {:lines :units :at-most-requests}. Over its own
+  lines, or over set `over` (as set-over gives it)."
+  ([node ref] (plan node ref nil))
+  ([node ref over] (run/plan (:s (core/over node ref over)))))
 
 (defn estimate
   "What coding scenario `ref` would take now, asking nothing: the requests to ask of `model` and those the record
   answers, the input tokens and cost (at Jev's published price) and the seconds it would take (from its timed runs).
   opts: :limit, as for code!. {:units :requests :asked :kept :input-tokens :cost-usd :seconds :timed
-  :price-per-million-input-tokens}"
-  [node ref model opts]
-  (run/estimate node (core/classifier-scenario node ref) model (assoc opts :runs (run/runs node ref))))
+  :price-per-million-input-tokens}. opts :over, a set to run over (as set-over gives it) instead of its own lines."
+  [node ref model {:keys [over] :as opts}]
+  (let [{:keys [scope s]} (core/over node ref over)]
+    (run/estimate node s model (assoc opts :runs (run/runs node scope)))))
 
 (defn code!
   "Codes scenario `ref`'s lines with `ask` (state, questions → a System One response; ownpurse.classify.interface/
@@ -111,9 +114,11 @@
   trial; a run without a limit is the scenario's whole coding), :on-unit (called with each unit's result as it
   returns, for progress). Each unit's coding stands when its strategy's
   (the coding layer's :strategy, default :checked) is a bucket at the layer's :threshold (default 0.85) or above;
-  else a person looks. Returns the run: {:scenario :at :units :coded :asked :kept :model}."
-  [node ref ask opts]
-  (run/code! node ref (core/classifier-scenario node ref) ask opts))
+  else a person looks. opts :over, a set to run over (as set-over gives it) instead of its own lines: that run is
+  kept apart, under <ref>@<set>. Returns the run: {:scenario :at :units :coded :asked :kept :model}."
+  [node ref ask {:keys [over] :as opts}]
+  (let [{:keys [scope s] set-id :over} (core/over node ref over)]
+    (run/code! node scope s ask (cond-> (dissoc opts :over) set-id (assoc :of ref :over set-id)))))
 
 (defn codings
   "Scenario `ref`'s coding of each unit, as its last run left it, by date."
@@ -126,9 +131,25 @@
   (run/coding node ref unit))
 
 (defn coding-runs
-  "Scenario `ref`'s coding runs, newest first."
-  [node ref]
-  (run/runs node ref))
+  "Scenario `ref`'s coding runs over its own lines (or over set `over`), newest first."
+  ([node ref] (run/runs node ref))
+  ([node ref over] (run/runs node (core/scope node ref over))))
+
+(defn set-over
+  "Set `id` of the record's lines (a scenario's lines layer, <scenario>~<layer>, or a saved set by name) as a run
+  reads it, or nil."
+  [node id]
+  (core/set-over node id))
+
+(defn line-set-put!
+  "Saves a set of lines by name: {:name :title :note :select}; its key is kept."
+  [node s]
+  (lines/put! node s))
+
+(defn line-set-confirm!
+  "Keys one line in saved set `name` ({:unit :expect ...}, or {:unit :remove true})."
+  [node name entry]
+  (lines/confirm! node name entry))
 
 (defn compare-codings
   "The units scenarios `a` and `b` code differently."
@@ -162,14 +183,15 @@
   (sandbox/world node ref))
 
 (defn sandbox-run
-  "Scenario `ref`'s coding as the sandbox's run: one row a unit."
-  [node ref]
-  (sandbox/run-lines node ref))
+  "Scenario `ref`'s coding as the sandbox's run: one row a unit. Over its own lines, or over set `over` (as set-over
+  gives it)."
+  ([node ref] (sandbox-run node ref nil))
+  ([node ref over] (sandbox/run-lines node ref over)))
 
 (defn sandbox-line
-  "One unit of scenario `ref`'s coding all the way through, as the sandbox's line."
-  [node ref unit]
-  (sandbox/line node ref unit))
+  "One unit of scenario `ref`'s coding all the way through, as the sandbox's line; over set `over` when given."
+  ([node ref unit] (sandbox-line node ref nil unit))
+  ([node ref over unit] (sandbox/line node ref over unit)))
 
 (defn answer-key
   "Scenario `ref`'s answer key, its bases' first: {unit {:expect :ok :review :why :at :in}}, :in the scenario whose
@@ -185,6 +207,7 @@
 
 (defn sandbox-trace
   "One unit of scenario `ref` through the pipeline step by step: each step's function called again on the record's
-  data, with what went in, what came out, and every query it made. Nothing is asked of Jev."
-  [node ref unit]
-  (sandbox/trace node ref unit))
+  data, with what went in, what came out, and every query it made. Nothing is asked of Jev. Over set `over` when
+  given."
+  ([node ref unit] (sandbox-trace node ref nil unit))
+  ([node ref over unit] (sandbox/trace node ref over unit)))
