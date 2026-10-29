@@ -46,6 +46,16 @@
 
 (defn bad? [outcome] (#{:wrong :unsafe} outcome))
 
+(def outcome-stroke
+  "An outcome's colour as a line, a border and a text, for what leads to it: the path a decision took, its end."
+  {:right {:line "bg-verdigris" :border "border-verdigris" :text "text-verdigris"}
+   :wrong {:line "bg-coin" :border "border-coin" :text "text-coin-text"}
+   :unsafe {:line "bg-coin" :border "border-coin" :text "text-coin-text"}
+   :review {:line "bg-gilt" :border "border-gilt" :text "text-gilt-text"}
+   :stopped {:line "bg-ink-2" :border "border-ink-2" :text "text-ink-2"}
+   :coded {:line "bg-lapis" :border "border-lapis" :text "text-lapis"}
+   :asks {:line "bg-gilt" :border "border-gilt" :text "text-gilt-text"}})
+
 (defui dot [{:keys [outcome]}]
   ($ :span {:class (cx "inline-block size-2.5 flex-none rounded-full" (outcome-dot outcome))
             :title (outcome-words outcome)}))
@@ -135,6 +145,15 @@
        label)))
 
 ;; ----------------------------------------------------------------------------------------------- layout
+
+(defui source-legend
+  "Who answers, the same wherever it is shown: a solid border is code checking a fact, a dashed one is Jev's
+  judgment. Colour is left to the outcome."
+  [{:keys [class]}]
+  ($ :span {:class (cx "flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-3" class)}
+     ($ :span {} ($ :span {:class "mr-1 inline-block rounded-1 border border-ink-3 px-1"} "solid") "code checks it")
+     ($ :span {} ($ :span {:class "mr-1 inline-block rounded-1 border border-dashed border-ink-3 px-1"} "dashed")
+        "Jev's judgment")))
 
 (defui panel
   "A bordered block on the page's paper."

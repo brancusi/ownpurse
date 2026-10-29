@@ -192,9 +192,7 @@
           ($ ui/eyebrow {} (count applying) " of " (count explained) (if (= 1 (count explained)) " rule applies" " rules apply")
              " to this line"
              (when (seq unsent) (str " · " (count sent) " sent to Jev")))
-          ($ :span {:class "flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-3"}
-             ($ :span {} ($ :span {:class "mr-1 inline-block rounded-1 border border-verdigris px-1"} "solid") "exact block, checked by code")
-             ($ :span {} ($ :span {:class "mr-1 inline-block rounded-1 border border-dashed border-line-2 px-1"} "dashed") "fuzzy block, Jev's yes/no")))
+          ($ ui/source-legend {}))
        (when note ($ ui/say {:class "mt-0 mb-2"} note))
        ($ rules-grid {}
           ($ :span) ($ ui/eyebrow {} "rule") ($ ui/eyebrow {:class "hidden md:block"} "codes to")
@@ -334,102 +332,142 @@
         coded? ($ :<> "Coded " ($ ui/tag {:code code}))
         :else ($ :<> "A person looks, " ($ ui/tag {:code code}) " suggested")))
 
+(defn- spread-of
+  "A Choice's probabilities, most likely first, as [code p]."
+  [answer]
+  (sort-by (comp - second) (for [[option p] (:probabilities answer)] [(option-code (name option)) (js/Number p)])))
+
+(defui jev-math
+  "How TypeSafe's confidence in a Choice follows from its probabilities: how far the top one sits above an even
+  split across the options."
+  [{:keys [answer]}]
+  (let [ps (spread-of answer)
+        n (count ps)
+        [[top p]] ps]
+    (when (pos? n)
+      ($ :<> "Jev's confidence is worked out from how it spread its probability over the " n " buckets: "
+         (interpose ", " (for [[c q] (take 3 ps) :when (pos? q)] ($ :span {:key (name c)} (ui/pct q) " " ($ ui/tag {:code c}))))
+         ". It is how far the top one (" (ui/pct p) ") sits above an even split (" (ui/pct (/ 1 n)) " each): "
+         ($ ui/mono {:class "text-ink-1"}
+            "(" (ui/pct p) " − " (ui/pct (/ 1 n)) ") ÷ (100% − " (ui/pct (/ 1 n)) ") = "
+            (ui/pct (/ (- p (/ 1 n)) (- 1 (/ 1 n)))))
+         ". An even split is 0%, everything on one bucket 100%. Nothing is averaged: one answer, one number "
+         "(TypeSafe's formula)."))))
+
 (defn- flow
-  "The way `strategy` went for this line, as nodes left to right, each {:kind :ask|:get|:end :label :body :edge :alt
-  :why}: a question (:ask) and the answer on the edge it took (:edge), with where the other answer would have led
-  (:alt {:edge :to}); a value worked out (:get); the end. `why` says more under the diagram."
-  [{:keys [blocks checked choice reversed no-rules rule-nouls]} strategy explained code confidence t o]
+  "The way `strategy` went for this line, as nodes left to right, each {:kind :ask|:get|:end :by :code|:jev :label
+  :body :edge :alt :why}: a question (:ask) and the answer on the edge it took (:edge), with where the other answer
+  would have led (:alt {:edge :to}); a value worked out (:get), by code or by Jev; the end. :why says how, under the
+  diagram."
+  [{:keys [blocks checked choice reversed no-rules rule-nouls]} strategy explained responses code confidence t o]
   (let [coded? (and (not= :needs-person code) (>= confidence t))
-        jev (fn [label {:keys [code confidence]}]
-              {:kind :get :label label :body ($ :<> ($ ui/tag {:code code}) " " (ui/pct confidence) " sure")})
+        jev (fn [label {:keys [code confidence]} answer]
+              (let [[_ p] (first (spread-of answer))]
+                [{:kind :get :by :jev :label label
+                  :body ($ :<> ($ ui/tag {:code code}) (when p (str " " (ui/pct p) " likely")))}
+                 {:kind :get :by :code :label "How sure Jev is" :body (ui/pct confidence)
+                  :math (when p (let [n (count (:probabilities answer))]
+                                  (str "(" (ui/pct p) " − 1/" n ") ÷ (1 − 1/" n ")")))
+                  :why (when answer ($ jev-math {:answer answer}))}]))
         rules (fn [{:keys [reason by code]}]
-                {:kind :get :label "Rules that apply, by their blocks"
+                {:kind :get :by :code :label "Rules that apply, by their blocks"
                  :body (case reason
                          :no-rule "none"
                          :conflict ($ :<> (and-list by) ": they disagree")
                          :check ($ :<> "check " (and-list by))
                          ($ :<> (and-list by) " → " ($ ui/tag {:code code})))})
         decide? (fn [{:keys [reason]}]
-                  {:kind :ask :label "Do the rules settle one bucket?"
+                  {:kind :ask :by :code :label "Do the rules settle one bucket?"
                    :edge (if (#{:no-rule :conflict :check} reason) "no" "yes")
                    :alt (if (#{:no-rule :conflict :check} reason)
                           {:edge "yes" :to "their bucket"}
                           {:edge "no" :to (if (= :hybrid strategy) "Jev's pick" "a person looks")})})
         sure (fn [p k]
-               {:kind :get :label "How sure the rules are" :body (ui/pct p)
-                :why ($ why-sure {:rule (least-certain explained k) :k k})})
+               (let [rule (least-certain explained k)
+                     q (some-> rule k js/Number)]
+                 {:kind :get :by :code :label "How sure the rules are" :body (ui/pct p)
+                  :math (when q (str "|2 × " (ui/pct q) " − 1|, " (:id rule)))
+                  :why ($ why-sure {:rule rule :k k})}))
         bar (when-not (= :needs-person code)
-              {:kind :ask :label ($ :<> "At least " (ui/pct t) " sure?")
+              {:kind :ask :by :code :label ($ :<> "At least " (ui/pct t) " sure?")
                :body (str (ui/pct confidence))
                :edge (if coded? "yes" "no")
                :alt (if coded? {:edge "no" :to "a person looks"} {:edge "yes" :to "coded, no one looking"})})
+        with-rules (get-in responses [:rules :answers :code])
         steps (case strategy
                 :checked (if (= :check (:reason checked))
-                           [{:kind :ask :label "Does a check rule apply?" :body (and-list (:by checked)) :edge "yes"
-                             :alt {:edge "no" :to "Jev's pick"}}]
-                           [{:kind :ask :label "Does a check rule apply?" :edge "no"
-                             :alt {:edge "yes" :to "a person looks"}}
-                            (jev "Jev's pick, with the rules" choice)])
-                :choice [(jev "Jev's pick, with the rules" choice)]
-                :reversed [(jev "Jev's pick, options asked last first" reversed)]
-                :no-rules [(jev "Jev's pick, from the facts alone" no-rules)]
-                :rule-nouls [{:kind :get :label "Rules Jev says apply"
+                           [{:kind :ask :by :code :label "Does a check rule apply?" :body (and-list (:by checked))
+                             :edge "yes" :alt {:edge "no" :to "Jev's pick"}}]
+                           (into [{:kind :ask :by :code :label "Does a check rule apply?" :edge "no"
+                                   :alt {:edge "yes" :to "a person looks"}}]
+                                 (jev "Jev's pick, with the rules" choice with-rules)))
+                :choice (jev "Jev's pick, with the rules" choice with-rules)
+                :reversed (jev "Jev's pick, options asked last first" reversed (get-in responses [:rules :answers :reversed]))
+                :no-rules (jev "Jev's pick, from the facts alone" no-rules (get-in responses [:plain :answers :code]))
+                :rule-nouls [{:kind :get :by :jev :label "Rules Jev says apply"
                               :body (if (seq (:by rule-nouls)) (and-list (:by rule-nouls)) "none")}
                              (decide? rule-nouls)
                              (when-not (= :needs-person code) (sure (:confidence rule-nouls) :jev))]
                 :blocks [(rules blocks) (decide? blocks)
                          (when-not (= :needs-person code) (sure (:confidence blocks) :holds))]
                 :hybrid (if (#{:no-rule :conflict} (:reason blocks))
-                          [(rules blocks) (decide? blocks) (jev "Jev's pick, with the rules" choice)]
+                          (into [(rules blocks) (decide? blocks)] (jev "Jev's pick, with the rules" choice with-rules))
                           [(rules blocks) (decide? blocks) (sure (:confidence blocks) :holds)])
                 [])]
-    (conj (vec (remove nil? (conj steps bar)))
+    (conj (vec (remove nil? (conj (vec steps) bar)))
           {:kind :end :body (end-text code coded?) :o o})))
 
-(defui flow-node [{:keys [kind label body o]}]
+(defui flow-node [{:keys [kind by label body math o]}]
   ($ :div {:class (cx "w-44 rounded-1 border px-2.5 py-2 text-sm"
+                      (when (= :jev by) "border-dashed")
                       (case kind
                         :ask "border-ink-2 bg-surface-0"
-                        :get "border-line-2 bg-surface-1"
-                        :end "border-ink-1 bg-surface-0 ring-1 ring-ink-1"))}
+                        :get "border-ink-3 bg-surface-1"
+                        :end (cx "border-2 bg-surface-0" (:border (ui/outcome-stroke o)))))}
      ($ :div {:class "font-mono text-2xs uppercase tracking-[0.06em] text-ink-3"}
-        (case kind :ask "question" :get "worked out" :end "result"))
+        (case kind :ask "question" :get (if (= :jev by) "Jev judges" "worked out") :end "result"))
      (when label ($ :div {:class "mt-0.5 leading-snug text-ink-2"} label))
      (when body ($ :div {:class "mt-1 font-medium leading-snug text-ink-1"} body))
+     (when math ($ :div {:class "mt-0.5 font-mono text-2xs text-ink-3"} "= " math))
      (when o ($ :div {:class "mt-1.5"} ($ ui/pill {:outcome o})))))
 
 (defui flow-edge
-  "The arrow from one node to the next, with the answer it stands for."
-  [{:keys [label]}]
-  ($ :div {:class "mt-7 flex w-14 flex-none flex-col items-center"}
-     ($ :span {:class "font-mono text-2xs font-medium text-ink-1"} (or label " "))
-     ($ :span {:class "flex w-full items-center"}
-        ($ :span {:class "h-0.5 flex-1 bg-ink-1"})
-        ($ :span {:class "-ml-0.5 text-xs leading-none text-ink-1"} "▶"))))
+  "The arrow from one node to the next, with the answer it stands for, in the colour of where the path ends."
+  [{:keys [label o]}]
+  (let [{:keys [line text]} (ui/outcome-stroke o {:line "bg-ink-1" :text "text-ink-1"})]
+    ($ :div {:class "mt-7 flex w-14 flex-none flex-col items-center"}
+       ($ :span {:class (cx "font-mono text-2xs font-medium" text)} (or label " "))
+       ($ :span {:class "flex w-full items-center"}
+          ($ :span {:class (cx "h-0.5 flex-1" line)})
+          ($ :span {:class (cx "-ml-0.5 text-xs leading-none" text)} "▶")))))
 
 (defui decision-flow
   "How the line's coding was decided, as a flow left to right (wrapping): each question and the answer it took, the
-  other answer in grey below it and where it would have led, what was worked out, and the end."
-  [{:keys [decisions strategy code confidence t o stale explained]}]
+  other answer below it and where it would have led, what was worked out and how, and the end; the path in the
+  colour of its outcome. Under it, how each number was worked out, and what the answers not used here said."
+  [{:keys [decisions strategy code confidence t o stale explained responses]}]
   (let [confidence (or confidence 0)
         {:keys [blocks choice no-rules]} decisions
-        nodes (flow decisions strategy explained code confidence t o)
+        nodes (flow decisions strategy explained responses code confidence t o)
         whys (keep :why nodes)
         others (remove nil? [(when-not (#{:blocks :hybrid} strategy)
-                               ($ :<> "the rules' blocks say " ($ ui/tag {:code (:code blocks)})))
+                               ($ :<> "the rules' blocks alone say " ($ ui/tag {:code (:code blocks)})))
                              (when-not (#{:choice :checked :hybrid} strategy)
-                               ($ :<> "Jev with the rules picks " ($ ui/tag {:code (:code choice)}) " " (ui/pct (:confidence choice))))
+                               ($ :<> "Jev with the rules picks " ($ ui/tag {:code (:code choice)}) ", "
+                                  (ui/pct (:confidence choice)) " sure"))
                              (when (not= strategy :no-rules)
-                               ($ :<> "Jev from the facts alone picks " ($ ui/tag {:code (:code no-rules)}) " "
-                                  (ui/pct (:confidence no-rules))))])]
+                               ($ :<> "Jev asked again without the rules (call 2, a separate question) picks "
+                                  ($ ui/tag {:code (:code no-rules)}) ", " (ui/pct (:confidence no-rules)) " sure"))])]
     ($ :div
        (when stale
          ($ ui/notice {} "This is the last run's decision, made before the rules changed. Run the scenario to decide it as "
             "they stand now."))
        ($ ui/panel {:class "px-3 py-3"}
-          ($ :div {:class "mb-3 text-sm text-ink-2"}
-             "This view codes by " ($ :b {:class "text-ink-1"} (some (fn [[k n]] (when (= k strategy) n)) strategies))
-             ($ :span {:class "text-ink-3"} ": " (some (fn [[k _ about]] (when (= k strategy) about)) strategies)))
+          ($ :div {:class "mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"}
+             ($ :div {:class "text-sm text-ink-2"}
+                "This view codes by " ($ :b {:class "text-ink-1"} (some (fn [[k n]] (when (= k strategy) n)) strategies))
+                ($ :span {:class "text-ink-3"} ": " (some (fn [[k _ about]] (when (= k strategy) about)) strategies)))
+             ($ ui/source-legend {}))
           ($ :div {:class "flex flex-wrap items-start gap-y-5"}
              (for [[i {:keys [edge alt] :as node}] (map-indexed vector nodes)
                    :let [last? (= i (dec (count nodes)))]]
@@ -438,15 +476,17 @@
                      ($ flow-node node)
                      (when alt
                        ($ :div {:class "ml-4 flex flex-col items-start text-ink-3"}
-                          ($ :span {:class "ml-[-0.5px] h-3 border-l border-dashed border-line-2"})
+                          ($ :span {:class "h-3 border-l border-dotted border-ink-3"})
                           ($ :span {:class "font-mono text-2xs"} "if " (:edge alt) " ↓")
-                          ($ :span {:class "mt-0.5 max-w-40 rounded-1 border border-dashed border-line-2 px-2 py-0.5 text-xs"}
+                          ($ :span {:class "mt-0.5 max-w-40 rounded-1 border border-dotted border-ink-3 px-2 py-0.5 text-xs"}
                              (:to alt)))))
-                  (when-not last? ($ flow-edge {:label edge}))))
-             )
-          (for [[i w] (map-indexed vector whys)] ($ ui/say {:key i :class "mt-3"} w)))
+                  (when-not last? ($ flow-edge {:label edge :o o})))))
+          (when (seq whys)
+            ($ :div {:class "mt-3 border-t border-line-1 pt-2"}
+               ($ ui/eyebrow {} "The numbers")
+               (for [[i w] (map-indexed vector whys)] ($ ui/say {:key i} w)))))
        (when (seq others)
-         ($ ui/say {} ($ :span {:class "text-ink-3"} "Beside it, from the same answers: ")
+         ($ ui/say {} ($ :span {:class "text-ink-3"} "Not used by this view, for comparison: ")
             (interpose "; " (map-indexed (fn [i x] ($ :span {:key i} x)) others)) ".")))))
 
 (defui walk-body [{:keys [scenario row strategy t data]}]
@@ -587,7 +627,7 @@
 
        ($ step {:n 6 :title "The decision" :where "core/combine · the Choice · the threshold"}
           ($ decision-flow {:decisions decisions :strategy strategy :code code :confidence confidence :t t :o o
-                             :stale (seq (:unanswered data)) :explained explained})
+                             :stale (seq (:unanswered data)) :explained explained :responses responses})
           ($ ui/disclosure {:summary "Call 1, raw: the payload with the rules (the state is in step 3), and what came back"}
              ($ :div {:class "grid gap-2.5 md:grid-cols-2"}
                 ($ :div ($ ui/eyebrow {} "Sent") ($ ui/code-block {:value (update (get requests :rules) :state dissoc :transaction :context)}))
