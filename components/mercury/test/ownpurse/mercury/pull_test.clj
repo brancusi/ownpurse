@@ -148,6 +148,28 @@
         (is (= [{:check-number "1043" :date (LocalDate/parse "2026-03-24")}]
                (store/q node "SELECT check_number, date FROM bank_lines")))))))
 
+(deftest card-facts-test
+  (with-node
+    (fn [node]
+      (testing "a card's line keeps its card, the merchant's code and the amount it charged; a transfer says so"
+        (mercury/keep! node org "transactions"
+                       {:transactions [{:id (txn-id 121) :accountId "4d0c5e11-0000-4000-8000-0000000000a1"
+                                        :amount -47.97M :status "sent" :kind "debitCardTransaction"
+                                        :createdAt "2026-03-20T10:00:00Z" :postedAt "2026-03-21T10:00:00Z"
+                                        :counterpartyName "Mercado Azul" :cardId "c4d0-0001"
+                                        :merchant {:id "77" :category "Grocery" :categoryCode "5411"
+                                                   :currency "EUR" :amount -4118}}
+                                       {:id (txn-id 122) :accountId "4d0c5e11-0000-4000-8000-0000000000a1"
+                                        :amount -500.00M :status "sent" :kind "internalTransfer"
+                                        :createdAt "2026-03-22T10:00:00Z" :postedAt "2026-03-22T10:00:00Z"
+                                        :counterpartyName "Savings"}]}
+                       {:now day-2})
+        (is (= [{:channel "card" :card "c4d0-0001" :merchant-code "5411" :original-amount -41.18M
+                 :original-currency "EUR"}
+                {:channel "transfer"}]
+               (map #(into {} (remove (comp nil? val)) %)
+                    (store/q node "SELECT channel, card, merchant_code, original_amount, original_currency FROM bank_lines ORDER BY date"))))))))
+
 (deftest refusals-test
   (with-node
     (fn [node]

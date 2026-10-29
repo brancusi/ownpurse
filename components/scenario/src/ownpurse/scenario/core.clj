@@ -3,6 +3,7 @@
    [clojure.string :as str]
    [ownpurse.close.interface :as close]
    [ownpurse.money.interface :as money]
+   [ownpurse.scenario.coding :as coding]
    [ownpurse.schema.interface :as schema]
    [ownpurse.store.interface :as store])
   (:import
@@ -26,7 +27,10 @@
 (def kinds
   "The kinds of layer a scenario holds, each with what it says."
   {"journals" "Journals of the scenario's own, in any book: each must balance in every commodity."
-   "close" "The close register's journals not yet posted: those of approved items (basis approved) or of every item not set aside (basis proposed)."})
+   "close" "The close register's journals not yet posted: those of approved items (basis approved) or of every item not set aside (basis proposed)."
+   "world" "Who and where, for coding bank lines: entities, cards and accounts with their holders, projects with their dates, trips, merchant categories."
+   "coding" "Buckets and rules for coding bank lines: each rule a sentence and its building blocks. A rule replaces the rule of its id under it; enabled false takes it out."
+   "lines" "Which bank lines the coding reads: a selection from the record (accounts, from, to), or lines given as they are."})
 
 (def built-in
   "Scenarios ownpurse gives every record, which cannot be changed or dropped: the close register as approved, and as
@@ -44,7 +48,7 @@
   [row]
   (-> (dissoc row :xt/id :xt/valid-from :xt/valid-to :xt/system-from :xt/system-to)
       (update :layers (partial mapv (fn [l]
-                                      (cond-> l
+                                      (cond-> (coding/unstored l)
                                         (:journals l)
                                         (update :journals (partial mapv (fn [j] (update j :postings (partial mapv #(update % :amount bigdec))))))))))))
 
@@ -88,6 +92,9 @@
                       (fail! :ownpurse/invalid (str "Layer " id " of scenario " ref " reads the close register: say "
                                                     "basis approved or proposed.")
                              {:ref ref :layer id})))
+    (= "world" kind) (assoc :world (coding/world-in (or (:world layer) {})))
+    (= "coding" kind) (assoc :coding (or (:coding layer) {}))
+    (= "lines" kind) (assoc :lines (coding/lines-in (or (:lines layer) {})))
     (= "journals" kind)
     (assoc :journals
            (do (when-let [dupes (seq (keep (fn [[r n]] (when (> n 1) r)) (frequencies (map :ref journals))))]
@@ -114,6 +121,20 @@
                                {:ref (peek seen) :base r}))]
               (recur (:base s) (conj seen r))))))
 
+(declare stack-layers)
+
+(defn- check-codings
+  "Each coding layer's rules checked against the buckets of the coding layers under it and its own."
+  [node base layers]
+  (let [below (if base (:codes (coding/compose (stack-layers node base))) {})]
+    (first (reduce (fn [[out codes] l]
+                     (if (= "coding" (:kind l))
+                       (let [c (coding/coding-in codes (:coding l))]
+                         [(conj out (assoc l :coding c)) (merge codes (:codes c))])
+                       [(conj out l) codes]))
+                   [[] below]
+                   layers))))
+
 (defn put! [node {:keys [ref name note base layers duplicated-from]}]
   (check-ref! "scenario" ref)
   (when (built-in ref)
@@ -128,11 +149,12 @@
         (fail! :ownpurse/not-found (str "Scenario " ref " stands on " base ", which there is not.") {:ref ref :base base}))
       (when (or (= base ref) (some #{ref} (bases-of node base)))
         (fail! :ownpurse/invalid (str "Scenario " ref " cannot stand on " base ", which stands on it.") {:ref ref :base base})))
-    (store/put-changed! node {:scenarios [(cond-> {:xt/id (scenario-id ref) :ref ref :name name :layers layers}
-                                            note (assoc :note note)
-                                            base (assoc :base base)
-                                            duplicated-from (assoc :duplicated-from duplicated-from))]}
-                        metadata)
+    (let [layers (mapv coding/stored (check-codings node base layers))]
+      (store/put-changed! node {:scenarios [(cond-> {:xt/id (scenario-id ref) :ref ref :name name :layers layers}
+                                              note (assoc :note note)
+                                              base (assoc :base base)
+                                              duplicated-from (assoc :duplicated-from duplicated-from))]}
+                          metadata))
     (scenario node ref)))
 
 (defn put-layer! [node ref layer]
@@ -179,7 +201,8 @@
                        {}
                        (for [j journals :when (and (= book (:book j)) (within? (:date j) from to))
                              p (:postings j)]
-                         p))))
+                         p))
+    {}))
 
 (defn evaluate [node ref book opts]
   (let [s (or (scenario node ref) (fail! :ownpurse/not-found (str "There is no scenario " ref ".") {:ref ref}))
@@ -192,3 +215,20 @@
      :stack (vec stack)
      :layers layers
      :balances (into {} (remove (comp zero? val)) (apply merge-with + {} (map :balances layers)))}))
+
+(defn stack-layers
+  "Every layer of scenario `ref` that is on, its bases' first."
+  [node ref]
+  (when-not (scenario node ref)
+    (fail! :ownpurse/not-found (str "There is no scenario " ref ".") {:ref ref}))
+  (vec (for [r (concat (reverse (bases-of node ref)) [ref])
+             l (:layers (scenario node r))
+             :when (:enabled l)]
+         l)))
+
+(defn classifier-scenario [node ref]
+  (let [{:keys [selects] :as s} (coding/compose (stack-layers node ref))
+        read (vec (mapcat #(coding/read-lines node s %) selects))]
+    (-> (dissoc s :selects)
+        (assoc :scenario ref)
+        (update :cases (fnil into []) read))))

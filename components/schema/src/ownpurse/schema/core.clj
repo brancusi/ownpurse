@@ -114,7 +114,15 @@
                          [:description {:optional true} :string]
                          [:counterparty {:optional true} :string]
                          [:reference {:optional true} :string]
-                         [:check-number {:optional true} [:re #"^[1-9][0-9]*$"]]]
+                         [:check-number {:optional true} [:re #"^[1-9][0-9]*$"]]
+                         ;; What a card line says about the purchase, when the source says it: the card (the
+                         ;; source's id for it), the merchant's category code (ISO 18245), and the amount in the
+                         ;; currency the merchant charged.
+                         [:channel {:optional true} [:enum "card" "transfer"]]
+                         [:card {:optional true} [:string {:min 1}]]
+                         [:merchant-code {:optional true} [:re #"^[0-9]{4}$"]]
+                         [:original-amount {:optional true} :ownpurse/amount]
+                         [:original-currency {:optional true} :ownpurse/commodity]]
 
     :ownpurse/slug [:re {:error/message "must be lowercase letters, digits and hyphens, such as tallowmere"}
                     #"^[a-z0-9][a-z0-9-]*$"]

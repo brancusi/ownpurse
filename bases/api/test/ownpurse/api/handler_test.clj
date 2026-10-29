@@ -206,7 +206,7 @@
       (testing "the built-in scenarios are listed, with the kinds of layer"
         (let [{:keys [scenarios kinds]} (:body (request app :get "/scenarios"))]
           (is (= ["approved" "proposed"] (map :ref scenarios)))
-          (is (= #{:journals :close} (set (keys kinds))))))
+          (is (= #{:journals :close :world :coding :lines} (set (keys kinds))))))
       (testing "a scenario is put with its layers, amounts as decimal strings"
         (let [{:keys [status body]} (request app :put "/scenarios/rent-split" body)]
           (is (= 200 status))
@@ -235,9 +235,31 @@
         (is (= {:ref "try" :dropped true} (:body (request app :delete "/scenarios/try"))))
         (is (= 404 (:status (request app :get "/scenarios/try"))))
         (is (= 2 (count (get-in (request app :get "/scenarios/try/versions") [:body :versions])))))
+      (testing "a coding scenario is put as JSON; its plan is known before anything is asked"
+        (store/put! node {:bank-lines [{:xt/id "line:test:1" :account "acct:checking" :source "test"
+                                        :source-table "test.transactions" :source-row "test:1" :org "test"
+                                        :date (java.time.LocalDate/parse "2025-10-03") :amount -47.97M
+                                        :status "posted" :counterparty "Mercado Azul" :channel "card"
+                                        :card "card-r" :merchant-code "5411"}]}
+                    {:source "test" :why "fixture"})
+        (is (= 200 (:status (request app :put "/scenarios/coding"
+                                     {:name "Coding"
+                                      :layers [{:id "world" :kind "world"
+                                                :world {:home "United States"
+                                                        :cards {"card-r" {:holder "robin" :name "Robin's card"}}}}
+                                               {:id "coding" :kind "coding"
+                                                :coding {:codes {"personal" "Personal" "needs-person" "A person looks"}
+                                                         :rules [{:id "R1" :code "personal" :rule "Groceries are personal."
+                                                                  :when [["category" "in" ["5411"]]]}]}}
+                                               {:id "lines" :kind "lines" :lines {:select {:accounts ["acct:checking"]}}}]}))))
+        (is (= {:lines 1 :units 1 :at-most-requests 2}
+               (get-in (request app :get "/scenarios/coding/coding") [:body :plan]))))
+      (testing "coding is refused without a TypeSafe key"
+        (is (= 409 (:status (request app :post "/scenarios/coding/coding" {:limit 1})))))
       (testing "the routes are in the OpenAPI document"
         (is (every? (set (keys (:paths (:body (request app :get "/openapi.json")))))
-                    (map keyword ["/scenarios" "/scenarios/{ref}" "/scenarios/{ref}/evaluation"]))))
+                    (map keyword ["/scenarios" "/scenarios/{ref}" "/scenarios/{ref}/evaluation"
+                                  "/scenarios/{ref}/coding" "/scenarios/{ref}/codings"]))))
       (finally (store/stop node)))))
 
 (deftest close-test

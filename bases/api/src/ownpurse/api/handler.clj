@@ -7,6 +7,7 @@
    [ownpurse.api.books :as books]
    [ownpurse.api.json :as api.json]
    [ownpurse.close.interface :as close]
+   [ownpurse.classify.interface :as classify]
    [ownpurse.compare.interface :as cmp]
    [ownpurse.entity.interface :as entity]
    [ownpurse.export.interface :as export]
@@ -309,7 +310,11 @@
    [:enabled {:optional true} :boolean]
    [:note {:optional true} :string]
    [:basis {:optional true} [:enum "approved" "proposed"]]
-   [:journals {:optional true} [:vector Journal]]])
+   [:journals {:optional true} [:vector Journal]]
+   ;; Checked by the scenario component; a bare :map here would be stripped of every key by the coercion.
+   [:world {:optional true} [:map-of :keyword :any]]
+   [:coding {:optional true} [:map-of :keyword :any]]
+   [:lines {:optional true} [:map-of :keyword :any]]])
 
 (def ScenarioBody
   "PUT /scenarios/{ref}: a scenario, a named stack of layers, standing on another scenario if it names a base."
@@ -327,6 +332,7 @@
    [:version {:optional true} :int] [:at {:optional true} :string]
    [:layers [:vector [:map [:id :string] [:kind :string] [:enabled :boolean] [:note {:optional true} :string]
                       [:basis {:optional true} :string]
+                      [:world {:optional true} :any] [:coding {:optional true} :any] [:lines {:optional true} :any]
                       [:journals {:optional true}
                        [:vector [:map [:ref :string] [:book :string] [:date :string] [:narration :string]
                                  [:evidence {:optional true} [:vector :string]]
@@ -514,9 +520,80 @@
              :handler (fn [{{:keys [path]} :parameters}]
                         (answer #(sandbox/line sb (:scenario path) (:run path) (:line path))))}}]]))
 
+(defn- coding-routes
+  "Coding a scenario's bank lines: a run in the background, its progress, each unit's coding, and two scenarios'
+  codings side by side. Answers are data as the component holds them; ask for application/transit+json to keep
+  keywords and decimals."
+  [{:keys [node jev]}]
+  (let [running (atom {})
+        Ref [:map [:ref [:string {:min 1}]]]]
+    [["/scenarios/{ref}/coding"
+      {:get {:summary (str "Coding a scenario's lines: what a run would take (:plan), the run going on, if any "
+                           "(:running, with units done of all), and the runs so far, newest first.")
+             :parameters {:path Ref}
+             :responses {200 {:body :any} 404 {:body ApiError}}
+             :handler (fn [{{:keys [path]} :parameters}]
+                        (answer #(hash-map :plan (scenario/plan node (:ref path))
+                                           :running (get @running (:ref path))
+                                           :runs (scenario/coding-runs node (:ref path)))))}
+       :post {:summary (str "Codes a scenario's lines in the background, through Jev, keeping every answer by its "
+                            "exact request: coding again after an edit asks only what changed. `limit` codes at most "
+                            "that many units, for a trial. GET the same path for progress. Refused while a run of "
+                            "the scenario is going on, or when no TypeSafe key is set. Nothing posts anywhere.")
+              :parameters {:path Ref :body [:map {:closed true} [:limit {:optional true} [:int {:min 1}]]]}
+              :responses {200 {:body :any} 404 {:body ApiError} 409 {:body ApiError}}
+              :handler
+              (fn [{{:keys [path body]} :parameters}]
+                (let [ref (:ref path)]
+                  (answer
+                   #(let [plan (scenario/plan node ref)
+                          units (cond-> (:units plan) (:limit body) (min (:limit body)))]
+                      (when-not (:api-key jev)
+                        (throw (ex-info (str "No TypeSafe key: set TYPESAFE_API_KEY, or the key in the config's "
+                                             "secrets, then restart ownpurse.")
+                                        {:type :ownpurse/scenario-conflict})))
+                      (when-not (compare-and-set! running (dissoc @running ref)
+                                                  (assoc @running ref {:done 0 :of units :started (str (java.time.Instant/now))}))
+                        (throw (ex-info (str "Scenario " ref " is being coded now. GET /scenarios/" ref "/coding for "
+                                             "its progress.")
+                                        {:type :ownpurse/scenario-conflict})))
+                      (future
+                        (try
+                          (scenario/code! node ref (classify/jev-ask jev)
+                                          {:model (:model jev) :limit (:limit body)
+                                           :on-unit (fn [_] (swap! running update-in [ref :done] inc))})
+                          (swap! running dissoc ref)
+                          (catch Throwable e
+                            (swap! running assoc-in [ref :failed] (ex-message e)))))
+                      {:started true :plan plan :units units}))))}}]
+     ["/scenarios/{ref}/codings"
+      {:get {:summary (str "A scenario's coding of each unit, as its last run left it: the bucket that stands, the "
+                           "one proposed, how sure, and whether it stands without a person.")
+             :parameters {:path Ref}
+             :responses {200 {:body :any}}
+             :handler (fn [{{:keys [path]} :parameters}]
+                        (answer #(hash-map :codings (scenario/codings node (:ref path)))))}}]
+     ;; A catch-all: a unit's id holds colons and, for an item of a receipt, a slash.
+     ["/scenarios/{ref}/codings/{*unit}"
+      {:get {:summary "One unit's coding all the way through: its facts and each strategy's decision."
+             :parameters {:path (mu/merge Ref [:map [:unit [:string {:min 1}]]])}
+             :responses {200 {:body :any} 404 {:body ApiError}}
+             :handler (fn [{{:keys [path]} :parameters}]
+                        (answer #(hash-map :coding (or (scenario/coding node (:ref path) (:unit path))
+                                                       (throw (ex-info (str "Scenario " (:ref path) " has not coded "
+                                                                            (:unit path) ".")
+                                                                       {:type :ownpurse/not-found}))))))}}]
+     ["/scenarios/{ref}/compare/{other}"
+      {:get {:summary "Each unit two scenarios code differently, with both codings."
+             :parameters {:path (mu/merge Ref [:map [:other [:string {:min 1}]]])}
+             :responses {200 {:body :any}}
+             :handler (fn [{{:keys [path]} :parameters}]
+                        (answer #(hash-map :differences (scenario/compare-codings node (:ref path) (:other path)))))}}]]))
+
 (defn- routes [{:keys [node] :as config}]
   [["/admin" {:no-doc true :get {:handler (fn [_] {:status 302 :headers {"Location" "/admin/"} :body ""})}}]
    (sandbox-routes config)
+   (coding-routes config)
    ["/openapi.json"
     {:get {:no-doc true
            :openapi {:info {:title "ownpurse" :version "0.0.0"

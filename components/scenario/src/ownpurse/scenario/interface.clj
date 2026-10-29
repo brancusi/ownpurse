@@ -5,7 +5,8 @@
   the book as the scenario would make it. Nothing here changes a fact or writes to a system of record: a scenario is
   dropped, duplicated or changed freely, and every version is kept. Knows nothing about any one source."
   (:require
-   [ownpurse.scenario.core :as core]))
+   [ownpurse.scenario.core :as core]
+   [ownpurse.scenario.run :as run]))
 
 (def kinds
   "The kinds of layer, each with what it says."
@@ -70,3 +71,45 @@
   trial balance's :adjustments takes."
   [node ref book opts]
   (:balances (core/evaluate node ref book opts)))
+
+(defn classifier-scenario
+  "Scenario `ref`'s world, coding and lines layers (those that are on, its bases' first), composed into the
+  classifier's scenario: what ownpurse.classify reads, with the lines from the record as its :cases."
+  [node ref]
+  (core/classifier-scenario node ref))
+
+(defn plan
+  "What coding scenario `ref` would take, before asking anything: {:lines :units :at-most-requests}."
+  [node ref]
+  (run/plan (core/classifier-scenario node ref)))
+
+(defn code!
+  "Codes scenario `ref`'s lines with `ask` (state, questions → a System One response; ownpurse.classify.interface/
+  jev-ask makes one), keeping every answer in the record by its exact request, so coding again after an edit asks
+  only what changed. opts: :model (part of what an answer is kept by), :limit (code at most that many units, for a
+  trial; a run without a limit is the scenario's whole coding), :on-unit (called with each unit's result as it
+  returns, for progress). Each unit's coding stands when its strategy's
+  (the coding layer's :strategy, default :checked) is a bucket at the layer's :threshold (default 0.85) or above;
+  else a person looks. Returns the run: {:scenario :at :units :coded :asked :kept :model}."
+  [node ref ask opts]
+  (run/code! node ref (core/classifier-scenario node ref) ask opts))
+
+(defn codings
+  "Scenario `ref`'s coding of each unit, as its last run left it, by date."
+  [node ref]
+  (run/codings node ref))
+
+(defn coding
+  "One unit's coding by scenario `ref`, with its facts and every strategy's decision, or nil."
+  [node ref unit]
+  (run/coding node ref unit))
+
+(defn coding-runs
+  "Scenario `ref`'s coding runs, newest first."
+  [node ref]
+  (run/runs node ref))
+
+(defn compare-codings
+  "The units scenarios `a` and `b` code differently."
+  [node a b]
+  (run/compare-codings node a b))

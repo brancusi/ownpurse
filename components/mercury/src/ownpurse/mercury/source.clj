@@ -183,11 +183,29 @@
   "A transaction is a line while pending and once sent. A failed, cancelled, reversed or blocked one moved no money."
   {"pending" "pending" "sent" "posted"})
 
+(def ^:private transfer-kinds
+  "The kinds of Mercury transaction that move money between accounts, not pay a merchant."
+  #{"externalTransfer" "internalTransfer" "outgoingPayment" "incomingDomesticWire" "incomingInternationalWire"
+    "checkDeposit"})
+
+(defn- card-facts
+  "What a card line says about the purchase: the card, the merchant's category code, and the amount in the
+  merchant's currency (Mercury gives it in hundredths). Nil for a line that is no card's."
+  [{:keys [card-id merchant kind]}]
+  (cond
+    card-id (let [{:keys [category-code currency amount]} merchant]
+              (cond-> {:channel "card" :card card-id}
+                (and category-code (re-matches #"[0-9]{4}" category-code)) (assoc :merchant-code category-code)
+                (and currency amount (re-matches #"[A-Z]{3}" currency))
+                (assoc :original-currency currency :original-amount (.movePointLeft (bigdec amount) 2))))
+    (transfer-kinds kind) {:channel "transfer"}))
+
 (defn bank-lines
   "The lines in rows of `resource` (from `rows`), as bank_lines rows: each pending or sent transaction, on its
   deposit account or, when its account is one of `credit-ids` (Mercury's ids of the org's credit card accounts),
-  on that credit card account. Dated by the day it posted, in UTC, or the day it was made while pending. Other
-  resources hold none. Pure."
+  on that credit card account. Dated by the day it posted, in UTC, or the day it was made while pending. A card's
+  line says its card, the merchant's category code and the amount in the merchant's currency; a transfer's says so.
+  Other resources hold none. Pure."
   [resource rows credit-ids]
   (if-not (line-resources resource)
     []
@@ -197,7 +215,8 @@
             :let [status (line-status status)
                   date (utc-date (or (:posted-at r) (:created-at r)))]
             :when (and status account-id date (:amount r))]
-        (into {:xt/id (str "line:" (:xt/id r))
+        (merge
+         (into {:xt/id (str "line:" (:xt/id r))
                :account (row-id (:org r) (if (credit? account-id) "credit-account" "account") account-id)
                :source "mercury"
                :source-table (str (namespace table) "." (str/replace (name table) "-" "_"))
@@ -210,4 +229,5 @@
               {:counterparty (:counterparty-name r)
                :description (or (:bank-description r) (:note r))
                :reference (:external-memo r)
-               :check-number (some->> (:check-number r) str (re-find #"[1-9]\d*"))})))))
+               :check-number (some->> (:check-number r) str (re-find #"[1-9]\d*"))})
+         (card-facts r))))))
