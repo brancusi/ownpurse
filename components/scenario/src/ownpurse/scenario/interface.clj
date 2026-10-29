@@ -160,3 +160,15 @@
   "One unit of scenario `ref`'s coding all the way through, as the sandbox's line."
   [node ref unit]
   (sandbox/line node ref unit))
+
+(defn answer-key
+  "Scenario `ref`'s answer key, its bases' first: {unit {:expect :ok :review :why :at :in}}, :in the scenario whose
+  key layer says it."
+  [node ref]
+  (core/answer-key node ref))
+
+(defn confirm!
+  "A person's coding of one unit, kept in scenario `ref`'s own key layer: {:unit :expect :ok :review :why}, or
+  {:unit :remove true} to take it out of this scenario's key. Returns the scenario."
+  [node ref entry]
+  (core/confirm! node ref entry))

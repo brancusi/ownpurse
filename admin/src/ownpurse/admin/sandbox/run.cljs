@@ -24,18 +24,24 @@
    [:blocks "The rule blocks" "Each rule's building blocks decide; Jev answers only the fuzzy ones."]
    [:hybrid "Blocks, else Jev" "The blocks where one rule decides; where none or several disagree, Jev's pick."]])
 
-(def ^:private filters
-  [[:all "All"] [:wrong nil] [:unsafe nil] [:review nil] [:stopped nil] [:right nil] [:hard "marked hard"]
-   [:noted "with commentary"]])
-
-(def ^:private unkeyed-filters
-  "A book's own lines have no answer key: they are coded, or sent to a person."
-  [[:all "All"] [:asks nil] [:coded nil]])
-
 (defn keyed?
-  "Whether a run's lines carry an answer key (the invented ones do; a book's own do not)."
+  "Whether any of a run's lines carries an answer key (every invented one does; a book's own, once a person keys it)."
   [lines]
   (boolean (some #(get-in % [:unit :expect]) lines)))
+
+(defn- unkeyed? [lines] (boolean (some #(nil? (get-in % [:unit :expect])) lines)))
+
+(defn- shown-outcomes
+  "The outcomes a run's lines can have: right or wrong and the rest for keyed lines, coded or to a person for the others."
+  [lines]
+  (concat (when (keyed? lines) outcome/outcomes) (when (unkeyed? lines) outcome/unkeyed-outcomes)))
+
+(defn- filters [scored]
+  (vec (concat [[:all "All"]]
+               (when (keyed? scored) [[:wrong nil] [:unsafe nil] [:review nil] [:stopped nil] [:right nil]])
+               (when (unkeyed? scored) [[:asks nil] [:coded nil]])
+               (when (some #(get-in % [:unit :hard]) scored) [[:hard "marked hard"]])
+               (when (some :noted scored) [[:noted "with commentary"]]))))
 
 (defn- score
   "Each line with its outcome under `strategy` at threshold `t`."
@@ -136,17 +142,42 @@
                         :class "w-full accent-[var(--ink-1)]"})
              ($ :span {:class "w-12 text-right font-display text-xl font-bold"} (ui/pct t)))
           ($ :div {:class "mt-4 flex flex-wrap items-baseline gap-x-5 gap-y-2"}
-             (for [o (if (keyed? lines) outcome/outcomes outcome/unkeyed-outcomes)]
+             (for [o (shown-outcomes lines)]
                ($ :span {:key (name o) :class "inline-flex items-baseline gap-1.5 text-sm"}
                   ($ :b {:class "font-display text-2xl leading-none"} (counts o 0))
                   ($ ui/dot {:outcome o}) ($ :span {:class "text-ink-2"} (ui/outcome-words o))))))
        ($ :div
           ($ ui/eyebrow {} "What each threshold gives")
           ($ sweep-chart {:points points :t t :on-pick on-threshold})
-          ($ ui/say {} (if (keyed? lines)
-                         "Raising the threshold sends more lines to a person and codes fewer wrongly. Click the chart to move it."
-                         (str "These lines have no answer key, so nothing here is right or wrong: the chart shows how "
-                              "many go to a person at each threshold. Click it to move the threshold.")))))))
+          ($ ui/say {} (cond
+                         (not (keyed? lines))
+                         (str "No line is keyed yet, so nothing here is right or wrong: the chart shows how many go to "
+                              "a person at each threshold. Key lines (open one) to score them. Click the chart to move it.")
+                         (unkeyed? lines)
+                         (str "Coded wrongly counts the keyed lines only (" (count (filter #(get-in % [:unit :expect]) lines))
+                              " of " (count lines) "); every line counts towards a person. Click the chart to move it.")
+                         :else
+                         "Raising the threshold sends more lines to a person and codes fewer wrongly. Click the chart to move it."))))))
+
+(defui benchmark
+  "How each strategy fares on the keyed lines at threshold `t`: the run's lines scored again, nothing asked. A row
+  picks its strategy."
+  [{:keys [lines strategy t on-strategy]}]
+  (let [keyed (filterv #(get-in % [:unit :expect]) lines)]
+    (when (seq keyed)
+      ($ ui/panel {:class "mt-4 p-4"}
+         ($ :div {:class "flex flex-wrap items-baseline justify-between gap-3"}
+            ($ ui/eyebrow {} "Benchmark: " (ui/count-of keyed "keyed line") ", at " (ui/pct t))
+            ($ ui/muted {:class "text-xs"} "Each strategy scored against the key; click one to code by it"))
+         ($ ui/table {:class "mt-2" :head (into ["Strategy"] (map ui/outcome-words outcome/outcomes))}
+            (for [[k title] strategies
+                  :let [fs (frequencies (map #(outcome/outcome (:unit %) (get-in % [:decisions k]) t) keyed))]]
+              ($ :tr {:key (name k) :on-click #(on-strategy k)
+                      :class (cx "cursor-pointer hover:bg-surface-1" (when (= k strategy) "bg-surface-1 font-semibold"))}
+                 ($ ui/td {} title)
+                 (for [o outcome/outcomes]
+                   ($ ui/td {:key (name o) :class (cx "font-mono" (when (and (ui/bad? o) (pos? (fs o 0))) "text-coin-text"))}
+                      (fs o 0))))))))))
 
 ;; ----------------------------------------------------------------------------------------------- the buckets
 
@@ -205,7 +236,7 @@
 
 (defui lines-table [{:keys [scored strategy t open show on-filter on-open line-view]}]
   (let [counts (frequencies (map :outcome scored))
-        filters (if (keyed? scored) filters unkeyed-filters)
+        filters (filters scored)
         shown (case show
                 :all scored
                 :hard (filterv #(get-in % [:unit :hard]) scored)
@@ -242,9 +273,10 @@
         world-state (api/use-get (str "/sandbox/scenarios/" scenario))
         world (get-in world-state [:data :world])
         this (some #(when (= scenario (:name %)) %) (get-in scenarios [:data :scenarios]))
-        newest (:id (first (:runs this)))
         ;; The world says so too: a scenario made since the list was read is still the record's.
         record (or (:record this) (:record world))
+        ;; A record scenario's one run is its coding as it stands, whatever the list read earlier said.
+        newest (if record "latest" (:id (first (:runs this))))
         run-state (api/use-get (when run (str "/sandbox/scenarios/" scenario "/runs/" run)))
         ;; A record scenario's own threshold and strategy (the run's defaults when it sets none) are where it starts.
         t (/ (js/Number (or (:t query) (some-> (:threshold world) js/Number (* 100) js/Math.round) 85)) 100)
@@ -276,7 +308,7 @@
           ($ ui/loading {:state world-state}
              ($ world-strip {:world world}))
           (cond
-            (and record (not newest))
+            (and record (:data run-state) (nil? (get-in run-state [:data :run])))
             ($ ui/panel {:class "mt-4 p-4"} ($ running/run-panel {:s {:ref scenario}}))
 
             (and (not run) (:data scenarios) world (not newest))
@@ -301,6 +333,7 @@
                      (when-let [{:keys [commit dirty]} (:source info)] (str " · code " (subs (str commit) 0 7) (when dirty ", with changes"))))
                   ($ levers {:scored scored :lines lines :strategy strategy :t t
                              :on-strategy #(go! {:s (name %)} true) :on-threshold #(go! {:t (js/Math.round (* 100 %))} true)})
+                  ($ benchmark {:lines lines :strategy strategy :t t :on-strategy #(go! {:s (name %)} true)})
                   ($ ui/section-title {:aside ($ :<> "Each bucket's lines, coloured by their " ($ term {:id :outcome}))} ($ term {:id :bucket} "The buckets"))
                   ($ board {:world world :scored scored
                             :line-href #(route/href ["sandbox" scenario run] (assoc query :line % :f nil))})

@@ -673,6 +673,14 @@ steps 2 and 3.
   requests to ask and those kept, tokens (scaled from the kept answers' own usage), cost at Jev's published price
   ($0.042 a million input tokens; the API reports tokens, not prices) and seconds (from the timed runs: a run now
   keeps :took-ms and :input-tokens). An empty scenario says it has no runs and offers the run with that estimate.
+- **A key for the record's lines (2026-10-29).** A layer of kind `key` holds lines a person has coded
+  ({:lines [{:unit :expect :ok :review :why :at}]}), checked against the stack's buckets, composed bases' first (a
+  child keys a line otherwise when its policy differs), never sent to Jev. `POST /scenarios/{ref}/key` keys or
+  removes one line in the scenario's own key layer; `GET` gives the composed key. The sandbox merges it into each
+  unit, so keyed lines score right, wrong, unsafe, stopped or needless review as the invented ones do and the rest
+  coded or to a person; a benchmark table scores every strategy on the keyed lines; a line's walk keys it (the
+  bucket chosen, one click, or another bucket in any scenario of the stack; the bottom one by default).
+  Not yet: keying from the scenario's codings table, many lines at once; the eval's report over a record key.
 - The invented scenarios (classify scenario files) stay for the demo with no record, until a scenario of layers
   can be exported to the static site.
 - Next: the rest of step 2 above, then step 3 (overrides and labels).

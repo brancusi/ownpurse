@@ -7,6 +7,7 @@
    [clojure.string :as str]
    [ownpurse.admin.api :as api]
    [ownpurse.admin.route :as route]
+   [ownpurse.admin.sandbox.key :as key]
    [ownpurse.admin.ui :as ui :refer [cx]]
    [ownpurse.classify.outcome :as outcome]
    [uix.core :as uix :refer [$ defui]]))
@@ -245,13 +246,14 @@
                                                     (assoc (:query (route/parse js/location.hash)) :line id))} id))]
     ($ :div {:class "border-t border-dashed border-line-1 bg-surface-1 px-3 pt-3 pb-4 md:pl-8"}
        ($ :div {:class "flex flex-wrap items-center gap-x-3.5 gap-y-1.5 pb-2.5 text-sm"}
-          (if (:expect unit)
-            ($ :<> ($ ui/eyebrow {} "Should be") ($ ui/tag {:code (:expect unit)}))
-            ($ ui/muted {} "A line of the record: no answer key"))
+          (if (:record data)
+            ($ :div {:class "w-full border-b border-line-1 pb-2.5"} ($ key/confirm {:unit unit :chosen code :world world}))
+            ($ :<> ($ ui/eyebrow {} "Should be") ($ ui/tag {:code (:expect unit)})))
           (when (seq (:ok unit))
             ($ ui/muted {} "also fine " (for [c (:ok unit)] ($ :span {:key (name c) :class "mr-1"} ($ ui/tag {:code c})))))
-          (case (:review unit) :required ($ ui/eyebrow {} "· a person must look") :allowed ($ ui/muted {} "· a person may look") nil)
-          ($ ui/muted {} "·") ($ ui/eyebrow {} "Chosen") ($ ui/tag {:code code}) ($ ui/mono {} (ui/pct confidence))
+          (when-not (:record data)
+            (case (:review unit) :required ($ ui/eyebrow {} "· a person must look") :allowed ($ ui/muted {} "· a person may look") nil))
+          (when-not (:record data) ($ ui/muted {} "·")) ($ ui/eyebrow {} "Chosen") ($ ui/tag {:code code}) ($ ui/mono {} (ui/pct confidence))
           ($ ui/muted {} "· automatic at " (ui/pct t) " →") ($ ui/pill {:outcome o}))
        (when-let [w (or (:hard unit) (:why unit))]
          ($ :div {:class "mb-2.5 border-l-2 border-line-2 pl-2 text-sm text-ink-2"}

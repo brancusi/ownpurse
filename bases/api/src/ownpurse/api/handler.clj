@@ -314,7 +314,8 @@
    ;; Checked by the scenario component; a bare :map here would be stripped of every key by the coercion.
    [:world {:optional true} [:map-of :keyword :any]]
    [:coding {:optional true} [:map-of :keyword :any]]
-   [:lines {:optional true} [:map-of :keyword :any]]])
+   [:lines {:optional true} [:map-of :keyword :any]]
+   [:key {:optional true} [:map-of :keyword :any]]])
 
 (def ScenarioBody
   "PUT /scenarios/{ref}: a scenario, a named stack of layers, standing on another scenario if it names a base."
@@ -590,6 +591,32 @@
              :handler (fn [{{:keys [path query]} :parameters}]
                         (answer #(hash-map :estimate (scenario/estimate node (:ref path) (:model jev)
                                                                         (select-keys query [:limit])))))}}]
+     ["/scenarios/{ref}/key"
+      {:get {:summary (str "A scenario's answer key, its bases' first: each line a person coded, the bucket it belongs "
+                           "in (:expect), others that are fine (:ok), whether a person must or may look (:review), "
+                           "why, and the scenario whose key layer says it (:in).")
+             :parameters {:path Ref}
+             :responses {200 {:body :any} 404 {:body ApiError}}
+             :handler (fn [{{:keys [path]} :parameters}]
+                        (answer #(hash-map :key (vec (vals (scenario/answer-key node (:ref path)))))))}
+       :post {:summary (str "Keys one line in this scenario's own key layer (made when it has none): the bucket a "
+                            "person says it belongs in. Its codings are then scored right or wrong. `remove` takes "
+                            "the line out of this scenario's key; a base's key of it stands. Never sent to Jev.")
+              :parameters {:path Ref
+                           :body [:map {:closed true}
+                                  [:unit [:string {:min 1}]]
+                                  [:expect {:optional true} [:string {:min 1}]]
+                                  [:ok {:optional true} [:vector [:string {:min 1}]]]
+                                  [:review {:optional true} [:enum "required" "allowed"]]
+                                  [:why {:optional true} :string]
+                                  [:remove {:optional true} :boolean]]}
+              :responses {200 {:body :any} 400 {:body ApiError} 404 {:body ApiError} 409 {:body ApiError}}
+              :handler (fn [{{:keys [path body]} :parameters}]
+                         (answer #(do (when-not (or (:remove body) (:expect body))
+                                        (throw (ex-info "Say the bucket the line belongs in (expect), or remove it."
+                                                        {:type :ownpurse/invalid})))
+                                      (scenario/confirm! node (:ref path) body)
+                                      {:key (get (scenario/answer-key node (:ref path)) (:unit body))})))}}]
      ["/scenarios/{ref}/composed"
       {:get {:summary (str "A scenario's world and coding as its layers that are on compose them, its bases' first: "
                            "the rules, codes, trips and projects that stand, the threshold and strategy, and which "

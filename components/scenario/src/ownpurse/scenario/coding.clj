@@ -92,6 +92,34 @@
     (some->> (:to select) (date! "The lines' :to")))
   lines)
 
+(defn key-in
+  "A key layer's data, checked: lines a person has coded, the answer key a scenario's codings are scored against.
+  {:lines [{:unit id :expect bucket :ok [other acceptable buckets] :review required|allowed :why words :at date}]},
+  one entry a unit. Its buckets are checked against the stack's by the scenario (`check-key`)."
+  [{:keys [lines] :as k}]
+  (let [dupes (keep (fn [[u n]] (when (> n 1) u)) (frequencies (map :unit lines)))]
+    (when (seq dupes) (fail! (str "The key names line " (first dupes) " twice.") {:unit (first dupes)}))
+    (doseq [{:keys [unit expect review]} lines]
+      (when-not (and (string? unit) (seq unit)) (fail! "Each line of a key names its unit (:unit)." {}))
+      (when-not (seq (some-> expect name)) (fail! (str "Line " unit " of the key says no bucket (:expect).") {:unit unit}))
+      (when (and review (not (#{"required" "allowed"} (name review))))
+        (fail! (str "Line " unit ": :review is required (a person must look) or allowed (a person may).") {:unit unit})))
+    (assoc k :lines (mapv #(cond-> (select-keys % [:unit :expect :ok :review :why :at :by])
+                             (:expect %) (update :expect name)
+                             (:ok %) (update :ok (partial mapv name))
+                             (:review %) (update :review name))
+                          lines))))
+
+(defn check-key
+  "Every bucket a key layer names is one of `codes` (the stack's), or needs-person."
+  [codes {:keys [lines]}]
+  (let [known (conj (set (map name (keys codes))) "needs-person")]
+    (doseq [{:keys [unit expect ok]} lines
+            c (cons expect ok)
+            :when (not (known c))]
+      (fail! (str "Line " unit " of the key says bucket " c ", which no coding layer of the scenario has.")
+             {:unit unit :code c}))))
+
 (defn- merge-rules
   "The rules of `below` with those of `above`: a rule of an id below is replaced where it stands, a new one comes
   last, and one turned off (enabled false) leaves."

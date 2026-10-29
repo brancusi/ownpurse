@@ -158,6 +158,21 @@
             (is record)
             (is (= #{:rules :plain} (set (keys responses))))
             (is (= ["R1" "R2" "R3"] (map :id explained)))))
+        (testing "a line a person keys is scored against it; a scenario standing on it can key it otherwise"
+          (scenario/confirm! node "harbour-coding" {:unit "line:test:1" :expect "per-diem"})
+          (scenario/confirm! node "harbour-coding" {:unit "line:test:2" :expect "travel" :review "allowed"})
+          (is (= {"line:test:1" [:per-diem "harbour-coding"] "line:test:2" [:travel "harbour-coding"]}
+                 (update-vals (scenario/answer-key node "harbour-coding") (juxt :expect :in))))
+          (is (= [:per-diem "harbour-coding"]
+                 ((juxt :expect :keyed-in) (:unit (first (:lines (scenario/sandbox-run node "harbour-coding")))))))
+          (scenario/put! node {:ref "child-key" :name "Keyed otherwise" :base "harbour-coding" :layers []})
+          (scenario/confirm! node "child-key" {:unit "line:test:1" :expect "personal"})
+          (is (= [:personal "child-key"] ((juxt :expect :in) (get (scenario/answer-key node "child-key") "line:test:1"))))
+          (is (= :per-diem (:expect (get (scenario/answer-key node "harbour-coding") "line:test:1"))) "the base keeps its own")
+          (scenario/confirm! node "child-key" {:unit "line:test:1" :remove true})
+          (is (= "harbour-coding" (:in (get (scenario/answer-key node "child-key") "line:test:1"))) "removed: the base's stands")
+          (is (= :ownpurse/invalid (:type (error #(scenario/confirm! node "harbour-coding" {:unit "line:test:3" :expect "nowhere"})))))
+          (scenario/drop! node "child-key"))
         (testing "coding again asks nothing: every answer is in the record"
           (is (= {:asked 0 :kept 9} (select-keys (scenario/code! node "harbour-coding" (stub calls) {:model "stub"})
                                                  [:asked :kept])))

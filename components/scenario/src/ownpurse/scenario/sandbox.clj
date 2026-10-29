@@ -1,8 +1,8 @@
 (ns ownpurse.scenario.sandbox
   "The record's coding scenarios in the sandbox's shapes (ownpurse.sandbox), so the admin's sandbox and its guide show
   a book's own bank lines as they show the invented ones. A scenario's coding is one run there, \"latest\": the one
-  its runs left. Its lines have no answer key, so the sandbox scores them coded or sent to a person, never right or
-  wrong. What Jev was asked and answered is rebuilt from the line's facts and read from the answers the record keeps."
+  its runs left. A line a person has keyed (a key layer) is scored right, wrong, unsafe or sent to a person
+  needlessly, as the invented ones are; one nobody has keyed only coded or sent to a person. What Jev was asked and answered is rebuilt from the line's facts and read from the answers the record keeps."
   (:require
    [clojure.edn :as edn]
    [clojure.string :as str]
@@ -52,11 +52,22 @@
 
 (defn world
   "What scenario `ref`'s lines happened in, as the sandbox's world: everything of its classifier scenario but the
-  lines."
+  lines; and its :stack (itself, then the scenarios it stands on), where a line can be keyed."
   [node ref]
   (let [s (core/classifier-scenario node ref)]
     (-> (dissoc s :cases)
-        (assoc :name ref :record true :buckets (buckets s)))))
+        (assoc :name ref :record true :buckets (buckets s)
+               :stack (vec (for [r (cons ref (core/bases-of node ref))
+                                 :let [sc (core/scenario node r)]
+                                 :when (not (:built-in sc))]
+                             {:ref r :name (:name sc)}))))))
+
+(defn- keyed
+  "A unit with what the answer key says of it: :expect :ok :review :why, and :keyed-in (the scenario that says it)."
+  [k unit]
+  (if-let [{:keys [in] :as e} (get k (:id unit))]
+    (merge unit (select-keys e [:expect :ok :review :why]) {:keyed-in in})
+    unit))
 
 (defn- short-ids
   "Each unit's short name, by date: L1, L2 … (an item of a receipt keeps its number: L7/2)."
@@ -72,13 +83,14 @@
         units (mapcat classify/units (:cases s))
         by-id (into {} (map (juxt :id identity)) units)
         short (short-ids units)
+        k (core/answer-key node ref)
         rows (coded-rows node ref)]
     {:run (run-summary node ref (count rows))
      :lines (vec (for [{:keys [unit result]} rows
                        :let [{:keys [decisions]} (edn/read-string result)]]
                    {:id unit
                     :short (short unit)
-                    :unit (dissoc (or (by-id unit) {:id unit}) :items)
+                    :unit (keyed k (dissoc (or (by-id unit) {:id unit}) :items))
                     :decisions (update-vals decisions #(select-keys % [:code :confidence :reason]))}))}))
 
 (defn line
@@ -105,7 +117,7 @@
     {:id unit-id
      :short (get (short-ids units) unit-id)
      :run (run-summary node ref (count (coded-rows node ref)))
-     :unit unit
+     :unit (keyed (core/answer-key node ref) unit)
      :line line
      :facts facts
      :requests (dissoc requests :enrich)

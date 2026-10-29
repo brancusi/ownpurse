@@ -30,7 +30,8 @@
    "close" "The close register's journals not yet posted: those of approved items (basis approved) or of every item not set aside (basis proposed)."
    "world" "Who and where, for coding bank lines: entities, cards and accounts with their holders, projects with their dates, trips, merchant categories."
    "coding" "Buckets and rules for coding bank lines: each rule a sentence and its building blocks. A rule replaces the rule of its id under it; enabled false takes it out."
-   "lines" "Which bank lines the coding reads: a selection from the record (accounts, from, to), or lines given as they are."})
+   "lines" "Which bank lines the coding reads: a selection from the record (accounts, from, to), or lines given as they are."
+   "key" "Lines a person has coded: the answer key the scenario's codings are scored against (right, wrong, or sent to a person needlessly). Never sent to Jev. A line keyed here replaces its key under it."})
 
 (def built-in
   "Scenarios ownpurse gives every record, which cannot be changed or dropped: the close register as approved, and as
@@ -95,6 +96,7 @@
     (= "world" kind) (assoc :world (coding/world-in (or (:world layer) {})))
     (= "coding" kind) (assoc :coding (or (:coding layer) {}))
     (= "lines" kind) (assoc :lines (coding/lines-in (or (:lines layer) {})))
+    (= "key" kind) (assoc :key (coding/key-in (or (:key layer) {})))
     (= "journals" kind)
     (assoc :journals
            (do (when-let [dupes (seq (keep (fn [[r n]] (when (> n 1) r)) (frequencies (map :ref journals))))]
@@ -108,7 +110,7 @@
                                                   (:postings j)))))
                      journals)))))
 
-(defn- bases-of
+(defn bases-of
   "The refs of the scenarios `ref` stands on, nearest first; throws when one is missing."
   [node ref]
   (loop [r (:base (scenario node ref)) seen [ref]]
@@ -126,14 +128,17 @@
 (defn- check-codings
   "Each coding layer's rules checked against the buckets of the coding layers under it and its own."
   [node base layers]
-  (let [below (if base (:codes (coding/compose (stack-layers node base))) {})]
-    (first (reduce (fn [[out codes] l]
-                     (if (= "coding" (:kind l))
-                       (let [c (coding/coding-in codes (:coding l))]
-                         [(conj out (assoc l :coding c)) (merge codes (:codes c))])
-                       [(conj out l) codes]))
-                   [[] below]
-                   layers))))
+  (let [below (if base (:codes (coding/compose (stack-layers node base))) {})
+        [out codes] (reduce (fn [[out codes] l]
+                              (if (= "coding" (:kind l))
+                                (let [c (coding/coding-in codes (:coding l))]
+                                  [(conj out (assoc l :coding c)) (merge codes (:codes c))])
+                                [(conj out l) codes]))
+                            [[] below]
+                            layers)]
+    ;; A key's buckets are the whole stack's, wherever in it the coding layer that names them stands.
+    (doseq [l out :when (= "key" (:kind l))] (coding/check-key codes (:key l)))
+    out))
 
 (defn put! [node {:keys [ref name note base layers duplicated-from]}]
   (check-ref! "scenario" ref)
@@ -242,3 +247,39 @@
     (-> (dissoc s :selects)
         (assoc :scenario ref)
         (update :cases (fnil into []) read))))
+
+(defn answer-key
+  "Scenario `ref`'s answer key, its bases' first: each unit a person coded, by unit id, with the scenario it was keyed
+  in (:in); a key layer nearer the scenario replaces a unit's key under it. Buckets as keywords, as codings say them."
+  [node ref]
+  (reduce (fn [acc [r l]]
+            (reduce (fn [acc {:keys [unit] :as e}]
+                      (assoc acc unit (cond-> (assoc e :in r :expect (keyword (:expect e)))
+                                        (:ok e) (update :ok (partial mapv keyword))
+                                        (:review e) (update :review keyword))))
+                    acc (get-in l [:key :lines])))
+          {}
+          (for [r (concat (reverse (bases-of node ref)) [ref])
+                l (:layers (scenario node r))
+                :when (and (:enabled l) (= "key" (:kind l)))]
+            [r l])))
+
+(defn confirm!
+  "Keys one unit in scenario `ref`'s own key layer (the first, or a new one, \"key\", last): {:unit :expect :ok
+  :review :why}, replacing the unit's entry there; {:unit :remove true} takes the unit out of this scenario's key
+  (a base's key of it stands). A new version of the scenario, like any change."
+  [node ref {:keys [unit] :as entry}]
+  (let [s (scenario node ref)]
+    (when-not s (fail! :ownpurse/not-found (str "There is no scenario " ref ".") {:ref ref}))
+    (when (:built-in s)
+      (fail! :ownpurse/scenario-conflict (str "Scenario " ref " is built in: key lines in a scenario standing on it.")
+             {:ref ref}))
+    (let [layers (:layers s)
+          i (first (keep-indexed (fn [i l] (when (= "key" (:kind l)) i)) layers))
+          layers (if i layers (conj layers {:id "key" :kind "key" :key {:lines []}
+                                            :note "Lines a person has coded, for scoring this scenario's codings."}))
+          i (or i (dec (count layers)))
+          others (vec (remove #(= unit (:unit %)) (get-in layers [i :key :lines])))
+          lines (if (:remove entry) others (conj others (-> (select-keys entry [:unit :expect :ok :review :why :by])
+                                                   (assoc :at (str (LocalDate/now))))))]
+      (put! node (assoc s :layers (assoc-in layers [i :key :lines] lines))))))

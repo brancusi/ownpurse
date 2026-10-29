@@ -206,7 +206,7 @@
       (testing "the built-in scenarios are listed, with the kinds of layer"
         (let [{:keys [scenarios kinds]} (:body (request app :get "/scenarios"))]
           (is (= ["approved" "proposed"] (map :ref scenarios)))
-          (is (= #{:journals :close :world :coding :lines} (set (keys kinds))))))
+          (is (= #{:journals :close :world :coding :lines :key} (set (keys kinds))))))
       (testing "a scenario is put with its layers, amounts as decimal strings"
         (let [{:keys [status body]} (request app :put "/scenarios/rent-split" body)]
           (is (= 200 status))
@@ -269,6 +269,12 @@
         (is (= {:units 1 :requests 2 :asked 2 :kept 0}
                (select-keys (get-in (request app :get "/scenarios/coding/coding/estimate") [:body :estimate])
                             [:units :requests :asked :kept]))))
+      (testing "a line is keyed in a scenario's own key layer, in a bucket of its stack"
+        (is (= "personal" (get-in (request app :post "/scenarios/coding/key" {:unit "line:test:1" :expect "personal"})
+                                  [:body :key :expect])))
+        (is (= 400 (:status (request app :post "/scenarios/coding/key" {:unit "line:test:1" :expect "nowhere"}))))
+        (is (= 400 (:status (request app :post "/scenarios/coding/key" {:unit "line:test:1"}))))
+        (is (= ["line:test:1"] (map :unit (get-in (request app :get "/scenarios/coding/key") [:body :key])))))
       (testing "the sandbox lists the record's coding scenario first, with no run until it is coded"
         (is (= {:name "coding" :record true :lines 1 :runs []}
                (select-keys (first (get-in (request app :get "/sandbox/scenarios") [:body :scenarios]))
